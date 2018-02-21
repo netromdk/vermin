@@ -5,6 +5,7 @@
 
 import sys
 import ast
+from os.path import abspath
 
 # Module requirements: name -> min version per major or None if N.A.
 MOD_REQS = {"argparse": (2.7, 3.2)}
@@ -66,7 +67,6 @@ def detect_min_versions(node):
 
   mins = [None, None]
   mods = visitor.modules()
-  print("Modules: {}".format(mods))
   for mod in mods:
     if mod in MOD_REQS:
       vers = MOD_REQS[mod]
@@ -83,13 +83,13 @@ def detect_min_versions(node):
   return [ver for ver in mins if ver is not None]
 
 if __name__ == "__main__":
-  if len(sys.argv) != 2:
-    print("Usage: {} <python source file>".format(sys.argv[0]))
+  if len(sys.argv) < 2:
+    print("Usage: {} <python source files..>".format(sys.argv[0]))
     sys.exit(-1)
 
-  path = sys.argv[1]
-  min_versions = detect_min_versions_path(path)
-  if len(min_versions) > 0:
-    print("Minimum versions detected: {}".format(min_versions))
-  else:
-    print("No specific minimum version detected.")
+  for path in sys.argv[1:]:
+    path = abspath(path)
+    print("{}:".format(path))
+    min_versions = detect_min_versions_path(path)
+    if len(min_versions) > 0:
+      print(min_versions)
