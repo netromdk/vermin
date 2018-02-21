@@ -8,7 +8,9 @@ import ast
 from os.path import abspath, isfile
 
 # Module requirements: name -> min version per major or None if N.A.
-MOD_REQS = {"argparse": (2.7, 3.2)}
+MOD_REQS = {"argparse": (2.7, 3.2),
+            "abc": (2.6, 3.0),
+            "abc.ABC": (None, 3.4)}
 
 def parse_source(source):
   """Parse python source into an AST."""
