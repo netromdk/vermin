@@ -5,7 +5,7 @@
 
 import sys
 import ast
-from os.path import abspath
+from os.path import abspath, isfile
 
 # Module requirements: name -> min version per major or None if N.A.
 MOD_REQS = {"argparse": (2.7, 3.2)}
@@ -89,6 +89,10 @@ if __name__ == "__main__":
 
   for path in sys.argv[1:]:
     path = abspath(path)
+    if not isfile(path):
+      continue
+    if not path.lower().endswith(".py"):
+      continue
     print("{}:".format(path))
     min_versions = detect_min_versions_path(path)
     if len(min_versions) > 0:
