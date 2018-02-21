@@ -30,11 +30,11 @@ class SourceVisitor(ast.NodeVisitor):
 
   def generic_visit(self, node):
     #print("{}: {}".format(type(node).__name__, ast.dump(node)))
-    ast.NodeVisitor.generic_visit(self, node)
+    super(SourceVisitor, self).generic_visit(node)
 
   def visit_Import(self, node):
     self.__import = True
-    ast.NodeVisitor.generic_visit(self, node)
+    self.generic_visit(node)
     self.__import = False
 
   def visit_ImportFrom(self, node):
