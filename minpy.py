@@ -51,17 +51,16 @@ class SourceVisitor(ast.NodeVisitor):
 
 # TODO: Detect version from language use, like "print expr" (2) vs "print(expr)" (3)
 
-if __name__ == "__main__":
-  if len(sys.argv) != 2:
-    print("Usage: {} <python source file>".format(sys.argv[0]))
-    sys.exit(-1)
-
-  path = sys.argv[1]
+def detect_min_versions_path(path):
   try:
     node = parse_source_file(path)
   except SyntaxError as err:
     print("Could not parse input: {}".format(err))
+    sys.exit(-1)
 
+  return detect_min_versions(node)
+
+def detect_min_versions(node):
   visitor = SourceVisitor()
   visitor.visit(node)
 
@@ -80,8 +79,17 @@ if __name__ == "__main__":
         else:
           mins[i] = min(vers[i], mins[i])
 
-  actual_mins = [ver for ver in mins if ver is not None]
-  if len(actual_mins) > 0:
-    print("Minimum versions detected: {}".format(actual_mins))
+  # Return non-None values.
+  return [ver for ver in mins if ver is not None]
+
+if __name__ == "__main__":
+  if len(sys.argv) != 2:
+    print("Usage: {} <python source file>".format(sys.argv[0]))
+    sys.exit(-1)
+
+  path = sys.argv[1]
+  min_versions = detect_min_versions_path(path)
+  if len(min_versions) > 0:
+    print("Minimum versions detected: {}".format(min_versions))
   else:
     print("No specific minimum version detected.")
