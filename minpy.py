@@ -28,6 +28,9 @@ class SourceVisitor(ast.NodeVisitor):
   def modules(self):
     return self.__modules
 
+  def __add_module(self, module):
+    self.__modules.append(module)
+
   def generic_visit(self, node):
     #print("{}: {}".format(type(node).__name__, ast.dump(node)))
     super(SourceVisitor, self).generic_visit(node)
@@ -38,11 +41,19 @@ class SourceVisitor(ast.NodeVisitor):
     self.__import = False
 
   def visit_ImportFrom(self, node):
-    self.__modules.append(node.module)
+    if node.module is None:
+      return
+
+    self.__add_module(node.module)
+
+    # Remember full module paths, like "abc.ABC" via "from abc import ABC".
+    for name in node.names:
+      if name.name is not None:
+        self.__add_module(node.module + "." + name.name)
 
   def visit_alias(self, node):
     if self.__import:
-      self.__modules.append(node.name)
+      self.__add_module(node.name)
 
   def visit_Load(self, node):
     pass
