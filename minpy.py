@@ -90,7 +90,7 @@ def detect_min_versions(node):
         if mins[i] is None:
           mins[i] = vers[i]
         else:
-          mins[i] = min(vers[i], mins[i])
+          mins[i] = max(vers[i], mins[i])
 
   # Return non-None values.
   return [ver for ver in mins if ver is not None]
