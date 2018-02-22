@@ -14,6 +14,8 @@ MOD_REQS = {"argparse": (2.7, 3.2),
 # Module member requirements: member -> (module, requirements)
 MOD_MEM_REQS = {"ABC": ("abc", (None, 3.4))}
 
+V2_DISABLED = False
+
 def parse_source(source):
   """Parse python source into an AST."""
   return ast.parse(source)
@@ -172,6 +174,11 @@ def detect_min_versions(node):
       if vers[0] is None and vers[1] is not None:
         mins[0] = None
 
+        # v2 is disabled globally so other files in same "session" can't change the v2 value
+        # requirement.
+        global V2_DISABLED
+        V2_DISABLED = True
+
   return mins
 
 def all_none(data):
@@ -199,6 +206,9 @@ if __name__ == "__main__":
     if not all_none(min_versions):
       print("{}: {}".format(path, min_versions))
       mins = combine_versions(mins, min_versions)
+
+  if V2_DISABLED:
+    mins[0] = None
 
   mins = remove_none(mins)
   if len(mins) == 0:
