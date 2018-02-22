@@ -37,3 +37,11 @@ class MinpyTests(unittest.TestCase):
   def test_format(self):
     vers = detect("'hello {}!'.format('world')")
     self.__assertOnlyIn((2.7, 3.0), vers)
+
+  def test_module_argparse(self):
+    self.__assertOnlyIn((2.7, 3.2), detect("import argparse"))
+    self.__assertOnlyIn((2.7, 3.2), detect("from argparse import *"))
+
+  def test_module_abc(self):
+    self.__assertOnlyIn((2.6, 3.0), detect("import abc"))
+
