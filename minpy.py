@@ -189,11 +189,8 @@ def detect_min_versions(node):
 
   return mins
 
-def all_none(data):
-  for elm in data:
-    if elm is not None:
-      return False
-  return True
+def all_none(elms):
+  return len(elms) == elms.count(None)
 
 def versions_string(vers):
   return ", ".join([str(v) for v in vers if v is not None])
@@ -220,7 +217,8 @@ if __name__ == "__main__":
       continue
     min_versions = detect_min_versions_path(path)
     if not all_none(min_versions):
-      print("{:<12} {}".format(versions_string(min_versions), path))
+      if len(paths) > 1:
+        print("{:<12} {}".format(versions_string(min_versions), path))
       mins = combine_versions(mins, min_versions)
 
   if V2_DISABLED:
@@ -229,4 +227,6 @@ if __name__ == "__main__":
   if all_none(mins):
     print("Could not determine minimum required versions!")
   else:
-    print("\nMinimum required versions: {}".format(versions_string(mins)))
+    if len(paths) > 1:
+      print("")
+    print("Minimum required versions: {}".format(versions_string(mins)))
