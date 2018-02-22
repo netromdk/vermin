@@ -135,6 +135,9 @@ def all_none(data):
       return False
   return True
 
+def remove_none(data):
+  return [elm for elm in data if elm is not None]
+
 if __name__ == "__main__":
   if len(sys.argv) < 2:
     print("Usage: {} <python source files..>".format(sys.argv[0]))
@@ -151,7 +154,9 @@ if __name__ == "__main__":
     if not all_none(min_versions):
       print("{}: {}".format(path, min_versions))
       mins = combine_versions(mins, min_versions)
-  if all_none(mins):
+
+  mins = remove_none(mins)
+  if len(mins) == 0:
     print("Could not determine minimum required versions!")
   else:
     print("\nMinimum required versions: {}".format(mins))
