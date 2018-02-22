@@ -12,7 +12,10 @@ class MinpyTests(unittest.TestCase):
     self.assertIn(value, data)
 
   def test_printv2(self):
-    self.__assertOnlyIn(2.0, detect("print 'hello'"))
+    vers = detect("print 'hello'")
+    # Before 3.4 it just said "invalid syntax" and didn't hint at missing parentheses.
+    if current_version() >= 3.4:
+      self.__assertOnlyIn(2.0, vers)
 
   def test_printv3(self):
     """Allowed in both v2 and v3."""
@@ -20,7 +23,9 @@ class MinpyTests(unittest.TestCase):
 
   def test_print_v2_v3_mixed(self):
     """When using both v2 and v3 style it must return v2 because v3 is allowed in v2."""
-    self.__assertOnlyIn(2.0, detect("print 'hello'\nprint('hello')"))
+    # Before 3.4 it just said "invalid syntax" and didn't hint at missing parentheses.
+    if current_version() >= 3.4:
+      self.__assertOnlyIn(2.0, detect("print 'hello'\nprint('hello')"))
 
   def test_formatv3(self):
     self.__assertOnlyIn(3.0, detect("'hello {}!'.format('world')"))

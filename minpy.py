@@ -115,12 +115,10 @@ def detect_min_versions_source(source):
   except SyntaxError as err:
     # `print expr` is a Python 2 construct, in v3 it's `print(expr)`.
     # NOTE: This is only triggered when running a python 3 on v2 code!
-    if err.msg.lower().find("missing parentheses in call to 'print'.") != -1:
+    if err.msg.lower().find("missing parentheses in call to 'print'") != -1:
       print("`{}` requires 2.0".format(err.text.strip()))
       return [2.0, None]
-
-    print("Could not parse input: {}".format(err))
-    sys.exit(-1)
+    return [None, None]
 
   return detect_min_versions(node)
 
