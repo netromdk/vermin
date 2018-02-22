@@ -16,6 +16,8 @@ MOD_MEM_REQS = {"ABC": ("abc", (None, 3.4))}
 
 V2_DISABLED = False
 
+VERBOSE = False
+
 def parse_source(source):
   """Parse python source into an AST."""
   return ast.parse(source)
@@ -24,6 +26,11 @@ def parse_source_file(path):
   """Parse python source file into an AST."""
   with open(path, "r") as fp:
     return parse_source(fp.read())
+
+def vprint(msg):
+  global VERBOSE
+  if VERBOSE:
+    print(msg)
 
 class SourceVisitor(ast.NodeVisitor):
   def __init__(self):
@@ -97,7 +104,7 @@ class SourceVisitor(ast.NodeVisitor):
         self.__printv3 = True
       elif hasattr(func, "attr") and func.attr == "format" and \
            hasattr(func, "value") and isinstance(func.value, ast.Str):
-        print("`\"..\".format(..)` requires [2.7, 3.0]")
+        vprint("`\"..\".format(..)` requires [2.7, 3.0]")
         self.__format = True
     self.generic_visit(node)
 
@@ -134,7 +141,7 @@ def detect_min_versions_source(source):
     # `print expr` is a Python 2 construct, in v3 it's `print(expr)`.
     # NOTE: This is only triggered when running a python 3 on v2 code!
     if err.msg.lower().find("missing parentheses in call to 'print'") != -1:
-      print("`{}` requires 2.0".format(err.text.strip()))
+      vprint("`{}` requires 2.0".format(err.text.strip()))
       return [2.0, None]
     return [None, None]
 
@@ -158,14 +165,14 @@ def detect_min_versions(node):
   for mod in mods:
     if mod in MOD_REQS:
       vers = MOD_REQS[mod]
-      print("'{}' requires {}".format(mod, vers))
+      vprint("'{}' requires {}".format(mod, vers))
       mins = combine_versions(mins, vers)
 
   mems = visitor.members()
   for mem in mems:
     if mem in MOD_MEM_REQS:
       (mod, vers) = MOD_MEM_REQS[mem]
-      print("'{}.{}' requires {}".format(mod, mem, vers))
+      vprint("'{}.{}' requires {}".format(mod, mem, vers))
       mins = combine_versions(mins, vers)
 
       # If the member of the module doesn't support v2 but only v3 then clear the v2 to None.
@@ -192,11 +199,19 @@ def remove_none(data):
 
 if __name__ == "__main__":
   if len(sys.argv) < 2:
-    print("Usage: {} <python source files..>".format(sys.argv[0]))
+    print("Usage: {} [-v|--verbose] <python source files..>".format(sys.argv[0]))
     sys.exit(-1)
 
+  path_pos = 1
+  arg1 = sys.argv[1].lower()
+  if arg1 == "-v" or arg1 == "--verbose":
+    VERBOSE = True
+    path_pos += 1
+
+  paths = sys.argv[path_pos:]
+
   mins = [None, None]
-  for path in sys.argv[1:]:
+  for path in paths:
     path = abspath(path)
     if not isfile(path):
       continue
