@@ -45,6 +45,9 @@ class MinpyTests(unittest.TestCase):
   def test_module_abc(self):
     self.__assertOnlyIn((2.6, 3.0), detect("import abc"))
 
+  def test_module_multiprocessing(self):
+    self.__assertOnlyIn((2.6, 3.0), detect("import multiprocessing"))
+
   def test_member_ABC_of_abc(self):
     self.__assertOnlyIn(3.4, detect("import abc.ABC"))
     self.__assertOnlyIn(3.4, detect("from abc import ABC"))
