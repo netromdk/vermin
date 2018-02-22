@@ -9,8 +9,10 @@ from os.path import abspath, isfile
 
 # Module requirements: name -> min version per major or None if N.A.
 MOD_REQS = {"argparse": (2.7, 3.2),
-            "abc": (2.6, 3.0),
-            "abc.ABC": (None, 3.4)}
+            "abc": (2.6, 3.0)}
+
+# Module member requirements: member -> (module, requirements)
+MOD_MEM_REQS = {"ABC": ("abc", (None, 3.4))}
 
 def parse_source(source):
   """Parse python source into an AST."""
@@ -26,12 +28,16 @@ class SourceVisitor(ast.NodeVisitor):
     super(SourceVisitor, self).__init__()
     self.__import = False
     self.__modules = []
+    self.__members = []
     self.__printv2 = False
     self.__printv3 = False
     self.__format = False
 
   def modules(self):
     return self.__modules
+
+  def members(self):
+    return self.__members
 
   def printv2(self):
     return self.__printv2
@@ -44,6 +50,9 @@ class SourceVisitor(ast.NodeVisitor):
 
   def __add_module(self, module):
     self.__modules.append(module)
+
+  def __add_member(self, member):
+    self.__members.append(member)
 
   def generic_visit(self, node):
     #print("{}: {}".format(type(node).__name__, ast.dump(node)))
@@ -60,14 +69,21 @@ class SourceVisitor(ast.NodeVisitor):
 
     self.__add_module(node.module)
 
-    # Remember full module paths, like "abc.ABC" via "from abc import ABC".
+    # Remember module members and full module paths, like "ABC" member of module "abc" and "abc.ABC"
+    # module.
     for name in node.names:
       if name.name is not None:
         self.__add_module(node.module + "." + name.name)
+        self.__add_member(name.name)
 
   def visit_alias(self, node):
     if self.__import:
       self.__add_module(node.name)
+
+      # If the import path has several levels then remember last member, like "ABC" of "abc.ABC".
+      elms = node.name.split(".")
+      if len(elms) >= 2:
+        self.__add_member(elms[-1])
 
   def visit_Print(self, node):
     self.__printv2 = True
@@ -142,6 +158,20 @@ def detect_min_versions(node):
       vers = MOD_REQS[mod]
       print("'{}' requires {}".format(mod, vers))
       mins = combine_versions(mins, vers)
+
+  mems = visitor.members()
+  for mem in mems:
+    if mem in MOD_MEM_REQS:
+      (mod, vers) = MOD_MEM_REQS[mem]
+      print("'{}.{}' requires {}".format(mod, mem, vers))
+      mins = combine_versions(mins, vers)
+
+      # If the member of the module doesn't support v2 but only v3 then clear the v2 to None.
+      # Example: "import abc" requires (2.6, 3.0) and "from abc import ABC" requires 3.4+ so if the
+      # latter is used then the v2.6 has to be ignored!
+      if vers[0] is None and vers[1] is not None:
+        mins[0] = None
+
   return mins
 
 def all_none(data):
