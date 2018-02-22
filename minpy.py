@@ -63,7 +63,21 @@ class SourceVisitor(ast.NodeVisitor):
   def visit_Pass(self, node):
     pass
 
-# TODO: Detect version from language use, like "print expr" (2) vs "print(expr)" (3)
+def combine_versions(list1, list2):
+  assert len(list1) == len(list2)
+  res = []
+  for i in range(len(list1)):
+    v1 = list1[i]
+    v2 = list2[i]
+    if v1 is None and v2 is None:
+      continue
+    if v1 is None:
+      res.append(v2)
+    elif v2 is None:
+      res.append(v1)
+    else:
+      res.append(max(v1, v2))
+  return res
 
 def detect_min_versions_path(path):
   try:
@@ -84,29 +98,32 @@ def detect_min_versions(node):
     if mod in MOD_REQS:
       vers = MOD_REQS[mod]
       print("'{}' requires {}".format(mod, vers))
-      for i in range(len(vers)):
-        if vers[i] is None:
-          continue
-        if mins[i] is None:
-          mins[i] = vers[i]
-        else:
-          mins[i] = max(vers[i], mins[i])
+      mins = combine_versions(mins, vers)
+  return mins
 
-  # Return non-None values.
-  return [ver for ver in mins if ver is not None]
+def all_none(data):
+  for elm in data:
+    if elm is not None:
+      return False
+  return True
 
 if __name__ == "__main__":
   if len(sys.argv) < 2:
     print("Usage: {} <python source files..>".format(sys.argv[0]))
     sys.exit(-1)
 
+  mins = [None, None]
   for path in sys.argv[1:]:
     path = abspath(path)
     if not isfile(path):
       continue
     if not path.lower().endswith(".py"):
       continue
-    print("{}:".format(path))
     min_versions = detect_min_versions_path(path)
-    if len(min_versions) > 0:
-      print(min_versions)
+    if not all_none(min_versions):
+      print("{}: {}".format(path, min_versions))
+      mins = combine_versions(mins, min_versions)
+  if all_none(mins):
+    print("Could not determine minimum required versions!")
+  else:
+    print("\nMinimum required versions: {}".format(mins))
