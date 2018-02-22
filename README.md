@@ -3,4 +3,4 @@
 # minpy
 Detect the minimum Python version needed to run code.
 
-Works with Python 2.7 and 3.2+.
+Works with Python 2.7 and 3+.

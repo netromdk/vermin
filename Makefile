@@ -1,2 +1,2 @@
 test:
-	python -m unittest tests
+	python -c "import unittest; unittest.main('tests')"
