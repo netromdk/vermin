@@ -26,9 +26,17 @@ class SourceVisitor(ast.NodeVisitor):
     super(SourceVisitor, self).__init__()
     self.__import = False
     self.__modules = []
+    self.__printv2 = False
+    self.__printv3 = False
 
   def modules(self):
     return self.__modules
+
+  def printv2(self):
+    return self.__printv2
+
+  def printv3(self):
+    return self.__printv3
 
   def __add_module(self, module):
     self.__modules.append(module)
@@ -57,6 +65,14 @@ class SourceVisitor(ast.NodeVisitor):
     if self.__import:
       self.__add_module(node.name)
 
+  def visit_Print(self, node):
+    self.__printv2 = True
+
+  def visit_Call(self, node):
+    if node.func.id == "print":
+      self.__printv3 = True
+    self.generic_visit(node)
+
   def visit_Load(self, node):
     pass
 
@@ -70,8 +86,8 @@ def combine_versions(list1, list2):
     v1 = list1[i]
     v2 = list2[i]
     if v1 is None and v2 is None:
-      continue
-    if v1 is None:
+      res.append(None)
+    elif v1 is None:
       res.append(v2)
     elif v2 is None:
       res.append(v1)
@@ -83,6 +99,12 @@ def detect_min_versions_path(path):
   try:
     node = parse_source_file(path)
   except SyntaxError as err:
+    # `print expr` is a Python 2 construct, in v3 it's `print(expr)`.
+    # NOTE: This is only triggered when running a python 3 on v2 code!
+    if err.msg.lower().find("missing parentheses in call to 'print'.") != -1:
+      print("`{}` requires 2.0".format(err.text.strip()))
+      return [2.0, None]
+
     print("Could not parse input: {}".format(err))
     sys.exit(-1)
 
@@ -93,6 +115,12 @@ def detect_min_versions(node):
   visitor.visit(node)
 
   mins = [None, None]
+
+  if visitor.printv2():
+    mins[0] = 2.0
+  if visitor.printv3():
+    mins[1] = 3.0
+
   mods = visitor.modules()
   for mod in mods:
     if mod in MOD_REQS:
