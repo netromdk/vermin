@@ -28,7 +28,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__modules = []
     self.__printv2 = False
     self.__printv3 = False
-    self.__formatv3 = False
+    self.__format = False
 
   def modules(self):
     return self.__modules
@@ -39,8 +39,8 @@ class SourceVisitor(ast.NodeVisitor):
   def printv3(self):
     return self.__printv3
 
-  def formatv3(self):
-    return self.__formatv3
+  def format(self):
+    return self.__format
 
   def __add_module(self, module):
     self.__modules.append(module)
@@ -79,8 +79,8 @@ class SourceVisitor(ast.NodeVisitor):
         self.__printv3 = True
       elif hasattr(func, "attr") and func.attr == "format" and \
            hasattr(func, "value") and isinstance(func.value, ast.Str):
-        print("`\"..\".format(..)` requires 3.0")
-        self.__formatv3 = True
+        print("`\"..\".format(..)` requires [2.7, 3.0]")
+        self.__format = True
     self.generic_visit(node)
 
   def visit_Load(self, node):
@@ -130,8 +130,11 @@ def detect_min_versions(node):
 
   if visitor.printv2():
     mins[0] = 2.0
-  if visitor.printv3() or visitor.formatv3():
+  if visitor.printv3():
     mins[1] = 3.0
+
+  if visitor.format():
+    mins = combine_versions(mins, (2.7, 3.0))
 
   mods = visitor.modules()
   for mod in mods:

@@ -6,10 +6,18 @@ def current_version():
   return float(sys.version_info.major)
 
 class MinpyTests(unittest.TestCase):
-  def __assertOnlyIn(self, value, data):
-    """Assert only value is in data but ignores None values."""
-    self.assertEqual(len(data) - data.count(None), 1)
-    self.assertIn(value, data)
+  def __assertOnlyIn(self, values, data):
+    """Assert only value(s) is in data but ignores None values."""
+    size = 1
+    multiple = isinstance(values, list) or isinstance(values, tuple)
+    if multiple:
+      size = len(values)
+    self.assertEqual(len(data) - data.count(None), size)
+    if multiple:
+      for value in values:
+        self.assertIn(value, data)
+    else:
+      self.assertIn(values, data)
 
   def test_printv2(self):
     # Before 3.4 it just said "invalid syntax" and didn't hint at missing parentheses.
@@ -26,5 +34,6 @@ class MinpyTests(unittest.TestCase):
     if current_version() >= 3.4:
       self.__assertOnlyIn(2.0, detect("print 'hello'\nprint('hello')"))
 
-  def test_formatv3(self):
-    self.__assertOnlyIn(3.0, detect("'hello {}!'.format('world')"))
+  def test_format(self):
+    vers = detect("'hello {}!'.format('world')")
+    self.__assertOnlyIn((2.7, 3.0), vers)
