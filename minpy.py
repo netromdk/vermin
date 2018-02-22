@@ -194,8 +194,8 @@ def all_none(data):
       return False
   return True
 
-def remove_none(data):
-  return [elm for elm in data if elm is not None]
+def versions_string(vers):
+  return ", ".join([str(v) for v in vers if v is not None])
 
 if __name__ == "__main__":
   if len(sys.argv) < 2:
@@ -219,14 +219,13 @@ if __name__ == "__main__":
       continue
     min_versions = detect_min_versions_path(path)
     if not all_none(min_versions):
-      print("{}: {}".format(path, min_versions))
+      print("{:<12} {}".format(versions_string(min_versions), path))
       mins = combine_versions(mins, min_versions)
 
   if V2_DISABLED:
     mins[0] = None
 
-  mins = remove_none(mins)
-  if len(mins) == 0:
+  if all_none(mins):
     print("Could not determine minimum required versions!")
   else:
-    print("\nMinimum required versions: {}".format(mins))
+    print("\nMinimum required versions: {}".format(versions_string(mins)))
