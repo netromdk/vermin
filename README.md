@@ -9,12 +9,12 @@ Works with Python 2.7 and 3+.
 It is fairly straightforward to use Minpy:
 ```
 % ./minpy.py
-Usage: ./minpy.py [-v|--verbose] <python source files..>
+Usage: ./minpy.py [-v|--verbose] <python source files and folders..>
 
 % ./minpy.py minpy.py
 Minimum required versions: 2.7, 3.0
 
-% ./minpy.py examples/*
+% ./minpy.py examples
 3.4          /path/to/git/minpy/examples/abc.py
 2.7, 3.2     /path/to/git/minpy/examples/argparse.py
 2.7, 3.0     /path/to/git/minpy/examples/formatv3.py

@@ -5,7 +5,8 @@
 
 import sys
 import ast
-from os.path import abspath, isfile
+from os import listdir
+from os.path import abspath, isfile, isdir, join
 
 # Module requirements: name -> min version per major or None if N.A.
 MOD_REQS = {"argparse": (2.7, 3.2),
@@ -195,9 +196,26 @@ def all_none(elms):
 def versions_string(vers):
   return ", ".join([str(v) for v in vers if v is not None])
 
+def process_paths(paths):
+  mins = [None, None]
+  for path in paths:
+    path = abspath(path)
+    if isdir(path):
+      submins = process_paths([join(path, p) for p in listdir(path)])
+      if not all_none(submins):
+        mins = combine_versions(mins, submins)
+      continue
+    if not isfile(path) or not path.lower().endswith(".py"):
+      continue
+    min_versions = detect_min_versions_path(path)
+    if not all_none(min_versions):
+      print("{:<12} {}".format(versions_string(min_versions), path))
+      mins = combine_versions(mins, min_versions)
+  return mins
+
 if __name__ == "__main__":
   if len(sys.argv) < 2:
-    print("Usage: {} [-v|--verbose] <python source files..>".format(sys.argv[0]))
+    print("Usage: {} [-v|--verbose] <python source files and folders..>".format(sys.argv[0]))
     sys.exit(-1)
 
   path_pos = 1
@@ -207,19 +225,7 @@ if __name__ == "__main__":
     path_pos += 1
 
   paths = sys.argv[path_pos:]
-
-  mins = [None, None]
-  for path in paths:
-    path = abspath(path)
-    if not isfile(path):
-      continue
-    if not path.lower().endswith(".py"):
-      continue
-    min_versions = detect_min_versions_path(path)
-    if not all_none(min_versions):
-      if len(paths) > 1:
-        print("{:<12} {}".format(versions_string(min_versions), path))
-      mins = combine_versions(mins, min_versions)
+  mins = process_paths(paths)
 
   if V2_DISABLED:
     mins[0] = None
@@ -227,6 +233,4 @@ if __name__ == "__main__":
   if all_none(mins):
     print("Could not determine minimum required versions!")
   else:
-    if len(paths) > 1:
-      print("")
     print("Minimum required versions: {}".format(versions_string(mins)))
