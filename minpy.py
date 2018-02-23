@@ -10,9 +10,46 @@ from os.path import abspath, isfile, isdir, join
 from multiprocessing import Pool
 
 # Module requirements: name -> min version per major or None if N.A.
-MOD_REQS = {"argparse": (2.7, 3.2),
-            "abc": (2.6, 3.0),
-            "multiprocessing": (2.6, 3.0)}
+MOD_REQS = {
+  "ConfigParser": (2.0, None),
+  "HTMLParser": (2.2, None),
+  "Queue": (2.0, None),
+  "SocketServer": (2.0, None),
+  "__builtin__": (2.0, None),
+  "_markupbase": (None, 3.0),
+  "_winreg": (2.0, None),
+  "abc": (2.6, 3.0),
+  "argparse": (2.7, 3.2),
+  "builtins": (None, 3.0),
+  "configparser": (None, 3.0),
+  "copy_reg": (2.0, None),
+  "copyreg": (None, 3.0),
+  "dbm.io": (None, 3.0),
+  "dbm.ndbm": (None, 3.0),
+  "dbm.os": (None, 3.0),
+  "dbm.struct": (None, 3.0),
+  "dbm.sys": (None, 3.0),
+  "dbm.whichdb": (None, 3.0),
+  "html": (None, 3.0),
+  "htmlentitydefs": (2.0, None),
+  "http": (None, 3.0),
+  "markupbase": (2.0, None),
+  "md5": (2.0, None),
+  "multiprocessing": (2.6, 3.0),
+  "new": (2.0, None),
+  "queue": (None, 3.0),
+  "repr": (2.0, None),
+  "reprlib": (None, 3.0),
+  "sets": (2.0, None),
+  "socketserver": (None, 3.0),
+  "string.letters": (2.0, None),
+  "string.lowercase": (2.0, None),
+  "string.uppercase": (2.0, None),
+  "tkinter": (None, 3.0),
+  "urllib2": (2.0, None),
+  "winreg": (None, 3.0),
+  "xmlrpc": (None, 3.0),
+}
 
 # Module member requirements: member -> (module, requirements)
 MOD_MEM_REQS = {"ABC": ("abc", (None, 3.4))}
