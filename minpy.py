@@ -65,6 +65,7 @@ MOD_MEM_REQS = {
 }
 
 V2_DISABLED = False
+V3_DISABLED = False
 
 VERBOSE = False
 
@@ -227,6 +228,9 @@ def detect_min_versions(node):
   if visitor.format():
     mins = combine_versions(mins, (2.7, 3.0))
 
+  global V2_DISABLED
+  global V3_DISABLED
+
   mods = visitor.modules()
   for mod in mods:
     if mod in MOD_REQS:
@@ -249,8 +253,12 @@ def detect_min_versions(node):
 
         # v2 is disabled globally so other files in same "session" can't change the v2 value
         # requirement.
-        global V2_DISABLED
         V2_DISABLED = True
+
+      # Same for v3 when v2 only.
+      if vers[0] is not None and vers[1] is None:
+        mins[1] = None
+        V3_DISABLED = True
 
   return mins
 
@@ -300,6 +308,8 @@ if __name__ == "__main__":
 
   if V2_DISABLED:
     mins[0] = None
+  if V3_DISABLED:
+    mins[1] = None
 
   if all_none(mins):
     print("Could not determine minimum required versions!")
