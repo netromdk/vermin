@@ -52,7 +52,17 @@ MOD_REQS = {
 }
 
 # Module member requirements: member -> (module, requirements)
-MOD_MEM_REQS = {"ABC": ("abc", (None, 3.4))}
+MOD_MEM_REQS = {
+  # Classes
+  "ABC": ("abc", (None, 3.4)),
+
+  # Functions
+  "exc_clear": ("sys", (2.3, None)),
+  "getcheckinterval": ("sys", (2.3, 3.0)),
+
+  # Variables
+  "flags": ("sys", (2.6, 3.0)),
+}
 
 V2_DISABLED = False
 

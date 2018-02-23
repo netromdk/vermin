@@ -163,3 +163,16 @@ class MinpyTests(unittest.TestCase):
   def test_member_ABC_of_abc(self):
     self.__assertOnlyIn(3.4, detect("import abc.ABC"))
     self.__assertOnlyIn(3.4, detect("from abc import ABC"))
+
+  def test_member_exc_clear_of_sys(self):
+    self.__assertOnlyIn(2.3, detect("import sys.exc_clear"))
+
+  def test_member_used_in_context_of_star_import(self):
+    self.__assertOnlyIn(2.3, detect("from sys import *\nvar=exc_clear"))
+    self.__assertOnlyIn(2.3, detect("from sys import *\nprint(exc_clear)"))
+
+  def test_member_getcheckinterval_of_sys(self):
+    self.__assertOnlyIn((2.3, 3.0), detect("import sys.getcheckinterval"))
+
+  def test_member_flags_of_sys(self):
+    self.__assertOnlyIn((2.6, 3.0), detect("import sys.flags"))
