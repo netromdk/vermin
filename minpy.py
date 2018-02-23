@@ -7,6 +7,7 @@ import sys
 import ast
 from os import listdir
 from os.path import abspath, isfile, isdir, join
+from multiprocessing import Pool
 
 # Module requirements: name -> min version per major or None if N.A.
 MOD_REQS = {"argparse": (2.7, 3.2),
@@ -196,18 +197,25 @@ def all_none(elms):
 def versions_string(vers):
   return ", ".join([str(v) for v in vers if v is not None])
 
-def process_paths(paths):
-  mins = [None, None]
+def detect_paths(paths):
+  accept_paths = []
   for path in paths:
     path = abspath(path)
     if isdir(path):
-      submins = process_paths([join(path, p) for p in listdir(path)])
-      if not all_none(submins):
-        mins = combine_versions(mins, submins)
+      accept_paths += detect_paths([join(path, p) for p in listdir(path)])
       continue
     if not isfile(path) or not path.lower().endswith(".py"):
       continue
-    min_versions = detect_min_versions_path(path)
+    accept_paths.append(path)
+  return accept_paths
+
+def process_path(path):
+  return (path, detect_min_versions_path(path))
+
+def process_paths(paths):
+  pool = Pool()
+  mins = [None, None]
+  for (path, min_versions) in pool.imap(process_path, paths):
     if not all_none(min_versions):
       print("{:<12} {}".format(versions_string(min_versions), path))
       mins = combine_versions(mins, min_versions)
@@ -224,7 +232,7 @@ if __name__ == "__main__":
     VERBOSE = True
     path_pos += 1
 
-  paths = sys.argv[path_pos:]
+  paths = detect_paths(sys.argv[path_pos:])
   mins = process_paths(paths)
 
   if V2_DISABLED:
