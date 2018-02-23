@@ -81,6 +81,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__printv2 = False
     self.__printv3 = False
     self.__format = False
+    self.__star_imports = []
 
   def modules(self):
     return self.__modules
@@ -103,6 +104,9 @@ class SourceVisitor(ast.NodeVisitor):
   def __add_member(self, member):
     self.__members.append(member)
 
+  def __add_star_import(self, module):
+    self.__star_imports.append(module)
+
   def generic_visit(self, node):
     #print("{}: {}".format(type(node).__name__, ast.dump(node)))
     super(SourceVisitor, self).generic_visit(node)
@@ -121,7 +125,9 @@ class SourceVisitor(ast.NodeVisitor):
     # Remember module members and full module paths, like "ABC" member of module "abc" and "abc.ABC"
     # module.
     for name in node.names:
-      if name.name is not None:
+      if name.name == "*":
+        self.__add_star_import(node.module)
+      elif name.name is not None:
         self.__add_module(node.module + "." + name.name)
         self.__add_member(name.name)
 
@@ -134,8 +140,18 @@ class SourceVisitor(ast.NodeVisitor):
       if len(elms) >= 2:
         self.__add_member(elms[-1])
 
+  def visit_Name(self, node):
+    # In the case of star imports it checks if the member is in one of such star imports before
+    # adding as member.
+    if len(self.__star_imports) > 0:
+      if node.id in MOD_MEM_REQS:
+        (mod, vers) = MOD_MEM_REQS[node.id]
+        if mod in self.__star_imports:
+          self.__add_member(node.id)
+
   def visit_Print(self, node):
     self.__printv2 = True
+    self.generic_visit(node)
 
   def visit_Call(self, node):
     if hasattr(node, "func"):
