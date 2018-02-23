@@ -160,9 +160,13 @@ class MinpyTests(unittest.TestCase):
 
   ### Members ###
 
+  ##### Classes #####
+
   def test_member_ABC_of_abc(self):
     self.__assertOnlyIn(3.4, detect("import abc.ABC"))
     self.__assertOnlyIn(3.4, detect("from abc import ABC"))
+
+  ##### Functions #####
 
   def test_member_exc_clear_of_sys(self):
     self.__assertOnlyIn(2.3, detect("import sys.exc_clear"))
@@ -173,6 +177,29 @@ class MinpyTests(unittest.TestCase):
 
   def test_member_getcheckinterval_of_sys(self):
     self.__assertOnlyIn((2.3, 3.0), detect("import sys.getcheckinterval"))
+
+  def test_member_getdefaultencoding_of_sys(self):
+    self.__assertOnlyIn((2.0, 3.0), detect("import sys.getdefaultencoding"))
+
+  def test_member_getdlopenflags_of_sys(self):
+    self.__assertOnlyIn((2.2, 3.0), detect("import sys.getdlopenflags"))
+
+  def test_member_getfilesystemencoding_of_sys(self):
+    self.__assertOnlyIn((2.3, 3.0), detect("import sys.getfilesystemencoding"))
+
+  def test_member_getsizeof_of_sys(self):
+    self.__assertOnlyIn((2.6, 3.0), detect("import sys.getsizeof"))
+
+  def test_member_getprofile_of_sys(self):
+    self.__assertOnlyIn((2.6, 3.0), detect("import sys.getprofile"))
+
+  def test_member_gettrace_of_sys(self):
+    self.__assertOnlyIn((2.6, 3.0), detect("import sys.gettrace"))
+
+  def test_member_getwindowsversion_of_sys(self):
+    self.__assertOnlyIn((2.3, 3.0), detect("import sys.getwindowsversion"))
+
+  ##### Variables #####
 
   def test_member_flags_of_sys(self):
     self.__assertOnlyIn((2.6, 3.0), detect("import sys.flags"))

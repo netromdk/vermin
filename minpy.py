@@ -59,6 +59,13 @@ MOD_MEM_REQS = {
   # Functions
   "exc_clear": ("sys", (2.3, None)),
   "getcheckinterval": ("sys", (2.3, 3.0)),
+  "getdefaultencoding": ("sys", (2.0, 3.0)),
+  "getdlopenflags": ("sys", (2.2, 3.0)),
+  "getfilesystemencoding": ("sys", (2.3, 3.0)),
+  "getsizeof": ("sys", (2.6, 3.0)),
+  "getprofile": ("sys", (2.6, 3.0)),
+  "gettrace": ("sys", (2.6, 3.0)),
+  "getwindowsversion": ("sys", (2.3, 3.0)),
 
   # Variables
   "flags": ("sys", (2.6, 3.0)),
