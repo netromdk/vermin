@@ -90,6 +90,7 @@ V2_DISABLED = False
 V3_DISABLED = False
 
 VERBOSE = False
+PRINT_VISITS = False
 
 def parse_source(source):
   """Parse python source into an AST."""
@@ -141,7 +142,8 @@ class SourceVisitor(ast.NodeVisitor):
     self.__star_imports.append(module)
 
   def generic_visit(self, node):
-    #print("{}: {}".format(type(node).__name__, ast.dump(node)))
+    if PRINT_VISITS:
+      print("{}: {}".format(type(node).__name__, ast.dump(node)))
     super(SourceVisitor, self).generic_visit(node)
 
   def visit_Import(self, node):
