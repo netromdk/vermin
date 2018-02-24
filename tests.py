@@ -158,6 +158,9 @@ class MinpyTests(unittest.TestCase):
   def test_module_string_uppercase(self):
     self.__assertOnlyIn(2.0, detect("import string.uppercase"))
 
+  def test_module_ast(self):
+    self.__assertOnlyIn((2.6, 3.0), detect("import ast"))
+
   ### Members ###
 
   ##### Classes #####
@@ -199,7 +202,49 @@ class MinpyTests(unittest.TestCase):
   def test_member_getwindowsversion_of_sys(self):
     self.__assertOnlyIn((2.3, 3.0), detect("import sys.getwindowsversion"))
 
+  def test_member_commonpath_of_os_path(self):
+    self.__assertOnlyIn(3.5, detect("import os.path.commonpath"))
+
+  def test_member_getctime_of_os_path(self):
+    self.__assertOnlyIn((2.3, 3.0), detect("import os.path.getctime"))
+
+  def test_member_ismount_of_os_path(self):
+    self.__assertOnlyIn(3.4, detect("import os.path.ismount"))
+
+  def test_member_lexists_of_os_path(self):
+    self.__assertOnlyIn((2.4, 3.0), detect("import os.path.lexists"))
+
+  def test_member_realpath_of_os_path(self):
+    self.__assertOnlyIn((2.6, 3.0), detect("import os.path.realpath"))
+
+  def test_member_getpgid_of_os(self):
+    self.__assertOnlyIn((2.3, 3.0), detect("import os.getpgid"))
+
+  def test_member_getresgid_of_os(self):
+    self.__assertOnlyIn((2.7, 3.0), detect("import os.getresgid"))
+
+  def test_member_getresuid_of_os(self):
+    self.__assertOnlyIn((2.7, 3.0), detect("import os.getresuid"))
+
+  def test_member_getsid_of_os(self):
+    self.__assertOnlyIn((2.4, 3.0), detect("import os.getsid"))
+
+  def test_member_initgroups_of_os(self):
+    self.__assertOnlyIn((2.7, 3.0), detect("import os.initgroups"))
+
+  def test_member_setgroups_of_os(self):
+    self.__assertOnlyIn((2.2, 3.0), detect("import os.setgroups"))
+
+  def test_member_setresgid_of_os(self):
+    self.__assertOnlyIn((2.7, 3.0), detect("import os.setresgid"))
+
+  def test_member_setresuid_of_os(self):
+    self.__assertOnlyIn((2.7, 3.0), detect("import os.setresuid"))
+
   ##### Variables #####
 
   def test_member_flags_of_sys(self):
     self.__assertOnlyIn((2.6, 3.0), detect("import sys.flags"))
+
+  def test_member_supports_unicode_filenames_of_sys(self):
+    self.__assertOnlyIn((2.3, 3.0), detect("import sys.supports_unicode_filenames"))

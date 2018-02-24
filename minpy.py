@@ -20,6 +20,7 @@ MOD_REQS = {
   "_winreg": (2.0, None),
   "abc": (2.6, 3.0),
   "argparse": (2.7, 3.2),
+  "ast": (2.6, 3.0),
   "builtins": (None, 3.0),
   "configparser": (None, 3.0),
   "copy_reg": (2.0, None),
@@ -57,18 +58,32 @@ MOD_MEM_REQS = {
   "ABC": ("abc", (None, 3.4)),
 
   # Functions
+  "commonpath": ("os.path", (None, 3.5)),
   "exc_clear": ("sys", (2.3, None)),
   "getcheckinterval": ("sys", (2.3, 3.0)),
+  "getctime": ("os.path", (2.3, 3.0)),
   "getdefaultencoding": ("sys", (2.0, 3.0)),
   "getdlopenflags": ("sys", (2.2, 3.0)),
   "getfilesystemencoding": ("sys", (2.3, 3.0)),
-  "getsizeof": ("sys", (2.6, 3.0)),
+  "getpgid": ("os", (2.3, 3.0)),
   "getprofile": ("sys", (2.6, 3.0)),
+  "getresgid": ("os", (2.7, 3.0)),
+  "getresuid": ("os", (2.7, 3.0)),
+  "getsid": ("os", (2.4, 3.0)),
+  "getsizeof": ("sys", (2.6, 3.0)),
   "gettrace": ("sys", (2.6, 3.0)),
   "getwindowsversion": ("sys", (2.3, 3.0)),
+  "initgroups": ("os", (2.7, 3.0)),
+  "ismount": ("os.path", (None, 3.4)),
+  "lexists": ("os.path", (2.4, 3.0)),
+  "realpath": ("os.path", (2.6, 3.0)),
+  "setgroups": ("os", (2.2, 3.0)),
+  "setresgid": ("os", (2.7, 3.0)),
+  "setresuid": ("os", (2.7, 3.0)),
 
   # Variables
   "flags": ("sys", (2.6, 3.0)),
+  "supports_unicode_filenames": ("os.path", (2.3, 3.0)),
 }
 
 V2_DISABLED = False
