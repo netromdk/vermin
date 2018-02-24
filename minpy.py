@@ -86,6 +86,11 @@ MOD_MEM_REQS = {
   "supports_unicode_filenames": ("os.path", (2.3, 3.0)),
 }
 
+# Keyword arguments requirements: (function, keyword argument) -> requirements
+KWARGS_REQS = {
+  ("dup2", "inheritable"): (None, 3.4)  # os
+}
+
 V2_DISABLED = False
 V3_DISABLED = False
 
@@ -116,6 +121,8 @@ class SourceVisitor(ast.NodeVisitor):
     self.__printv3 = False
     self.__format = False
     self.__star_imports = []
+    self.__function_name = None
+    self.__kwargs = []
 
   def modules(self):
     return self.__modules
@@ -132,6 +139,9 @@ class SourceVisitor(ast.NodeVisitor):
   def format(self):
     return self.__format
 
+  def kwargs(self):
+    return self.__kwargs
+
   def __add_module(self, module):
     self.__modules.append(module)
 
@@ -140,6 +150,9 @@ class SourceVisitor(ast.NodeVisitor):
 
   def __add_star_import(self, module):
     self.__star_imports.append(module)
+
+  def __add_kwargs(self, function, keyword):
+    self.__kwargs.append((function, keyword))
 
   def generic_visit(self, node):
     if PRINT_VISITS:
@@ -191,13 +204,26 @@ class SourceVisitor(ast.NodeVisitor):
   def visit_Call(self, node):
     if hasattr(node, "func"):
       func = node.func
-      if hasattr(func, "id") and func.id == "print":
-        self.__printv3 = True
+      if hasattr(func, "id"):
+        self.__function_name = func.id
+        if func.id == "print":
+          self.__printv3 = True
       elif hasattr(func, "attr") and func.attr == "format" and \
            hasattr(func, "value") and isinstance(func.value, ast.Str):
         vprint("`\"..\".format(..)` requires [2.7, 3.0]")
         self.__format = True
     self.generic_visit(node)
+    self.__function_name = None
+
+  def visit_Attribute(self, node):
+    # When a function is called like "os.path.ismount(..)" it is an attribute list where the "first"
+    # (this one) is the function name. Stop visiting here.
+    if hasattr(node, "attr"):
+      self.__function_name = node.attr
+
+  def visit_keyword(self, node):
+    if self.__function_name is not None:
+      self.__add_kwargs(self.__function_name, node.arg)
 
   def visit_Load(self, node):
     pass
@@ -283,6 +309,12 @@ def detect_min_versions(node):
       if vers[0] is not None and vers[1] is None:
         mins[1] = None
         V3_DISABLED = True
+
+  kwargs = visitor.kwargs()
+  for fn_kw in kwargs:
+    if fn_kw in KWARGS_REQS:
+      vers = KWARGS_REQS[fn_kw]
+      mins = combine_versions(mins, vers)
 
   return mins
 

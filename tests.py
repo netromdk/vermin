@@ -248,3 +248,9 @@ class MinpyTests(unittest.TestCase):
 
   def test_member_supports_unicode_filenames_of_sys(self):
     self.__assertOnlyIn((2.3, 3.0), detect("import sys.supports_unicode_filenames"))
+
+  ### Function Arguments ###
+
+  def test_kwarg_inheritable_of_dup2_from_os(self):
+    self.__assertOnlyIn(3.4, detect("import os\nv = os.dup2(inheritable=True)"))
+    self.__assertOnlyIn(3.4, detect("from os import dup2\nv = dup2(inheritable=True)"))
