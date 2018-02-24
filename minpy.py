@@ -56,16 +56,27 @@ MOD_REQS = {
 MOD_MEM_REQS = {
   # Classes
   "ABC": ("abc", (None, 3.4)),
+  "PathLike": ("os", (None, 3.6)),
+  "terminal_size": ("os", (None, 3.3)),
 
   # Functions
   "commonpath": ("os.path", (None, 3.5)),
   "exc_clear": ("sys", (2.3, None)),
+  "fsdecode": ("os", (None, 3.2)),
+  "fsencode": ("os", (None, 3.2)),
+  "fspath": ("os", (None, 3.6)),
+  "get_blocking": ("os", (None, 3.5)),
+  "get_exec_path": ("os", (None, 3.2)),
+  "get_terminal_size": ("os", (None, 3.3)),
   "getcheckinterval": ("sys", (2.3, 3.0)),
   "getctime": ("os.path", (2.3, 3.0)),
   "getdefaultencoding": ("sys", (2.0, 3.0)),
   "getdlopenflags": ("sys", (2.2, 3.0)),
+  "getenvb": ("os", (None, 3.2)),
   "getfilesystemencoding": ("sys", (2.3, 3.0)),
+  "getgrouplist": ("os", (None, 3.3)),
   "getpgid": ("os", (2.3, 3.0)),
+  "getpriority": ("os", (None, 3.3)),
   "getprofile": ("sys", (2.6, 3.0)),
   "getresgid": ("os", (2.7, 3.0)),
   "getresuid": ("os", (2.7, 3.0)),
@@ -73,22 +84,55 @@ MOD_MEM_REQS = {
   "getsizeof": ("sys", (2.6, 3.0)),
   "gettrace": ("sys", (2.6, 3.0)),
   "getwindowsversion": ("sys", (2.3, 3.0)),
-  "initgroups": ("os", (2.7, 3.0)),
+  "initgroups": ("os", (2.7, 3.2)),
   "ismount": ("os.path", (None, 3.4)),
   "lexists": ("os.path", (2.4, 3.0)),
+  "lockf": ("os", (None, 3.3)),
+  "pipe2": ("os", (None, 3.3)),
+  "posix_fadvise": ("os", (None, 3.3)),
+  "posix_fallocate": ("os", (None, 3.3)),
+  "pread": ("os", (None, 3.3)),
+  "pwrite": ("os", (None, 3.3)),
+  "readv": ("os", (None, 3.3)),
   "realpath": ("os.path", (2.6, 3.0)),
+  "sendfile": ("os", (None, 3.3)),
+  "set_blocking": ("os", (None, 3.5)),
   "setgroups": ("os", (2.2, 3.0)),
-  "setresgid": ("os", (2.7, 3.0)),
-  "setresuid": ("os", (2.7, 3.0)),
+  "setpriority": ("os", (None, 3.3)),
+  "setresgid": ("os", (2.7, 3.2)),
+  "setresuid": ("os", (2.7, 3.2)),
+  "writev": ("os", (None, 3.3)),
 
-  # Variables
+  # Variables and Constants
+  "F_LOCK": ("os", (None, 3.3)),
+  "F_TEST": ("os", (None, 3.3)),
+  "F_TLOCK": ("os", (None, 3.3)),
+  "F_ULOCK": ("os", (None, 3.3)),
+  "O_CLOEXEC": ("os", (None, 3.3)),
+  "O_PATH": ("os", (None, 3.4)),
+  "O_TMPFILE": ("os", (None, 3.4)),
+  "POSIX_FADV_DONTNEED": ("os", (None, 3.3)),
+  "POSIX_FADV_NOREUSE": ("os", (None, 3.3)),
+  "POSIX_FADV_NORMAL": ("os", (None, 3.3)),
+  "POSIX_FADV_RANDOM": ("os", (None, 3.3)),
+  "POSIX_FADV_SEQUENTIAL": ("os", (None, 3.3)),
+  "POSIX_FADV_WILLNEED": ("os", (None, 3.3)),
+  "PRIO_PGRP": ("os", (None, 3.3)),
+  "PRIO_PROCESS": ("os", (None, 3.3)),
+  "PRIO_USER": ("os", (None, 3.3)),
+  "SF_MNOWAIT": ("os", (None, 3.3)),
+  "SF_NODISKIO": ("os", (None, 3.3)),
+  "SF_SYNC": ("os", (None, 3.3)),
+  "environb": ("os", (None, 3.2)),
   "flags": ("sys", (2.6, 3.0)),
+  "supports_bytes_environ": ("os", (None, 3.2)),
   "supports_unicode_filenames": ("os.path", (2.3, 3.0)),
 }
 
 # Keyword arguments requirements: (function, keyword argument) -> requirements
 KWARGS_REQS = {
-  ("dup2", "inheritable"): (None, 3.4)  # os
+  ("dup2", "inheritable"): (None, 3.4),  # os
+  ("open", "dir_fd"): (None, 3.3),  # os
 }
 
 V2_DISABLED = False

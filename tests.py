@@ -169,6 +169,12 @@ class MinpyTests(unittest.TestCase):
     self.__assertOnlyIn(3.4, detect("import abc.ABC"))
     self.__assertOnlyIn(3.4, detect("from abc import ABC"))
 
+  def test_member_PathLike_of_os(self):
+    self.__assertOnlyIn(3.6, detect("from os import PathLike"))
+
+  def test_member_terminal_size_of_os(self):
+    self.__assertOnlyIn(3.3, detect("from os import terminal_size"))
+
   ##### Functions #####
 
   def test_member_exc_clear_of_sys(self):
@@ -230,27 +236,153 @@ class MinpyTests(unittest.TestCase):
     self.__assertOnlyIn((2.4, 3.0), detect("import os.getsid"))
 
   def test_member_initgroups_of_os(self):
-    self.__assertOnlyIn((2.7, 3.0), detect("import os.initgroups"))
+    self.__assertOnlyIn((2.7, 3.2), detect("import os.initgroups"))
 
   def test_member_setgroups_of_os(self):
     self.__assertOnlyIn((2.2, 3.0), detect("import os.setgroups"))
 
   def test_member_setresgid_of_os(self):
-    self.__assertOnlyIn((2.7, 3.0), detect("import os.setresgid"))
+    self.__assertOnlyIn((2.7, 3.2), detect("import os.setresgid"))
 
   def test_member_setresuid_of_os(self):
-    self.__assertOnlyIn((2.7, 3.0), detect("import os.setresuid"))
+    self.__assertOnlyIn((2.7, 3.2), detect("import os.setresuid"))
+
+  def test_member_fsencode_of_os(self):
+    self.__assertOnlyIn(3.2, detect("import os.fsencode"))
+
+  def test_member_fsdecode_of_os(self):
+    self.__assertOnlyIn(3.2, detect("import os.fsdecode"))
+
+  def test_member_fspath_of_os(self):
+    self.__assertOnlyIn(3.6, detect("import os.fspath"))
+
+  def test_member_getenvb_of_os(self):
+    self.__assertOnlyIn(3.2, detect("import os.getenvb"))
+
+  def test_member_get_exec_path_of_os(self):
+    self.__assertOnlyIn(3.2, detect("import os.get_exec_path"))
+
+  def test_member_getgrouplist_of_os(self):
+    self.__assertOnlyIn(3.3, detect("import os.getgrouplist"))
+
+  def test_member_getpriority_of_os(self):
+    self.__assertOnlyIn(3.3, detect("import os.getpriority"))
+
+  def test_member_setpriority_of_os(self):
+    self.__assertOnlyIn(3.3, detect("import os.setpriority"))
+
+  def test_member_get_blocking_of_os(self):
+    self.__assertOnlyIn(3.5, detect("import os.get_blocking"))
+
+  def test_member_set_blocking_of_os(self):
+    self.__assertOnlyIn(3.5, detect("import os.set_blocking"))
+
+  def test_member_lockf_of_os(self):
+    self.__assertOnlyIn(3.3, detect("import os.lockf"))
+
+  def test_member_pipe2_of_os(self):
+    self.__assertOnlyIn(3.3, detect("import os.pipe2"))
+
+  def test_member_posix_fallocate_of_os(self):
+    self.__assertOnlyIn(3.3, detect("import os.posix_fallocate"))
+
+  def test_member_posix_fadvise_of_os(self):
+    self.__assertOnlyIn(3.3, detect("import os.posix_fadvise"))
+
+  def test_member_pread_of_os(self):
+    self.__assertOnlyIn(3.3, detect("import os.pread"))
+
+  def test_member_pwrite_of_os(self):
+    self.__assertOnlyIn(3.3, detect("import os.pwrite"))
+
+  def test_member_sendfile_of_os(self):
+    self.__assertOnlyIn(3.3, detect("import os.sendfile"))
+
+  def test_member_readv_of_os(self):
+    self.__assertOnlyIn(3.3, detect("import os.readv"))
+
+  def test_member_writev_of_os(self):
+    self.__assertOnlyIn(3.3, detect("import os.writev"))
+
+  def test_member_get_terminal_size_of_os(self):
+    self.__assertOnlyIn(3.3, detect("import os.get_terminal_size"))
 
   ##### Variables #####
 
   def test_member_flags_of_sys(self):
-    self.__assertOnlyIn((2.6, 3.0), detect("import sys.flags"))
+    self.__assertOnlyIn((2.6, 3.0), detect("from sys import flags"))
 
   def test_member_supports_unicode_filenames_of_sys(self):
-    self.__assertOnlyIn((2.3, 3.0), detect("import sys.supports_unicode_filenames"))
+    self.__assertOnlyIn((2.3, 3.0), detect("from sys import supports_unicode_filenames"))
+
+  def test_member_supports_bytes_environ_of_sys(self):
+    self.__assertOnlyIn(3.2, detect("from sys import supports_bytes_environ"))
+
+  def test_member_environb_of_os(self):
+    self.__assertOnlyIn(3.2, detect("from os import environb"))
+
+  def test_member_PRIO_PROCESS_of_os(self):
+    self.__assertOnlyIn(3.3, detect("from os import PRIO_PROCESS"))
+
+  def test_member_PRIO_PGRP_of_os(self):
+    self.__assertOnlyIn(3.3, detect("from os import PRIO_PGRP"))
+
+  def test_member_PRIO_USER_of_os(self):
+    self.__assertOnlyIn(3.3, detect("from os import PRIO_USER"))
+
+  def test_member_F_LOCK_of_os(self):
+    self.__assertOnlyIn(3.3, detect("from os import F_LOCK"))
+
+  def test_member_F_TLOCK_of_os(self):
+    self.__assertOnlyIn(3.3, detect("from os import F_TLOCK"))
+
+  def test_member_F_ULOCK_of_os(self):
+    self.__assertOnlyIn(3.3, detect("from os import F_ULOCK"))
+
+  def test_member_F_TEST_of_os(self):
+    self.__assertOnlyIn(3.3, detect("from os import F_TEST"))
+
+  def test_member_O_CLOEXEC_of_os(self):
+    self.__assertOnlyIn(3.3, detect("from os import O_CLOEXEC"))
+
+  def test_member_O_PATH_of_os(self):
+    self.__assertOnlyIn(3.4, detect("from os import O_PATH"))
+
+  def test_member_O_TMPFILE_of_os(self):
+    self.__assertOnlyIn(3.4, detect("from os import O_TMPFILE"))
+
+  def test_member_POSIX_FADV_NORMAL_of_os(self):
+    self.__assertOnlyIn(3.3, detect("from os import POSIX_FADV_NORMAL"))
+
+  def test_member_POSIX_FADV_SEQUENTIAL_of_os(self):
+    self.__assertOnlyIn(3.3, detect("from os import POSIX_FADV_SEQUENTIAL"))
+
+  def test_member_POSIX_FADV_RANDOM_of_os(self):
+    self.__assertOnlyIn(3.3, detect("from os import POSIX_FADV_RANDOM"))
+
+  def test_member_POSIX_FADV_NOREUSE_of_os(self):
+    self.__assertOnlyIn(3.3, detect("from os import POSIX_FADV_NOREUSE"))
+
+  def test_member_POSIX_FADV_WILLNEED_of_os(self):
+    self.__assertOnlyIn(3.3, detect("from os import POSIX_FADV_WILLNEED"))
+
+  def test_member_POSIX_FADV_DONTNEED_of_os(self):
+    self.__assertOnlyIn(3.3, detect("from os import POSIX_FADV_DONTNEED"))
+
+  def test_member_SF_NODISKIO_of_os(self):
+    self.__assertOnlyIn(3.3, detect("from os import SF_NODISKIO"))
+
+  def test_member_SF_MNOWAIT_of_os(self):
+    self.__assertOnlyIn(3.3, detect("from os import SF_MNOWAIT"))
+
+  def test_member_SF_SYNC_of_os(self):
+    self.__assertOnlyIn(3.3, detect("from os import SF_SYNC"))
 
   ### Function Arguments ###
 
   def test_kwarg_inheritable_of_dup2_from_os(self):
     self.__assertOnlyIn(3.4, detect("import os\nv = os.dup2(inheritable=True)"))
     self.__assertOnlyIn(3.4, detect("from os import dup2\nv = dup2(inheritable=True)"))
+
+  def test_kwarg_dir_fd_of_open_from_os(self):
+    self.__assertOnlyIn(3.3, detect("import os\nv = os.open(dir_fd=None)"))
