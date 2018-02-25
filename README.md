@@ -5,7 +5,7 @@ Concurrently detect the minimum Python version needed to run code.
 
 Works with Python 2.7 and 3+.
 
-It matches against internal dictionaries of 39 modules, 72 classes/functions/constants members of modules, and 13 kwargs of functions. Including looking for v2/v3 `print expr` and `print(expr)`, `"..".format(..)`, imports (`import X`, `from X import Y`, `from X import *`), and function calls wrt. name and kwargs.
+It functions by parsing Python code into an abstract syntax tree (AST), which it traverses and matches against internal dictionaries of 39 modules, 79 classes/functions/constants members of modules, and 13 kwargs of functions. Including looking for v2/v3 `print expr` and `print(expr)`, `"..".format(..)`, imports (`import X`, `from X import Y`, `from X import *`), and function calls wrt. name and kwargs.
 
 ## Usage
 It is fairly straightforward to use Minpy:

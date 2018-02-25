@@ -390,6 +390,27 @@ class MinpyTests(unittest.TestCase):
   def test_member_SF_SYNC_of_os(self):
     self.__assertOnlyIn(3.3, detect("from os import SF_SYNC"))
 
+  def test_member_float_info_of_sys(self):
+    self.__assertOnlyIn((2.6, 3.0), detect("from sys import float_info"))
+
+  def test_member_float_repr_style_of_sys(self):
+    self.__assertOnlyIn((2.7, 3.0), detect("from sys import float_repr_style"))
+
+  def test_member_long_info_of_sys(self):
+    self.__assertOnlyIn(2.7, detect("from sys import long_info"))
+
+  def test_member_py3kwarning_of_sys(self):
+    self.__assertOnlyIn(2.6, detect("from sys import py3kwarning"))
+
+  def test_member_subversion_of_sys(self):
+    self.__assertOnlyIn(2.5, detect("from sys import subversion"))
+
+  def test_member_api_version_of_sys(self):
+    self.__assertOnlyIn((2.3, 3.0), detect("from sys import api_version"))
+
+  def test_member_version_info_of_sys(self):
+    self.__assertOnlyIn((2.0, 3.0), detect("from sys import version_info"))
+
   ### Function Arguments ###
 
   def test_kwarg_inheritable_of_dup2_from_os(self):

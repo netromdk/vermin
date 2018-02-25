@@ -3,6 +3,9 @@
 # TODO: This script needs to use the lowest possible python to run so that people don't need another
 # version to determine what minimum version they need!
 
+# TODO: Put the tests into tests/ and split into files regarding modules, classes, functions
+# etc.. Put the __assertOnlyIn in a common class that all tests inherit from.
+
 import sys
 import ast
 from os import listdir
@@ -127,10 +130,17 @@ MOD_MEM_REQS = {
   "SF_MNOWAIT": ("os", (None, 3.3)),
   "SF_NODISKIO": ("os", (None, 3.3)),
   "SF_SYNC": ("os", (None, 3.3)),
+  "api_version": ("sys", (2.3, 3.0)),
   "environb": ("os", (None, 3.2)),
   "flags": ("sys", (2.6, 3.0)),
+  "float_info": ("sys", (2.6, 3.0)),
+  "float_repr_style": ("sys", (2.7, 3.0)),
+  "long_info": ("sys", (2.7, None)),
+  "py3kwarning": ("sys", (2.6, None)),
+  "subversion": ("sys", (2.5, None)),
   "supports_bytes_environ": ("os", (None, 3.2)),
   "supports_unicode_filenames": ("os.path", (2.3, 3.0)),
+  "version_info": ("sys", (2.0, 3.0)),
 }
 
 # Keyword arguments requirements: (function, keyword argument) -> requirements
