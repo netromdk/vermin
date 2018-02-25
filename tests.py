@@ -307,6 +307,18 @@ class MinpyTests(unittest.TestCase):
   def test_member_get_terminal_size_of_os(self):
     self.__assertOnlyIn(3.3, detect("import os.get_terminal_size"))
 
+  def test_member_get_inheritable_of_os(self):
+    self.__assertOnlyIn(3.4, detect("import os.get_inheritable"))
+
+  def test_member_set_inheritable_of_os(self):
+    self.__assertOnlyIn(3.4, detect("import os.set_inheritable"))
+
+  def test_member_get_handle_inheritable_of_os(self):
+    self.__assertOnlyIn(3.4, detect("import os.get_handle_inheritable"))
+
+  def test_member_set_handle_inheritable_of_os(self):
+    self.__assertOnlyIn(3.4, detect("import os.set_handle_inheritable"))
+
   ##### Variables #####
 
   def test_member_flags_of_sys(self):
@@ -386,3 +398,36 @@ class MinpyTests(unittest.TestCase):
 
   def test_kwarg_dir_fd_of_open_from_os(self):
     self.__assertOnlyIn(3.3, detect("import os\nv = os.open(dir_fd=None)"))
+
+  def test_kwarg_dir_fd_of_access_from_os(self):
+    self.__assertOnlyIn(3.3, detect("import os\nv = os.access(dir_fd=None)"))
+
+  def test_kwarg_effective_ids_of_access_from_os(self):
+    self.__assertOnlyIn(3.3, detect("import os\nv = os.access(effective_ids=None)"))
+
+  def test_kwarg_follow_symlinks_of_access_from_os(self):
+    self.__assertOnlyIn(3.3, detect("import os\nv = os.access(follow_symlinks=None)"))
+
+  def test_kwarg_follow_symlinks_of_chflags_from_os(self):
+    self.__assertOnlyIn(3.3, detect("import os\nv = os.chflags(follow_symlinks=None)"))
+
+  def test_kwarg_dir_fd_of_chmod_from_os(self):
+    self.__assertOnlyIn(3.3, detect("import os\nv = os.chmod(dir_fd=None)"))
+
+  def test_kwarg_follow_symlinks_of_chmod_from_os(self):
+    self.__assertOnlyIn(3.3, detect("import os\nv = os.chmod(follow_symlinks=None)"))
+
+  def test_kwarg_dir_fd_of_chown_from_os(self):
+    self.__assertOnlyIn(3.3, detect("import os\nv = os.chown(dir_fd=None)"))
+
+  def test_kwarg_follow_symlinks_of_chown_from_os(self):
+    self.__assertOnlyIn(3.3, detect("import os\nv = os.chown(follow_symlinks=None)"))
+
+  def test_kwarg_src_dir_fd_of_link_from_os(self):
+    self.__assertOnlyIn(3.3, detect("import os\nv = os.link(src_dir_fd=None)"))
+
+  def test_kwarg_dst_dir_fd_of_link_from_os(self):
+    self.__assertOnlyIn(3.3, detect("import os\nv = os.link(dst_dir_fd=None)"))
+
+  def test_kwarg_follow_symlinks_of_link_from_os(self):
+    self.__assertOnlyIn(3.3, detect("import os\nv = os.link(follow_symlinks=None)"))

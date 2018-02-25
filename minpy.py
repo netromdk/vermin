@@ -67,6 +67,8 @@ MOD_MEM_REQS = {
   "fspath": ("os", (None, 3.6)),
   "get_blocking": ("os", (None, 3.5)),
   "get_exec_path": ("os", (None, 3.2)),
+  "get_handle_inheritable": ("os", (None, 3.4)),
+  "get_inheritable": ("os", (None, 3.4)),
   "get_terminal_size": ("os", (None, 3.3)),
   "getcheckinterval": ("sys", (2.3, 3.0)),
   "getctime": ("os.path", (2.3, 3.0)),
@@ -97,6 +99,8 @@ MOD_MEM_REQS = {
   "realpath": ("os.path", (2.6, 3.0)),
   "sendfile": ("os", (None, 3.3)),
   "set_blocking": ("os", (None, 3.5)),
+  "set_handle_inheritable": ("os", (None, 3.4)),
+  "set_inheritable": ("os", (None, 3.4)),
   "setgroups": ("os", (2.2, 3.0)),
   "setpriority": ("os", (None, 3.3)),
   "setresgid": ("os", (2.7, 3.2)),
@@ -131,7 +135,18 @@ MOD_MEM_REQS = {
 
 # Keyword arguments requirements: (function, keyword argument) -> requirements
 KWARGS_REQS = {
+  ("access", "dir_fd"): (None, 3.3),  # os
+  ("access", "effective_ids"): (None, 3.3),  # os
+  ("access", "follow_symlinks"): (None, 3.3),  # os
+  ("chflags", "follow_symlinks"): (None, 3.3),  # os
+  ("chmod", "dir_fd"): (None, 3.3),  # os
+  ("chmod", "follow_symlinks"): (None, 3.3),  # os
+  ("chown", "dir_fd"): (None, 3.3),  # os
+  ("chown", "follow_symlinks"): (None, 3.3),  # os
   ("dup2", "inheritable"): (None, 3.4),  # os
+  ("link", "dst_dir_fd"): (None, 3.3),  # os
+  ("link", "follow_symlinks"): (None, 3.3),  # os
+  ("link", "src_dir_fd"): (None, 3.3),  # os
   ("open", "dir_fd"): (None, 3.3),  # os
 }
 
