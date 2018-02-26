@@ -1,4 +1,5 @@
 test: self-test
+	python -c "import unittest; unittest.main('general_tests')"
 	python -c "import unittest; unittest.main('lang_tests')"
 	python -c "import unittest; unittest.main('module_tests')"
 	python -c "import unittest; unittest.main('class_tests')"

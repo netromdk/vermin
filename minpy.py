@@ -317,17 +317,21 @@ def detect_min_versions_path(path):
   with open(path, "r") as fp:
     return detect_min_versions_source(fp.read())
 
-def detect_min_versions_source(source):
+def parse_detect_source(source):
   try:
-    node = parse_source(source)
+    return (parse_source(source), [])
   except SyntaxError as err:
     # `print expr` is a Python 2 construct, in v3 it's `print(expr)`.
     # NOTE: This is only triggered when running a python 3 on v2 code!
     if err.msg.lower().find("missing parentheses in call to 'print'") != -1:
       vprint("`{}` requires 2.0".format(err.text.strip()))
-      return [2.0, None]
-    return [None, None]
+      return (None, [2.0, None])
+    return (None, [None, None])
 
+def detect_min_versions_source(source):
+  (node, mins) = parse_detect_source(source)
+  if node is None:
+    return mins
   return detect_min_versions(node)
 
 def detect_min_versions(node):
