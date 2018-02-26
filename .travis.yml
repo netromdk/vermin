@@ -13,5 +13,8 @@ python:
 - '3.5'
 - '3.6'
 - nightly
+install:
+- if [[ $TRAVIS_PYTHON_VERSION > 3.2 ]]; then pip install -U pip virtualenv; fi
 script:
 - make test
+- if [[ $TRAVIS_PYTHON_VERSION > 3.2 ]]; then make setup; source .venv/bin/activate; make check; fi
