@@ -4,8 +4,11 @@ import sys
 # Export as short function name for tests.
 from minpy import detect_min_versions_source as detect  # noqa:401
 
-def current_version():
+def current_major_version():
   return float(sys.version_info.major)
+
+def current_version():
+  return current_major_version() + float(sys.version_info.minor) / 10.0
 
 class MinpyTest(unittest.TestCase):
   """General test case class for all Minpy tests."""
