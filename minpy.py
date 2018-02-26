@@ -287,6 +287,9 @@ class SourceVisitor(ast.NodeVisitor):
     if hasattr(node, "attr"):
       self.__function_name = node.attr
 
+      # Also add as a possible module member, like `B` in `class A(B)`.
+      self.__add_member(node.attr)
+
   def visit_keyword(self, node):
     if self.__function_name is not None:
       self.__add_kwargs(self.__function_name, node.arg)

@@ -41,12 +41,16 @@ class MinpyGeneralTests(MinpyTest):
     self.assertOnlyIn("ABC", visitor.members())
     visitor = visit("import abc.ABC")
     self.assertOnlyIn("ABC", visitor.members())
+    visitor = visit("import abc\nclass a(abc.ABC): pass")
+    self.assertOnlyIn("ABC", visitor.members())
 
   def test_member_function(self):
     visitor = visit("from sys import exc_clear")
     self.assertOnlyIn("exc_clear", visitor.members())
 
   def test_member_import_star(self):
+    visitor = visit("from abc import *\nclass a(ABC): pass")
+    self.assertOnlyIn("ABC", visitor.members())
     visitor = visit("from sys import *\nprint(exc_clear())")
     self.assertOnlyIn("exc_clear", visitor.members())
 
