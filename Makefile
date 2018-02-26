@@ -1,5 +1,10 @@
 test: self-test
-	python -c "import unittest; unittest.main('tests')"
+	python -c "import unittest; unittest.main('lang_tests')"
+	python -c "import unittest; unittest.main('module_tests')"
+	python -c "import unittest; unittest.main('class_tests')"
+	python -c "import unittest; unittest.main('function_tests')"
+	python -c "import unittest; unittest.main('constants_tests')"
+	python -c "import unittest; unittest.main('kwargs_tests')"
 
 self-test:
 	./minpy.py minpy.py

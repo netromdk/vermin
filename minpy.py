@@ -3,9 +3,6 @@
 # TODO: This script needs to use the lowest possible python to run so that people don't need another
 # version to determine what minimum version they need!
 
-# TODO: Put the tests into tests/ and split into files regarding modules, classes, functions
-# etc.. Put the __assertOnlyIn in a common class that all tests inherit from.
-
 import sys
 import ast
 from os import listdir
