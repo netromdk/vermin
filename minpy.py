@@ -157,9 +157,6 @@ KWARGS_REQS = {
   ("open", "dir_fd"): (None, 3.3),  # os
 }
 
-V2_DISABLED = False
-V3_DISABLED = False
-
 VERBOSE = False
 PRINT_VISITS = False
 
@@ -300,18 +297,27 @@ class SourceVisitor(ast.NodeVisitor):
   def visit_Pass(self, node):
     pass
 
+class InvalidVersionException(BaseException):
+  pass
+
 def combine_versions(list1, list2):
   assert len(list1) == len(list2)
+  assert len(list1) == 2
+  if (list1[0] is None and list1[1] is not None and list2[0] is not None and list2[1] is None) or\
+     (list1[0] is not None and list1[1] is None and list2[0] is None and list2[1] is not None):
+    raise InvalidVersionException("Versions could not be combined: {} and {}".format(list1, list2))
   res = []
   for i in range(len(list1)):
     v1 = list1[i]
     v2 = list2[i]
-    if v1 is None and v2 is None:
-      res.append(None)
-    elif v1 is None:
+    if v1 is 0 and v2 is 0:
+      res.append(0)
+    elif v1 is 0:
       res.append(v2)
-    elif v2 is None:
+    elif v2 is 0:
       res.append(v1)
+    elif v1 is None or v2 is None:
+      res.append(None)
     else:
       res.append(max(v1, v2))
   return res
@@ -341,7 +347,7 @@ def detect_min_versions(node):
   visitor = SourceVisitor()
   visitor.visit(node)
 
-  mins = [None, None]
+  mins = [0, 0]
 
   if visitor.printv2():
     mins[0] = 2.0
@@ -350,9 +356,6 @@ def detect_min_versions(node):
 
   if visitor.format():
     mins = combine_versions(mins, (2.7, 3.0))
-
-  global V2_DISABLED
-  global V3_DISABLED
 
   mods = visitor.modules()
   for mod in mods:
@@ -368,21 +371,6 @@ def detect_min_versions(node):
       vprint("'{}.{}' requires {}".format(mod, mem, vers))
       mins = combine_versions(mins, vers)
 
-      # If the member of the module doesn't support v2 but only v3 then clear the v2 to None.
-      # Example: "import abc" requires (2.6, 3.0) and "from abc import ABC" requires 3.4+ so if the
-      # latter is used then the v2.6 has to be ignored!
-      if vers[0] is None and vers[1] is not None:
-        mins[0] = None
-
-        # v2 is disabled globally so other files in same "session" can't change the v2 value
-        # requirement.
-        V2_DISABLED = True
-
-      # Same for v3 when v2 only.
-      if vers[0] is not None and vers[1] is None:
-        mins[1] = None
-        V3_DISABLED = True
-
   kwargs = visitor.kwargs()
   for fn_kw in kwargs:
     if fn_kw in KWARGS_REQS:
@@ -395,7 +383,7 @@ def all_none(elms):
   return len(elms) == elms.count(None)
 
 def versions_string(vers):
-  return ", ".join([str(v) for v in vers if v is not None])
+  return ", ".join([str(v) for v in vers if v is not None and v is not 0])
 
 def detect_paths(paths):
   accept_paths = []
@@ -410,16 +398,27 @@ def detect_paths(paths):
   return accept_paths
 
 def process_path(path):
-  return (path, detect_min_versions_path(path))
+  try:
+    mins = detect_min_versions_path(path)
+  except InvalidVersionException as ex:
+    mins = None
+    print(ex)
+  return (path, mins)
 
 def process_paths(paths):
   pool = Pool()
-  mins = [None, None]
+  mins = [0, 0]
   for (path, min_versions) in pool.imap(process_path, paths):
-    if not all_none(min_versions):
-      print("{:<12} {}".format(versions_string(min_versions), path))
-      mins = combine_versions(mins, min_versions)
+    if min_versions is None:
+      print("File with incompatible versions: {}".format(path))
+      sys.exit(-1)
+    print("{:<12} {}".format(versions_string(min_versions), path))
+    mins = combine_versions(mins, min_versions)
   return mins
+
+def unknown_versions(vers):
+  """Versions are unknown if all values are either 0 or None."""
+  return len(vers) == vers.count(0) + vers.count(None)
 
 if __name__ == "__main__":
   if len(sys.argv) < 2:
@@ -435,12 +434,7 @@ if __name__ == "__main__":
   paths = detect_paths(sys.argv[path_pos:])
   mins = process_paths(paths)
 
-  if V2_DISABLED:
-    mins[0] = None
-  if V3_DISABLED:
-    mins[1] = None
-
-  if all_none(mins):
+  if unknown_versions(mins):
     print("Could not determine minimum required versions!")
   else:
     print("Minimum required versions: {}".format(versions_string(mins)))

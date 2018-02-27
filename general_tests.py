@@ -1,5 +1,6 @@
 from testutils import MinpyTest, current_version
-from minpy import SourceVisitor, parse_source, parse_detect_source, detect_min_versions_path
+from minpy import SourceVisitor, parse_source, parse_detect_source, detect_min_versions_path, \
+  detect_min_versions_source, combine_versions, InvalidVersionException
 
 def visit(source):
   visitor = SourceVisitor()
@@ -33,8 +34,8 @@ class MinpyGeneralTests(MinpyTest):
     self.assertTrue(visitor.format())
 
   def test_modules(self):
-    visitor = visit("import ast\nimport sys\nfrom os import *")
-    self.assertOnlyIn(("ast", "sys", "os"), visitor.modules())
+    visitor = visit("import ast\nimport sys, argparse\nfrom os import *")
+    self.assertOnlyIn(("ast", "sys", "argparse", "os"), visitor.modules())
 
   def test_member_class(self):
     visitor = visit("from abc import ABC")
@@ -64,3 +65,39 @@ class MinpyGeneralTests(MinpyTest):
 
   def test_detect_minpy_min_versions(self):
     self.assertOnlyIn((2.7, 3.0), detect_min_versions_path("minpy.py"))
+
+  def test_combine_versions(self):
+    with self.assertRaises(AssertionError):
+      combine_versions([None], [None, None])
+    self.assertEqual([2.0, 3.1], combine_versions([2.0, 3.0], [2.0, 3.1]))
+    self.assertEqual([2.1, 3.0], combine_versions([2.1, 3.0], [2.0, 3.0]))
+    self.assertEqual([None, 3.0], combine_versions([2.0, 3.0], [None, 3.0]))
+    self.assertEqual([2.0, None], combine_versions([2.0, None], [2.0, 3.0]))
+    self.assertEqual([None, None], combine_versions([2.0, 3.0], [None, None]))
+    self.assertEqual([None, None], combine_versions([None, None], [2.0, 3.0]))
+    with self.assertRaises(InvalidVersionException):
+      combine_versions([2.0, None], [None, 3.0])
+    with self.assertRaises(InvalidVersionException):
+      combine_versions([None, 3.0], [2.0, None])
+    self.assertEqual([0, 3.0], combine_versions([0, 3.0], [0, 3.0]))
+    self.assertEqual([2.0, 3.0], combine_versions([0, 3.0], [2.0, 3.0]))
+    self.assertEqual([2.0, 3.0], combine_versions([2.0, 3.0], [0, 3.0]))
+    self.assertEqual([2.0, 3.0], combine_versions([2.0, 0], [2.0, 3.0]))
+    self.assertEqual([2.0, 3.0], combine_versions([2.0, 3.0], [2.0, 0]))
+
+  def test_detect_min_version(self):
+    self.assertEqual([2.6, 3.0], detect_min_versions_source("import abc"))
+
+    # (2.6, 3.0) vs. (2.7, 3.2) = (2.7, 3.2)
+    self.assertEqual([2.7, 3.2], detect_min_versions_source("import abc, argparse"))
+
+    # (2.6, 3.0) vs. (None, 3.4) = (None, 3.4)
+    self.assertEqual([None, 3.4], detect_min_versions_source("import abc\nfrom abc import ABC"))
+
+    # (2.0, None) vs. (2.0, 3.0) = (2.0, None)
+    self.assertEqual([2.0, None],
+                     detect_min_versions_source("import repr\nfrom sys import getdefaultencoding"))
+
+    # (2.0, None) vs. (None, 3.0) = both exclude the other major version -> exception!
+    with self.assertRaises(InvalidVersionException):
+      print(detect_min_versions_source("import copy_reg, http"))

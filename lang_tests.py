@@ -8,7 +8,7 @@ class MinpyLanguageTests(MinpyTest):
 
   def test_printv3(self):
     """Allowed in both v2 and v3."""
-    self.assertOnlyIn(current_major_version(), detect("print('hello')"))
+    self.assertIn(current_major_version(), detect("print('hello')"))
 
   def test_print_v2_v3_mixed(self):
     """When using both v2 and v3 style it must return v2 because v3 is allowed in v2."""
