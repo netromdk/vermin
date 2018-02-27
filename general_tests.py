@@ -1,5 +1,5 @@
 from testutils import MinpyTest, current_version
-from minpy import SourceVisitor, parse_source, parse_detect_source
+from minpy import SourceVisitor, parse_source, parse_detect_source, detect_min_versions_path
 
 def visit(source):
   visitor = SourceVisitor()
@@ -61,3 +61,6 @@ class MinpyGeneralTests(MinpyTest):
   def test_member_kwargs(self):
     visitor = visit("from os import open\nfd = open(dir_fd = None)")
     self.assertOnlyIn([("open", "dir_fd")], visitor.kwargs())
+
+  def test_detect_minpy_min_versions(self):
+    self.assertOnlyIn((2.7, 3.0), detect_min_versions_path("minpy.py"))
