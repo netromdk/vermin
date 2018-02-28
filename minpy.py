@@ -157,7 +157,7 @@ KWARGS_REQS = {
   ("open", "dir_fd"): (None, 3.3),  # os
 }
 
-VERBOSE = False
+VERBOSE = 0
 PRINT_VISITS = False
 
 def parse_source(source):
@@ -169,10 +169,16 @@ def parse_source_file(path):
   with open(path, "r") as fp:
     return parse_source(fp.read())
 
-def vprint(msg):
+def verbose_print(msg, level):
   global VERBOSE
-  if VERBOSE:
+  if VERBOSE == level:
     print(msg)
+
+def vprint(msg):
+  verbose_print(msg, 1)
+
+def vvprint(msg):
+  verbose_print(msg, 2)
 
 class SourceVisitor(ast.NodeVisitor):
   def __init__(self):
@@ -273,7 +279,7 @@ class SourceVisitor(ast.NodeVisitor):
           self.__printv3 = True
       elif hasattr(func, "attr") and func.attr == "format" and \
            hasattr(func, "value") and isinstance(func.value, ast.Str):
-        vprint("`\"..\".format(..)` requires [2.7, 3.0]")
+        vvprint("`\"..\".format(..)` requires [2.7, 3.0]")
         self.__format = True
     self.generic_visit(node)
     self.__function_name = None
@@ -333,7 +339,7 @@ def parse_detect_source(source):
     # `print expr` is a Python 2 construct, in v3 it's `print(expr)`.
     # NOTE: This is only triggered when running a python 3 on v2 code!
     if err.msg.lower().find("missing parentheses in call to 'print'") != -1:
-      vprint("`{}` requires 2.0".format(err.text.strip()))
+      vvprint("`{}` requires 2.0".format(err.text.strip()))
       return (None, [2.0, None])
     return (None, [None, None])
 
@@ -361,14 +367,14 @@ def detect_min_versions(node):
   for mod in mods:
     if mod in MOD_REQS:
       vers = MOD_REQS[mod]
-      vprint("'{}' requires {}".format(mod, vers))
+      vvprint("'{}' requires {}".format(mod, vers))
       mins = combine_versions(mins, vers)
 
   mems = visitor.members()
   for mem in mems:
     if mem in MOD_MEM_REQS:
       (mod, vers) = MOD_MEM_REQS[mem]
-      vprint("'{}.{}' requires {}".format(mod, mem, vers))
+      vvprint("'{}.{}' requires {}".format(mod, mem, vers))
       mins = combine_versions(mins, vers)
 
   kwargs = visitor.kwargs()
@@ -402,7 +408,7 @@ def process_path(path):
     mins = detect_min_versions_path(path)
   except InvalidVersionException as ex:
     mins = None
-    print(ex)
+    vprint(ex)
   return (path, mins)
 
 def process_paths(paths):
@@ -418,7 +424,7 @@ def process_paths(paths):
       incomp = True
       print_incomp(path)
       continue
-    print("{:<12} {}".format(versions_string(min_versions), path))
+    vprint("{:<12} {}".format(versions_string(min_versions), path))
     try:
       mins = combine_versions(mins, min_versions)
     except InvalidVersionException as ex:
@@ -432,13 +438,14 @@ def unknown_versions(vers):
 
 if __name__ == "__main__":
   if len(sys.argv) < 2:
-    print("Usage: {} [-v|--verbose] <python source files and folders..>".format(sys.argv[0]))
+    print("Usage: {} [-v..] <python source files and folders..>".format(sys.argv[0]))
+    print("  -v..    Verbosity level 1 to 2. -v shows less than -vv but more than no verbosity.")
     sys.exit(-1)
 
   path_pos = 1
   arg1 = sys.argv[1].lower()
-  if arg1 == "-v" or arg1 == "--verbose":
-    VERBOSE = True
+  if arg1.startswith("-v"):
+    VERBOSE = arg1.count("v")
     path_pos += 1
 
   paths = detect_paths(sys.argv[path_pos:])
