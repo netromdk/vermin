@@ -400,7 +400,7 @@ def parse_detect_source(source):
     if err.msg.lower().find("missing parentheses in call to 'print'") != -1:
       vvprint("`{}` requires 2.0".format(err.text.strip()))
       return (None, [2.0, None])
-    return (None, [0, 0])
+    return (None, [None, None])
 
 def detect_min_versions_source(source):
   (node, mins) = parse_detect_source(source)
@@ -507,10 +507,9 @@ if __name__ == "__main__":
     VERBOSE = arg1.count("v")
     path_pos += 1
 
-  print("Detecting python files..", end=" ")
-  sys.stdout.flush()
+  print("Detecting python files..")
   paths = detect_paths(sys.argv[path_pos:])
-  print(len(paths))
+  print("Found {}".format(len(paths)))
 
   (mins, incomp) = process_paths(paths)
 
