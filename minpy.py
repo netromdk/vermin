@@ -408,13 +408,23 @@ def process_path(path):
 def process_paths(paths):
   pool = Pool()
   mins = [0, 0]
+  incomp = False
+
+  def print_incomp(path):
+    print("File with incompatible versions: {}".format(path))
+
   for (path, min_versions) in pool.imap(process_path, paths):
     if min_versions is None:
-      print("File with incompatible versions: {}".format(path))
-      sys.exit(-1)
+      incomp = True
+      print_incomp(path)
+      continue
     print("{:<12} {}".format(versions_string(min_versions), path))
-    mins = combine_versions(mins, min_versions)
-  return mins
+    try:
+      mins = combine_versions(mins, min_versions)
+    except InvalidVersionException as ex:
+      incomp = True
+      print_incomp(path)
+  return (mins, incomp)
 
 def unknown_versions(vers):
   """Versions are unknown if all values are either 0 or None."""
@@ -432,7 +442,10 @@ if __name__ == "__main__":
     path_pos += 1
 
   paths = detect_paths(sys.argv[path_pos:])
-  mins = process_paths(paths)
+  (mins, incomp) = process_paths(paths)
+
+  if incomp:
+    print("Note: Some files had incompatible versions so the results might not be correct!")
 
   if unknown_versions(mins):
     print("Could not determine minimum required versions!")
