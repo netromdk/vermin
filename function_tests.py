@@ -142,3 +142,25 @@ class MinpyFunctionMemberTests(MinpyTest):
 
   def test_set_handle_inheritable_of_os(self):
     self.assertOnlyIn(3.4, detect("from os import set_handle_inheritable"))
+
+  def test_starmap_of_multiprocessing_Pool(self):
+    self.assertOnlyIn(3.3, detect("from multiprocessing import Pool\np = Pool()\np.starmap()"))
+
+  def test_starmap_async_of_multiprocessing_Pool(self):
+    self.assertOnlyIn(3.3,
+                      detect("from multiprocessing import Pool\np = Pool()\np.starmap_async()"))
+
+  def test_wait_of_multiprocessing_connection(self):
+    self.assertOnlyIn(3.3, detect("import multiprocessing.connection\nwait()"))
+
+  def test_get_all_start_methods_of_multiprocessing(self):
+    self.assertOnlyIn(3.4, detect("import multiprocessing\nget_all_start_methods()"))
+
+  def test_get_start_method_of_multiprocessing(self):
+    self.assertOnlyIn(3.4, detect("import multiprocessing\nget_start_method()"))
+
+  def test_set_start_method_of_multiprocessing(self):
+    self.assertOnlyIn(3.4, detect("import multiprocessing\nset_start_method()"))
+
+  def test_get_context_of_multiprocessing(self):
+    self.assertOnlyIn(3.4, detect("import multiprocessing\nget_context()"))

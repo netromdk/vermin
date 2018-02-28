@@ -40,3 +40,12 @@ class MinpyKwargsTests(MinpyTest):
 
   def test_follow_symlinks_of_link_from_os(self):
     self.assertOnlyIn(3.3, detect("import os\nv = os.link(follow_symlinks=None)"))
+
+  def test_maxtasksperchild_of_Pool_from_multiprocessing(self):
+    self.assertOnlyIn(3.2, detect("import multiprocessing\nPool(maxtasksperchild=3)"))
+
+  def test_context_of_Pool_from_multiprocessing(self):
+    self.assertOnlyIn(3.4, detect("import multiprocessing\nPool(context=None)"))
+
+  def test_daemon_of_Process_from_multiprocessing(self):
+    self.assertOnlyIn(3.3, detect("import multiprocessing\nProcess(daemon=None)"))

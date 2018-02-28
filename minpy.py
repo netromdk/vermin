@@ -53,6 +53,7 @@ MOD_REQS = {
 MOD_MEM_REQS = {
   # Classes
   "ABC": ("abc", (None, 3.4)),
+  "Barrier": ("multiprocessing", (None, 3.3)),
   "PathLike": ("os", (None, 3.6)),
   "terminal_size": ("os", (None, 3.3)),
 
@@ -62,10 +63,13 @@ MOD_MEM_REQS = {
   "fsdecode": ("os", (None, 3.2)),
   "fsencode": ("os", (None, 3.2)),
   "fspath": ("os", (None, 3.6)),
+  "get_all_start_methods": ("multiprocessing", (None, 3.4)),
   "get_blocking": ("os", (None, 3.5)),
+  "get_context": ("multiprocessing", (None, 3.4)),
   "get_exec_path": ("os", (None, 3.2)),
   "get_handle_inheritable": ("os", (None, 3.4)),
   "get_inheritable": ("os", (None, 3.4)),
+  "get_start_method": ("multiprocessing", (None, 3.4)),
   "get_terminal_size": ("os", (None, 3.3)),
   "getcheckinterval": ("sys", (2.3, 3.0)),
   "getctime": ("os.path", (2.3, 3.0)),
@@ -98,10 +102,14 @@ MOD_MEM_REQS = {
   "set_blocking": ("os", (None, 3.5)),
   "set_handle_inheritable": ("os", (None, 3.4)),
   "set_inheritable": ("os", (None, 3.4)),
+  "set_start_method": ("multiprocessing", (None, 3.4)),
   "setgroups": ("os", (2.2, 3.0)),
   "setpriority": ("os", (None, 3.3)),
   "setresgid": ("os", (2.7, 3.2)),
   "setresuid": ("os", (2.7, 3.2)),
+  "starmap": ("multiprocessing.Pool", (None, 3.3)),
+  "starmap_async": ("multiprocessing.Pool", (None, 3.3)),
+  "wait": ("multiprocessing.connection", (None, 3.3)),
   "writev": ("os", (None, 3.3)),
 
   # Variables and Constants
@@ -131,6 +139,7 @@ MOD_MEM_REQS = {
   "float_repr_style": ("sys", (2.7, 3.0)),
   "long_info": ("sys", (2.7, None)),
   "py3kwarning": ("sys", (2.6, None)),
+  "sentinel": ("multiprocessing.Process", (None, 3.3)),
   "subversion": ("sys", (2.5, None)),
   "supports_bytes_environ": ("os", (None, 3.2)),
   "supports_unicode_filenames": ("os.path", (2.3, 3.0)),
@@ -139,6 +148,9 @@ MOD_MEM_REQS = {
 
 # Keyword arguments requirements: (function, keyword argument) -> requirements
 KWARGS_REQS = {
+  ("Pool", "context"): (None, 3.4),  # multiprocessing
+  ("Pool", "maxtasksperchild"): (None, 3.2),  # multiprocessing
+  ("Process", "daemon"): (None, 3.3),  # multiprocessing
   ("access", "dir_fd"): (None, 3.3),  # os
   ("access", "effective_ids"): (None, 3.3),  # os
   ("access", "follow_symlinks"): (None, 3.3),  # os

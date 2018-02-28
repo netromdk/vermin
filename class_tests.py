@@ -9,3 +9,6 @@ class MinpyClassMemberTests(MinpyTest):
 
   def test_terminal_size_of_os(self):
     self.assertOnlyIn(3.3, detect("from os import terminal_size"))
+
+  def test_Barrier_of_multiprocessing(self):
+    self.assertOnlyIn(3.3, detect("from multiprocessing import Barrier"))

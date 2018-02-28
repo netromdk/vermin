@@ -90,3 +90,6 @@ class MinpyConstantMemberTests(MinpyTest):
 
   def test_version_info_of_sys(self):
     self.assertOnlyIn((2.0, 3.0), detect("from sys import version_info"))
+
+  def test_sentinel_of_multiprocessing_Process(self):
+    self.assertOnlyIn(3.3, detect("from multiprocessing import Process\np = Process()\np.sentinel"))
