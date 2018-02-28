@@ -4,7 +4,7 @@ import sys
 import ast
 from os import listdir
 from os.path import abspath, isfile, isdir, join
-from multiprocessing import Pool
+from multiprocessing import Pool, cpu_count
 
 # Module requirements: name -> min version per major or None if N.A.
 MOD_REQS = {
@@ -483,7 +483,7 @@ def process_path(path):
   return (path, mins)
 
 def process_paths(paths):
-  pool = Pool()
+  pool = Pool(processes=cpu_count())
   mins = [0, 0]
   incomp = False
 
@@ -521,8 +521,8 @@ if __name__ == "__main__":
 
   print("Detecting python files..")
   paths = detect_paths(sys.argv[path_pos:])
-  print("Found {}".format(len(paths)))
 
+  print("Analyzing {} file(s) using {} processes..".format(len(paths), cpu_count()))
   (mins, incomp) = process_paths(paths)
 
   if incomp:
