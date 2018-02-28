@@ -40,8 +40,6 @@ class MinpyGeneralTests(MinpyTest):
   def test_member_class(self):
     visitor = visit("from abc import ABC")
     self.assertOnlyIn("ABC", visitor.members())
-    visitor = visit("import abc.ABC")
-    self.assertOnlyIn("ABC", visitor.members())
     visitor = visit("import abc\nclass a(abc.ABC): pass")
     self.assertOnlyIn("ABC", visitor.members())
 

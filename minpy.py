@@ -207,13 +207,23 @@ class SourceVisitor(ast.NodeVisitor):
     self.__modules.append(module)
 
   def __add_member(self, member):
-    self.__members.append(member)
+    """Add member if required module is imported."""
+    if self.__member_mod_visited(member):
+      self.__members.append(member)
 
   def __add_star_import(self, module):
     self.__star_imports.append(module)
 
   def __add_kwargs(self, function, keyword):
     self.__kwargs.append((function, keyword))
+
+  def __member_mod_visited(self, member):
+    """Checks if module of member is imported/visited."""
+    if member in MOD_MEM_REQS:
+      (mod, vers) = MOD_MEM_REQS[member]
+      if mod in self.__modules or mod in self.__star_imports:
+        return True
+    return False
 
   def generic_visit(self, node):
     if PRINT_VISITS:
@@ -250,13 +260,7 @@ class SourceVisitor(ast.NodeVisitor):
         self.__add_member(elms[-1])
 
   def visit_Name(self, node):
-    # In the case of star imports it checks if the member is in one of such star imports before
-    # adding as member.
-    if len(self.__star_imports) > 0:
-      if node.id in MOD_MEM_REQS:
-        (mod, vers) = MOD_MEM_REQS[node.id]
-        if mod in self.__star_imports:
-          self.__add_member(node.id)
+    self.__add_member(node.id)
 
   def visit_Print(self, node):
     self.__printv2 = True

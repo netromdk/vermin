@@ -2,7 +2,6 @@ from testutils import MinpyTest, detect
 
 class MinpyClassMemberTests(MinpyTest):
   def test_ABC_of_abc(self):
-    self.assertOnlyIn(3.4, detect("import abc.ABC"))
     self.assertOnlyIn(3.4, detect("from abc import ABC"))
 
   def test_PathLike_of_os(self):

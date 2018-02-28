@@ -4,11 +4,11 @@ class MinpyConstantMemberTests(MinpyTest):
   def test_flags_of_sys(self):
     self.assertOnlyIn((2.6, 3.0), detect("from sys import flags"))
 
-  def test_supports_unicode_filenames_of_sys(self):
-    self.assertOnlyIn((2.3, 3.0), detect("from sys import supports_unicode_filenames"))
+  def test_supports_unicode_filenames_of_os_path(self):
+    self.assertOnlyIn((2.3, 3.0), detect("from os.path import supports_unicode_filenames"))
 
-  def test_supports_bytes_environ_of_sys(self):
-    self.assertOnlyIn(3.2, detect("from sys import supports_bytes_environ"))
+  def test_supports_bytes_environ_of_os(self):
+    self.assertOnlyIn(3.2, detect("from os import supports_bytes_environ"))
 
   def test_environb_of_os(self):
     self.assertOnlyIn(3.2, detect("from os import environb"))
