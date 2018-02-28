@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-# TODO: This script needs to use the lowest possible python to run so that people don't need another
-# version to determine what minimum version they need!
-
 import sys
 import ast
 from os import listdir
@@ -448,7 +445,11 @@ if __name__ == "__main__":
     VERBOSE = arg1.count("v")
     path_pos += 1
 
+  print("Detecting python files..", end=" ")
+  sys.stdout.flush()
   paths = detect_paths(sys.argv[path_pos:])
+  print(len(paths))
+
   (mins, incomp) = process_paths(paths)
 
   if incomp:
