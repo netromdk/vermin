@@ -467,7 +467,10 @@ def detect_paths(paths):
   for path in paths:
     path = abspath(path)
     if isdir(path):
-      accept_paths += detect_paths([join(path, p) for p in listdir(path)])
+      try:
+        accept_paths += detect_paths([join(path, p) for p in listdir(path)])
+      except PermissionError as ex:
+        print("Ignoring {}: {}".format(path, ex))
       continue
     if not isfile(path) or not path.lower().endswith(".py"):
       continue
