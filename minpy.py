@@ -289,10 +289,69 @@ class SourceVisitor(ast.NodeVisitor):
     if self.__function_name is not None:
       self.__add_kwargs(self.__function_name, node.arg)
 
+  # Ignore unused nodes as a speed optimization.
+
   def visit_Load(self, node):
     pass
 
+  def visit_Store(self, node):
+    pass
+
   def visit_Pass(self, node):
+    pass
+
+  def visit_Num(self, node):
+    pass
+
+  def visit_Not(self, node):
+    pass
+
+  def visit_Add(self, node):
+    pass
+
+  def visit_Sub(self, node):
+    pass
+
+  def visit_Mult(self, node):
+    pass
+
+  def visit_Div(self, node):
+    pass
+
+  def visit_BitAnd(self, node):
+    pass
+
+  def visit_Or(self, node):
+    pass
+
+  def visit_BitOr(self, node):
+    pass
+
+  def visit_Eq(self, node):
+    pass
+
+  def visit_NotEq(self, node):
+    pass
+
+  def visit_Lt(self, node):
+    pass
+
+  def visit_Gt(self, node):
+    pass
+
+  def visit_In(self, node):
+    pass
+
+  def visit_Is(self, node):
+    pass
+
+  def visit_Continue(self, node):
+    pass
+
+  def visit_Break(self, node):
+    pass
+
+  def visit_Mod(self, node):
     pass
 
 class InvalidVersionException(BaseException):
