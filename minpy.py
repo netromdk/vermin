@@ -161,11 +161,6 @@ def parse_source(source):
   """Parse python source into an AST."""
   return ast.parse(source)
 
-def parse_source_file(path):
-  """Parse python source file into an AST."""
-  with open(path, "r") as fp:
-    return parse_source(fp.read())
-
 def verbose_print(msg, level):
   global VERBOSE
   if VERBOSE == level:
@@ -327,7 +322,11 @@ def combine_versions(list1, list2):
 
 def detect_min_versions_path(path):
   with open(path, "r") as fp:
-    return detect_min_versions_source(fp.read())
+    try:
+      return detect_min_versions_source(fp.read())
+    except Exception as ex:
+      print("{}: {}".format(path, ex))
+      return [0, 0]
 
 def parse_detect_source(source):
   try:
@@ -338,7 +337,7 @@ def parse_detect_source(source):
     if err.msg.lower().find("missing parentheses in call to 'print'") != -1:
       vvprint("`{}` requires 2.0".format(err.text.strip()))
       return (None, [2.0, None])
-    return (None, [None, None])
+    return (None, [0, 0])
 
 def detect_min_versions_source(source):
   (node, mins) = parse_detect_source(source)
