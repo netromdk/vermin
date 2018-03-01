@@ -1,14 +1,13 @@
-test: self-test
-	python -c "import unittest; unittest.main('general_tests')"
-	python -c "import unittest; unittest.main('lang_tests')"
-	python -c "import unittest; unittest.main('module_tests')"
-	python -c "import unittest; unittest.main('class_tests')"
-	python -c "import unittest; unittest.main('function_tests')"
-	python -c "import unittest; unittest.main('constants_tests')"
-	python -c "import unittest; unittest.main('kwargs_tests')"
-
 self-test:
 	./minpy.py -vv minpy.py
+
+test: self-test
+	./runtests.py
+
+test-all:
+	python2.7 ./runtests.py
+	python3.2 ./runtests.py
+	python3 ./runtests.py
 
 count:
 	./count.py
