@@ -168,6 +168,7 @@ KWARGS_REQS = {
 
 VERBOSE = 0
 PRINT_VISITS = False
+IGNORE_INCOMP = False
 
 def parse_source(source):
   """Parse python source into an AST."""
@@ -375,8 +376,9 @@ class InvalidVersionException(BaseException):
 def combine_versions(list1, list2):
   assert len(list1) == len(list2)
   assert len(list1) == 2
-  if (list1[0] is None and list1[1] is not None and list2[0] is not None and list2[1] is None) or\
-     (list1[0] is not None and list1[1] is None and list2[0] is None and list2[1] is not None):
+  if not IGNORE_INCOMP and\
+    ((list1[0] is None and list1[1] is not None and list2[0] is not None and list2[1] is None) or
+     (list1[0] is not None and list1[1] is None and list2[0] is None and list2[1] is not None)):
     raise InvalidVersionException("Versions could not be combined: {} and {}".format(list1, list2))
   res = []
   for i in range(len(list1)):
@@ -490,7 +492,8 @@ def process_paths(paths):
   incomp = False
 
   def print_incomp(path):
-    print("File with incompatible versions: {}".format(path))
+    if not IGNORE_INCOMP:
+      print("File with incompatible versions: {}".format(path))
 
   for (path, min_versions) in pool.imap(process_path, paths):
     if min_versions is None:
@@ -509,18 +512,28 @@ def unknown_versions(vers):
   """Versions are unknown if all values are either 0 or None."""
   return len(vers) == vers.count(0) + vers.count(None)
 
+def print_usage():
+  print("Usage: {} [options] <python source files and folders..>".format(sys.argv[0]))
+  print("Options:")
+  print("  -v..    Verbosity level 1 to 2. -v shows less than -vv but more than no verbosity.")
+  print("  -i      Ignore incompatible version warnings.")
+
 def parse_args():
   if len(sys.argv) < 2:
-    print("Usage: {} [-v..] <python source files and folders..>".format(sys.argv[0]))
-    print("  -v..    Verbosity level 1 to 2. -v shows less than -vv but more than no verbosity.")
+    print_usage()
     sys.exit(-1)
 
   path_pos = 1
-  arg1 = sys.argv[1].lower()
-  if arg1.startswith("-v"):
-    global VERBOSE
-    VERBOSE = arg1.count("v")
-    path_pos += 1
+  for i in range(1, len(sys.argv)):
+    arg = sys.argv[i].lower()
+    if arg.startswith("-v"):
+      global VERBOSE
+      VERBOSE = arg.count("v")
+      path_pos += 1
+    elif arg == "-i":
+      global IGNORE_INCOMP
+      IGNORE_INCOMP = True
+      path_pos += 1
 
   paths = sys.argv[path_pos:]
   if len(paths) == 0:
@@ -542,7 +555,7 @@ if __name__ == "__main__":
   print("{} using {} processes..".format(msg, cpu_count()))
   (mins, incomp) = process_paths(paths)
 
-  if incomp:
+  if incomp and not IGNORE_INCOMP:
     print("Note: Some files had incompatible versions so the results might not be correct!")
 
   if unknown_versions(mins):
