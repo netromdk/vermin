@@ -174,8 +174,7 @@ def parse_source(source):
   return ast.parse(source)
 
 def verbose_print(msg, level):
-  global VERBOSE
-  if VERBOSE == level:
+  if VERBOSE >= level:
     print(msg)
 
 def vprint(msg):
