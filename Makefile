@@ -8,7 +8,7 @@ test: self-test
 	python -c "import unittest; unittest.main('kwargs_tests')"
 
 self-test:
-	./minpy.py minpy.py
+	./minpy.py -vv minpy.py
 
 count:
 	./count.py
@@ -20,6 +20,7 @@ setup: clean
 clean:
 	rm -fr .venv
 	find . -iname __pycache__ | xargs rm -fr
+	find . -iname '*.pyc' | xargs rm -f
 
 update-requirements: setup
 	.venv/bin/pip freeze > .misc-requirements.txt
