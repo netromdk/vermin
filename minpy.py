@@ -418,7 +418,7 @@ def parse_detect_source(source):
     if err.msg.lower().find("missing parentheses in call to 'print'") != -1:
       vvprint("`{}` requires 2.0".format(err.text.strip()))
       return (None, [2.0, None])
-    return (None, [None, None])
+    return (None, [0, 0])
 
 def detect_min_versions_source(source):
   (node, mins) = parse_detect_source(source)
@@ -433,7 +433,7 @@ def detect_min_versions(node):
   mins = [0, 0]
 
   if visitor.printv2():
-    mins = combine_versions(mins, (2.0, None))
+    mins[0] = 2.0
 
   if visitor.printv3():
     mins = combine_versions(mins, (2.0, 3.0))
@@ -459,6 +459,7 @@ def detect_min_versions(node):
   for fn_kw in kwargs:
     if fn_kw in KWARGS_REQS:
       vers = KWARGS_REQS[fn_kw]
+      vvprint("'{}' requires {}".format(fn_kw, vers))
       mins = combine_versions(mins, vers)
 
   return mins
@@ -473,7 +474,7 @@ def versions_string(vers):
     if ver == 0:
       continue
     if ver is None:
-      res.append("!{}".format(i+2))
+      res.append("!{}".format(i + 2))
     else:
       res.append(str(ver))
   return ", ".join(res)

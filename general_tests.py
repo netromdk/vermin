@@ -17,7 +17,7 @@ class MinpyGeneralTests(MinpyTest):
       self.assertOnlyIn(2.0, mins)
     elif v >= 3.0 and v < 3.4:
       self.assertEqual(node, None)
-      self.assertEqual(mins, [None, None])
+      self.assertEqual(mins, [0, 0])
     else:  # < 3.0
       visitor = visit(source)
       self.assertTrue(visitor.printv2())
