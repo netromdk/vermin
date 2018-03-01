@@ -26,13 +26,12 @@ Or copy "minpy.py" to your project:
 Usage: ./minpy.py [options] <python source files and folders..>
 
 Options:
+  -q      Quite mode. It only prints the final versions verdict.
   -v..    Verbosity level 1 to 2. -v shows less than -vv but more than no verbosity.
   -i      Ignore incompatible version warnings.
   -p=X    Use X concurrent processes to analyze files (defaults to all cores = 8).
 
-% ./minpy.py minpy.py
-Detecting python files..
-Analyzing using 8 processes..
+% ./minpy.py -q minpy.py
 Minimum required versions: 2.7, 3.0
 
 % ./minpy.py -v examples

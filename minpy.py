@@ -166,6 +166,7 @@ KWARGS_REQS = {
   ("open", "dir_fd"): (None, 3.3),  # os
 }
 
+QUIET = False
 VERBOSE = 0
 PRINT_VISITS = False
 IGNORE_INCOMP = False
@@ -174,8 +175,12 @@ def parse_source(source):
   """Parse python source into an AST."""
   return ast.parse(source)
 
+def nprint(msg):
+  if not QUIET:
+    print(msg)
+
 def verbose_print(msg, level):
-  if VERBOSE >= level:
+  if VERBOSE >= level and not QUIET:
     print(msg)
 
 def vprint(msg):
@@ -239,7 +244,7 @@ class SourceVisitor(ast.NodeVisitor):
 
   def generic_visit(self, node):
     if PRINT_VISITS:
-      print("{}: {}".format(type(node).__name__, ast.dump(node)))
+      nprint("{}: {}".format(type(node).__name__, ast.dump(node)))
     super(SourceVisitor, self).generic_visit(node)
 
   def visit_Import(self, node):
@@ -401,7 +406,7 @@ def detect_min_versions_path(path):
     try:
       return detect_min_versions_source(fp.read())
     except Exception as ex:
-      print("{}: {}".format(path, ex))
+      nprint("{}: {}".format(path, ex))
       return [0, 0]
 
 def parse_detect_source(source):
@@ -481,7 +486,7 @@ def detect_paths(paths):
       try:
         accept_paths += detect_paths([join(path, p) for p in listdir(path)])
       except PermissionError as ex:
-        print("Ignoring {}: {}".format(path, ex))
+        nprint("Ignoring {}: {}".format(path, ex))
       continue
     if not isfile(path) or not path.lower().endswith(".py"):
       continue
@@ -503,7 +508,7 @@ def process_paths(paths, processes):
 
   def print_incomp(path):
     if not IGNORE_INCOMP:
-      print("File with incompatible versions: {}".format(path))
+      nprint("File with incompatible versions: {}".format(path))
 
   for (path, min_versions) in pool.imap(process_path, paths):
     if min_versions is None:
@@ -525,6 +530,7 @@ def unknown_versions(vers):
 def print_usage():
   print("Usage: {} [options] <python source files and folders..>".format(sys.argv[0]))
   print("\nOptions:")
+  print("  -q      Quite mode. It only prints the final versions verdict.")
   print("  -v..    Verbosity level 1 to 2. -v shows less than -vv but more than no verbosity.")
   print("  -i      Ignore incompatible version warnings.")
   print("  -p=X    Use X concurrent processes to analyze files (defaults to all cores = {})."
@@ -539,7 +545,11 @@ def parse_args():
   processes = cpu_count()
   for i in range(1, len(sys.argv)):
     arg = sys.argv[i].lower()
-    if arg.startswith("-v"):
+    if arg == "-q":
+      global QUIET
+      QUIET = True
+      path_pos += 1
+    elif arg.startswith("-v"):
       global VERBOSE
       VERBOSE = arg.count("v")
       path_pos += 1
@@ -558,6 +568,10 @@ def parse_args():
         print("Non-positive number: {}".format(processes))
         sys.exit(-1)
 
+  if QUIET and VERBOSE > 0:
+    print("Cannot use quiet and verbose modes together!")
+    sys.exit(-1)
+
   paths = sys.argv[path_pos:]
   return {"paths": paths,
           "processes": processes}
@@ -566,7 +580,7 @@ if __name__ == "__main__":
   args = parse_args()
   processes = args["processes"]
 
-  print("Detecting python files..")
+  nprint("Detecting python files..")
   paths = set(detect_paths(args["paths"]))
   amount = len(paths)
   if amount == 0:
@@ -576,11 +590,11 @@ if __name__ == "__main__":
   msg = "Analyzing"
   if amount > 1:
     msg += " {} files".format(amount)
-  print("{} using {} processes..".format(msg, processes))
+  nprint("{} using {} processes..".format(msg, processes))
   (mins, incomp) = process_paths(paths, processes)
 
   if incomp and not IGNORE_INCOMP:
-    print("Note: Some files had incompatible versions so the results might not be correct!")
+    nprint("Note: Some files had incompatible versions so the results might not be correct!")
 
   if unknown_versions(mins):
     print("Could not determine minimum required versions!")
