@@ -486,8 +486,8 @@ def process_path(path):
     vprint(ex)
   return (path, mins)
 
-def process_paths(paths):
-  pool = Pool(processes=cpu_count())
+def process_paths(paths, processes):
+  pool = Pool(processes=processes)
   mins = [0, 0]
   incomp = False
 
@@ -514,9 +514,11 @@ def unknown_versions(vers):
 
 def print_usage():
   print("Usage: {} [options] <python source files and folders..>".format(sys.argv[0]))
-  print("Options:")
+  print("\nOptions:")
   print("  -v..    Verbosity level 1 to 2. -v shows less than -vv but more than no verbosity.")
   print("  -i      Ignore incompatible version warnings.")
+  print("  -p=X    Use X concurrent processes to analyze files (defaults to all cores = {})."
+        .format(cpu_count()))
 
 def parse_args():
   if len(sys.argv) < 2:
@@ -524,6 +526,7 @@ def parse_args():
     sys.exit(-1)
 
   path_pos = 1
+  processes = cpu_count()
   for i in range(1, len(sys.argv)):
     arg = sys.argv[i].lower()
     if arg.startswith("-v"):
@@ -534,26 +537,37 @@ def parse_args():
       global IGNORE_INCOMP
       IGNORE_INCOMP = True
       path_pos += 1
+    elif arg.startswith("-p="):
+      value = arg.split("=")[1]
+      try:
+        processes = int(value)
+      except ValueError:
+        print("Invalid value: {}".format(value))
+        sys.exit(-1)
+      if processes <= 0:
+        print("Non-positive number: {}".format(processes))
+        sys.exit(-1)
 
   paths = sys.argv[path_pos:]
-  if len(paths) == 0:
-    print("No files specified to analyze!")
-    sys.exit(-1)
-
-  return {"paths": paths}
+  return {"paths": paths,
+          "processes": processes}
 
 if __name__ == "__main__":
   args = parse_args()
+  processes = args["processes"]
 
   print("Detecting python files..")
   paths = set(detect_paths(args["paths"]))
   amount = len(paths)
+  if amount == 0:
+    print("No files specified to analyze!")
+    sys.exit(-1)
 
   msg = "Analyzing"
   if amount > 1:
     msg += " {} files".format(amount)
-  print("{} using {} processes..".format(msg, cpu_count()))
-  (mins, incomp) = process_paths(paths)
+  print("{} using {} processes..".format(msg, processes))
+  (mins, incomp) = process_paths(paths, processes)
 
   if incomp and not IGNORE_INCOMP:
     print("Note: Some files had incompatible versions so the results might not be correct!")
