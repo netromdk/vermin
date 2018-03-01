@@ -428,9 +428,10 @@ def detect_min_versions(node):
   mins = [0, 0]
 
   if visitor.printv2():
-    mins[0] = 2.0
+    mins = combine_versions(mins, (2.0, None))
+
   if visitor.printv3():
-    mins[1] = 3.0
+    mins = combine_versions(mins, (2.0, 3.0))
 
   if visitor.format():
     mins = combine_versions(mins, (2.7, 3.0))
@@ -461,7 +462,16 @@ def all_none(elms):
   return len(elms) == elms.count(None)
 
 def versions_string(vers):
-  return ", ".join([str(v) for v in vers if v is not None and v is not 0])
+  res = []
+  for i in range(len(vers)):
+    ver = vers[i]
+    if ver == 0:
+      continue
+    if ver is None:
+      res.append("!{}".format(i+2))
+    else:
+      res.append(str(ver))
+  return ", ".join(res)
 
 def detect_paths(paths):
   accept_paths = []

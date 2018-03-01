@@ -23,18 +23,27 @@ Or copy "minpy.py" to your project:
 ## Examples
 ```
 % ./minpy.py
-Usage: ./minpy.py [-v..] <python source files and folders..>
+Usage: ./minpy.py [options] <python source files and folders..>
+
+Options:
   -v..    Verbosity level 1 to 2. -v shows less than -vv but more than no verbosity.
+  -i      Ignore incompatible version warnings.
+  -p=X    Use X concurrent processes to analyze files (defaults to all cores = 8).
 
 % ./minpy.py minpy.py
+Detecting python files..
+Analyzing using 8 processes..
 Minimum required versions: 2.7, 3.0
 
-% ./minpy.py examples
-3.4          /path/to/git/minpy/examples/abc.py
-2.7, 3.2     /path/to/git/minpy/examples/argparse.py
-2.7, 3.0     /path/to/git/minpy/examples/formatv3.py
-2.0          /path/to/git/minpy/examples/printv2.py
-3.0          /path/to/git/minpy/examples/printv3.py
-
-Minimum required versions: 3.4
+% ./minpy.py -v examples
+Detecting python files..
+Analyzing 6 files using 8 processes..
+             /path/to/examples/formatv2.py
+2.7, 3.2     /path/to/examples/argparse.py
+2.7, 3.0     /path/to/examples/formatv3.py
+2.0, 3.0     /path/to/examples/printv3.py
+!2, 3.4      /path/to/examples/abc.py
+             /path/to/examples/unknown.py
+Minimum required versions: !2, 3.4
 ```
+When it yields `!2` or `!3` it means that it explicitly cannot run on that version.
