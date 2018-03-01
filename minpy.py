@@ -510,7 +510,7 @@ def unknown_versions(vers):
   """Versions are unknown if all values are either 0 or None."""
   return len(vers) == vers.count(0) + vers.count(None)
 
-if __name__ == "__main__":
+def parse_args():
   if len(sys.argv) < 2:
     print("Usage: {} [-v..] <python source files and folders..>".format(sys.argv[0]))
     print("  -v..    Verbosity level 1 to 2. -v shows less than -vv but more than no verbosity.")
@@ -519,13 +519,28 @@ if __name__ == "__main__":
   path_pos = 1
   arg1 = sys.argv[1].lower()
   if arg1.startswith("-v"):
+    global VERBOSE
     VERBOSE = arg1.count("v")
     path_pos += 1
 
-  print("Detecting python files..")
-  paths = detect_paths(sys.argv[path_pos:])
+  paths = sys.argv[path_pos:]
+  if len(paths) == 0:
+    print("No files specified to analyze!")
+    sys.exit(-1)
 
-  print("Analyzing {} file(s) using {} processes..".format(len(paths), cpu_count()))
+  return {"paths": paths}
+
+if __name__ == "__main__":
+  args = parse_args()
+
+  print("Detecting python files..")
+  paths = detect_paths(args["paths"])
+  amount = len(paths)
+
+  msg = "Analyzing"
+  if amount > 1:
+    msg += " {} files".format(amount)
+  print("{} using {} processes..".format(msg, cpu_count()))
   (mins, incomp) = process_paths(paths)
 
   if incomp:
