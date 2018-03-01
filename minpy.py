@@ -534,7 +534,7 @@ if __name__ == "__main__":
   args = parse_args()
 
   print("Detecting python files..")
-  paths = detect_paths(args["paths"])
+  paths = set(detect_paths(args["paths"]))
   amount = len(paths)
 
   msg = "Analyzing"
