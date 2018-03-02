@@ -201,6 +201,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__star_imports = []
     self.__function_name = None
     self.__kwargs = []
+    self.__depth = 0
 
   def modules(self):
     return self.__modules
@@ -243,9 +244,11 @@ class SourceVisitor(ast.NodeVisitor):
     return False
 
   def generic_visit(self, node):
+    self.__depth += 1
     if PRINT_VISITS:
-      nprint("{}: {}".format(type(node).__name__, ast.dump(node)))
+      nprint("| " * self.__depth + ast.dump(node))
     super(SourceVisitor, self).generic_visit(node)
+    self.__depth -= 1
 
   def visit_Import(self, node):
     self.__import = True
@@ -536,6 +539,7 @@ def print_usage():
   print("  -i      Ignore incompatible version warnings.")
   print("  -p=X    Use X concurrent processes to analyze files (defaults to all cores = {})."
         .format(cpu_count()))
+  print("  -d      Dump AST node visits.")
 
 def parse_args():
   if len(sys.argv) < 2:
@@ -568,6 +572,10 @@ def parse_args():
       if processes <= 0:
         print("Non-positive number: {}".format(processes))
         sys.exit(-1)
+    elif arg == "-d":
+      global PRINT_VISITS
+      PRINT_VISITS = True
+      path_pos += 1
 
   if QUIET and VERBOSE > 0:
     print("Cannot use quiet and verbose modes together!")
