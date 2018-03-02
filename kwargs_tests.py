@@ -49,3 +49,21 @@ class MinpyKwargsTests(MinpyTest):
 
   def test_daemon_of_Process_from_multiprocessing(self):
     self.assertOnlyIn(3.3, detect("import multiprocessing\nProcess(daemon=None)"))
+
+  def test_compact_of_PrettyPrinter_from_pprint(self):
+    self.assertOnlyIn(3.4, detect("import pprint\npprint.PrettyPrinter(compact=True)"))
+
+  def test_compact_of_pformat_from_pprint(self):
+    self.assertOnlyIn(3.4, detect("import pprint\npprint.pformat(compact=True)"))
+
+  def test_compact_of_pprint_from_pprint(self):
+    self.assertOnlyIn(3.4, detect("import pprint\npprint.pprint(compact=True)"))
+
+  def test_delta_of_assertAlmostEqual_from_unitest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.assertAlmostEqual(delta=1)"))
+
+  def test_delta_of_assertNotAlmostEqual_from_unitest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\n"
+                             "TestCase.assertNotAlmostEqual(delta=1)"))

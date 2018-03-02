@@ -7,7 +7,7 @@ Everything is contained within "minpy.py" - no other file is necessary.
 
 Since the code is vanilla Python, and it doesn't have any external dependencies, it works with v2.7+ and v3+.
 
-It functions by parsing Python code into an abstract syntax tree (AST), which it traverses and matches against internal dictionaries of 39 modules, 88 classes/functions/constants members of modules, and 16 kwargs of functions. Including looking for v2/v3 `print expr` and `print(expr)`, `"..".format(..)`, imports (`import X`, `from X import Y`, `from X import *`), and function calls wrt. name and kwargs.
+It functions by parsing Python code into an abstract syntax tree (AST), which it traverses and matches against internal dictionaries with 184 rules divided into 40 modules, 123 classes/functions/constants members of modules, and 21 kwargs of functions. Including looking for v2/v3 `print expr` and `print(expr)`, `"..".format(..)`, imports (`import X`, `from X import Y`, `from X import *`), and function calls wrt. name and kwargs.
 
 ## Usage
 It is fairly straightforward to use Minpy:
@@ -30,6 +30,7 @@ Options:
   -v..    Verbosity level 1 to 2. -v shows less than -vv but more than no verbosity.
   -i      Ignore incompatible version warnings.
   -p=X    Use X concurrent processes to analyze files (defaults to all cores = 8).
+  -d      Dump AST node visits.
 
 % ./minpy.py -q minpy.py
 Minimum required versions: 2.7, 3.0

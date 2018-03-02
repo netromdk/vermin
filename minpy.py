@@ -44,6 +44,7 @@ MOD_REQS = {
   "string.lowercase": (2.0, None),
   "string.uppercase": (2.0, None),
   "tkinter": (None, 3.0),
+  "unittest": (2.1, 3.0),
   "urllib2": (2.0, None),
   "winreg": (None, 3.0),
   "xmlrpc": (None, 3.0),
@@ -55,10 +56,38 @@ MOD_MEM_REQS = {
   "ABC": ("abc", (None, 3.4)),
   "Barrier": ("multiprocessing", (None, 3.3)),
   "PathLike": ("os", (None, 3.6)),
+  "TextTestResult": ("unittest", (2.7, 3.0)),
   "terminal_size": ("os", (None, 3.3)),
 
   # Functions
+  "addCleanup": ("unittest.TestCase", (2.7, 3.0)),
+  "addTypeEqualityFunc": ("unittest.TestCase", (2.7, 3.0)),
+  "assertDictContainsSubset": ("unittest.TestCase", (2.7, 3.0)),
+  "assertDictEqual": ("unittest.TestCase", (2.7, 3.0)),
+  "assertGreater": ("unittest.TestCase", (2.7, 3.0)),
+  "assertGreaterEqual": ("unittest.TestCase", (2.7, 3.0)),
+  "assertIn": ("unittest.TestCase", (2.7, 3.0)),
+  "assertIs": ("unittest.TestCase", (2.7, 3.0)),
+  "assertIsInstance": ("unittest.TestCase", (2.7, 3.0)),
+  "assertIsNone": ("unittest.TestCase", (2.7, 3.0)),
+  "assertIsNot": ("unittest.TestCase", (2.7, 3.0)),
+  "assertIsNotNone": ("unittest.TestCase", (2.7, 3.0)),
+  "assertItemsEqual": ("unittest.TestCase", (2.7, 3.0)),
+  "assertLess": ("unittest.TestCase", (2.7, 3.0)),
+  "assertLessEqual": ("unittest.TestCase", (2.7, 3.0)),
+  "assertListEqual": ("unittest.TestCase", (2.7, 3.0)),
+  "assertMultilineEqual": ("unittest.TestCase", (2.7, 3.0)),
+  "assertNotIn": ("unittest.TestCase", (2.7, 3.0)),
+  "assertNotIsInstance": ("unittest.TestCase", (2.7, 3.0)),
+  "assertNotRegexpMatches": ("unittest.TestCase", (2.7, 3.0)),
+  "assertRaisesRegexp": ("unittest.TestCase", (2.7, 3.0)),
+  "assertRegexpMatches": ("unittest.TestCase", (2.7, 3.0)),
+  "assertSequenceEqual": ("unittest.TestCase", (2.7, 3.0)),
+  "assertSetEqual": ("unittest.TestCase", (2.7, 3.0)),
+  "assertTupleEqual": ("unittest.TestCase", (2.7, 3.0)),
   "commonpath": ("os.path", (None, 3.5)),
+  "discover": ("unittest.TestLoader", (2.7, 3.0)),
+  "doCleanup": ("unittest.TestCase", (2.7, 3.0)),
   "exc_clear": ("sys", (2.3, None)),
   "fsdecode": ("os", (None, 3.2)),
   "fsencode": ("os", (None, 3.2)),
@@ -91,6 +120,8 @@ MOD_MEM_REQS = {
   "ismount": ("os.path", (None, 3.4)),
   "lexists": ("os.path", (2.4, 3.0)),
   "lockf": ("os", (None, 3.3)),
+  "longMessage": ("unittest.TestCase", (2.7, 3.0)),
+  "maxDiff": ("unittest.TestCase", (2.7, 3.0)),
   "pipe2": ("os", (None, 3.3)),
   "posix_fadvise": ("os", (None, 3.3)),
   "posix_fallocate": ("os", (None, 3.3)),
@@ -109,6 +140,8 @@ MOD_MEM_REQS = {
   "setresuid": ("os", (2.7, 3.2)),
   "starmap": ("multiprocessing.Pool", (None, 3.3)),
   "starmap_async": ("multiprocessing.Pool", (None, 3.3)),
+  "startTestRun": ("unittest.TestResult", (2.7, 3.0)),
+  "stopTestRun": ("unittest.TestResult", (2.7, 3.0)),
   "wait": ("multiprocessing.connection", (None, 3.3)),
   "writev": ("os", (None, 3.3)),
 
@@ -133,13 +166,16 @@ MOD_MEM_REQS = {
   "SF_NODISKIO": ("os", (None, 3.3)),
   "SF_SYNC": ("os", (None, 3.3)),
   "api_version": ("sys", (2.3, 3.0)),
+  "buffer": ("unittest.TestResult", (2.7, 3.0)),
   "environb": ("os", (None, 3.2)),
+  "failfast": ("unittest.TestResult", (2.7, 3.0)),
   "flags": ("sys", (2.6, 3.0)),
   "float_info": ("sys", (2.6, 3.0)),
   "float_repr_style": ("sys", (2.7, 3.0)),
   "long_info": ("sys", (2.7, None)),
   "py3kwarning": ("sys", (2.6, None)),
   "sentinel": ("multiprocessing.Process", (None, 3.3)),
+  "skipped": ("unittest.TestResult", (2.7, 3.0)),
   "subversion": ("sys", (2.5, None)),
   "supports_bytes_environ": ("os", (None, 3.2)),
   "supports_unicode_filenames": ("os.path", (2.3, 3.0)),
@@ -150,10 +186,13 @@ MOD_MEM_REQS = {
 KWARGS_REQS = {
   ("Pool", "context"): (None, 3.4),  # multiprocessing
   ("Pool", "maxtasksperchild"): (None, 3.2),  # multiprocessing
+  ("PrettyPrinter", "compact"): (None, 3.4),  # pprint
   ("Process", "daemon"): (None, 3.3),  # multiprocessing
   ("access", "dir_fd"): (None, 3.3),  # os
   ("access", "effective_ids"): (None, 3.3),  # os
   ("access", "follow_symlinks"): (None, 3.3),  # os
+  ("assertAlmostEqual", "delta"): (2.7, 3.0),  # unittest.TestCase
+  ("assertNotAlmostEqual", "delta"): (2.7, 3.0),  # unittest.TestCase
   ("chflags", "follow_symlinks"): (None, 3.3),  # os
   ("chmod", "dir_fd"): (None, 3.3),  # os
   ("chmod", "follow_symlinks"): (None, 3.3),  # os
@@ -164,6 +203,8 @@ KWARGS_REQS = {
   ("link", "follow_symlinks"): (None, 3.3),  # os
   ("link", "src_dir_fd"): (None, 3.3),  # os
   ("open", "dir_fd"): (None, 3.3),  # os
+  ("pformat", "compact"): (None, 3.4),  # pprint
+  ("pprint", "compact"): (None, 3.4),  # pprint
 }
 
 QUIET = False

@@ -164,3 +164,122 @@ class MinpyFunctionMemberTests(MinpyTest):
 
   def test_get_context_of_multiprocessing(self):
     self.assertOnlyIn(3.4, detect("import multiprocessing\nget_context()"))
+
+  def test_assertIs_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0), detect("from unittest import TestCase\nTestCase.assertIs()"))
+
+  def test_assertIsNot_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0), detect("from unittest import TestCase\nTestCase.assertIsNot()"))
+
+  def test_assertIsNone_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0), detect("from unittest import TestCase\nTestCase.assertIsNone()"))
+
+  def test_assertIsNotNone_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.assertIsNotNone()"))
+
+  def test_assertIn_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0), detect("from unittest import TestCase\nTestCase.assertIn()"))
+
+  def test_assertNotIn_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0), detect("from unittest import TestCase\nTestCase.assertNotIn()"))
+
+  def test_assertIsInstance_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.assertIsInstance()"))
+
+  def test_assertNotIsInstance_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.assertNotIsInstance()"))
+
+  def test_assertRaisesRegexp_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.assertRaisesRegexp()"))
+
+  def test_assertGreater_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.assertGreater()"))
+
+  def test_assertGreaterEqual_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.assertGreaterEqual()"))
+
+  def test_assertLess_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.assertLess()"))
+
+  def test_assertLessEqual_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.assertLessEqual()"))
+
+  def test_assertRegexpMatches_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.assertRegexpMatches()"))
+
+  def test_assertNotRegexpMatches_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.assertNotRegexpMatches()"))
+
+  def test_assertItemsEqual_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.assertItemsEqual()"))
+
+  def test_assertDictContainsSubset_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.assertDictContainsSubset()"))
+
+  def test_addTypeEqualityFunc_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.addTypeEqualityFunc()"))
+
+  def test_assertMultilineEqual_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.assertMultilineEqual()"))
+
+  def test_assertSequenceEqual_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.assertSequenceEqual()"))
+
+  def test_assertListEqual_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.assertListEqual()"))
+
+  def test_assertTupleEqual_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.assertTupleEqual()"))
+
+  def test_assertSetEqual_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.assertSetEqual()"))
+
+  def test_assertDictEqual_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.assertDictEqual()"))
+
+  def test_longMessage_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.longMessage()"))
+
+  def test_maxDiff_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.maxDiff()"))
+
+  def test_addCleanup_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.addCleanup()"))
+
+  def test_doCleanup_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestCase\nTestCase.doCleanup()"))
+
+  def test_discover_of_unittest_TestLoader(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestLoader\nTestLoader.discover()"))
+
+  def test_startTestRun_of_unittest_TestResult(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestResult\nTestResult.startTestRun()"))
+
+  def test_stopTestRun_of_unittest_TestResult(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestResult\nTestResult.stopTestRun()"))

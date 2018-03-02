@@ -93,3 +93,15 @@ class MinpyConstantMemberTests(MinpyTest):
 
   def test_sentinel_of_multiprocessing_Process(self):
     self.assertOnlyIn(3.3, detect("from multiprocessing import Process\np = Process()\np.sentinel"))
+
+  def test_skipped_of_unittest_TestResult(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestResult\np = TestResult()\np.skipped"))
+
+  def test_buffer_of_unittest_TestResult(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestResult\np = TestResult()\np.buffer"))
+
+  def test_failfast_of_unittest_TestResult(self):
+    self.assertOnlyIn((2.7, 3.0),
+                      detect("from unittest import TestResult\np = TestResult()\np.failfast"))

@@ -118,3 +118,6 @@ class MinpyModuleTests(MinpyTest):
 
   def test_ast(self):
     self.assertOnlyIn((2.6, 3.0), detect("import ast"))
+
+  def test_unittest(self):
+    self.assertOnlyIn((2.1, 3.0), detect("import unittest"))

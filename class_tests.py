@@ -12,3 +12,6 @@ class MinpyClassMemberTests(MinpyTest):
 
   def test_Barrier_of_multiprocessing(self):
     self.assertOnlyIn(3.3, detect("from multiprocessing import Barrier"))
+
+  def test_TextTestResult_of_unittest(self):
+    self.assertOnlyIn((2.7, 3.0), detect("from unittest import TextTestResult"))
