@@ -47,3 +47,6 @@ Analyzing 6 files using 8 processes..
 Minimum required versions: !2, 3.4
 ```
 When it yields `!2` or `!3` it means that it explicitly cannot run on that version.
+
+## Contributing
+Contributions are very welcome, especially adding and updating detection rules of modules, functions, classes etc. to cover as many Python versions as possible. For PRs, make sure to keep the code vanilla Python and run `make test` first. Note that code must be remain valid and working on Python v2.7+ and v3+.
