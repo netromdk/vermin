@@ -447,7 +447,7 @@ def combine_versions(list1, list2):
   return res
 
 def detect_min_versions_path(path):
-  with open(path, "r") as fp:
+  with open(path, mode="rb") as fp:
     try:
       return detect_min_versions_source(fp.read())
     except Exception as ex:
