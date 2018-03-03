@@ -23,6 +23,7 @@ Or copy "minpy.py" to your project:
 ## Examples
 ```
 % ./minpy.py
+Minpy 0.1
 Usage: ./minpy.py [options] <python source files and folders..>
 
 Options:

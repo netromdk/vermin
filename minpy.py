@@ -6,6 +6,12 @@ from os import listdir
 from os.path import abspath, isfile, isdir, join
 from multiprocessing import Pool, cpu_count
 
+VERSION = "0.1"
+QUIET = False
+VERBOSE = 0
+PRINT_VISITS = False
+IGNORE_INCOMP = False
+
 # Module requirements: name -> min version per major or None if N.A.
 MOD_REQS = {
   "ConfigParser": (2.0, None),
@@ -206,11 +212,6 @@ KWARGS_REQS = {
   ("pformat", "compact"): (None, 3.4),  # pprint
   ("pprint", "compact"): (None, 3.4),  # pprint
 }
-
-QUIET = False
-VERBOSE = 0
-PRINT_VISITS = False
-IGNORE_INCOMP = False
 
 def parse_source(source):
   """Parse python source into an AST."""
@@ -573,6 +574,7 @@ def unknown_versions(vers):
   return len(vers) == vers.count(0) + vers.count(None)
 
 def print_usage():
+  print("Minpy {}".format(VERSION))
   print("Usage: {} [options] <python source files and folders..>".format(sys.argv[0]))
   print("\nOptions:")
   print("  -q      Quite mode. It only prints the final versions verdict.")
