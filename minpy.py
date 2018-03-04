@@ -24,6 +24,7 @@ MOD_REQS = {
   "abc": (2.6, 3.0),
   "argparse": (2.7, 3.2),
   "ast": (2.6, 3.0),
+  "asyncio": (None, 3.4),
   "builtins": (None, 3.0),
   "configparser": (None, 3.0),
   "copy_reg": (2.0, None),
@@ -44,6 +45,7 @@ MOD_REQS = {
   "queue": (None, 3.0),
   "repr": (2.0, None),
   "reprlib": (None, 3.0),
+  "secrets": (None, 3.6),
   "sets": (2.0, None),
   "socketserver": (None, 3.0),
   "string.letters": (2.0, None),
@@ -64,6 +66,7 @@ MOD_MEM_REQS = {
   "PathLike": ("os", (None, 3.6)),
   "TextTestResult": ("unittest", (2.7, 3.0)),
   "terminal_size": ("os", (None, 3.3)),
+  "timezone": ("datetime", (None, 3.2)),
 
   # Functions
   "addCleanup": ("unittest.TestCase", (2.7, 3.0)),
@@ -148,6 +151,8 @@ MOD_MEM_REQS = {
   "starmap_async": ("multiprocessing.Pool", (None, 3.3)),
   "startTestRun": ("unittest.TestResult", (2.7, 3.0)),
   "stopTestRun": ("unittest.TestResult", (2.7, 3.0)),
+  "timestamp": ("datetime.datetime", (None, 3.3)),
+  "total_seconds": ("datetime.timedelta", (None, 3.2)),
   "wait": ("multiprocessing.connection", (None, 3.3)),
   "writev": ("os", (None, 3.3)),
 
@@ -178,6 +183,7 @@ MOD_MEM_REQS = {
   "flags": ("sys", (2.6, 3.0)),
   "float_info": ("sys", (2.6, 3.0)),
   "float_repr_style": ("sys", (2.7, 3.0)),
+  "fold": ("datetime.datetime", (None, 3.6)),
   "long_info": ("sys", (2.7, None)),
   "py3kwarning": ("sys", (2.6, None)),
   "sentinel": ("multiprocessing.Process", (None, 3.3)),
@@ -204,13 +210,17 @@ KWARGS_REQS = {
   ("chmod", "follow_symlinks"): (None, 3.3),  # os
   ("chown", "dir_fd"): (None, 3.3),  # os
   ("chown", "follow_symlinks"): (None, 3.3),  # os
+  ("combine", "tzinfo"): (None, 3.6),  # datetime.datetime
+  ("datetime", "fold"): (None, 3.6),  # datetime.datetime
   ("dup2", "inheritable"): (None, 3.4),  # os
+  ("isoformat", "timespec"): (None, 3.6),  # datetime.datetime
   ("link", "dst_dir_fd"): (None, 3.3),  # os
   ("link", "follow_symlinks"): (None, 3.3),  # os
   ("link", "src_dir_fd"): (None, 3.3),  # os
   ("open", "dir_fd"): (None, 3.3),  # os
   ("pformat", "compact"): (None, 3.4),  # pprint
   ("pprint", "compact"): (None, 3.4),  # pprint
+  ("replace", "fold"): (None, 3.6),  # datetime.datetime
 }
 
 def parse_source(source, path=None):

@@ -105,3 +105,6 @@ class MinpyConstantMemberTests(MinpyTest):
   def test_failfast_of_unittest_TestResult(self):
     self.assertOnlyIn((2.7, 3.0),
                       detect("from unittest import TestResult\np = TestResult()\np.failfast"))
+
+  def test_fold_of_datetime_datetime(self):
+    self.assertOnlyIn(3.6, detect("from datetime import datetime\np = datetime()\np.fold"))

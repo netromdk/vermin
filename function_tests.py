@@ -283,3 +283,9 @@ class MinpyFunctionMemberTests(MinpyTest):
   def test_stopTestRun_of_unittest_TestResult(self):
     self.assertOnlyIn((2.7, 3.0),
                       detect("from unittest import TestResult\nTestResult.stopTestRun()"))
+
+  def test_total_seconds_of_datetime_timedelta(self):
+    self.assertOnlyIn(3.2, detect("from datetime import timedelta\ntimedelta.total_seconds()"))
+
+  def test_timestamp_of_datetime_datetime(self):
+    self.assertOnlyIn(3.3, detect("from datetime import datetime\ndatetime.timestamp()"))

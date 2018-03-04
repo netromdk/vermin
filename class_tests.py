@@ -15,3 +15,6 @@ class MinpyClassMemberTests(MinpyTest):
 
   def test_TextTestResult_of_unittest(self):
     self.assertOnlyIn((2.7, 3.0), detect("from unittest import TextTestResult"))
+
+  def test_timezone_of_datetime(self):
+    self.assertOnlyIn(3.2, detect("from datetime import timezone"))

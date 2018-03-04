@@ -121,3 +121,9 @@ class MinpyModuleTests(MinpyTest):
 
   def test_unittest(self):
     self.assertOnlyIn((2.1, 3.0), detect("import unittest"))
+
+  def test_secrets(self):
+    self.assertOnlyIn(3.6, detect("import secrets"))
+
+  def test_asyncio(self):
+    self.assertOnlyIn(3.4, detect("import asyncio"))

@@ -67,3 +67,15 @@ class MinpyKwargsTests(MinpyTest):
     self.assertOnlyIn((2.7, 3.0),
                       detect("from unittest import TestCase\n"
                              "TestCase.assertNotAlmostEqual(delta=1)"))
+
+  def test_fold_of_datetime_from_datetime(self):
+    self.assertOnlyIn(3.6, detect("from datetime import datetime\ndatetime(fold=1)"))
+
+  def test_tzinfo_of_combine_from_datetime(self):
+    self.assertOnlyIn(3.6, detect("from datetime import datetime\ndatetime.combine(tzinfo=1)"))
+
+  def test_fold_of_replace_from_datetime(self):
+    self.assertOnlyIn(3.6, detect("from datetime import datetime\ndatetime.replace(fold=1)"))
+
+  def test_timespec_of_isoformat_from_datetime(self):
+    self.assertOnlyIn(3.6, detect("from datetime import datetime\ndatetime.isoformat(timespec=1)"))
