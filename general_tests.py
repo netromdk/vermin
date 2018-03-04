@@ -46,6 +46,11 @@ class MinpyGeneralTests(MinpyTest):
       visitor = visit("s = B'hello'")
       self.assertTrue(visitor.bytesv3())
 
+  def test_fstrings(self):
+    if current_version() >= 3.6:
+      visitor = visit("name = 'world'\nf'hello {name}'")
+      self.assertTrue(visitor.fstrings())
+
   def test_modules(self):
     visitor = visit("import ast\nimport sys, argparse\nfrom os import *")
     self.assertOnlyIn(("ast", "sys", "argparse", "os"), visitor.modules())

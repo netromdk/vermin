@@ -28,3 +28,7 @@ class MinpyLanguageTests(MinpyTest):
     if current_major_version() >= 3:
       self.assertOnlyIn(3.0, detect("v = b'hello'"))
       self.assertOnlyIn(3.0, detect("v = B'hello'"))
+
+  def test_fstrings(self):
+    if current_version() >= 3.6:
+      self.assertOnlyIn(3.6, detect("name = 'world'\nf'hello {name}'"))
