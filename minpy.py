@@ -470,7 +470,9 @@ def parse_detect_source(source):
     if err.msg.lower().find("missing parentheses in call to 'print'") != -1:
       vvprint("`{}` requires 2.0".format(err.text.strip()))
       return (None, [2.0, None])
-    return (None, [0, 0])
+    else:
+      vvprint("{}: {}".format(err, err.text.strip()))
+  return (None, [0, 0])
 
 def detect_min_versions_source(source):
   (node, mins) = parse_detect_source(source)
