@@ -240,6 +240,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__printv2 = False
     self.__printv3 = False
     self.__format = False
+    self.__longv2 = False
     self.__star_imports = []
     self.__function_name = None
     self.__kwargs = []
@@ -259,6 +260,9 @@ class SourceVisitor(ast.NodeVisitor):
 
   def format(self):
     return self.__format
+
+  def longv2(self):
+    return self.__longv2
 
   def kwargs(self):
     return self.__kwargs
@@ -322,6 +326,9 @@ class SourceVisitor(ast.NodeVisitor):
         self.__add_member(elms[-1])
 
   def visit_Name(self, node):
+    if node.id == "long":
+      self.__longv2 = True
+      vvprint("long is a v2 feature")
     self.__add_member(node.id)
 
   def visit_Print(self, node):
@@ -485,6 +492,9 @@ def detect_min_versions(node):
 
   if visitor.format():
     mins = combine_versions(mins, (2.7, 3.0))
+
+  if visitor.longv2():
+    mins = combine_versions(mins, (2.0, None))
 
   mods = visitor.modules()
   for mod in mods:

@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/netromdk/minpy.svg?branch=master)](https://travis-ci.org/netromdk/minpy)
+![Commits since last release](https://img.shields.io/github/commits-since/netromdk/minpy/latest.svg)
 
 # minpy
 Concurrently detect the minimum Python version needed to run code.
@@ -7,7 +8,7 @@ Everything is contained within "minpy.py" - no other file is necessary.
 
 Since the code is vanilla Python, and it doesn't have any external dependencies, it works with v2.7+ and v3+.
 
-It functions by parsing Python code into an abstract syntax tree (AST), which it traverses and matches against internal dictionaries with 184 rules divided into 40 modules, 123 classes/functions/constants members of modules, and 21 kwargs of functions. Including looking for v2/v3 `print expr` and `print(expr)`, `"..".format(..)`, imports (`import X`, `from X import Y`, `from X import *`), and function calls wrt. name and kwargs.
+It functions by parsing Python code into an abstract syntax tree (AST), which it traverses and matches against internal dictionaries with 184 rules divided into 40 modules, 123 classes/functions/constants members of modules, and 21 kwargs of functions. Including looking for v2/v3 `print expr` and `print(expr)`, `long`, `"..".format(..)`, imports (`import X`, `from X import Y`, `from X import *`), and function calls wrt. name and kwargs.
 
 ## Usage
 It is fairly straightforward to use Minpy:

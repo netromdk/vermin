@@ -19,3 +19,7 @@ class MinpyLanguageTests(MinpyTest):
   def test_format(self):
     vers = detect("'hello {}!'.format('world')")
     self.assertOnlyIn((2.7, 3.0), vers)
+
+  def test_longv2(self):
+    self.assertOnlyIn(2.0, detect("v = long(42)"))
+    self.assertOnlyIn(2.0, detect("isinstance(42, long)"))

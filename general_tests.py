@@ -33,6 +33,12 @@ class MinpyGeneralTests(MinpyTest):
     visitor = visit("print('{}'.format(42))")
     self.assertTrue(visitor.format())
 
+  def test_longv2(self):
+    visitor = visit("n = long(42)")
+    self.assertTrue(visitor.longv2())
+    visitor = visit("isinstance(42, long)")
+    self.assertTrue(visitor.longv2())
+
   def test_modules(self):
     visitor = visit("import ast\nimport sys, argparse\nfrom os import *")
     self.assertOnlyIn(("ast", "sys", "argparse", "os"), visitor.modules())
