@@ -51,6 +51,12 @@ class MinpyGeneralTests(MinpyTest):
       visitor = visit("name = 'world'\nf'hello {name}'")
       self.assertTrue(visitor.fstrings())
 
+  def test_strftime_directives(self):
+    visitor = visit("from datetime import datetime\ndatetime.now().strftime('%A %d. %B %Y')")
+    self.assertOnlyIn(("%A", "%d", "%B", "%Y"), visitor.strftime_directives())
+    visitor = visit("from datetime import datetime\ndatetime.strptime('2018', '%Y')")
+    self.assertOnlyIn("%Y", visitor.strftime_directives())
+
   def test_modules(self):
     visitor = visit("import ast\nimport sys, argparse\nfrom os import *")
     self.assertOnlyIn(("ast", "sys", "argparse", "os"), visitor.modules())

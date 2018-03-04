@@ -2,6 +2,7 @@
 
 import sys
 import ast
+import re
 from os import listdir
 from os.path import abspath, isfile, isdir, join
 from multiprocessing import Pool, cpu_count
@@ -11,6 +12,8 @@ QUIET = False
 VERBOSE = 0
 PRINT_VISITS = False
 IGNORE_INCOMP = False
+
+STRFTIME_DIRECTIVE_REGEX = re.compile(r"(%\w)")
 
 # Module requirements: name -> min version per major or None if N.A.
 MOD_REQS = {
@@ -223,6 +226,14 @@ KWARGS_REQS = {
   ("replace", "fold"): (None, 3.6),  # datetime.datetime
 }
 
+# datetime+time strftime/strptime requirements: directive -> requirements
+STRFTIME_REQS = {
+  "%G": (None, 3.6),
+  "%V": (None, 3.6),
+  "%f": (2.6, 3.0),
+  "%u": (None, 3.6),
+}
+
 def parse_source(source, path=None):
   """Parse python source into an AST."""
   path = "<unknown>" if path is None else path
@@ -258,6 +269,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__function_name = None
     self.__kwargs = []
     self.__depth = 0
+    self.__strftime_directives = []
 
   def modules(self):
     return self.__modules
@@ -286,6 +298,9 @@ class SourceVisitor(ast.NodeVisitor):
   def kwargs(self):
     return self.__kwargs
 
+  def strftime_directives(self):
+    return self.__strftime_directives
+
   def __add_module(self, module):
     self.__modules.append(module)
 
@@ -307,6 +322,9 @@ class SourceVisitor(ast.NodeVisitor):
       if mod in self.__modules or mod in self.__star_imports:
         return True
     return False
+
+  def __add_strftime_directive(self, group):
+    self.__strftime_directives.append(group)
 
   def generic_visit(self, node):
     self.__depth += 1
@@ -361,10 +379,16 @@ class SourceVisitor(ast.NodeVisitor):
         self.__function_name = func.id
         if func.id == "print":
           self.__printv3 = True
-      elif hasattr(func, "attr") and func.attr == "format" and \
-           hasattr(func, "value") and isinstance(func.value, ast.Str):
-        vvprint("`\"..\".format(..)` requires [2.7, 3.0]")
-        self.__format = True
+      elif hasattr(func, "attr"):
+        attr = func.attr
+        if attr == "format" and hasattr(func, "value") and isinstance(func.value, ast.Str):
+          vvprint("`\"..\".format(..)` requires [2.7, 3.0]")
+          self.__format = True
+        elif (attr == "strftime" or attr == "strptime") and hasattr(node, "args"):
+          for arg in node.args:
+            if hasattr(arg, "s"):
+              for directive in STRFTIME_DIRECTIVE_REGEX.findall(arg.s):
+                self.__add_strftime_directive(directive)
     self.generic_visit(node)
     self.__function_name = None
 
@@ -528,6 +552,12 @@ def detect_min_versions(node):
 
   if visitor.fstrings():
     mins = combine_versions(mins, (None, 3.6))
+
+  for directive in visitor.strftime_directives():
+    if directive in STRFTIME_REQS:
+      vers = STRFTIME_REQS[directive]
+      vvprint("strftime directive '{}' requires {}".format(directive, vers))
+      mins = combine_versions(mins, vers)
 
   mods = visitor.modules()
   for mod in mods:
