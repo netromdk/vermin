@@ -213,9 +213,10 @@ KWARGS_REQS = {
   ("pprint", "compact"): (None, 3.4),  # pprint
 }
 
-def parse_source(source):
+def parse_source(source, path=None):
   """Parse python source into an AST."""
-  return ast.parse(source)
+  path = "<unknown>" if path is None else path
+  return ast.parse(source, filename=path)
 
 def nprint(msg):
   if not QUIET:
@@ -456,14 +457,14 @@ def combine_versions(list1, list2):
 def detect_min_versions_path(path):
   with open(path, mode="rb") as fp:
     try:
-      return detect_min_versions_source(fp.read())
+      return detect_min_versions_source(fp.read(), path=path)
     except Exception as ex:
       nprint("{}: {}".format(path, ex))
       return [0, 0]
 
-def parse_detect_source(source):
+def parse_detect_source(source, path=None):
   try:
-    return (parse_source(source), [])
+    return (parse_source(source, path=path), [])
   except SyntaxError as err:
     # `print expr` is a Python 2 construct, in v3 it's `print(expr)`.
     # NOTE: This is only triggered when running a python 3 on v2 code!
@@ -474,8 +475,8 @@ def parse_detect_source(source):
       vvprint("{}: {}".format(err, err.text.strip()))
   return (None, [0, 0])
 
-def detect_min_versions_source(source):
-  (node, mins) = parse_detect_source(source)
+def detect_min_versions_source(source, path=None):
+  (node, mins) = parse_detect_source(source, path)
   if node is None:
     return mins
   return detect_min_versions(node)
