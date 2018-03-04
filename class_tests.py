@@ -18,3 +18,30 @@ class MinpyClassMemberTests(MinpyTest):
 
   def test_timezone_of_datetime(self):
     self.assertOnlyIn(3.2, detect("from datetime import timezone"))
+
+  def test_Collection_of_typing(self):
+    self.assertOnlyIn(3.6, detect("from typing import Collection"))
+
+  def test_Deque_of_typing(self):
+    self.assertOnlyIn(3.6, detect("from typing import Deque"))
+
+  def test_ContextManager_of_typing(self):
+    self.assertOnlyIn(3.6, detect("from typing import ContextManager"))
+
+  def test_Counter_of_typing(self):
+    self.assertOnlyIn(3.6, detect("from typing import Counter"))
+
+  def test_ChainMap_of_typing(self):
+    self.assertOnlyIn(3.6, detect("from typing import ChainMap"))
+
+  def test_AsyncGenerator_of_typing(self):
+    self.assertOnlyIn(3.6, detect("from typing import AsyncGenerator"))
+
+  def test_Text_of_typing(self):
+    self.assertOnlyIn(3.6, detect("from typing import Text"))
+
+  def test_ClassVar_of_typing(self):
+    self.assertOnlyIn(3.5, detect("from typing import ClassVar"))
+
+  def test_DomainFilter_of_tracemalloc(self):
+    self.assertOnlyIn(3.6, detect("from tracemalloc import DomainFilter"))

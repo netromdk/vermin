@@ -38,9 +38,12 @@ MOD_REQS = {
   "dbm.struct": (None, 3.0),
   "dbm.sys": (None, 3.0),
   "dbm.whichdb": (None, 3.0),
+  "faulthandler": (None, 3.3),
+  "hashlib": (2.5, 3.0),
   "html": (None, 3.0),
   "htmlentitydefs": (2.0, None),
   "http": (None, 3.0),
+  "ipaddress": (None, 3.3),
   "markupbase": (2.0, None),
   "md5": (2.0, None),
   "multiprocessing": (2.6, 3.0),
@@ -55,6 +58,8 @@ MOD_REQS = {
   "string.lowercase": (2.0, None),
   "string.uppercase": (2.0, None),
   "tkinter": (None, 3.0),
+  "tracemalloc": (None, 3.4),
+  "typing": (None, 3.5),
   "unittest": (2.1, 3.0),
   "urllib2": (2.0, None),
   "winreg": (None, 3.0),
@@ -65,13 +70,23 @@ MOD_REQS = {
 MOD_MEM_REQS = {
   # Classes
   "ABC": ("abc", (None, 3.4)),
+  "AsyncGenerator": ("typing", (None, 3.6)),
   "Barrier": ("multiprocessing", (None, 3.3)),
+  "ChainMap": ("typing", (None, 3.6)),
+  "ClassVar": ("typing", (None, 3.5)),
+  "Collection": ("typing", (None, 3.6)),
+  "ContextManager": ("typing", (None, 3.6)),
+  "Counter": ("typing", (None, 3.6)),
+  "Deque": ("typing", (None, 3.6)),
+  "DomainFilter": ("tracemalloc", (None, 3.6)),
   "PathLike": ("os", (None, 3.6)),
+  "Text": ("typing", (None, 3.6)),
   "TextTestResult": ("unittest", (2.7, 3.0)),
   "terminal_size": ("os", (None, 3.3)),
   "timezone": ("datetime", (None, 3.2)),
 
   # Functions
+  "NewType": ("typing", (None, 3.5)),
   "addCleanup": ("unittest.TestCase", (2.7, 3.0)),
   "addTypeEqualityFunc": ("unittest.TestCase", (2.7, 3.0)),
   "assertDictContainsSubset": ("unittest.TestCase", (2.7, 3.0)),
@@ -134,6 +149,7 @@ MOD_MEM_REQS = {
   "lockf": ("os", (None, 3.3)),
   "longMessage": ("unittest.TestCase", (2.7, 3.0)),
   "maxDiff": ("unittest.TestCase", (2.7, 3.0)),
+  "pbkdf2_hmac": ("hashlib", (2.7, 3.4)),
   "pipe2": ("os", (None, 3.3)),
   "posix_fadvise": ("os", (None, 3.3)),
   "posix_fallocate": ("os", (None, 3.3)),
@@ -141,6 +157,7 @@ MOD_MEM_REQS = {
   "pwrite": ("os", (None, 3.3)),
   "readv": ("os", (None, 3.3)),
   "realpath": ("os.path", (2.6, 3.0)),
+  "scrypt": ("hashlib", (None, 3.6)),
   "sendfile": ("os", (None, 3.3)),
   "set_blocking": ("os", (None, 3.5)),
   "set_handle_inheritable": ("os", (None, 3.4)),
@@ -179,6 +196,10 @@ MOD_MEM_REQS = {
   "SF_MNOWAIT": ("os", (None, 3.3)),
   "SF_NODISKIO": ("os", (None, 3.3)),
   "SF_SYNC": ("os", (None, 3.3)),
+  "TYPE_CHECKING": ("typing", (None, 3.5)),
+  "algorithms": ("hashlib", (2.7, None)),
+  "algorithms_available": ("hashlib", (2.7, 3.2)),
+  "algorithms_guaranteed": ("hashlib", (2.7, 3.2)),
   "api_version": ("sys", (2.3, 3.0)),
   "buffer": ("unittest.TestResult", (2.7, 3.0)),
   "environb": ("os", (None, 3.2)),
@@ -187,8 +208,10 @@ MOD_MEM_REQS = {
   "float_info": ("sys", (2.6, 3.0)),
   "float_repr_style": ("sys", (2.7, 3.0)),
   "fold": ("datetime.datetime", (None, 3.6)),
+  "is_global": ("ipaddress.IPv4Address", (None, 3.4)),
   "long_info": ("sys", (2.7, None)),
   "py3kwarning": ("sys", (2.6, None)),
+  "reverse_pointer": ("ipaddress.IPv4Address", (None, 3.5)),
   "sentinel": ("multiprocessing.Process", (None, 3.3)),
   "skipped": ("unittest.TestResult", (2.7, 3.0)),
   "subversion": ("sys", (2.5, None)),
@@ -199,6 +222,7 @@ MOD_MEM_REQS = {
 
 # Keyword arguments requirements: (function, keyword argument) -> requirements
 KWARGS_REQS = {
+  ("Filter", "domain"): (None, 3.6),  # tracemalloc
   ("Pool", "context"): (None, 3.4),  # multiprocessing
   ("Pool", "maxtasksperchild"): (None, 3.2),  # multiprocessing
   ("PrettyPrinter", "compact"): (None, 3.4),  # pprint

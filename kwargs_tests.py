@@ -79,3 +79,6 @@ class MinpyKwargsTests(MinpyTest):
 
   def test_timespec_of_isoformat_from_datetime(self):
     self.assertOnlyIn(3.6, detect("from datetime import datetime\ndatetime.isoformat(timespec=1)"))
+
+  def test_domain_of_Filter_from_tracemalloc(self):
+    self.assertOnlyIn(3.6, detect("import tracemalloc\ntracemalloc.Filter(domain=1)"))

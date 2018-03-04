@@ -108,3 +108,27 @@ class MinpyConstantMemberTests(MinpyTest):
 
   def test_fold_of_datetime_datetime(self):
     self.assertOnlyIn(3.6, detect("from datetime import datetime\np = datetime()\np.fold"))
+
+  def test_TYPE_CHECKING_of_typing(self):
+    self.assertOnlyIn(3.5, detect("from typing import TYPE_CHECKING"))
+
+  def test_algorithms_of_hashlib(self):
+    self.assertOnlyIn(2.7, detect("from hashlib import algorithms"))
+
+  def test_algorithms_available_of_hashlib(self):
+    self.assertOnlyIn((2.7, 3.2), detect("from hashlib import algorithms_available"))
+
+  def test_algorithms_guaranteed_of_hashlib(self):
+    self.assertOnlyIn((2.7, 3.2), detect("from hashlib import algorithms_guaranteed"))
+
+  def test_reverse_pointer_of_ipaddress_IPv4Address(self):
+    self.assertOnlyIn(3.5,
+                      detect("from ipaddress import IPv4Address\n"
+                             "addr = IPv4Address('127.0.0.1')\n"
+                             "addr.reverse_pointer"))
+
+  def test_is_global_of_ipaddress_IPv4Address(self):
+    self.assertOnlyIn(3.4,
+                      detect("from ipaddress import IPv4Address\n"
+                             "addr = IPv4Address('127.0.0.1')\n"
+                             "addr.is_global"))

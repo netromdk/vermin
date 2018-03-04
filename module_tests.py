@@ -127,3 +127,18 @@ class MinpyModuleTests(MinpyTest):
 
   def test_asyncio(self):
     self.assertOnlyIn(3.4, detect("import asyncio"))
+
+  def test_typing(self):
+    self.assertOnlyIn(3.5, detect("import typing"))
+
+  def test_tracemalloc(self):
+    self.assertOnlyIn(3.4, detect("import tracemalloc"))
+
+  def test_hashlib(self):
+    self.assertOnlyIn((2.5, 3.0), detect("import hashlib"))
+
+  def test_faulthandler(self):
+    self.assertOnlyIn(3.3, detect("import faulthandler"))
+
+  def test_ipaddress(self):
+    self.assertOnlyIn(3.3, detect("import ipaddress"))
