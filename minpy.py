@@ -242,6 +242,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__printv3 = False
     self.__format = False
     self.__longv2 = False
+    self.__bytesv3 = False
     self.__star_imports = []
     self.__function_name = None
     self.__kwargs = []
@@ -264,6 +265,9 @@ class SourceVisitor(ast.NodeVisitor):
 
   def longv2(self):
     return self.__longv2
+
+  def bytesv3(self):
+    return self.__bytesv3
 
   def kwargs(self):
     return self.__kwargs
@@ -362,6 +366,9 @@ class SourceVisitor(ast.NodeVisitor):
   def visit_keyword(self, node):
     if self.__function_name is not None:
       self.__add_kwargs(self.__function_name, node.arg)
+
+  def visit_Bytes(self, node):
+    self.__bytesv3 = True
 
   # Ignore unused nodes as a speed optimization.
 
@@ -498,6 +505,9 @@ def detect_min_versions(node):
 
   if visitor.longv2():
     mins = combine_versions(mins, (2.0, None))
+
+  if visitor.bytesv3():
+    mins[1] = 3.0
 
   mods = visitor.modules()
   for mod in mods:

@@ -39,6 +39,13 @@ class MinpyGeneralTests(MinpyTest):
     visitor = visit("isinstance(42, long)")
     self.assertTrue(visitor.longv2())
 
+  def test_bytesv3(self):
+    if current_version() >= 3.0:
+      visitor = visit("s = b'hello'")
+      self.assertTrue(visitor.bytesv3())
+      visitor = visit("s = B'hello'")
+      self.assertTrue(visitor.bytesv3())
+
   def test_modules(self):
     visitor = visit("import ast\nimport sys, argparse\nfrom os import *")
     self.assertOnlyIn(("ast", "sys", "argparse", "os"), visitor.modules())

@@ -23,3 +23,8 @@ class MinpyLanguageTests(MinpyTest):
   def test_longv2(self):
     self.assertOnlyIn(2.0, detect("v = long(42)"))
     self.assertOnlyIn(2.0, detect("isinstance(42, long)"))
+
+  def test_bytesv3(self):
+    if current_major_version() >= 3:
+      self.assertOnlyIn(3.0, detect("v = b'hello'"))
+      self.assertOnlyIn(3.0, detect("v = B'hello'"))

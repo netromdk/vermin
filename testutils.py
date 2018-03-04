@@ -13,12 +13,12 @@ def current_version():
 class MinpyTest(unittest.TestCase):
   """General test case class for all Minpy tests."""
   def assertOnlyIn(self, values, data):
-    """Assert only value(s) is in data but ignores None values."""
+    """Assert only value(s) is in data but ignores None and 0 values."""
     size = 1
     multiple = isinstance(values, list) or isinstance(values, tuple)
     if multiple:
       size = len(values)
-    self.assertEqual(len(data) - data.count(None), size,
+    self.assertEqual(len(data) - data.count(None) - data.count(0), size,
                      msg="ONLY looking for '{}' in '{}'".format(values, data))
     if multiple:
       for value in values:
