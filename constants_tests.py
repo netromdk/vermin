@@ -132,3 +132,9 @@ class MinpyConstantMemberTests(MinpyTest):
                       detect("from ipaddress import IPv4Address\n"
                              "addr = IPv4Address('127.0.0.1')\n"
                              "addr.is_global"))
+
+  def test_is_global_of_ipaddress_IPv6Address(self):
+    self.assertOnlyIn(3.4,
+                      detect("from ipaddress import IPv6Address\n"
+                             "addr = IPv6Address(':::1')\n"
+                             "addr.is_global"))

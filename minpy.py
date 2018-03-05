@@ -216,6 +216,7 @@ MOD_MEM_REQS = multidict((
   ("float_repr_style", ("sys", (2.7, 3.0))),
   ("fold", ("datetime.datetime", (None, 3.6))),
   ("is_global", ("ipaddress.IPv4Address", (None, 3.4))),
+  ("is_global", ("ipaddress.IPv6Address", (None, 3.4))),
   ("long_info", ("sys", (2.7, None))),
   ("py3kwarning", ("sys", (2.6, None))),
   ("reverse_pointer", ("ipaddress.IPv4Address", (None, 3.5))),
@@ -425,6 +426,20 @@ class SourceVisitor(ast.NodeVisitor):
     self.__function_name = None
 
   def visit_Attribute(self, node):
+    # Retrieve full attribute name path, like "ipaddress.IPv4Address" from:
+    # Attribute(value=Name(id='ipaddress', ctx=Load()), attr='IPv4Address', ctx=Load())
+    if hasattr(node, "value"):
+      full_name = []
+      for attr in ast.walk(node):
+        if isinstance(attr, ast.Attribute):
+          if hasattr(attr, "attr"):
+            full_name.insert(0, attr.attr)
+          if hasattr(attr, "value") and hasattr(attr.value, "id"):
+            full_name.insert(0, attr.value.id)
+      if len(full_name) > 0:
+        if full_name[0] in self.__modules:
+          self.__add_module(".".join(full_name))
+
     # When a function is called like "os.path.ismount(..)" it is an attribute list where the "first"
     # (this one) is the function name. Stop visiting here.
     if hasattr(node, "attr"):
