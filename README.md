@@ -2,9 +2,7 @@
 ![Commits since last release](https://img.shields.io/github/commits-since/netromdk/minpy/latest.svg)
 
 # minpy
-Concurrently detect the minimum Python version needed to run code.
-
-Everything is contained within "minpy.py" - no other file is necessary.
+Concurrently detect the minimum Python versions needed to run code.
 
 Since the code is vanilla Python, and it doesn't have any external dependencies, it works with v2.7+ and v3+.
 
@@ -14,11 +12,6 @@ It functions by parsing Python code into an abstract syntax tree (AST), which it
 It is fairly straightforward to use Minpy:
 ```
 ./minpy.py /path/to/your/project
-```
-
-Or copy "minpy.py" to your project:
-```
-./minpy.py .
 ```
 
 ## Examples
