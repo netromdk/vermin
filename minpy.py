@@ -326,7 +326,8 @@ class SourceVisitor(ast.NodeVisitor):
     return self.__strftime_directives
 
   def __add_module(self, module):
-    self.__modules.append(module)
+    if module not in self.__modules:
+      self.__modules.append(module)
 
   def __add_member(self, member):
     """Add member if required module is imported."""
