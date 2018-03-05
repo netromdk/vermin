@@ -1,4 +1,4 @@
-from testutils import MinpyTest, detect
+from .testutils import MinpyTest, detect
 
 class MinpyStrftimeDirectiveTests(MinpyTest):
   def test_G_directive(self):

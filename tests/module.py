@@ -1,4 +1,4 @@
-from testutils import MinpyTest, detect
+from .testutils import MinpyTest, detect
 
 class MinpyModuleTests(MinpyTest):
   def test_argparse(self):

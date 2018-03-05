@@ -1,4 +1,4 @@
-from testutils import MinpyTest, detect
+from .testutils import MinpyTest, detect
 
 class MinpyClassMemberTests(MinpyTest):
   def test_ABC_of_abc(self):

@@ -1,4 +1,4 @@
-from testutils import MinpyTest, detect, current_version, current_major_version
+from .testutils import MinpyTest, detect, current_version, current_major_version
 
 class MinpyLanguageTests(MinpyTest):
   def test_printv2(self):

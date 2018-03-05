@@ -1,4 +1,4 @@
-from testutils import MinpyTest, detect
+from .testutils import MinpyTest, detect
 
 class MinpyFunctionMemberTests(MinpyTest):
   def test_exc_clear_of_sys(self):

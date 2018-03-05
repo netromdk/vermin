@@ -1,9 +1,10 @@
 from os.path import abspath
 from multiprocessing import cpu_count
 
-from testutils import MinpyTest, current_version
 from minpy import SourceVisitor, parse_source, parse_detect_source, detect_min_versions_source,\
   combine_versions, InvalidVersionException, detect_paths, process_paths
+
+from .testutils import MinpyTest, current_version
 
 def visit(source):
   visitor = SourceVisitor()

@@ -1,4 +1,5 @@
 MINPY_FILES=minpy.py `find minpy -iname '*.py'`
+TEST_FILES=runtests.py `find tests -iname '*.py'`
 
 self-test:
 	./minpy.py -v ${MINPY_FILES}
@@ -28,9 +29,9 @@ update-requirements: setup
 
 check-style:
 	flake8 --ignore E111,E114,E121,E126,E127,E302,E305 --max-line-length 100 --count \
-          --show-source ${MINPY_FILES}
+          --show-source ${MINPY_FILES} ${TEST_FILES}
 
 static-analysis:
-	vulture --min-confidence 70 --sort-by-size ${MINPY_FILES}
+	vulture --min-confidence 70 --sort-by-size ${MINPY_FILES} ${TEST_FILES}
 
 check: check-style static-analysis

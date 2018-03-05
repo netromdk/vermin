@@ -1,4 +1,4 @@
-from testutils import MinpyTest, detect
+from .testutils import MinpyTest, detect
 
 class MinpyConstantMemberTests(MinpyTest):
   def test_flags_of_sys(self):

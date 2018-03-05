@@ -1,4 +1,4 @@
-from testutils import MinpyTest, detect
+from .testutils import MinpyTest, detect
 
 class MinpyKwargsTests(MinpyTest):
   def test_inheritable_of_dup2_from_os(self):
