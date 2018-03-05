@@ -1,6 +1,9 @@
+from os.path import abspath
+from multiprocessing import cpu_count
+
 from testutils import MinpyTest, current_version
-from minpy import SourceVisitor, parse_source, parse_detect_source, detect_min_versions_path, \
-  detect_min_versions_source, combine_versions, InvalidVersionException
+from minpy import SourceVisitor, parse_source, parse_detect_source, detect_min_versions_source,\
+  combine_versions, InvalidVersionException, detect_paths, process_paths
 
 def visit(source):
   visitor = SourceVisitor()
@@ -86,7 +89,9 @@ class MinpyGeneralTests(MinpyTest):
     self.assertOnlyIn([("open", "dir_fd")], visitor.kwargs())
 
   def test_detect_minpy_min_versions(self):
-    self.assertOnlyIn((2.7, 3.0), detect_min_versions_path("minpy.py"))
+    paths = detect_paths([abspath("minpy")])
+    (mins, incomp) = process_paths(paths, cpu_count())
+    self.assertOnlyIn((2.7, 3.0), mins)
 
   def test_combine_versions(self):
     with self.assertRaises(AssertionError):
