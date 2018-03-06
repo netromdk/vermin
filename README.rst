@@ -29,6 +29,11 @@ It is fairly straightforward to use Vermin::
 
   ./vermin.py /path/to/your/project
 
+Or via `PyPi <https://pypi.python.org/pypi/vermin/>`__::
+
+  % pip install vermin
+  % vermin /path/to/your/project
+
 Examples
 ========
 
