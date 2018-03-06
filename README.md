@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/netromdk/vermin.svg?branch=master)](https://travis-ci.org/netromdk/vermin)
 ![Commits since last release](https://img.shields.io/github/commits-since/netromdk/vermin/latest.svg)
+[![PyPI version fury.io](https://badge.fury.io/py/vermin.svg)](https://pypi.python.org/pypi/vermin/)
 
 # Vermin
 Concurrently detect the minimum Python versions needed to run code.
