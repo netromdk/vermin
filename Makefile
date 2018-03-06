@@ -17,14 +17,24 @@ test-all:
 count:
 	./count.py
 
-setup: clean
+setup: clean-venv clean
 	virtualenv -p python .venv
 	.venv/bin/pip install -r .misc-requirements.txt
 
 clean:
-	rm -fr .venv
 	find . -iname __pycache__ | xargs rm -fr
 	find . -iname '*.pyc' | xargs rm -f
+
+clean-venv:
+	rm -fr .venv
+
+clean-pypi:
+	rm -fr build dist *.egg-info
+
+dist-clean: clean clean-venv clean-pypi
+
+pypi-dist: clean-pypi
+	python setup.py bdist_wheel --universal
 
 update-requirements: setup
 	.venv/bin/pip freeze > .misc-requirements.txt
