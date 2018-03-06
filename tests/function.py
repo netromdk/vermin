@@ -1,6 +1,6 @@
-from .testutils import MinpyTest, detect
+from .testutils import VerminTest, detect
 
-class MinpyFunctionMemberTests(MinpyTest):
+class VerminFunctionMemberTests(VerminTest):
   def test_exc_clear_of_sys(self):
     self.assertOnlyIn(2.3, detect("from sys import exc_clear"))
 

@@ -1,10 +1,10 @@
-MINPY_FILES=minpy.py `find minpy -iname '*.py'`
+VERMIN_FILES=vermin.py `find vermin -iname '*.py'`
 TEST_FILES=runtests.py `find tests -iname '*.py'`
 OTHER_FILES=count.py
-ALL_FILES=${MINPY_FILES} ${TEST_FILES} ${OTHER_FILES}
+ALL_FILES=${VERMIN_FILES} ${TEST_FILES} ${OTHER_FILES}
 
 self-test:
-	./minpy.py -v ${MINPY_FILES}
+	./vermin.py -v ${VERMIN_FILES}
 
 test: self-test
 	./runtests.py

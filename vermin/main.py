@@ -17,7 +17,7 @@ def unknown_versions(vers):
   return len(vers) == vers.count(0) + vers.count(None)
 
 def print_usage():
-  print("Minpy {}".format(VERSION))
+  print("Vermin {}".format(VERSION))
   print("Usage: {} [options] <python source files and folders..>".format(sys.argv[0]))
   print("\nOptions:")
   print("  -q      Quite mode. It only prints the final versions verdict.")

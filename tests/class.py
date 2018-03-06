@@ -1,6 +1,6 @@
-from .testutils import MinpyTest, detect
+from .testutils import VerminTest, detect
 
-class MinpyClassMemberTests(MinpyTest):
+class VerminClassMemberTests(VerminTest):
   def test_ABC_of_abc(self):
     self.assertOnlyIn(3.4, detect("from abc import ABC"))
 

@@ -1,6 +1,6 @@
-from .testutils import MinpyTest, detect
+from .testutils import VerminTest, detect
 
-class MinpyModuleTests(MinpyTest):
+class VerminModuleTests(VerminTest):
   def test_argparse(self):
     self.assertOnlyIn((2.7, 3.2), detect("import argparse"))
     self.assertOnlyIn((2.7, 3.2), detect("from argparse import *"))

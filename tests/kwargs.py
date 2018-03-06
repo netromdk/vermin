@@ -1,6 +1,6 @@
-from .testutils import MinpyTest, detect
+from .testutils import VerminTest, detect
 
-class MinpyKwargsTests(MinpyTest):
+class VerminKwargsTests(VerminTest):
   def test_inheritable_of_dup2_from_os(self):
     self.assertOnlyIn(3.4, detect("import os\nv = os.dup2(inheritable=True)"))
     self.assertOnlyIn(3.4, detect("from os import dup2\nv = dup2(inheritable=True)"))

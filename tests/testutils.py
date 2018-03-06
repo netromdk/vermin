@@ -2,7 +2,7 @@ import unittest
 import sys
 
 # Export as short function name for tests.
-from minpy import detect_min_versions_source as detect  # noqa:401
+from vermin import detect_min_versions_source as detect  # noqa:401
 
 def current_major_version():
   return float(sys.version_info.major)
@@ -10,8 +10,8 @@ def current_major_version():
 def current_version():
   return current_major_version() + float(sys.version_info.minor) / 10.0
 
-class MinpyTest(unittest.TestCase):
-  """General test case class for all Minpy tests."""
+class VerminTest(unittest.TestCase):
+  """General test case class for all Vermin tests."""
   def assertOnlyIn(self, values, data):
     """Assert only value(s) is in data but ignores None and 0 values."""
     size = 1

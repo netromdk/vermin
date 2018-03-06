@@ -1,6 +1,6 @@
-from .testutils import MinpyTest, detect
+from .testutils import VerminTest, detect
 
-class MinpyConstantMemberTests(MinpyTest):
+class VerminConstantMemberTests(VerminTest):
   def test_flags_of_sys(self):
     self.assertOnlyIn((2.6, 3.0), detect("from sys import flags"))
 

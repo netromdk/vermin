@@ -1,6 +1,6 @@
-from .testutils import MinpyTest, detect, current_version, current_major_version
+from .testutils import VerminTest, detect, current_version, current_major_version
 
-class MinpyLanguageTests(MinpyTest):
+class VerminLanguageTests(VerminTest):
   def test_printv2(self):
     # Before 3.4 it just said "invalid syntax" and didn't hint at missing parentheses.
     if current_version() >= 3.4:

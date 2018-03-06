@@ -1,6 +1,6 @@
-from .testutils import MinpyTest, detect
+from .testutils import VerminTest, detect
 
-class MinpyStrftimeDirectiveTests(MinpyTest):
+class VerminStrftimeDirectiveTests(VerminTest):
   def test_G_directive(self):
     self.assertOnlyIn(3.6, detect("from datetime import datetime\ndatetime.now().strftime('%G')"))
 

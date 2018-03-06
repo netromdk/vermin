@@ -1,4 +1,4 @@
 #!/usr/bin/env python
-from minpy.main import main
+from vermin.main import main
 if __name__ == "__main__":
   main()
