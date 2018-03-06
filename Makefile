@@ -36,4 +36,7 @@ check-style:
 static-analysis:
 	vulture --min-confidence 70 --sort-by-size ${ALL_FILES}
 
+check-unused:
+	vulture --sort-by-size ${VERMIN_FILES}
+
 check: check-style static-analysis
