@@ -18,7 +18,7 @@ It is fairly straightforward to use Vermin:
 ## Examples
 ```
 % ./vermin.py
-Vermin 0.1
+Vermin 0.2.1
 Usage: ./vermin.py [options] <python source files and folders..>
 
 Options:
