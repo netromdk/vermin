@@ -6,9 +6,6 @@ from .detection import detect_paths
 from .processing import process_paths, versions_string
 from .arguments import parse_args
 
-def all_none(elms):
-  return len(elms) == elms.count(None)
-
 def unknown_versions(vers):
   """Versions are unknown if all values are either 0 or None."""
   return len(vers) == vers.count(0) + vers.count(None)
