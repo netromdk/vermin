@@ -6,17 +6,21 @@ from .detection import detect_paths
 from .processing import process_paths
 from .arguments import parse_args
 
+def version_strings(vers):
+  return ", ".join(str(v) for v in vers)
+
 def main():
   config = Config.get()
   args = parse_args()
   processes = args["processes"]
+  targets = args["targets"]
 
   nprint("Detecting python files..")
   paths = set(detect_paths(args["paths"]))
   amount = len(paths)
   if amount == 0:
     print("No files specified to analyze!")
-    sys.exit(-1)
+    sys.exit(1)
 
   msg = "Analyzing"
   if amount > 1:
@@ -32,13 +36,19 @@ def main():
   for i in range(len(mins)):
     ver = mins[i]
     if ver is None:
-      incomps.append(str(i + 2))
+      incomps.append(i + 2)
     elif ver is not None and ver != 0:
-      reqs.append(str(ver))
+      reqs.append(ver)
 
   if len(reqs) == 0 and len(incomps) == 0:
     print("Could not determine minimum required versions!")
+    sys.exit(1)
+
   if len(reqs) > 0:
-    print("Minimum required versions: {:>5}".format(", ".join(reqs)))
+    print("Minimum required versions: {}".format(version_strings(reqs)))
   if len(incomps) > 0:
-    print("Incompatible versions:     {:>5}".format(", ".join(incomps)))
+    print("Incompatible versions:     {}".format(version_strings(incomps)))
+
+  if len(targets) > 0 and targets != reqs:
+    print("Target versions not met:   {}".format(version_strings(targets)))
+    sys.exit(1)

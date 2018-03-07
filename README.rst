@@ -46,12 +46,20 @@ Examples
   Options:
     -q      Quite mode. It only prints the final versions verdict.
     -v..    Verbosity level 1 to 2. -v shows less than -vv but more than no verbosity.
+    -t=V    Target version that files must abide by. Can be specified once or twice.
+            If not met Vermin will exit with code 1.
+    -p=N    Use N concurrent processes to analyze files (defaults to all cores = 8).
     -i      Ignore incompatible version warnings.
-    -p=X    Use X concurrent processes to analyze files (defaults to all cores = 8).
     -d      Dump AST node visits.
 
-  % ./vermin.py -q vermin.py
+  % ./vermin.py -q vermin
   Minimum required versions: 2.7, 3.0
+
+  % ./vermin.py -q -t=3.3 vermin
+  Minimum required versions: 2.7, 3.0
+  Target versions not met:   3.3
+  % echo $?
+  1
 
   % ./vermin.py -v examples
   Detecting python files..
