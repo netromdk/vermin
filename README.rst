@@ -1,5 +1,4 @@
-|PyPI version| |Build Status|
-
+|PyPI version| |Build Status| |Coverage|
 
 .. |PyPI version| image:: https://badge.fury.io/py/vermin.svg
    :target: https://pypi.python.org/pypi/vermin/
@@ -7,13 +6,14 @@
 .. |Build Status| image:: https://travis-ci.org/netromdk/vermin.svg?branch=master
    :target: https://travis-ci.org/netromdk/vermin
 
+.. |Coverage| image:: https://coveralls.io/repos/github/netromdk/vermin/badge.svg?branch=master
+   :target: https://coveralls.io/github/netromdk/vermin?branch=master
+
 Vermin
 ******
 
-Concurrently detect the minimum Python versions needed to run code.
-
-Since the code is vanilla Python, and it doesn't have any external dependencies, it works with v2.7+
-and v3+.
+Concurrently detect the minimum Python versions needed to run code. Additionally, since the code is
+vanilla Python, and it doesn't have any external dependencies, it works with v2.7+ and v3+.
 
 It functions by parsing Python code into an abstract syntax tree (AST), which it traverses and
 matches against internal dictionaries with 222 rules divided into 47 modules, 146

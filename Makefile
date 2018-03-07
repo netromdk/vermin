@@ -17,9 +17,16 @@ test-all:
 count:
 	./count.py
 
-setup: clean-venv clean
+setup-venv: clean-venv
 	virtualenv -p python .venv
+
+setup-misc: clean
 	.venv/bin/pip install -r .misc-requirements.txt
+
+setup-coverage: clean
+	.venv/bin/pip install -r .coverage-requirements.txt
+
+setup: setup-venv setup-misc setup-coverage
 
 clean:
 	find . -iname __pycache__ | xargs rm -fr
@@ -36,8 +43,11 @@ dist-clean: clean clean-venv clean-pypi
 pypi-dist: clean-pypi
 	python setup.py bdist_wheel --universal
 
-update-requirements: setup
+update-misc-requirements: setup-venv setup-misc
 	.venv/bin/pip freeze > .misc-requirements.txt
+
+update-coverage-requirements: setup-venv setup-coverage
+	.venv/bin/pip freeze > .coverage-requirements.txt
 
 check-style:
 	flake8 --ignore E111,E114,E121,E126,E127,E302,E305 --max-line-length 100 --count \
@@ -50,3 +60,10 @@ check-unused:
 	vulture --sort-by-size ${VERMIN_FILES}
 
 check: check-style static-analysis
+
+test-coverage:
+	.venv/bin/coverage run --source=vermin,tests runtests.py
+	.venv/bin/coverage run --append --source=vermin ./vermin.py -v ${VERMIN_FILES}
+
+coveralls:
+	COVERALLS_REPO_TOKEN=twBSHlgE5AMFEQNmUK04LDcN7SVth3lDV .venv/bin/coveralls
