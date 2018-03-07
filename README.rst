@@ -62,9 +62,8 @@ Examples
   2.0, 3.0     /path/to/examples/printv3.py
   !2, 3.4      /path/to/examples/abc.py
                /path/to/examples/unknown.py
-  Minimum required versions: !2, 3.4
-
-When it yields ``!2`` or ``!3`` it means that it explicitly cannot run on that version.
+  Minimum required versions:   3.4
+  Incompatible versions:         2
 
 Contributing
 ============

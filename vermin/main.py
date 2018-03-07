@@ -3,12 +3,8 @@ import sys
 from .config import Config
 from .printing import nprint
 from .detection import detect_paths
-from .processing import process_paths, versions_string
+from .processing import process_paths
 from .arguments import parse_args
-
-def unknown_versions(vers):
-  """Versions are unknown if all values are either 0 or None."""
-  return len(vers) == vers.count(0) + vers.count(None)
 
 def main():
   config = Config.get()
@@ -31,7 +27,18 @@ def main():
   if incomp and not config.ignore_incomp():
     nprint("Note: Some files had incompatible versions so the results might not be correct!")
 
-  if unknown_versions(mins):
+  incomps = []
+  reqs = []
+  for i in range(len(mins)):
+    ver = mins[i]
+    if ver is None:
+      incomps.append(str(i + 2))
+    elif ver is not None and ver != 0:
+      reqs.append(str(ver))
+
+  if len(reqs) == 0 and len(incomps) == 0:
     print("Could not determine minimum required versions!")
-  else:
-    print("Minimum required versions: {}".format(versions_string(mins)))
+  if len(reqs) > 0:
+    print("Minimum required versions: {:>5}".format(", ".join(reqs)))
+  if len(incomps) > 0:
+    print("Incompatible versions:     {:>5}".format(", ".join(incomps)))
