@@ -25,3 +25,12 @@ class VerminTest(unittest.TestCase):
         self.assertIn(value, data, msg="ONLY looking for '{}' in '{}'".format(value, data))
     else:
       self.assertIn(values, data, msg="ONLY looking for '{}' in '{}'".format(values, data))
+
+  def assertContainsDict(self, dictionary, data):
+    """Assert data contains all keys and values of dictionary input."""
+    for key in dictionary:
+      self.assertTrue(key in data, msg="Data doesn't have key '{}'".format(key))
+      value = dictionary[key]
+      value2 = data[key]
+      self.assertEqual(value, value2,
+                       msg="key={}, value={} != target={}".format(key, value, value2))

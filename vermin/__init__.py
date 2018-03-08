@@ -5,6 +5,8 @@ from .source_visitor import SourceVisitor
 from .parsing import parse_source, parse_detect_source
 from .processing import process_paths
 from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS
+from .arguments import parse_args
+from .config import Config
 
 __all__ = [
   "main",
@@ -20,5 +22,7 @@ __all__ = [
   "MOD_REQS",
   "MOD_MEM_REQS",
   "KWARGS_REQS",
-  "STRFTIME_REQS"
+  "STRFTIME_REQS",
+  "parse_args",
+  "Config"
 ]

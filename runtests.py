@@ -10,6 +10,7 @@ def runsuite(suite):
     sys.exit(-1)
 
 runsuite("general")
+runsuite("arguments")
 runsuite("lang")
 runsuite("module")
 runsuite("class")

@@ -3,11 +3,7 @@ class Config:
 
   def __init__(self):
     if not Config.__instance:
-      self.__quiet = False
-      self.__verbose = 0
-      self.__print_visits = False
-      self.__ignore_incomp = False
-
+      self.reset()
       Config.__instance = self
 
   @staticmethod
@@ -15,6 +11,12 @@ class Config:
     if not Config.__instance:
       Config()
     return Config.__instance
+
+  def reset(self):
+    self.__quiet = False
+    self.__verbose = 0
+    self.__print_visits = False
+    self.__ignore_incomp = False
 
   def quiet(self):
     return self.__quiet

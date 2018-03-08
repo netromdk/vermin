@@ -4,14 +4,20 @@ from .config import Config
 from .printing import nprint
 from .detection import detect_paths
 from .processing import process_paths
-from .arguments import parse_args
+from .arguments import parse_args, print_usage
 
 def version_strings(vers):
   return ", ".join(str(v) for v in vers)
 
 def main():
   config = Config.get()
-  args = parse_args()
+
+  args = parse_args(sys.argv[1:])
+  if "usage" in args:
+    print_usage()
+  if args["code"] != 0:
+    sys.exit(args["code"])
+
   processes = args["processes"]
   targets = args["targets"]
 
