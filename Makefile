@@ -4,7 +4,7 @@ OTHER_FILES=count.py
 ALL_FILES=${VERMIN_FILES} ${TEST_FILES} ${OTHER_FILES}
 
 self-test:
-	./vermin.py -v ${VERMIN_FILES}
+	./vermin.py -v -t=2.7 -t=3 ${VERMIN_FILES}
 
 test: self-test
 	./runtests.py
@@ -63,7 +63,7 @@ check: check-style static-analysis
 
 test-coverage:
 	.venv/bin/coverage run --source=vermin,tests runtests.py
-	.venv/bin/coverage run --append --source=vermin ./vermin.py -v ${VERMIN_FILES}
+	.venv/bin/coverage run --append --source=vermin ./vermin.py -v -t=2.7 -t=3 ${VERMIN_FILES}
 
 coveralls:
 	COVERALLS_REPO_TOKEN=twBSHlgE5AMFEQNmUK04LDcN7SVth3lDV .venv/bin/coveralls
