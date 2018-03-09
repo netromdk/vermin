@@ -298,3 +298,27 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_scrypt_of_hashlib(self):
     self.assertOnlyIn(3.6, detect("import hashlib\nhashlib.scrypt()"))
+
+  def test_open_of_bz2(self):
+    self.assertOnlyIn(3.3, detect("import bz2\nbz2.open()"))
+
+  def test_peek_of_bz2_BZ2File(self):
+    self.assertOnlyIn(3.3, detect("from bz2 import BZ2File\nf = BZ2File()\nf.peek()"))
+
+  def test_fileno_of_bz2_BZ2File(self):
+    self.assertOnlyIn(3.3, detect("from bz2 import BZ2File\nf = BZ2File()\nf.fileno()"))
+
+  def test_readable_of_bz2_BZ2File(self):
+    self.assertOnlyIn(3.3, detect("from bz2 import BZ2File\nf = BZ2File()\nf.readable()"))
+
+  def test_seekable_of_bz2_BZ2File(self):
+    self.assertOnlyIn(3.3, detect("from bz2 import BZ2File\nf = BZ2File()\nf.seekable()"))
+
+  def test_writable_of_bz2_BZ2File(self):
+    self.assertOnlyIn(3.3, detect("from bz2 import BZ2File\nf = BZ2File()\nf.writable()"))
+
+  def test_read1_of_bz2_BZ2File(self):
+    self.assertOnlyIn(3.3, detect("from bz2 import BZ2File\nf = BZ2File()\nf.read1()"))
+
+  def test_readinto_of_bz2_BZ2File(self):
+    self.assertOnlyIn(3.3, detect("from bz2 import BZ2File\nf = BZ2File()\nf.readinto()"))

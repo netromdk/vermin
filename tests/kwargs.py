@@ -82,3 +82,9 @@ class VerminKwargsTests(VerminTest):
 
   def test_domain_of_Filter_from_tracemalloc(self):
     self.assertOnlyIn(3.6, detect("import tracemalloc\ntracemalloc.Filter(domain=1)"))
+
+  def test_max_length_of_decompress_from_bz2_BZ2Decompressor(self):
+    self.assertOnlyIn(3.5,
+                      detect("from bz2 import BZ2Decompressor\n"
+                             "d = BZ2Decompressor()\n"
+                             "d.decompress(max_length=1)"))

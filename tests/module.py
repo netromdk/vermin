@@ -142,3 +142,12 @@ class VerminModuleTests(VerminTest):
 
   def test_ipaddress(self):
     self.assertOnlyIn(3.3, detect("import ipaddress"))
+
+  def test___future__(self):
+    self.assertOnlyIn((2.1, 3.0), detect("import __future__"))
+
+  def test_atexit(self):
+    self.assertOnlyIn((2.0, 3.0), detect("import atexit"))
+
+  def test_bz2(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import bz2"))

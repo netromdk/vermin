@@ -138,3 +138,36 @@ class VerminConstantMemberTests(VerminTest):
                       detect("from ipaddress import IPv6Address\n"
                              "addr = IPv6Address(':::1')\n"
                              "addr.is_global"))
+
+  def test_nested_scopes_of___future__(self):
+    self.assertOnlyIn((2.1, 3.0), detect("from __future__ import nested_scopes"))
+
+  def test_generators_of___future__(self):
+    self.assertOnlyIn((2.2, 3.0), detect("from __future__ import generators"))
+
+  def test_division_of___future__(self):
+    self.assertOnlyIn((2.2, 3.0), detect("from __future__ import division"))
+
+  def test_absolute_import_of___future__(self):
+    self.assertOnlyIn((2.5, 3.0), detect("from __future__ import absolute_import"))
+
+  def test_with_statement_of___future__(self):
+    self.assertOnlyIn((2.5, 3.0), detect("from __future__ import with_statement"))
+
+  def test_print_function_of___future__(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from __future__ import print_function"))
+
+  def test_unicode_literals_of___future__(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from __future__ import unicode_literals"))
+
+  def test_generator_stop_of___future__(self):
+    self.assertOnlyIn(3.5, detect("from __future__ import generator_stop"))
+
+  def test_eof_of_bz2_BZ2Decompressor(self):
+    self.assertOnlyIn(3.3, detect("from bz2 import BZ2Decompressor\nd = BZ2Decompressor()\nd.eof"))
+
+  def test_needs_input_of_bz2_BZ2Decompressor(self):
+    self.assertOnlyIn(3.5,
+                      detect("from bz2 import BZ2Decompressor\n"
+                             "d = BZ2Decompressor()\n"
+                             "d.needs_input"))
