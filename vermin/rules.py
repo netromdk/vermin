@@ -3,11 +3,13 @@ from .multidict import multidict
 # Module requirements: name -> min version per major or None if N.A.
 MOD_REQS = {
   "ConfigParser": (2.0, None),
+  "DocXMLRPCServer": (2.3, None),
   "HTMLParser": (2.2, None),
   "Queue": (2.0, None),
   "SocketServer": (2.0, None),
   "__builtin__": (2.0, None),
   "__future__": (2.1, 3.0),
+  "_dummy_thread": (None, 3.0),
   "_markupbase": (None, 3.0),
   "_winreg": (2.0, None),
   "abc": (2.6, 3.0),
@@ -27,14 +29,25 @@ MOD_REQS = {
   "copyreg": (None, 3.0),
   "csv": (2.3, 3.0),
   "ctypes": (2.5, 3.0),
+  "datetime": (2.3, 3.0),
   "dbm.io": (None, 3.0),
   "dbm.ndbm": (None, 3.0),
   "dbm.os": (None, 3.0),
   "dbm.struct": (None, 3.0),
   "dbm.sys": (None, 3.0),
   "dbm.whichdb": (None, 3.0),
+  "decimal": (2.4, 3.0),
+  "difflib": (2.1, 3.0),
+  "dummy_thread": (2.3, None),
+  "dummy_threading": (2.3, None),
+  "email": (2.2, 3.0),
   "faulthandler": (None, 3.3),
+  "fractions": (2.6, 3.0),
+  "functools": (2.5, 3.0),
+  "future_builtins": (2.6, None),
   "hashlib": (2.5, 3.0),
+  "heapq": (2.3, 3.0),
+  "hmac": (2.2, 3.0),
   "html": (None, 3.0),
   "htmlentitydefs": (2.0, None),
   "http": (None, 3.0),
@@ -60,6 +73,8 @@ MOD_REQS = {
   "urllib2": (2.0, None),
   "winreg": (None, 3.0),
   "xmlrpc": (None, 3.0),
+  "xmlrpc.client": (None, 3.0),
+  "xmlrpc.server": (None, 3.0),
 }
 
 # Module member requirements: member -> (module, requirements)
@@ -79,6 +94,7 @@ MOD_MEM_REQS = multidict((
   ("Deque", ("typing", (None, 3.6))),
   ("DomainFilter", ("tracemalloc", (None, 3.6))),
   ("ExitStack", ("contextlib", (None, 3.3))),
+  ("HtmlDiff", ("difflib", (2.4, 3.0))),
   ("OrderedDict", ("collections", (2.7, 3.1))),
   ("PathLike", ("os", (None, 3.6))),
   ("Text", ("typing", (None, 3.6))),
@@ -100,6 +116,7 @@ MOD_MEM_REQS = multidict((
   ("NewType", ("typing", (None, 3.5))),
   ("addCleanup", ("unittest.TestCase", (2.7, 3.1))),
   ("addTypeEqualityFunc", ("unittest.TestCase", (2.7, 3.1))),
+  ("as_integer_ratio", ("decimal.Decimal", (None, 3.6))),
   ("assertDictContainsSubset", ("unittest.TestCase", (2.7, 3.1))),
   ("assertDictEqual", ("unittest.TestCase", (2.7, 3.1))),
   ("assertGreater", ("unittest.TestCase", (2.7, 3.1))),
@@ -125,17 +142,34 @@ MOD_MEM_REQS = multidict((
   ("assertSequenceEqual", ("unittest.TestCase", (2.7, 3.1))),
   ("assertSetEqual", ("unittest.TestCase", (2.7, 3.1))),
   ("assertTupleEqual", ("unittest.TestCase", (2.7, 3.1))),
+  ("canonical", ("decimal.Decimal", (2.6, 3.0))),
+  ("clear_traps", ("decimal.Context", (None, 3.3))),
+  ("cmp_to_key", ("functools", (2.7, 3.2))),
   ("commonpath", ("os.path", (None, 3.5))),
+  ("compare_digest", ("hmac", (2.7, 3.3))),
+  ("compare_signal", ("decimal.Decimal", (2.6, 3.0))),
+  ("compare_total", ("decimal.Decimal", (2.6, 3.0))),
+  ("compare_total_mag", ("decimal.Decimal", (2.6, 3.0))),
+  ("conjugate", ("decimal.Decimal", (2.6, 3.0))),
+  ("context_diff", ("difflib", (2.3, 3.0))),
   ("copy", ("collections.deque", (None, 3.5))),
+  ("copy_abs", ("decimal.Decimal", (2.6, 3.0))),
+  ("copy_negate", ("decimal.Decimal", (2.6, 3.0))),
+  ("copy_sign", ("decimal.Decimal", (2.6, 3.0))),
   ("count", ("collections.deque", (2.7, 3.2))),
+  ("create_decimal_from_float", ("decimal.Context", (2.7, 3.1))),
+  ("diff_bytes", ("difflib", (None, 3.5))),
   ("discover", ("unittest.TestLoader", (2.7, 3.2))),
   ("doCleanups", ("unittest.TestCase", (2.7, 3.1))),
   ("exc_clear", ("sys", (2.3, None))),
+  ("exp", ("decimal.Decimal", (2.6, 3.0))),
   ("field_size_limit", ("csv", (2.5, 3.0))),
   ("fileno", ("bz2.BZ2File", (None, 3.3))),
   ("find_msvcrt", ("ctypes.util", (2.6, 3.0))),
+  ("fma", ("decimal.Decimal", (2.6, 3.0))),
   ("from_buffer", ("ctypes._CData", (2.6, 3.0))),
   ("from_buffer_copy", ("ctypes._CData", (2.6, 3.0))),
+  ("from_float", ("decimal.Decimal", (2.7, 3.1))),
   ("fsdecode", ("os", (None, 3.2))),
   ("fsencode", ("os", (None, 3.2))),
   ("fspath", ("os", (None, 3.6))),
@@ -144,6 +178,7 @@ MOD_MEM_REQS = multidict((
   ("get_context", ("multiprocessing", (None, 3.4))),
   ("get_errno", ("ctypes", (2.6, 3.0))),
   ("get_exec_path", ("os", (None, 3.2))),
+  ("get_grouped_opcodes", ("difflib.SequenceMatcher", (2.3, 3.0))),
   ("get_handle_inheritable", ("os", (None, 3.4))),
   ("get_inheritable", ("os", (None, 3.4))),
   ("get_last_error", ("ctypes", (2.6, 3.0))),
@@ -165,16 +200,46 @@ MOD_MEM_REQS = multidict((
   ("getsizeof", ("sys", (2.6, 3.0))),
   ("gettrace", ("sys", (2.6, 3.0))),
   ("getwindowsversion", ("sys", (2.3, 3.0))),
+  ("heappushpop", ("heapq", (2.6, 3.0))),
   ("index", ("collections.deque", (None, 3.5))),
   ("initgroups", ("os", (2.7, 3.2))),
   ("insert", ("collections.deque", (None, 3.5))),
+  ("is_canonical", ("decimal.Decimal", (2.6, 3.0))),
+  ("is_finite", ("decimal.Decimal", (2.6, 3.0))),
+  ("is_infinite", ("decimal.Decimal", (2.6, 3.0))),
+  ("is_nan", ("decimal.Decimal", (2.6, 3.0))),
+  ("is_normal", ("decimal.Decimal", (2.6, 3.0))),
+  ("is_qnan", ("decimal.Decimal", (2.6, 3.0))),
+  ("is_signed", ("decimal.Decimal", (2.6, 3.0))),
+  ("is_snan", ("decimal.Decimal", (2.6, 3.0))),
+  ("is_subnormal", ("decimal.Decimal", (2.6, 3.0))),
+  ("is_zero", ("decimal.Decimal", (2.6, 3.0))),
   ("ismount", ("os.path", (None, 3.4))),
   ("lexists", ("os.path", (2.4, 3.0))),
+  ("ln", ("decimal.Decimal", (2.6, 3.0))),
+  ("localcontext", ("decimal", (2.5, 3.0))),
   ("lockf", ("os", (None, 3.3))),
+  ("log10", ("decimal.Decimal", (2.6, 3.0))),
+  ("logb", ("decimal.Decimal", (2.6, 3.0))),
+  ("logical_and", ("decimal.Decimal", (2.6, 3.0))),
+  ("logical_invert", ("decimal.Decimal", (2.6, 3.0))),
+  ("logical_or", ("decimal.Decimal", (2.6, 3.0))),
+  ("logical_xor", ("decimal.Decimal", (2.6, 3.0))),
   ("longMessage", ("unittest.TestCase", (2.7, 3.1))),
+  ("lru_cache", ("functools", (None, 3.2))),
   ("maxDiff", ("unittest.TestCase", (2.7, 3.2))),
+  ("max_mag", ("decimal.Decimal", (2.6, 3.0))),
+  ("merge", ("heapq", (2.6, 3.0))),
+  ("min_mag", ("decimal.Decimal", (2.6, 3.0))),
   ("move_to_end", ("collections.OrderedDict", (None, 3.2))),
+  ("next_minus", ("decimal.Decimal", (2.6, 3.0))),
+  ("next_plus", ("decimal.Decimal", (2.6, 3.0))),
+  ("next_toward", ("decimal.Decimal", (2.6, 3.0))),
+  ("nlargest", ("heapq", (2.4, 3.0))),
+  ("nsmallest", ("heapq", (2.4, 3.0))),
+  ("number_class", ("decimal.Decimal", (2.6, 3.0))),
   ("open", ("bz2", (None, 3.3))),
+  ("partial_method", ("functools", (None, 3.4))),
   ("pbkdf2_hmac", ("hashlib", (2.7, 3.4))),
   ("peek", ("bz2.BZ2File", (None, 3.3))),
   ("pipe2", ("os", (None, 3.3))),
@@ -182,6 +247,7 @@ MOD_MEM_REQS = multidict((
   ("posix_fallocate", ("os", (None, 3.3))),
   ("pread", ("os", (None, 3.3))),
   ("pwrite", ("os", (None, 3.3))),
+  ("radix", ("decimal.Decimal", (2.6, 3.0))),
   ("read1", ("bz2.BZ2File", (None, 3.3))),
   ("readable", ("bz2.BZ2File", (None, 3.3))),
   ("readinto", ("bz2.BZ2File", (None, 3.3))),
@@ -189,8 +255,11 @@ MOD_MEM_REQS = multidict((
   ("realpath", ("os.path", (2.6, 3.0))),
   ("redirect_stderr", ("contextlib", (None, 3.5))),
   ("redirect_stdout", ("contextlib", (None, 3.4))),
+  ("reduce", ("functools", (2.6, 3.0))),
   ("remove", ("collections.deque", (2.5, 3.0))),
   ("reverse", ("collections.deque", (2.7, 3.2))),
+  ("rotate", ("decimal.Decimal", (2.6, 3.0))),
+  ("scaleb", ("decimal.Decimal", (2.6, 3.0))),
   ("scrypt", ("hashlib", (None, 3.6))),
   ("seekable", ("bz2.BZ2File", (None, 3.3))),
   ("sendfile", ("os", (None, 3.3))),
@@ -204,13 +273,18 @@ MOD_MEM_REQS = multidict((
   ("setpriority", ("os", (None, 3.3))),
   ("setresgid", ("os", (2.7, 3.2))),
   ("setresuid", ("os", (2.7, 3.2))),
+  ("shift", ("decimal.Decimal", (2.6, 3.0))),
   ("starmap", ("multiprocessing.Pool", (None, 3.3))),
   ("starmap_async", ("multiprocessing.Pool", (None, 3.3))),
   ("startTestRun", ("unittest.TestResult", (2.7, 3.1))),
   ("stopTestRun", ("unittest.TestResult", (2.7, 3.1))),
   ("suppress", ("contextlib", (None, 3.4))),
   ("timestamp", ("datetime.datetime", (None, 3.3))),
+  ("to_integral_exact", ("decimal.Decimal", (2.6, 3.0))),
+  ("to_integral_value", ("decimal.Decimal", (2.6, 3.0))),
+  ("total_ordering", ("functools", (2.7, 3.2))),
   ("total_seconds", ("datetime.timedelta", (None, 3.2))),
+  ("unified_diff", ("difflib", (2.3, 3.0))),
   ("wait", ("multiprocessing.connection", (None, 3.3))),
   ("writable", ("bz2.BZ2File", (None, 3.3))),
   ("writev", ("os", (None, 3.3))),
@@ -241,6 +315,7 @@ MOD_MEM_REQS = multidict((
   ("algorithms_available", ("hashlib", (2.7, 3.2))),
   ("algorithms_guaranteed", ("hashlib", (2.7, 3.2))),
   ("api_version", ("sys", (2.3, 3.0))),
+  ("block_size", ("hmac.HMAC", (None, 3.4))),
   ("buffer", ("unittest.TestResult", (2.7, 3.0))),
   ("division", ("__future__", (2.2, 3.0))),
   ("environb", ("os", (None, 3.2))),
@@ -256,6 +331,7 @@ MOD_MEM_REQS = multidict((
   ("is_global", ("ipaddress.IPv6Address", (None, 3.4))),
   ("long_info", ("sys", (2.7, None))),
   ("maxlen", ("collections.deque", (2.7, 3.1))),
+  ("name", ("hmac.HMAC", (None, 3.4))),
   ("needs_input", ("bz2.BZ2Decompressor", (None, 3.5))),
   ("nested_scopes", ("__future__", (2.1, 3.0))),
   ("print_function", ("__future__", (2.6, 3.0))),
@@ -277,6 +353,8 @@ KWARGS_REQS = {
   ("CDLL", "use_last_error"): (2.6, 3.0),  # ctypes
   ("CFUNCTYPE", "use_errno"): (2.6, 3.0),  # ctypes
   ("CFUNCTYPE", "use_last_error"): (2.6, 3.0),  # ctypes
+  ("CGIXMLRPCRequestHandler", "use_builtin_types"): (None, 3.3),  # xmlrpc.server
+  ("DocXMLRPCServer", "use_builtin_types"): (None, 3.3),  # xmlrpc.server
   ("Filter", "domain"): (None, 3.6),  # tracemalloc
   ("OleDLL", "use_errno"): (2.6, 3.0),  # ctypes
   ("OleDLL", "use_last_error"): (2.6, 3.0),  # ctypes
@@ -284,6 +362,8 @@ KWARGS_REQS = {
   ("Pool", "maxtasksperchild"): (None, 3.2),  # multiprocessing
   ("PrettyPrinter", "compact"): (None, 3.4),  # pprint
   ("Process", "daemon"): (None, 3.3),  # multiprocessing
+  ("SequenceMatcher", "autojunk"): (2.7, 3.2),  # difflib
+  ("SimpleXMLRPCServer", "use_builtin_types"): (None, 3.3),  # xmlrpc.server
   ("WinDLL", "use_errno"): (2.6, 3.0),  # ctypes
   ("WinDLL", "use_last_error"): (2.6, 3.0),  # ctypes
   ("access", "dir_fd"): (None, 3.3),  # os
@@ -306,8 +386,14 @@ KWARGS_REQS = {
   ("link", "dst_dir_fd"): (None, 3.3),  # os
   ("link", "follow_symlinks"): (None, 3.3),  # os
   ("link", "src_dir_fd"): (None, 3.3),  # os
+  ("lru_cache", "typed"): (None, 3.3),  # functools
+  ("make_file", "charset"): (None, 3.5),  # difflib.HtmlDiff
+  ("merge", "key"): (None, 3.5),  # heapq
+  ("merge", "reverse"): (None, 3.5),  # heapq
   ("namedtuple", "module"): (None, 3.6),  # collections
   ("namedtuple", "rename"): (2.7, 3.1),  # collections
+  ("nlargest", "key"): (2.4, 3.0),  # heapq
+  ("nsmallest", "key"): (2.4, 3.0),  # heapq
   ("open", "dir_fd"): (None, 3.3),  # os
   ("pformat", "compact"): (None, 3.4),  # pprint
   ("pprint", "compact"): (None, 3.4),  # pprint

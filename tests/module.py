@@ -175,3 +175,48 @@ class VerminModuleTests(VerminTest):
 
   def test_ctypes(self):
     self.assertOnlyIn((2.5, 3.0), detect("import ctypes"))
+
+  def test_datetime(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import datetime"))
+
+  def test_decimal(self):
+    self.assertOnlyIn((2.4, 3.0), detect("import decimal"))
+
+  def test_difflib(self):
+    self.assertOnlyIn((2.1, 3.0), detect("import difflib"))
+
+  def test_DocXMLRPCServer(self):
+    self.assertOnlyIn(2.3, detect("import DocXMLRPCServer"))
+
+  def test_xmlrpc_server(self):
+    self.assertOnlyIn(3.0, detect("import xmlrpc.server"))
+
+  def test_xmlrpc_client(self):
+    self.assertOnlyIn(3.0, detect("import xmlrpc.client"))
+
+  def test_dummy_thread(self):
+    self.assertOnlyIn(2.3, detect("import dummy_thread"))
+
+  def test__dummy_thread(self):
+    self.assertOnlyIn(3.0, detect("import _dummy_thread"))
+
+  def test_dummy_threading(self):
+    self.assertOnlyIn(2.3, detect("import dummy_threading"))
+
+  def test_email(self):
+    self.assertOnlyIn((2.2, 3.0), detect("import email"))
+
+  def test_fractions(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import fractions"))
+
+  def test_functools(self):
+    self.assertOnlyIn((2.5, 3.0), detect("import functools"))
+
+  def test_future_builtins(self):
+    self.assertOnlyIn(2.6, detect("import future_builtins"))
+
+  def test_heapq(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import heapq"))
+
+  def test_hmac(self):
+    self.assertOnlyIn((2.2, 3.0), detect("import hmac"))

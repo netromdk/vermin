@@ -90,3 +90,6 @@ class VerminClassMemberTests(VerminTest):
 
   def test_c_ssize_t_of_ctypes(self):
     self.assertOnlyIn((2.7, 3.2), detect("from ctypes import c_ssize_t"))
+
+  def test_HtmlDiff_of_difflib(self):
+    self.assertOnlyIn((2.4, 3.0), detect("from difflib import HtmlDiff"))

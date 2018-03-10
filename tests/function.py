@@ -386,3 +386,183 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_from_buffer_copy_of_ctypes__CData(self):
     self.assertOnlyIn((2.6, 3.0), detect("from ctypes import _CData\n_CData.from_buffer_copy()"))
+
+  def test_canonical_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.canonical()"))
+
+  def test_compare_signal_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.compare_signal()"))
+
+  def test_compare_total_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.compare_total()"))
+
+  def test_compare_total_mag_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0),
+                      detect("from decimal import Decimal\nDecimal.compare_total_mag()"))
+
+  def test_conjugate_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.conjugate()"))
+
+  def test_copy_abs_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.copy_abs()"))
+
+  def test_copy_negate_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.copy_negate()"))
+
+  def test_copy_sign_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.copy_sign()"))
+
+  def test_exp_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.exp()"))
+
+  def test_from_float_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.7, 3.1), detect("from decimal import Decimal\nDecimal.from_float()"))
+
+  def test_fma_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.fma()"))
+
+  def test_is_canonical_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.is_canonical()"))
+
+  def test_is_finite_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.is_finite()"))
+
+  def test_is_infinite_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.is_infinite()"))
+
+  def test_is_nan_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.is_nan()"))
+
+  def test_is_normal_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.is_normal()"))
+
+  def test_is_qnan_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.is_qnan()"))
+
+  def test_is_signed_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.is_signed()"))
+
+  def test_is_snan_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.is_snan()"))
+
+  def test_is_subnormal_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.is_subnormal()"))
+
+  def test_is_zero_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.is_zero()"))
+
+  def test_ln_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.ln()"))
+
+  def test_log10_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.log10()"))
+
+  def test_logb_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.logb()"))
+
+  def test_logical_and_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.logical_and()"))
+
+  def test_logical_invert_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.logical_invert()"))
+
+  def test_logical_or_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.logical_or()"))
+
+  def test_logical_xor_of_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.logical_xor()"))
+
+  def test_max_mag_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.max_mag()"))
+
+  def test_min_mag_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.min_mag()"))
+
+  def test_next_minus_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.next_minus()"))
+
+  def test_next_plus_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.next_plus()"))
+
+  def test_next_toward_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.next_toward()"))
+
+  def test_number_class_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.number_class()"))
+
+  def test_radix_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.radix()"))
+
+  def test_rotate_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.rotate()"))
+
+  def test_scaleb_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.scaleb()"))
+
+  def test_shift_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from decimal import Decimal\nDecimal.shift()"))
+
+  def test_to_integral_exact_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0),
+                      detect("from decimal import Decimal\nDecimal.to_integral_exact()"))
+
+  def test_to_integral_value_decimal_Decimal(self):
+    self.assertOnlyIn((2.6, 3.0),
+                      detect("from decimal import Decimal\nDecimal.to_integral_value()"))
+
+  def test_as_integer_ratio_decimal_Decimal(self):
+    self.assertOnlyIn(3.6, detect("from decimal import Decimal\nDecimal.as_integer_ratio()"))
+
+  def test_localcontext_decimal(self):
+    self.assertOnlyIn((2.5, 3.0), detect("import decimal\ndecimal.localcontext()"))
+
+  def test_create_decimal_from_float_decimal_Context(self):
+    self.assertOnlyIn((2.7, 3.1),
+                      detect("from decimal import Context\nContext.create_decimal_from_float()"))
+
+  def test_clear_traps_decimal_Context(self):
+    self.assertOnlyIn(3.3, detect("from decimal import Context\nContext.clear_traps()"))
+
+  def test_context_diff_difflib(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import difflib\ndifflib.context_diff()"))
+
+  def test_unified_diff_difflib(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import difflib\ndifflib.unified_diff()"))
+
+  def test_diff_bytes_difflib(self):
+    self.assertOnlyIn(3.5, detect("import difflib\ndifflib.diff_bytes()"))
+
+  def test_get_grouped_opcodes_difflib_SequenceMatcher(self):
+    self.assertOnlyIn((2.3, 3.0),
+                      detect("from difflib import SequenceMatcher\n"
+                             "SequenceMatcher.get_grouped_opcodes()"))
+
+  def test_cmp_to_key_from_functools(self):
+    self.assertOnlyIn((2.7, 3.2), detect("import functools\nfunctools.cmp_to_key()"))
+
+  def test_total_ordering_from_functools(self):
+    self.assertOnlyIn((2.7, 3.2), detect("import functools\nfunctools.total_ordering()"))
+
+  def test_reduce_from_functools(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import functools\nfunctools.reduce()"))
+
+  def test_lru_cache_from_functools(self):
+    self.assertOnlyIn(3.2, detect("import functools\nfunctools.lru_cache()"))
+
+  def test_partial_method_from_functools(self):
+    self.assertOnlyIn(3.4, detect("import functools\nfunctools.partial_method()"))
+
+  def test_heappushpop_from_heapq(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import heapq\nheapq.heappushpop()"))
+
+  def test_merge_from_heapq(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import heapq\nheapq.merge()"))
+
+  def test_nlargest_from_heapq(self):
+    self.assertOnlyIn((2.4, 3.0), detect("import heapq\nheapq.nlargest()"))
+
+  def test_nsmallest_from_heapq(self):
+    self.assertOnlyIn((2.4, 3.0), detect("import heapq\nheapq.nsmallest()"))
+
+  def test_compare_digest_from_hmac(self):
+    self.assertOnlyIn((2.7, 3.3), detect("import hmac\nhmac.compare_digest()"))

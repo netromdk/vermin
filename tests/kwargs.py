@@ -124,3 +124,37 @@ class VerminKwargsTests(VerminTest):
 
   def test_offset_of_byref_from_ctypes(self):
     self.assertOnlyIn((2.6, 3.0), detect("import ctypes\nctypes.byref(offset=3)"))
+
+  def test_autojunk_of_SequenceMatcher_from_difflib(self):
+    self.assertOnlyIn((2.7, 3.2), detect("import difflib\ndifflib.SequenceMatcher(autojunk=True)"))
+
+  def test_charset_of_make_file_from_difflib(self):
+    self.assertOnlyIn(3.5, detect("from difflib import HtmlDiff\n"
+                                  "HtmlDiff.make_file(charset=True)"))
+
+  def test_use_builtin_types_of_SimpleXMLRPCServer_from_xmlrpc_server(self):
+    self.assertOnlyIn(3.3, detect("from xmlrpc.server import SimpleXMLRPCServer\n"
+                                  "SimpleXMLRPCServer(use_builtin_types=True)"))
+
+  def test_use_builtin_types_of_CGIXMLRPCRequestHandler_from_xmlrpc_server(self):
+    self.assertOnlyIn(3.3, detect("from xmlrpc.server import CGIXMLRPCRequestHandler\n"
+                                  "CGIXMLRPCRequestHandler(use_builtin_types=True)"))
+
+  def test_use_builtin_types_of_DocXMLRPCServer_from_xmlrpc_server(self):
+    self.assertOnlyIn(3.3, detect("from xmlrpc.server import DocXMLRPCServer\n"
+                                  "DocXMLRPCServer(use_builtin_types=True)"))
+
+  def test_typed_of_lru_cache_from_functools(self):
+    self.assertOnlyIn(3.3, detect("import functools\nfunctools.lru_cache(typed=3)"))
+
+  def test_key_of_nlargest_from_heapq(self):
+    self.assertOnlyIn((2.4, 3.0), detect("import heapq\nheapq.nlargest(key=3)"))
+
+  def test_key_of_nsmallest_from_heapq(self):
+    self.assertOnlyIn((2.4, 3.0), detect("import heapq\nheapq.nsmallest(key=3)"))
+
+  def test_key_of_merge_from_heapq(self):
+    self.assertOnlyIn(3.5, detect("import heapq\nheapq.merge(key=3)"))
+
+  def test_reverse_of_merge_from_heapq(self):
+    self.assertOnlyIn(3.5, detect("import heapq\nheapq.merge(reverse=True)"))

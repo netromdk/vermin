@@ -174,3 +174,9 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_maxlen_of_collections_deque(self):
     self.assertOnlyIn((2.7, 3.1), detect("from collections import deque\nd = deque()\nd.maxlen"))
+
+  def test_block_size_of_hmac_HMAC(self):
+    self.assertOnlyIn(3.4, detect("from hmac import HMAC\nd = HMAC()\nd.block_size"))
+
+  def test_name_of_hmac_HMAC(self):
+    self.assertOnlyIn(3.4, detect("from hmac import HMAC\nd = HMAC()\nd.name"))
