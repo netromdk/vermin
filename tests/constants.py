@@ -171,3 +171,6 @@ class VerminConstantMemberTests(VerminTest):
                       detect("from bz2 import BZ2Decompressor\n"
                              "d = BZ2Decompressor()\n"
                              "d.needs_input"))
+
+  def test_maxlen_of_collections_deque(self):
+    self.assertOnlyIn((2.7, 3.1), detect("from collections import deque\nd = deque()\nd.maxlen"))

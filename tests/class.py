@@ -45,3 +45,48 @@ class VerminClassMemberTests(VerminTest):
 
   def test_DomainFilter_of_tracemalloc(self):
     self.assertOnlyIn(3.6, detect("from tracemalloc import DomainFilter"))
+
+  def test_Counter_of_collections(self):
+    self.assertOnlyIn((2.7, 3.1), detect("from collections import Counter"))
+
+  def test_deque_of_collections(self):
+    self.assertOnlyIn((2.4, 3.0), detect("from collections import deque"))
+
+  def test_defaultdict_of_collections(self):
+    self.assertOnlyIn((2.5, 3.0), detect("from collections import defaultdict"))
+
+  def test_namedtuple_of_collections(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from collections import namedtuple"))
+
+  def test_OrderedDict_of_collections(self):
+    self.assertOnlyIn((2.7, 3.1), detect("from collections import OrderedDict"))
+
+  def test_UserDict_of_collections(self):
+    self.assertOnlyIn(3.0, detect("from collections import UserDict"))
+
+  def test_UserList_of_collections(self):
+    self.assertOnlyIn(3.0, detect("from collections import UserList"))
+
+  def test_UserString_of_collections(self):
+    self.assertOnlyIn(3.0, detect("from collections import UserString"))
+
+  def test_AbstractContextManager_of_contextlib(self):
+    self.assertOnlyIn(3.6, detect("from contextlib import AbstractContextManager"))
+
+  def test_ContextDecorator_of_contextlib(self):
+    self.assertOnlyIn(3.2, detect("from contextlib import ContextDecorator"))
+
+  def test_ExitStack_of_contextlib(self):
+    self.assertOnlyIn(3.3, detect("from contextlib import ExitStack"))
+
+  def test_unix_dialect_of_csv(self):
+    self.assertOnlyIn(3.2, detect("from csv import unix_dialect"))
+
+  def test_c_longdouble_of_ctypes(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from ctypes import c_longdouble"))
+
+  def test_c_bool_of_ctypes(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from ctypes import c_bool"))
+
+  def test_c_ssize_t_of_ctypes(self):
+    self.assertOnlyIn((2.7, 3.2), detect("from ctypes import c_ssize_t"))

@@ -166,122 +166,128 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(3.4, detect("import multiprocessing\nget_context()"))
 
   def test_assertIs_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0), detect("from unittest import TestCase\nTestCase.assertIs()"))
+    self.assertOnlyIn((2.7, 3.1), detect("from unittest import TestCase\nTestCase.assertIs()"))
 
   def test_assertIsNot_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0), detect("from unittest import TestCase\nTestCase.assertIsNot()"))
+    self.assertOnlyIn((2.7, 3.1), detect("from unittest import TestCase\nTestCase.assertIsNot()"))
 
   def test_assertIsNone_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0), detect("from unittest import TestCase\nTestCase.assertIsNone()"))
+    self.assertOnlyIn((2.7, 3.1), detect("from unittest import TestCase\nTestCase.assertIsNone()"))
 
   def test_assertIsNotNone_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.1),
                       detect("from unittest import TestCase\nTestCase.assertIsNotNone()"))
 
   def test_assertIn_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0), detect("from unittest import TestCase\nTestCase.assertIn()"))
+    self.assertOnlyIn((2.7, 3.1), detect("from unittest import TestCase\nTestCase.assertIn()"))
 
   def test_assertNotIn_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0), detect("from unittest import TestCase\nTestCase.assertNotIn()"))
+    self.assertOnlyIn((2.7, 3.1), detect("from unittest import TestCase\nTestCase.assertNotIn()"))
 
   def test_assertIsInstance_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.2),
                       detect("from unittest import TestCase\nTestCase.assertIsInstance()"))
 
   def test_assertNotIsInstance_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.2),
                       detect("from unittest import TestCase\nTestCase.assertNotIsInstance()"))
 
   def test_assertRaisesRegexp_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.1),
                       detect("from unittest import TestCase\nTestCase.assertRaisesRegexp()"))
 
   def test_assertGreater_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.1),
                       detect("from unittest import TestCase\nTestCase.assertGreater()"))
 
   def test_assertGreaterEqual_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.1),
                       detect("from unittest import TestCase\nTestCase.assertGreaterEqual()"))
 
   def test_assertLess_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.1),
                       detect("from unittest import TestCase\nTestCase.assertLess()"))
 
   def test_assertLessEqual_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.1),
                       detect("from unittest import TestCase\nTestCase.assertLessEqual()"))
 
   def test_assertRegexpMatches_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.1),
                       detect("from unittest import TestCase\nTestCase.assertRegexpMatches()"))
 
   def test_assertNotRegexpMatches_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.1),
                       detect("from unittest import TestCase\nTestCase.assertNotRegexpMatches()"))
 
   def test_assertItemsEqual_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.1),
                       detect("from unittest import TestCase\nTestCase.assertItemsEqual()"))
 
   def test_assertDictContainsSubset_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.1),
                       detect("from unittest import TestCase\nTestCase.assertDictContainsSubset()"))
 
   def test_addTypeEqualityFunc_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.1),
                       detect("from unittest import TestCase\nTestCase.addTypeEqualityFunc()"))
 
   def test_assertMultilineEqual_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.1),
                       detect("from unittest import TestCase\nTestCase.assertMultilineEqual()"))
 
   def test_assertSequenceEqual_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.1),
                       detect("from unittest import TestCase\nTestCase.assertSequenceEqual()"))
 
   def test_assertListEqual_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.1),
                       detect("from unittest import TestCase\nTestCase.assertListEqual()"))
 
   def test_assertTupleEqual_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.1),
                       detect("from unittest import TestCase\nTestCase.assertTupleEqual()"))
 
+  def test_assertRegex_of_unittest_TestCase(self):
+    self.assertOnlyIn(3.1, detect("from unittest import TestCase\nTestCase.assertRegex()"))
+
+  def test_assertNotRegex_of_unittest_TestCase(self):
+    self.assertOnlyIn(3.1, detect("from unittest import TestCase\nTestCase.assertNotRegex()"))
+
   def test_assertSetEqual_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.1),
                       detect("from unittest import TestCase\nTestCase.assertSetEqual()"))
 
   def test_assertDictEqual_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.1),
                       detect("from unittest import TestCase\nTestCase.assertDictEqual()"))
 
   def test_longMessage_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.1),
                       detect("from unittest import TestCase\nTestCase.longMessage()"))
 
   def test_maxDiff_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.2),
                       detect("from unittest import TestCase\nTestCase.maxDiff()"))
 
   def test_addCleanup_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.1),
                       detect("from unittest import TestCase\nTestCase.addCleanup()"))
 
-  def test_doCleanup_of_unittest_TestCase(self):
-    self.assertOnlyIn((2.7, 3.0),
-                      detect("from unittest import TestCase\nTestCase.doCleanup()"))
+  def test_doCleanups_of_unittest_TestCase(self):
+    self.assertOnlyIn((2.7, 3.1),
+                      detect("from unittest import TestCase\nTestCase.doCleanups()"))
 
   def test_discover_of_unittest_TestLoader(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.2),
                       detect("from unittest import TestLoader\nTestLoader.discover()"))
 
   def test_startTestRun_of_unittest_TestResult(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.1),
                       detect("from unittest import TestResult\nTestResult.startTestRun()"))
 
   def test_stopTestRun_of_unittest_TestResult(self):
-    self.assertOnlyIn((2.7, 3.0),
+    self.assertOnlyIn((2.7, 3.1),
                       detect("from unittest import TestResult\nTestResult.stopTestRun()"))
 
   def test_total_seconds_of_datetime_timedelta(self):
@@ -322,3 +328,61 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_readinto_of_bz2_BZ2File(self):
     self.assertOnlyIn(3.3, detect("from bz2 import BZ2File\nf = BZ2File()\nf.readinto()"))
+
+  def test_count_of_collections_deque(self):
+    self.assertOnlyIn((2.7, 3.2), detect("from collections import deque\nd = deque()\nd.count()"))
+
+  def test_remove_of_collections_deque(self):
+    self.assertOnlyIn((2.5, 3.0), detect("from collections import deque\nd = deque()\nd.remove()"))
+
+  def test_reverse_of_collections_deque(self):
+    self.assertOnlyIn((2.7, 3.2), detect("from collections import deque\nd = deque()\nd.reverse()"))
+
+  def test_copy_of_collections_deque(self):
+    self.assertOnlyIn(3.5, detect("from collections import deque\nd = deque()\nd.copy()"))
+
+  def test_index_of_collections_deque(self):
+    self.assertOnlyIn(3.5, detect("from collections import deque\nd = deque()\nd.index()"))
+
+  def test_insert_of_collections_deque(self):
+    self.assertOnlyIn(3.5, detect("from collections import deque\nd = deque()\nd.insert()"))
+
+  def test_move_to_end_of_collections_OrderedDict(self):
+    self.assertOnlyIn(3.2,
+                      detect("from collections import OrderedDict\n"
+                             "d = OrderedDict()\n"
+                             "d.move_to_end()"))
+
+  def test_suppress_of_contextlib(self):
+    self.assertOnlyIn(3.4, detect("import contextlib\ncontextlib.suppress()"))
+
+  def test_redirect_stdout_of_contextlib(self):
+    self.assertOnlyIn(3.4, detect("import contextlib\ncontextlib.redirect_stdout()"))
+
+  def test_redirect_stderr_of_contextlib(self):
+    self.assertOnlyIn(3.5, detect("import contextlib\ncontextlib.redirect_stderr()"))
+
+  def test_field_size_limit_of_csv(self):
+    self.assertOnlyIn((2.5, 3.0), detect("import csv\ncsv.field_size_limit()"))
+
+  def test_find_msvcrt_of_ctypes_util(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import ctypes.util\nctypes.util.find_msvcrt()"))
+    self.assertOnlyIn((2.6, 3.0), detect("from ctypes.util import *\nfind_msvcrt()"))
+
+  def test_get_errno_of_ctypes(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import ctypes\nctypes.get_errno()"))
+
+  def test_get_last_error_of_ctypes(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import ctypes\nctypes.get_last_error()"))
+
+  def test_set_errno_of_ctypes(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import ctypes\nctypes.set_errno()"))
+
+  def test_set_last_error_of_ctypes(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import ctypes\nctypes.set_last_error()"))
+
+  def test_from_buffer_of_ctypes__CData(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from ctypes import _CData\n_CData.from_buffer()"))
+
+  def test_from_buffer_copy_of_ctypes__CData(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from ctypes import _CData\n_CData.from_buffer_copy()"))

@@ -17,9 +17,16 @@ MOD_REQS = {
   "atexit": (2.0, 3.0),
   "builtins": (None, 3.0),
   "bz2": (2.3, 3.0),
+  "cProfile": (2.5, 3.0),
+  "cgitb": (2.2, 3.0),
+  "collections": (2.4, 3.0),
   "configparser": (None, 3.0),
+  "contextlib": (2.5, 3.0),
+  "cookielib": (2.4, None),
   "copy_reg": (2.0, None),
   "copyreg": (None, 3.0),
+  "csv": (2.3, 3.0),
+  "ctypes": (2.5, 3.0),
   "dbm.io": (None, 3.0),
   "dbm.ndbm": (None, 3.0),
   "dbm.os": (None, 3.0),
@@ -31,6 +38,7 @@ MOD_REQS = {
   "html": (None, 3.0),
   "htmlentitydefs": (2.0, None),
   "http": (None, 3.0),
+  "http.cookiejar": (None, 3.0),
   "ipaddress": (None, 3.3),
   "markupbase": (2.0, None),
   "md5": (2.0, None),
@@ -58,62 +66,87 @@ MOD_REQS = {
 MOD_MEM_REQS = multidict((
   # Classes
   ("ABC", ("abc", (None, 3.4))),
+  ("AbstractContextManager", ("contextlib", (None, 3.6))),
   ("AsyncGenerator", ("typing", (None, 3.6))),
   ("Barrier", ("multiprocessing", (None, 3.3))),
   ("ChainMap", ("typing", (None, 3.6))),
   ("ClassVar", ("typing", (None, 3.5))),
   ("Collection", ("typing", (None, 3.6))),
+  ("ContextDecorator", ("contextlib", (None, 3.2))),
   ("ContextManager", ("typing", (None, 3.6))),
+  ("Counter", ("collections", (2.7, 3.1))),
   ("Counter", ("typing", (None, 3.6))),
   ("Deque", ("typing", (None, 3.6))),
   ("DomainFilter", ("tracemalloc", (None, 3.6))),
+  ("ExitStack", ("contextlib", (None, 3.3))),
+  ("OrderedDict", ("collections", (2.7, 3.1))),
   ("PathLike", ("os", (None, 3.6))),
   ("Text", ("typing", (None, 3.6))),
   ("TextTestResult", ("unittest", (2.7, 3.0))),
+  ("UserDict", ("collections", (None, 3.0))),
+  ("UserList", ("collections", (None, 3.0))),
+  ("UserString", ("collections", (None, 3.0))),
+  ("c_bool", ("ctypes", (2.6, 3.0))),
+  ("c_longdouble", ("ctypes", (2.6, 3.0))),
+  ("c_ssize_t", ("ctypes", (2.7, 3.2))),
+  ("defaultdict", ("collections", (2.5, 3.0))),
+  ("deque", ("collections", (2.4, 3.0))),
+  ("namedtuple", ("collections", (2.6, 3.0))),
   ("terminal_size", ("os", (None, 3.3))),
   ("timezone", ("datetime", (None, 3.2))),
+  ("unix_dialect", ("csv", (None, 3.2))),
 
   # Functions
   ("NewType", ("typing", (None, 3.5))),
-  ("addCleanup", ("unittest.TestCase", (2.7, 3.0))),
-  ("addTypeEqualityFunc", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertDictContainsSubset", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertDictEqual", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertGreater", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertGreaterEqual", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertIn", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertIs", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertIsInstance", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertIsNone", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertIsNot", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertIsNotNone", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertItemsEqual", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertLess", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertLessEqual", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertListEqual", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertMultilineEqual", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertNotIn", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertNotIsInstance", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertNotRegexpMatches", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertRaisesRegexp", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertRegexpMatches", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertSequenceEqual", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertSetEqual", ("unittest.TestCase", (2.7, 3.0))),
-  ("assertTupleEqual", ("unittest.TestCase", (2.7, 3.0))),
+  ("addCleanup", ("unittest.TestCase", (2.7, 3.1))),
+  ("addTypeEqualityFunc", ("unittest.TestCase", (2.7, 3.1))),
+  ("assertDictContainsSubset", ("unittest.TestCase", (2.7, 3.1))),
+  ("assertDictEqual", ("unittest.TestCase", (2.7, 3.1))),
+  ("assertGreater", ("unittest.TestCase", (2.7, 3.1))),
+  ("assertGreaterEqual", ("unittest.TestCase", (2.7, 3.1))),
+  ("assertIn", ("unittest.TestCase", (2.7, 3.1))),
+  ("assertIs", ("unittest.TestCase", (2.7, 3.1))),
+  ("assertIsInstance", ("unittest.TestCase", (2.7, 3.2))),
+  ("assertIsNone", ("unittest.TestCase", (2.7, 3.1))),
+  ("assertIsNot", ("unittest.TestCase", (2.7, 3.1))),
+  ("assertIsNotNone", ("unittest.TestCase", (2.7, 3.1))),
+  ("assertItemsEqual", ("unittest.TestCase", (2.7, 3.1))),
+  ("assertLess", ("unittest.TestCase", (2.7, 3.1))),
+  ("assertLessEqual", ("unittest.TestCase", (2.7, 3.1))),
+  ("assertListEqual", ("unittest.TestCase", (2.7, 3.1))),
+  ("assertMultilineEqual", ("unittest.TestCase", (2.7, 3.1))),
+  ("assertNotIn", ("unittest.TestCase", (2.7, 3.1))),
+  ("assertNotIsInstance", ("unittest.TestCase", (2.7, 3.2))),
+  ("assertNotRegex", ("unittest.TestCase", (None, 3.1))),
+  ("assertNotRegexpMatches", ("unittest.TestCase", (2.7, 3.1))),
+  ("assertRaisesRegexp", ("unittest.TestCase", (2.7, 3.1))),
+  ("assertRegex", ("unittest.TestCase", (None, 3.1))),
+  ("assertRegexpMatches", ("unittest.TestCase", (2.7, 3.1))),
+  ("assertSequenceEqual", ("unittest.TestCase", (2.7, 3.1))),
+  ("assertSetEqual", ("unittest.TestCase", (2.7, 3.1))),
+  ("assertTupleEqual", ("unittest.TestCase", (2.7, 3.1))),
   ("commonpath", ("os.path", (None, 3.5))),
-  ("discover", ("unittest.TestLoader", (2.7, 3.0))),
-  ("doCleanup", ("unittest.TestCase", (2.7, 3.0))),
+  ("copy", ("collections.deque", (None, 3.5))),
+  ("count", ("collections.deque", (2.7, 3.2))),
+  ("discover", ("unittest.TestLoader", (2.7, 3.2))),
+  ("doCleanups", ("unittest.TestCase", (2.7, 3.1))),
   ("exc_clear", ("sys", (2.3, None))),
+  ("field_size_limit", ("csv", (2.5, 3.0))),
   ("fileno", ("bz2.BZ2File", (None, 3.3))),
+  ("find_msvcrt", ("ctypes.util", (2.6, 3.0))),
+  ("from_buffer", ("ctypes._CData", (2.6, 3.0))),
+  ("from_buffer_copy", ("ctypes._CData", (2.6, 3.0))),
   ("fsdecode", ("os", (None, 3.2))),
   ("fsencode", ("os", (None, 3.2))),
   ("fspath", ("os", (None, 3.6))),
   ("get_all_start_methods", ("multiprocessing", (None, 3.4))),
   ("get_blocking", ("os", (None, 3.5))),
   ("get_context", ("multiprocessing", (None, 3.4))),
+  ("get_errno", ("ctypes", (2.6, 3.0))),
   ("get_exec_path", ("os", (None, 3.2))),
   ("get_handle_inheritable", ("os", (None, 3.4))),
   ("get_inheritable", ("os", (None, 3.4))),
+  ("get_last_error", ("ctypes", (2.6, 3.0))),
   ("get_start_method", ("multiprocessing", (None, 3.4))),
   ("get_terminal_size", ("os", (None, 3.3))),
   ("getcheckinterval", ("sys", (2.3, 3.0))),
@@ -132,12 +165,15 @@ MOD_MEM_REQS = multidict((
   ("getsizeof", ("sys", (2.6, 3.0))),
   ("gettrace", ("sys", (2.6, 3.0))),
   ("getwindowsversion", ("sys", (2.3, 3.0))),
+  ("index", ("collections.deque", (None, 3.5))),
   ("initgroups", ("os", (2.7, 3.2))),
+  ("insert", ("collections.deque", (None, 3.5))),
   ("ismount", ("os.path", (None, 3.4))),
   ("lexists", ("os.path", (2.4, 3.0))),
   ("lockf", ("os", (None, 3.3))),
-  ("longMessage", ("unittest.TestCase", (2.7, 3.0))),
-  ("maxDiff", ("unittest.TestCase", (2.7, 3.0))),
+  ("longMessage", ("unittest.TestCase", (2.7, 3.1))),
+  ("maxDiff", ("unittest.TestCase", (2.7, 3.2))),
+  ("move_to_end", ("collections.OrderedDict", (None, 3.2))),
   ("open", ("bz2", (None, 3.3))),
   ("pbkdf2_hmac", ("hashlib", (2.7, 3.4))),
   ("peek", ("bz2.BZ2File", (None, 3.3))),
@@ -151,12 +187,18 @@ MOD_MEM_REQS = multidict((
   ("readinto", ("bz2.BZ2File", (None, 3.3))),
   ("readv", ("os", (None, 3.3))),
   ("realpath", ("os.path", (2.6, 3.0))),
+  ("redirect_stderr", ("contextlib", (None, 3.5))),
+  ("redirect_stdout", ("contextlib", (None, 3.4))),
+  ("remove", ("collections.deque", (2.5, 3.0))),
+  ("reverse", ("collections.deque", (2.7, 3.2))),
   ("scrypt", ("hashlib", (None, 3.6))),
   ("seekable", ("bz2.BZ2File", (None, 3.3))),
   ("sendfile", ("os", (None, 3.3))),
   ("set_blocking", ("os", (None, 3.5))),
+  ("set_errno", ("ctypes", (2.6, 3.0))),
   ("set_handle_inheritable", ("os", (None, 3.4))),
   ("set_inheritable", ("os", (None, 3.4))),
+  ("set_last_error", ("ctypes", (2.6, 3.0))),
   ("set_start_method", ("multiprocessing", (None, 3.4))),
   ("setgroups", ("os", (2.2, 3.0))),
   ("setpriority", ("os", (None, 3.3))),
@@ -164,8 +206,9 @@ MOD_MEM_REQS = multidict((
   ("setresuid", ("os", (2.7, 3.2))),
   ("starmap", ("multiprocessing.Pool", (None, 3.3))),
   ("starmap_async", ("multiprocessing.Pool", (None, 3.3))),
-  ("startTestRun", ("unittest.TestResult", (2.7, 3.0))),
-  ("stopTestRun", ("unittest.TestResult", (2.7, 3.0))),
+  ("startTestRun", ("unittest.TestResult", (2.7, 3.1))),
+  ("stopTestRun", ("unittest.TestResult", (2.7, 3.1))),
+  ("suppress", ("contextlib", (None, 3.4))),
   ("timestamp", ("datetime.datetime", (None, 3.3))),
   ("total_seconds", ("datetime.timedelta", (None, 3.2))),
   ("wait", ("multiprocessing.connection", (None, 3.3))),
@@ -212,6 +255,7 @@ MOD_MEM_REQS = multidict((
   ("is_global", ("ipaddress.IPv4Address", (None, 3.4))),
   ("is_global", ("ipaddress.IPv6Address", (None, 3.4))),
   ("long_info", ("sys", (2.7, None))),
+  ("maxlen", ("collections.deque", (2.7, 3.1))),
   ("needs_input", ("bz2.BZ2Decompressor", (None, 3.5))),
   ("nested_scopes", ("__future__", (2.1, 3.0))),
   ("print_function", ("__future__", (2.6, 3.0))),
@@ -229,16 +273,25 @@ MOD_MEM_REQS = multidict((
 
 # Keyword arguments requirements: (function, keyword argument) -> requirements
 KWARGS_REQS = {
+  ("CDLL", "use_errno"): (2.6, 3.0),  # ctypes
+  ("CDLL", "use_last_error"): (2.6, 3.0),  # ctypes
+  ("CFUNCTYPE", "use_errno"): (2.6, 3.0),  # ctypes
+  ("CFUNCTYPE", "use_last_error"): (2.6, 3.0),  # ctypes
   ("Filter", "domain"): (None, 3.6),  # tracemalloc
+  ("OleDLL", "use_errno"): (2.6, 3.0),  # ctypes
+  ("OleDLL", "use_last_error"): (2.6, 3.0),  # ctypes
   ("Pool", "context"): (None, 3.4),  # multiprocessing
   ("Pool", "maxtasksperchild"): (None, 3.2),  # multiprocessing
   ("PrettyPrinter", "compact"): (None, 3.4),  # pprint
   ("Process", "daemon"): (None, 3.3),  # multiprocessing
+  ("WinDLL", "use_errno"): (2.6, 3.0),  # ctypes
+  ("WinDLL", "use_last_error"): (2.6, 3.0),  # ctypes
   ("access", "dir_fd"): (None, 3.3),  # os
   ("access", "effective_ids"): (None, 3.3),  # os
   ("access", "follow_symlinks"): (None, 3.3),  # os
   ("assertAlmostEqual", "delta"): (2.7, 3.0),  # unittest.TestCase
   ("assertNotAlmostEqual", "delta"): (2.7, 3.0),  # unittest.TestCase
+  ("byref", "offset"): (2.6, 3.0),  # ctypes
   ("chflags", "follow_symlinks"): (None, 3.3),  # os
   ("chmod", "dir_fd"): (None, 3.3),  # os
   ("chmod", "follow_symlinks"): (None, 3.3),  # os
@@ -247,11 +300,14 @@ KWARGS_REQS = {
   ("combine", "tzinfo"): (None, 3.6),  # datetime.datetime
   ("datetime", "fold"): (None, 3.6),  # datetime.datetime
   ("decompress", "max_length"): (None, 3.5),  # bz2.BZ2Decompressor
+  ("deque", "maxlen"): (2.6, 3.0),  # collections
   ("dup2", "inheritable"): (None, 3.4),  # os
   ("isoformat", "timespec"): (None, 3.6),  # datetime.datetime
   ("link", "dst_dir_fd"): (None, 3.3),  # os
   ("link", "follow_symlinks"): (None, 3.3),  # os
   ("link", "src_dir_fd"): (None, 3.3),  # os
+  ("namedtuple", "module"): (None, 3.6),  # collections
+  ("namedtuple", "rename"): (2.7, 3.1),  # collections
   ("open", "dir_fd"): (None, 3.3),  # os
   ("pformat", "compact"): (None, 3.4),  # pprint
   ("pprint", "compact"): (None, 3.4),  # pprint

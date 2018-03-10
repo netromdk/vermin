@@ -151,3 +151,27 @@ class VerminModuleTests(VerminTest):
 
   def test_bz2(self):
     self.assertOnlyIn((2.3, 3.0), detect("import bz2"))
+
+  def test_cgitb(self):
+    self.assertOnlyIn((2.2, 3.0), detect("import cgitb"))
+
+  def test_collections(self):
+    self.assertOnlyIn((2.4, 3.0), detect("import collections"))
+
+  def test_contextlib(self):
+    self.assertOnlyIn((2.5, 3.0), detect("import contextlib"))
+
+  def test_cookielib(self):
+    self.assertOnlyIn(2.4, detect("import cookielib"))
+
+  def test_http_cookiejar(self):
+    self.assertOnlyIn(3.0, detect("import http.cookiejar"))
+
+  def test_cProfile(self):
+    self.assertOnlyIn((2.5, 3.0), detect("import cProfile"))
+
+  def test_csv(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import csv"))
+
+  def test_ctypes(self):
+    self.assertOnlyIn((2.5, 3.0), detect("import ctypes"))

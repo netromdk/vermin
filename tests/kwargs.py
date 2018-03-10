@@ -88,3 +88,39 @@ class VerminKwargsTests(VerminTest):
                       detect("from bz2 import BZ2Decompressor\n"
                              "d = BZ2Decompressor()\n"
                              "d.decompress(max_length=1)"))
+
+  def test_maxlen_of_deque_from_collections(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import collections\ncollections.deque(maxlen=1)"))
+
+  def test_rename_of_namedtuple_from_collections(self):
+    self.assertOnlyIn((2.7, 3.1), detect("import collections\ncollections.namedtuple(rename=True)"))
+
+  def test_module_of_namedtuple_from_collections(self):
+    self.assertOnlyIn(3.6, detect("import collections\ncollections.namedtuple(module=None)"))
+
+  def test_use_last_error_of_CDLL_from_ctypes(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import ctypes\nctypes.CDLL(use_last_error=True)"))
+
+  def test_use_errno_of_CDLL_from_ctypes(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import ctypes\nctypes.CDLL(use_errno=True)"))
+
+  def test_use_last_error_of_OleDLL_from_ctypes(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import ctypes\nctypes.OleDLL(use_last_error=True)"))
+
+  def test_use_errno_of_OleDLL_from_ctypes(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import ctypes\nctypes.OleDLL(use_errno=True)"))
+
+  def test_use_last_error_of_WinDLL_from_ctypes(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import ctypes\nctypes.WinDLL(use_last_error=True)"))
+
+  def test_use_errno_of_WinDLL_from_ctypes(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import ctypes\nctypes.WinDLL(use_errno=True)"))
+
+  def test_use_last_error_of_CFUNCTYPE_from_ctypes(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import ctypes\nctypes.CFUNCTYPE(use_last_error=True)"))
+
+  def test_use_errno_of_CFUNCTYPE_from_ctypes(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import ctypes\nctypes.CFUNCTYPE(use_errno=True)"))
+
+  def test_offset_of_byref_from_ctypes(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import ctypes\nctypes.byref(offset=3)"))
