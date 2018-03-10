@@ -35,6 +35,14 @@ Or via `PyPi <https://pypi.python.org/pypi/vermin/>`__::
 
   % pip install vermin
   % vermin /path/to/your/project
+  
+When using continuous integration (CI) tools, like `Travis CI <https://travis-ci.org/>`_, Vermin can be used to check that the minimum required versions didn't change. The following is an exerpt::
+
+  install:
+  - ./setup_virtual_env.sh
+  - pip install vermin
+  script:
+  - vermin -t=2.7 -t=3 project_package otherfile.py
 
 Examples
 ========
