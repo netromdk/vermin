@@ -1,4 +1,4 @@
-|PyPI version| |Build Status| |Coverage|
+|PyPI version| |Build Status| |Coverage| |Commits since last|
 
 .. |PyPI version| image:: https://badge.fury.io/py/vermin.svg
    :target: https://pypi.python.org/pypi/vermin/
@@ -8,6 +8,8 @@
 
 .. |Coverage| image:: https://coveralls.io/repos/github/netromdk/vermin/badge.svg?branch=master
    :target: https://coveralls.io/github/netromdk/vermin?branch=master
+   
+.. |Commits since last| image:: https://img.shields.io/github/commits-since/netromdk/vermin/latest.svg
 
 Vermin
 ******
