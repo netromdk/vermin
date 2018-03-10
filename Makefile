@@ -16,6 +16,7 @@ test-all:
 
 count:
 	./count.py
+	@echo "Tests: `grep -ri 'def test_' tests | wc -l | xargs echo`"
 
 setup-venv: clean-venv
 	virtualenv -p python .venv
