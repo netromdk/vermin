@@ -566,3 +566,101 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_compare_digest_from_hmac(self):
     self.assertOnlyIn((2.7, 3.3), detect("import hmac\nhmac.compare_digest()"))
+
+  def test_isgenerator_from_inspect(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import inspect\ninspect.isgenerator()"))
+
+  def test_isgeneratorfunction_from_inspect(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import inspect\ninspect.isgeneratorfunction()"))
+
+  def test_isabstract_from_inspect(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import inspect\ninspect.isabstract()"))
+
+  def test_isdatadescriptor_from_inspect(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import inspect\ninspect.isdatadescriptor()"))
+
+  def test_isgetsetdescriptor_from_inspect(self):
+    self.assertOnlyIn((2.5, 3.0), detect("import inspect\ninspect.isgetsetdescriptor()"))
+
+  def test_ismemberdescriptor_from_inspect(self):
+    self.assertOnlyIn((2.5, 3.0), detect("import inspect\ninspect.ismemberdescriptor()"))
+
+  def test_cleandoc_from_inspect(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import inspect\ninspect.cleandoc()"))
+
+  def test_getcallargs_from_inspect(self):
+    self.assertOnlyIn((2.7, 3.2), detect("import inspect\ninspect.getcallargs()"))
+
+  def test_iscoroutine_from_inspect(self):
+    self.assertOnlyIn(3.5, detect("import inspect\ninspect.iscoroutine()"))
+
+  def test_iscoroutinefunction_from_inspect(self):
+    self.assertOnlyIn(3.5, detect("import inspect\ninspect.iscoroutinefunction()"))
+
+  def test_isawaitable_from_inspect(self):
+    self.assertOnlyIn(3.5, detect("import inspect\ninspect.isawaitable()"))
+
+  def test_isasyncgen_from_inspect(self):
+    self.assertOnlyIn(3.6, detect("import inspect\ninspect.isasyncgen()"))
+
+  def test_isasyncgenfunction_from_inspect(self):
+    self.assertOnlyIn(3.6, detect("import inspect\ninspect.isasyncgenfunction()"))
+
+  def test_signature_from_inspect(self):
+    self.assertOnlyIn(3.3, detect("import inspect\ninspect.signature()"))
+
+  def test_apply_defaults_from_inspect_BoundArguments(self):
+    self.assertOnlyIn(3.6, detect("from inspect import BoundArguments\n"
+                                  "ba = BoundArguments()\n"
+                                  "ba.apply_defaults()"))
+
+  def test_getclosurevars_from_inspect(self):
+    self.assertOnlyIn(3.3, detect("import inspect\ninspect.getclosurevars()"))
+
+  def test_unwrap_from_inspect(self):
+    self.assertOnlyIn(3.4, detect("import inspect\ninspect.unwrap()"))
+
+  def test_getattr_static_from_inspect(self):
+    self.assertOnlyIn(3.2, detect("import inspect\ninspect.getattr_static()"))
+
+  def test_getgeneratorstate_from_inspect(self):
+    self.assertOnlyIn(3.2, detect("import inspect\ninspect.getgeneratorstate()"))
+
+  def test_getgeneratorlocals_from_inspect(self):
+    self.assertOnlyIn(3.2, detect("import inspect\ninspect.getgeneratorlocals()"))
+
+  def test_getcoroutinestate_from_inspect(self):
+    self.assertOnlyIn(3.5, detect("import inspect\ninspect.getcoroutinestate()"))
+
+  def test_getcoroutinelocals_from_inspect(self):
+    self.assertOnlyIn(3.5, detect("import inspect\ninspect.getcoroutinelocals()"))
+
+  def test_detach_from_io_BufferedIOBase(self):
+    self.assertOnlyIn((2.7, 3.1),
+                      detect("from io import BufferedIOBase\n"
+                             "bb = BufferedIOBase()\n"
+                             "bb.detach()"))
+
+  def test_readinto1_from_io_BufferedIOBase(self):
+    self.assertOnlyIn(3.5,
+                      detect("from io import BufferedIOBase\n"
+                             "bb = BufferedIOBase()\n"
+                             "bb.readinto1()"))
+
+  def test_readinto1_from_io_BytesIO(self):
+    self.assertOnlyIn(3.5,
+                      detect("from io import BytesIO\n"
+                             "bb = BytesIO()\n"
+                             "bb.readinto1()"))
+
+  def test_getbuffer_from_io_BytesIO(self):
+    self.assertOnlyIn(3.2,
+                      detect("from io import BytesIO\n"
+                             "bb = BytesIO()\n"
+                             "bb.getbuffer()"))
+
+  def test_detach_from_io_TextIOBase(self):
+    self.assertOnlyIn((2.7, 3.1),
+                      detect("from io import TextIOBase\n"
+                             "bb = TextIOBase()\n"
+                             "bb.detach()"))

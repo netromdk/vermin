@@ -220,3 +220,15 @@ class VerminModuleTests(VerminTest):
 
   def test_hmac(self):
     self.assertOnlyIn((2.2, 3.0), detect("import hmac"))
+
+  def test_hotshot(self):
+    self.assertOnlyIn(2.2, detect("import hotshot"))
+
+  def test_importlib(self):
+    self.assertOnlyIn((2.7, 3.1), detect("import importlib"))
+
+  def test_inspect(self):
+    self.assertOnlyIn((2.1, 3.0), detect("import inspect"))
+
+  def test_io(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import io"))

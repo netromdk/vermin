@@ -180,3 +180,12 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_name_of_hmac_HMAC(self):
     self.assertOnlyIn(3.4, detect("from hmac import HMAC\nd = HMAC()\nd.name"))
+
+  def test_CO_COROUTINE_of_inspect(self):
+    self.assertOnlyIn(3.5, detect("import inspect\ninspect.CO_COROUTINE"))
+
+  def test_CO_ITERABLE_COROUTINE_of_inspect(self):
+    self.assertOnlyIn(3.5, detect("import inspect\ninspect.CO_ITERABLE_COROUTINE"))
+
+  def test_CO_ASYNC_GENERATOR_of_inspect(self):
+    self.assertOnlyIn(3.6, detect("import inspect\ninspect.CO_ASYNC_GENERATOR"))

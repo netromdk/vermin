@@ -158,3 +158,9 @@ class VerminKwargsTests(VerminTest):
 
   def test_reverse_of_merge_from_heapq(self):
     self.assertOnlyIn(3.5, detect("import heapq\nheapq.merge(reverse=True)"))
+
+  def test_follow_wrapped_of_signature_from_inspect(self):
+    self.assertOnlyIn(3.5, detect("import inspect\ninspect.signature(follow_wrapped=True)"))
+
+  def test_write_through_of_TextIOWrapper_from_io(self):
+    self.assertOnlyIn(3.3, detect("import io\nio.TextIOWrapper(write_through=True)"))

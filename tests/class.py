@@ -93,3 +93,12 @@ class VerminClassMemberTests(VerminTest):
 
   def test_HtmlDiff_of_difflib(self):
     self.assertOnlyIn((2.4, 3.0), detect("from difflib import HtmlDiff"))
+
+  def test_Signature_of_inspect(self):
+    self.assertOnlyIn(3.3, detect("from inspect import Signature"))
+
+  def test_Parameter_of_inspect(self):
+    self.assertOnlyIn(3.3, detect("from inspect import Parameter"))
+
+  def test_BoundArguments_of_inspect(self):
+    self.assertOnlyIn(3.3, detect("from inspect import BoundArguments"))

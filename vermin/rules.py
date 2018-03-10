@@ -48,10 +48,14 @@ MOD_REQS = {
   "hashlib": (2.5, 3.0),
   "heapq": (2.3, 3.0),
   "hmac": (2.2, 3.0),
+  "hotshot": (2.2, None),
   "html": (None, 3.0),
   "htmlentitydefs": (2.0, None),
   "http": (None, 3.0),
   "http.cookiejar": (None, 3.0),
+  "importlib": (2.7, 3.1),
+  "inspect": (2.1, 3.0),
+  "io": (2.6, 3.0),
   "ipaddress": (None, 3.3),
   "markupbase": (2.0, None),
   "md5": (2.0, None),
@@ -84,6 +88,7 @@ MOD_MEM_REQS = multidict((
   ("AbstractContextManager", ("contextlib", (None, 3.6))),
   ("AsyncGenerator", ("typing", (None, 3.6))),
   ("Barrier", ("multiprocessing", (None, 3.3))),
+  ("BoundArguments", ("inspect", (None, 3.3))),
   ("ChainMap", ("typing", (None, 3.6))),
   ("ClassVar", ("typing", (None, 3.5))),
   ("Collection", ("typing", (None, 3.6))),
@@ -96,7 +101,9 @@ MOD_MEM_REQS = multidict((
   ("ExitStack", ("contextlib", (None, 3.3))),
   ("HtmlDiff", ("difflib", (2.4, 3.0))),
   ("OrderedDict", ("collections", (2.7, 3.1))),
+  ("Parameter", ("inspect", (None, 3.3))),
   ("PathLike", ("os", (None, 3.6))),
+  ("Signature", ("inspect", (None, 3.3))),
   ("Text", ("typing", (None, 3.6))),
   ("TextTestResult", ("unittest", (2.7, 3.0))),
   ("UserDict", ("collections", (None, 3.0))),
@@ -116,6 +123,7 @@ MOD_MEM_REQS = multidict((
   ("NewType", ("typing", (None, 3.5))),
   ("addCleanup", ("unittest.TestCase", (2.7, 3.1))),
   ("addTypeEqualityFunc", ("unittest.TestCase", (2.7, 3.1))),
+  ("apply_defaults", ("inspect.BoundArguments", (None, 3.6))),
   ("as_integer_ratio", ("decimal.Decimal", (None, 3.6))),
   ("assertDictContainsSubset", ("unittest.TestCase", (2.7, 3.1))),
   ("assertDictEqual", ("unittest.TestCase", (2.7, 3.1))),
@@ -143,6 +151,7 @@ MOD_MEM_REQS = multidict((
   ("assertSetEqual", ("unittest.TestCase", (2.7, 3.1))),
   ("assertTupleEqual", ("unittest.TestCase", (2.7, 3.1))),
   ("canonical", ("decimal.Decimal", (2.6, 3.0))),
+  ("cleandoc", ("inspect", (2.6, 3.0))),
   ("clear_traps", ("decimal.Context", (None, 3.3))),
   ("cmp_to_key", ("functools", (2.7, 3.2))),
   ("commonpath", ("os.path", (None, 3.5))),
@@ -158,6 +167,8 @@ MOD_MEM_REQS = multidict((
   ("copy_sign", ("decimal.Decimal", (2.6, 3.0))),
   ("count", ("collections.deque", (2.7, 3.2))),
   ("create_decimal_from_float", ("decimal.Context", (2.7, 3.1))),
+  ("detach", ("io.BufferedIOBase", (2.7, 3.1))),
+  ("detach", ("io.TextIOBase", (2.7, 3.1))),
   ("diff_bytes", ("difflib", (None, 3.5))),
   ("discover", ("unittest.TestLoader", (2.7, 3.2))),
   ("doCleanups", ("unittest.TestCase", (2.7, 3.1))),
@@ -184,12 +195,20 @@ MOD_MEM_REQS = multidict((
   ("get_last_error", ("ctypes", (2.6, 3.0))),
   ("get_start_method", ("multiprocessing", (None, 3.4))),
   ("get_terminal_size", ("os", (None, 3.3))),
+  ("getattr_static", ("inspect", (None, 3.2))),
+  ("getbuffer", ("io.BytesIO", (None, 3.2))),
+  ("getcallargs", ("inspect", (2.7, 3.2))),
   ("getcheckinterval", ("sys", (2.3, 3.0))),
+  ("getclosurevars", ("inspect", (None, 3.3))),
+  ("getcoroutinelocals", ("inspect", (None, 3.5))),
+  ("getcoroutinestate", ("inspect", (None, 3.5))),
   ("getctime", ("os.path", (2.3, 3.0))),
   ("getdefaultencoding", ("sys", (2.0, 3.0))),
   ("getdlopenflags", ("sys", (2.2, 3.0))),
   ("getenvb", ("os", (None, 3.2))),
   ("getfilesystemencoding", ("sys", (2.3, 3.0))),
+  ("getgeneratorlocals", ("inspect", (None, 3.2))),
+  ("getgeneratorstate", ("inspect", (None, 3.2))),
   ("getgrouplist", ("os", (None, 3.3))),
   ("getpgid", ("os", (2.3, 3.0))),
   ("getpriority", ("os", (None, 3.3))),
@@ -214,6 +233,17 @@ MOD_MEM_REQS = multidict((
   ("is_snan", ("decimal.Decimal", (2.6, 3.0))),
   ("is_subnormal", ("decimal.Decimal", (2.6, 3.0))),
   ("is_zero", ("decimal.Decimal", (2.6, 3.0))),
+  ("isabstract", ("inspect", (2.6, 3.0))),
+  ("isasyncgen", ("inspect", (None, 3.6))),
+  ("isasyncgenfunction", ("inspect", (None, 3.6))),
+  ("isawaitable", ("inspect", (None, 3.5))),
+  ("iscoroutine", ("inspect", (None, 3.5))),
+  ("iscoroutinefunction", ("inspect", (None, 3.5))),
+  ("isdatadescriptor", ("inspect", (2.3, 3.0))),
+  ("isgenerator", ("inspect", (2.6, 3.0))),
+  ("isgeneratorfunction", ("inspect", (2.6, 3.0))),
+  ("isgetsetdescriptor", ("inspect", (2.5, 3.0))),
+  ("ismemberdescriptor", ("inspect", (2.5, 3.0))),
   ("ismount", ("os.path", (None, 3.4))),
   ("lexists", ("os.path", (2.4, 3.0))),
   ("ln", ("decimal.Decimal", (2.6, 3.0))),
@@ -251,6 +281,8 @@ MOD_MEM_REQS = multidict((
   ("read1", ("bz2.BZ2File", (None, 3.3))),
   ("readable", ("bz2.BZ2File", (None, 3.3))),
   ("readinto", ("bz2.BZ2File", (None, 3.3))),
+  ("readinto1", ("io.BufferedIOBase", (None, 3.5))),
+  ("readinto1", ("io.BytesIO", (None, 3.5))),
   ("readv", ("os", (None, 3.3))),
   ("realpath", ("os.path", (2.6, 3.0))),
   ("redirect_stderr", ("contextlib", (None, 3.5))),
@@ -274,6 +306,7 @@ MOD_MEM_REQS = multidict((
   ("setresgid", ("os", (2.7, 3.2))),
   ("setresuid", ("os", (2.7, 3.2))),
   ("shift", ("decimal.Decimal", (2.6, 3.0))),
+  ("signature", ("inspect", (None, 3.3))),
   ("starmap", ("multiprocessing.Pool", (None, 3.3))),
   ("starmap_async", ("multiprocessing.Pool", (None, 3.3))),
   ("startTestRun", ("unittest.TestResult", (2.7, 3.1))),
@@ -285,11 +318,15 @@ MOD_MEM_REQS = multidict((
   ("total_ordering", ("functools", (2.7, 3.2))),
   ("total_seconds", ("datetime.timedelta", (None, 3.2))),
   ("unified_diff", ("difflib", (2.3, 3.0))),
+  ("unwrap", ("inspect", (None, 3.4))),
   ("wait", ("multiprocessing.connection", (None, 3.3))),
   ("writable", ("bz2.BZ2File", (None, 3.3))),
   ("writev", ("os", (None, 3.3))),
 
   # Variables and Constants
+  ("CO_ASYNC_GENERATOR", ("inspect", (None, 3.6))),
+  ("CO_COROUTINE", ("inspect", (None, 3.5))),
+  ("CO_ITERABLE_COROUTINE", ("inspect", (None, 3.5))),
   ("F_LOCK", ("os", (None, 3.3))),
   ("F_TEST", ("os", (None, 3.3))),
   ("F_TLOCK", ("os", (None, 3.3))),
@@ -364,6 +401,7 @@ KWARGS_REQS = {
   ("Process", "daemon"): (None, 3.3),  # multiprocessing
   ("SequenceMatcher", "autojunk"): (2.7, 3.2),  # difflib
   ("SimpleXMLRPCServer", "use_builtin_types"): (None, 3.3),  # xmlrpc.server
+  ("TextIOWrapper", "write_through"): (None, 3.3),  # io
   ("WinDLL", "use_errno"): (2.6, 3.0),  # ctypes
   ("WinDLL", "use_last_error"): (2.6, 3.0),  # ctypes
   ("access", "dir_fd"): (None, 3.3),  # os
@@ -398,6 +436,7 @@ KWARGS_REQS = {
   ("pformat", "compact"): (None, 3.4),  # pprint
   ("pprint", "compact"): (None, 3.4),  # pprint
   ("replace", "fold"): (None, 3.6),  # datetime.datetime
+  ("signature", "follow_wrapped"): (None, 3.5),  # inspect
 }
 
 # datetime+time strftime/strptime requirements: directive -> requirements
