@@ -164,3 +164,36 @@ class VerminKwargsTests(VerminTest):
 
   def test_write_through_of_TextIOWrapper_from_io(self):
     self.assertOnlyIn(3.3, detect("import io\nio.TextIOWrapper(write_through=True)"))
+
+  def test_func_of_accumulate_from_itertools(self):
+    self.assertOnlyIn(3.3, detect("import itertools\nitertools.accumulate(func=None)"))
+
+  def test_step_of_count_from_itertools(self):
+    self.assertOnlyIn(3.1, detect("import itertools\nitertools.count(step=None)"))
+
+  def test_object_pairs_hook_of_load_from_json(self):
+    self.assertOnlyIn((2.7, 3.1), detect("import json\njson.load(object_pairs_hook=None)"))
+
+  def test_object_pairs_hook_of_JSONDecoder_from_json(self):
+    self.assertOnlyIn((2.7, 3.1), detect("import json\njson.JSONDecoder(object_pairs_hook=None)"))
+
+  def test_func_of_makeRecord_from_logging_Logger(self):
+    self.assertOnlyIn((2.5, 3.0),
+                      detect("from logging import Logger\nLogger.makeRecord(func=None)"))
+
+  def test_extra_of_makeRecord_from_logging_Logger(self):
+    self.assertOnlyIn((2.5, 3.0),
+                      detect("from logging import Logger\nLogger.makeRecord(extra=None)"))
+
+  def test_func_of_LogRecord_from_logging(self):
+    self.assertOnlyIn((2.5, 3.0),
+                      detect("from logging import LogRecord\nLogger.LogRecord(func=None)"))
+
+  def test_extra_of_debug_from_logging(self):
+    self.assertOnlyIn((2.5, 3.0), detect("import logging\nlogging.debug(extra=None)"))
+
+  def test_stack_info_of_debug_from_logging(self):
+    self.assertOnlyIn(3.2, detect("import logging\nlogging.debug(stack_info=None)"))
+
+  def test_style_of_Formatter_from_logging(self):
+    self.assertOnlyIn(3.2, detect("import logging\nlogging.Formatter(style=None)"))

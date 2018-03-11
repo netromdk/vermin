@@ -664,3 +664,43 @@ class VerminFunctionMemberTests(VerminTest):
                       detect("from io import TextIOBase\n"
                              "bb = TextIOBase()\n"
                              "bb.detach()"))
+
+  def test_combinations_from_itertools(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import itertools\nitertools.combinations()"))
+
+  def test_combinations_with_replacement_from_itertools(self):
+    self.assertOnlyIn((2.7, 3.1),
+                      detect("import itertools\nitertools.combinations_with_replacement()"))
+
+  def test_compress_from_itertools(self):
+    self.assertOnlyIn((2.7, 3.1), detect("import itertools\nitertools.compress()"))
+
+  def test_groupby_from_itertools(self):
+    self.assertOnlyIn((2.4, 3.0), detect("import itertools\nitertools.groupby()"))
+
+  def test_izip_longest_from_itertools(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import itertools\nitertools.izip_longest()"))
+
+  def test_permutations_from_itertools(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import itertools\nitertools.permutations()"))
+
+  def test_product_from_itertools(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import itertools\nitertools.product()"))
+
+  def test_tee_from_itertools(self):
+    self.assertOnlyIn((2.4, 3.0), detect("import itertools\nitertools.tee()"))
+
+  def test_accumulate_from_itertools(self):
+    self.assertOnlyIn(3.2, detect("import itertools\nitertools.accumulate()"))
+
+  def test_getChild_from_logging_Logger(self):
+    self.assertOnlyIn((2.7, 3.2), detect("from logging import Logger\nLogger.getChild()"))
+
+  def test_hasHandlers_from_logging_Logger(self):
+    self.assertOnlyIn(3.2, detect("from logging import Logger\nLogger.hasHandlers()"))
+
+  def test_getLogRecordFactory_from_logging(self):
+    self.assertOnlyIn(3.2, detect("import logging\nlogging.getLogRecordFactory()"))
+
+  def test_setLogRecordFactory_from_logging(self):
+    self.assertOnlyIn(3.2, detect("import logging\nlogging.setLogRecordFactory()"))

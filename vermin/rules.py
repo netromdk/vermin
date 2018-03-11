@@ -57,6 +57,9 @@ MOD_REQS = {
   "inspect": (2.1, 3.0),
   "io": (2.6, 3.0),
   "ipaddress": (None, 3.3),
+  "itertools": (2.3, 3.0),
+  "json": (2.6, 3.0),
+  "logging": (2.3, 3.0),
   "markupbase": (2.0, None),
   "md5": (2.0, None),
   "multiprocessing": (2.6, 3.0),
@@ -100,6 +103,8 @@ MOD_MEM_REQS = multidict((
   ("DomainFilter", ("tracemalloc", (None, 3.6))),
   ("ExitStack", ("contextlib", (None, 3.3))),
   ("HtmlDiff", ("difflib", (2.4, 3.0))),
+  ("JSONDecodeError", ("json", (None, 3.5))),
+  ("LoggerAdapter", ("logging", (2.6, 3.0))),
   ("OrderedDict", ("collections", (2.7, 3.1))),
   ("Parameter", ("inspect", (None, 3.3))),
   ("PathLike", ("os", (None, 3.6))),
@@ -121,6 +126,7 @@ MOD_MEM_REQS = multidict((
 
   # Functions
   ("NewType", ("typing", (None, 3.5))),
+  ("accumulate", ("itertools", (None, 3.2))),
   ("addCleanup", ("unittest.TestCase", (2.7, 3.1))),
   ("addTypeEqualityFunc", ("unittest.TestCase", (2.7, 3.1))),
   ("apply_defaults", ("inspect.BoundArguments", (None, 3.6))),
@@ -154,11 +160,14 @@ MOD_MEM_REQS = multidict((
   ("cleandoc", ("inspect", (2.6, 3.0))),
   ("clear_traps", ("decimal.Context", (None, 3.3))),
   ("cmp_to_key", ("functools", (2.7, 3.2))),
+  ("combinations", ("itertools", (2.6, 3.0))),
+  ("combinations_with_replacement", ("itertools", (2.7, 3.1))),
   ("commonpath", ("os.path", (None, 3.5))),
   ("compare_digest", ("hmac", (2.7, 3.3))),
   ("compare_signal", ("decimal.Decimal", (2.6, 3.0))),
   ("compare_total", ("decimal.Decimal", (2.6, 3.0))),
   ("compare_total_mag", ("decimal.Decimal", (2.6, 3.0))),
+  ("compress", ("itertools", (2.7, 3.1))),
   ("conjugate", ("decimal.Decimal", (2.6, 3.0))),
   ("context_diff", ("difflib", (2.3, 3.0))),
   ("copy", ("collections.deque", (None, 3.5))),
@@ -184,6 +193,7 @@ MOD_MEM_REQS = multidict((
   ("fsdecode", ("os", (None, 3.2))),
   ("fsencode", ("os", (None, 3.2))),
   ("fspath", ("os", (None, 3.6))),
+  ("getChild", ("logging.Logger", (2.7, 3.2))),
   ("get_all_start_methods", ("multiprocessing", (None, 3.4))),
   ("get_blocking", ("os", (None, 3.5))),
   ("get_context", ("multiprocessing", (None, 3.4))),
@@ -219,6 +229,8 @@ MOD_MEM_REQS = multidict((
   ("getsizeof", ("sys", (2.6, 3.0))),
   ("gettrace", ("sys", (2.6, 3.0))),
   ("getwindowsversion", ("sys", (2.3, 3.0))),
+  ("groupby", ("itertools", (2.4, 3.0))),
+  ("hasHandlers", ("logging.Logger", (None, 3.2))),
   ("heappushpop", ("heapq", (2.6, 3.0))),
   ("index", ("collections.deque", (None, 3.5))),
   ("initgroups", ("os", (2.7, 3.2))),
@@ -245,6 +257,7 @@ MOD_MEM_REQS = multidict((
   ("isgetsetdescriptor", ("inspect", (2.5, 3.0))),
   ("ismemberdescriptor", ("inspect", (2.5, 3.0))),
   ("ismount", ("os.path", (None, 3.4))),
+  ("izip_longest", ("itertools", (2.6, 3.0))),
   ("lexists", ("os.path", (2.4, 3.0))),
   ("ln", ("decimal.Decimal", (2.6, 3.0))),
   ("localcontext", ("decimal", (2.5, 3.0))),
@@ -272,10 +285,12 @@ MOD_MEM_REQS = multidict((
   ("partial_method", ("functools", (None, 3.4))),
   ("pbkdf2_hmac", ("hashlib", (2.7, 3.4))),
   ("peek", ("bz2.BZ2File", (None, 3.3))),
+  ("permutations", ("itertools", (2.6, 3.0))),
   ("pipe2", ("os", (None, 3.3))),
   ("posix_fadvise", ("os", (None, 3.3))),
   ("posix_fallocate", ("os", (None, 3.3))),
   ("pread", ("os", (None, 3.3))),
+  ("product", ("itertools", (2.6, 3.0))),
   ("pwrite", ("os", (None, 3.3))),
   ("radix", ("decimal.Decimal", (2.6, 3.0))),
   ("read1", ("bz2.BZ2File", (None, 3.3))),
@@ -312,6 +327,7 @@ MOD_MEM_REQS = multidict((
   ("startTestRun", ("unittest.TestResult", (2.7, 3.1))),
   ("stopTestRun", ("unittest.TestResult", (2.7, 3.1))),
   ("suppress", ("contextlib", (None, 3.4))),
+  ("tee", ("itertools", (2.4, 3.0))),
   ("timestamp", ("datetime.datetime", (None, 3.3))),
   ("to_integral_exact", ("decimal.Decimal", (2.6, 3.0))),
   ("to_integral_value", ("decimal.Decimal", (2.6, 3.0))),
@@ -322,6 +338,8 @@ MOD_MEM_REQS = multidict((
   ("wait", ("multiprocessing.connection", (None, 3.3))),
   ("writable", ("bz2.BZ2File", (None, 3.3))),
   ("writev", ("os", (None, 3.3))),
+  ("getLogRecordFactory", ("logging", (None, 3.2))),
+  ("setLogRecordFactory", ("logging", (None, 3.2))),
 
   # Variables and Constants
   ("CO_ASYNC_GENERATOR", ("inspect", (None, 3.6))),
@@ -366,6 +384,7 @@ MOD_MEM_REQS = multidict((
   ("generators", ("__future__", (2.2, 3.0))),
   ("is_global", ("ipaddress.IPv4Address", (None, 3.4))),
   ("is_global", ("ipaddress.IPv6Address", (None, 3.4))),
+  ("lastResort", ("logging", (None, 3.2))),
   ("long_info", ("sys", (2.7, None))),
   ("maxlen", ("collections.deque", (2.7, 3.1))),
   ("name", ("hmac.HMAC", (None, 3.4))),
@@ -393,6 +412,9 @@ KWARGS_REQS = {
   ("CGIXMLRPCRequestHandler", "use_builtin_types"): (None, 3.3),  # xmlrpc.server
   ("DocXMLRPCServer", "use_builtin_types"): (None, 3.3),  # xmlrpc.server
   ("Filter", "domain"): (None, 3.6),  # tracemalloc
+  ("Formatter", "style"): (None, 3.2),  # logging
+  ("JSONDecoder", "object_pairs_hook"): (2.7, 3.1),  # json
+  ("LogRecord", "func"): (2.5, 3.0),  # logging
   ("OleDLL", "use_errno"): (2.6, 3.0),  # ctypes
   ("OleDLL", "use_last_error"): (2.6, 3.0),  # ctypes
   ("Pool", "context"): (None, 3.4),  # multiprocessing
@@ -407,6 +429,7 @@ KWARGS_REQS = {
   ("access", "dir_fd"): (None, 3.3),  # os
   ("access", "effective_ids"): (None, 3.3),  # os
   ("access", "follow_symlinks"): (None, 3.3),  # os
+  ("accumulate", "func"): (None, 3.3),  # itertools
   ("assertAlmostEqual", "delta"): (2.7, 3.0),  # unittest.TestCase
   ("assertNotAlmostEqual", "delta"): (2.7, 3.0),  # unittest.TestCase
   ("byref", "offset"): (2.6, 3.0),  # ctypes
@@ -416,7 +439,10 @@ KWARGS_REQS = {
   ("chown", "dir_fd"): (None, 3.3),  # os
   ("chown", "follow_symlinks"): (None, 3.3),  # os
   ("combine", "tzinfo"): (None, 3.6),  # datetime.datetime
+  ("count", "step"): (None, 3.1),  # itertools
   ("datetime", "fold"): (None, 3.6),  # datetime.datetime
+  ("debug", "extra"): (2.5, 3.0),  # logging
+  ("debug", "stack_info"): (None, 3.2),  # logging
   ("decompress", "max_length"): (None, 3.5),  # bz2.BZ2Decompressor
   ("deque", "maxlen"): (2.6, 3.0),  # collections
   ("dup2", "inheritable"): (None, 3.4),  # os
@@ -424,7 +450,10 @@ KWARGS_REQS = {
   ("link", "dst_dir_fd"): (None, 3.3),  # os
   ("link", "follow_symlinks"): (None, 3.3),  # os
   ("link", "src_dir_fd"): (None, 3.3),  # os
+  ("load", "object_pairs_hook"): (2.7, 3.1),  # json
   ("lru_cache", "typed"): (None, 3.3),  # functools
+  ("makeRecord", "extra"): (2.5, 3.0),  # logging.Logger
+  ("makeRecord", "func"): (2.5, 3.0),  # logging.Logger
   ("make_file", "charset"): (None, 3.5),  # difflib.HtmlDiff
   ("merge", "key"): (None, 3.5),  # heapq
   ("merge", "reverse"): (None, 3.5),  # heapq

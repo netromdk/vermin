@@ -189,3 +189,6 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_CO_ASYNC_GENERATOR_of_inspect(self):
     self.assertOnlyIn(3.6, detect("import inspect\ninspect.CO_ASYNC_GENERATOR"))
+
+  def test_lastResort_of_logging(self):
+    self.assertOnlyIn(3.2, detect("import logging\nlogging.lastResort"))

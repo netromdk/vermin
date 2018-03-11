@@ -232,3 +232,12 @@ class VerminModuleTests(VerminTest):
 
   def test_io(self):
     self.assertOnlyIn((2.6, 3.0), detect("import io"))
+
+  def test_itertools(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import itertools"))
+
+  def test_json(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import json"))
+
+  def test_logging(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import logging"))

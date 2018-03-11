@@ -102,3 +102,9 @@ class VerminClassMemberTests(VerminTest):
 
   def test_BoundArguments_of_inspect(self):
     self.assertOnlyIn(3.3, detect("from inspect import BoundArguments"))
+
+  def test_JSONDecodeError_of_json(self):
+    self.assertOnlyIn(3.5, detect("from json import JSONDecodeError"))
+
+  def test_LoggerAdapter_of_logging(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from logging import LoggerAdapter"))
