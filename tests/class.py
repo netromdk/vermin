@@ -108,3 +108,9 @@ class VerminClassMemberTests(VerminTest):
 
   def test_LoggerAdapter_of_logging(self):
     self.assertOnlyIn((2.6, 3.0), detect("from logging import LoggerAdapter"))
+
+  def test_ModuleInfo_of_pkgutil(self):
+    self.assertOnlyIn(3.6, detect("from pkgutil import ModuleInfo"))
+
+  def test_CGIXMLRPCRequestHandler_of_SimpleXMLRPCServer(self):
+    self.assertOnlyIn(2.3, detect("from SimpleXMLRPCServer import CGIXMLRPCRequestHandler"))

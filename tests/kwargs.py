@@ -197,3 +197,47 @@ class VerminKwargsTests(VerminTest):
 
   def test_style_of_Formatter_from_logging(self):
     self.assertOnlyIn(3.2, detect("import logging\nlogging.Formatter(style=None)"))
+
+  def test_annotate_of_dis_from_pickletools(self):
+    self.assertOnlyIn(3.2, detect("import pickletools\npickletools.dis(annotate=None)"))
+
+  def test_posix_of_split_from_shlex(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import shlex\nshlex.split(posix=None)"))
+
+  def test_punctuation_chars_of_shlex_from_shlex(self):
+    self.assertOnlyIn(3.6, detect("import shlex\nshlex.shlex(punctuation_chars=None)"))
+
+  def test_allow_none_of_SimpleXMLRPCServer_from_SimpleXMLRPCServer(self):
+    self.assertOnlyIn(2.5,
+                      detect("from SimpleXMLRPCServer import SimpleXMLRPCServer\n"
+                             "SimpleXMLRPCServer(allow_none=True)"))
+
+  def test_encoding_of_SimpleXMLRPCServer_from_SimpleXMLRPCServer(self):
+    self.assertOnlyIn(2.5,
+                      detect("from SimpleXMLRPCServer import SimpleXMLRPCServer\n"
+                             "SimpleXMLRPCServer(encoding=True)"))
+
+  def test_bind_and_active_of_SimpleXMLRPCServer_from_SimpleXMLRPCServer(self):
+    self.assertOnlyIn(2.6,
+                      detect("from SimpleXMLRPCServer import SimpleXMLRPCServer\n"
+                             "SimpleXMLRPCServer(bind_and_active=True)"))
+
+  def test_allow_none_of_CGIXMLRPCRequestHandler_from_SimpleXMLRPCServer(self):
+    self.assertOnlyIn(2.5,
+                      detect("from SimpleXMLRPCServer import CGIXMLRPCRequestHandler\n"
+                             "CGIXMLRPCRequestHandler(allow_none=True)"))
+
+  def test_encoding_of_CGIXMLRPCRequestHandler_from_SimpleXMLRPCServer(self):
+    self.assertOnlyIn(2.5,
+                      detect("from SimpleXMLRPCServer import CGIXMLRPCRequestHandler\n"
+                             "CGIXMLRPCRequestHandler(encoding=True)"))
+
+  def test_allow_dotted_names_of_register_instance_from_SimpleXMLRPCServer(self):
+    self.assertOnlyIn(2.3,
+                      detect("from SimpleXMLRPCServer import SimpleXMLRPCServer\n"
+                             "srv = SimpleXMLRPCServer()\n"
+                             "srv.register_instance(allow_dotted_names=True)"))
+    self.assertOnlyIn(3.0,
+                      detect("from xmlrpc.server import SimpleXMLRPCServer\n"
+                             "srv = SimpleXMLRPCServer()\n"
+                             "srv.register_instance(allow_dotted_names=True)"))

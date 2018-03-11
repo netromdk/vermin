@@ -192,3 +192,31 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_lastResort_of_logging(self):
     self.assertOnlyIn(3.2, detect("import logging\nlogging.lastResort"))
+
+  def test_escape_of_shlex(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import shlex\nshlex.escape"))
+
+  def test_escapedquotes_of_shlex(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import shlex\nshlex.escapedquotes"))
+
+  def test_whitespace_split_of_shlex(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import shlex\nshlex.whitespace_split"))
+
+  def test_eof_of_shlex(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import shlex\nshlex.eof"))
+
+  def test_punctuation_chars_of_shlex(self):
+    self.assertOnlyIn(3.6, detect("import shlex\nshlex.punctuation_chars"))
+
+  def test_rpc_paths_of_SimpleXMLRPCServer_SimpleXMLRPCRequestHandler(self):
+    self.assertOnlyIn(2.5,
+                      detect("from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler\n"
+                             "SimpleXMLRPCRequestHandler.rpc_paths"))
+    self.assertOnlyIn(3.0,
+                      detect("from xmlrpc.server import SimpleXMLRPCRequestHandler\n"
+                             "SimpleXMLRPCRequestHandler.rpc_paths"))
+
+  def test_encode_threshold_of_SimpleXMLRPCServer_SimpleXMLRPCRequestHandler(self):
+    self.assertOnlyIn(2.7,
+                      detect("from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler\n"
+                             "SimpleXMLRPCRequestHandler.encode_threshold"))

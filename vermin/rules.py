@@ -6,6 +6,7 @@ MOD_REQS = {
   "DocXMLRPCServer": (2.3, None),
   "HTMLParser": (2.2, None),
   "Queue": (2.0, None),
+  "SimpleXMLRPCServer": (2.2, None),
   "SocketServer": (2.0, None),
   "__builtin__": (2.0, None),
   "__future__": (2.1, 3.0),
@@ -62,13 +63,24 @@ MOD_REQS = {
   "logging": (2.3, 3.0),
   "markupbase": (2.0, None),
   "md5": (2.0, None),
+  "modulefinder": (2.3, 3.0),
+  "msilib": (2.5, 3.0),
   "multiprocessing": (2.6, 3.0),
   "new": (2.0, None),
+  "numbers": (2.6, 3.0),
+  "optparse": (2.3, 3.0),
+  "ossaudiodev": (2.3, 3.0),
+  "pickletools": (2.3, 3.0),
+  "pkgutil": (2.3, 3.0),
+  "platform": (2.3, 3.0),
+  "pydoc": (2.1, 3.0),
   "queue": (None, 3.0),
   "repr": (2.0, None),
   "reprlib": (None, 3.0),
+  "runpy": (2.5, 3.0),
   "secrets": (None, 3.6),
-  "sets": (2.0, None),
+  "sets": (2.3, None),
+  "shlex": (2.0, 3.0),
   "socketserver": (None, 3.0),
   "string.letters": (2.0, None),
   "string.lowercase": (2.0, None),
@@ -92,6 +104,7 @@ MOD_MEM_REQS = multidict((
   ("AsyncGenerator", ("typing", (None, 3.6))),
   ("Barrier", ("multiprocessing", (None, 3.3))),
   ("BoundArguments", ("inspect", (None, 3.3))),
+  ("CGIXMLRPCRequestHandler", ("SimpleXMLRPCServer", (2.3, None))),
   ("ChainMap", ("typing", (None, 3.6))),
   ("ClassVar", ("typing", (None, 3.5))),
   ("Collection", ("typing", (None, 3.6))),
@@ -105,6 +118,7 @@ MOD_MEM_REQS = multidict((
   ("HtmlDiff", ("difflib", (2.4, 3.0))),
   ("JSONDecodeError", ("json", (None, 3.5))),
   ("LoggerAdapter", ("logging", (2.6, 3.0))),
+  ("ModuleInfo", ("pkgutil", (None, 3.6))),
   ("OrderedDict", ("collections", (2.7, 3.1))),
   ("Parameter", ("inspect", (None, 3.3))),
   ("PathLike", ("os", (None, 3.6))),
@@ -194,9 +208,11 @@ MOD_MEM_REQS = multidict((
   ("fsencode", ("os", (None, 3.2))),
   ("fspath", ("os", (None, 3.6))),
   ("getChild", ("logging.Logger", (2.7, 3.2))),
+  ("getLogRecordFactory", ("logging", (None, 3.2))),
   ("get_all_start_methods", ("multiprocessing", (None, 3.4))),
   ("get_blocking", ("os", (None, 3.5))),
   ("get_context", ("multiprocessing", (None, 3.4))),
+  ("get_data", ("pkgutil", (2.6, 3.0))),
   ("get_errno", ("ctypes", (2.6, 3.0))),
   ("get_exec_path", ("os", (None, 3.2))),
   ("get_grouped_opcodes", ("difflib.SequenceMatcher", (2.3, 3.0))),
@@ -259,6 +275,7 @@ MOD_MEM_REQS = multidict((
   ("ismount", ("os.path", (None, 3.4))),
   ("izip_longest", ("itertools", (2.6, 3.0))),
   ("lexists", ("os.path", (2.4, 3.0))),
+  ("linux_distribution", ("platform", (2.6, 3.0))),
   ("ln", ("decimal.Decimal", (2.6, 3.0))),
   ("localcontext", ("decimal", (2.5, 3.0))),
   ("lockf", ("os", (None, 3.3))),
@@ -282,16 +299,23 @@ MOD_MEM_REQS = multidict((
   ("nsmallest", ("heapq", (2.4, 3.0))),
   ("number_class", ("decimal.Decimal", (2.6, 3.0))),
   ("open", ("bz2", (None, 3.3))),
+  ("optimize", ("pickletools", (2.6, 3.0))),
   ("partial_method", ("functools", (None, 3.4))),
   ("pbkdf2_hmac", ("hashlib", (2.7, 3.4))),
   ("peek", ("bz2.BZ2File", (None, 3.3))),
   ("permutations", ("itertools", (2.6, 3.0))),
   ("pipe2", ("os", (None, 3.3))),
+  ("pop_source", ("shlex", (2.1, 3.0))),
   ("posix_fadvise", ("os", (None, 3.3))),
   ("posix_fallocate", ("os", (None, 3.3))),
   ("pread", ("os", (None, 3.3))),
   ("product", ("itertools", (2.6, 3.0))),
+  ("push_source", ("shlex", (2.1, 3.0))),
   ("pwrite", ("os", (None, 3.3))),
+  ("python_branch", ("platform", (2.6, 3.0))),
+  ("python_implementation", ("platform", (2.6, 3.0))),
+  ("python_revision", ("platform", (2.6, 3.0))),
+  ("quote", ("shlex", (None, 3.3))),
   ("radix", ("decimal.Decimal", (2.6, 3.0))),
   ("read1", ("bz2.BZ2File", (None, 3.3))),
   ("readable", ("bz2.BZ2File", (None, 3.3))),
@@ -303,13 +327,17 @@ MOD_MEM_REQS = multidict((
   ("redirect_stderr", ("contextlib", (None, 3.5))),
   ("redirect_stdout", ("contextlib", (None, 3.4))),
   ("reduce", ("functools", (2.6, 3.0))),
+  ("register_introspection_functions", ("SimpleXMLRPCServer.SimpleXMLRPCServer", (2.3, None))),
+  ("register_introspection_functions", ("xmlrpc.server.SimpleXMLRPCServer", (None, 3.0))),
   ("remove", ("collections.deque", (2.5, 3.0))),
   ("reverse", ("collections.deque", (2.7, 3.2))),
   ("rotate", ("decimal.Decimal", (2.6, 3.0))),
+  ("run_path", ("runpy", (2.7, 3.2))),
   ("scaleb", ("decimal.Decimal", (2.6, 3.0))),
   ("scrypt", ("hashlib", (None, 3.6))),
   ("seekable", ("bz2.BZ2File", (None, 3.3))),
   ("sendfile", ("os", (None, 3.3))),
+  ("setLogRecordFactory", ("logging", (None, 3.2))),
   ("set_blocking", ("os", (None, 3.5))),
   ("set_errno", ("ctypes", (2.6, 3.0))),
   ("set_handle_inheritable", ("os", (None, 3.4))),
@@ -322,6 +350,7 @@ MOD_MEM_REQS = multidict((
   ("setresuid", ("os", (2.7, 3.2))),
   ("shift", ("decimal.Decimal", (2.6, 3.0))),
   ("signature", ("inspect", (None, 3.3))),
+  ("split", ("shlex", (2.3, 3.0))),
   ("starmap", ("multiprocessing.Pool", (None, 3.3))),
   ("starmap_async", ("multiprocessing.Pool", (None, 3.3))),
   ("startTestRun", ("unittest.TestResult", (2.7, 3.1))),
@@ -338,8 +367,6 @@ MOD_MEM_REQS = multidict((
   ("wait", ("multiprocessing.connection", (None, 3.3))),
   ("writable", ("bz2.BZ2File", (None, 3.3))),
   ("writev", ("os", (None, 3.3))),
-  ("getLogRecordFactory", ("logging", (None, 3.2))),
-  ("setLogRecordFactory", ("logging", (None, 3.2))),
 
   # Variables and Constants
   ("CO_ASYNC_GENERATOR", ("inspect", (None, 3.6))),
@@ -373,8 +400,12 @@ MOD_MEM_REQS = multidict((
   ("block_size", ("hmac.HMAC", (None, 3.4))),
   ("buffer", ("unittest.TestResult", (2.7, 3.0))),
   ("division", ("__future__", (2.2, 3.0))),
+  ("encode_threshold", ("SimpleXMLRPCServer.SimpleXMLRPCRequestHandler", (2.7, None))),
   ("environb", ("os", (None, 3.2))),
   ("eof", ("bz2.BZ2Decompressor", (None, 3.3))),
+  ("eof", ("shlex", (2.3, 3.0))),
+  ("escape", ("shlex", (2.3, 3.0))),
+  ("escapedquotes", ("shlex", (2.3, 3.0))),
   ("failfast", ("unittest.TestResult", (2.7, 3.0))),
   ("flags", ("sys", (2.6, 3.0))),
   ("float_info", ("sys", (2.6, 3.0))),
@@ -391,8 +422,11 @@ MOD_MEM_REQS = multidict((
   ("needs_input", ("bz2.BZ2Decompressor", (None, 3.5))),
   ("nested_scopes", ("__future__", (2.1, 3.0))),
   ("print_function", ("__future__", (2.6, 3.0))),
+  ("punctuation_chars", ("shlex", (None, 3.6))),
   ("py3kwarning", ("sys", (2.6, None))),
   ("reverse_pointer", ("ipaddress.IPv4Address", (None, 3.5))),
+  ("rpc_paths", ("SimpleXMLRPCServer.SimpleXMLRPCRequestHandler", (2.5, None))),
+  ("rpc_paths", ("xmlrpc.server.SimpleXMLRPCRequestHandler", (None, 3.0))),
   ("sentinel", ("multiprocessing.Process", (None, 3.3))),
   ("skipped", ("unittest.TestResult", (2.7, 3.0))),
   ("subversion", ("sys", (2.5, None))),
@@ -400,6 +434,7 @@ MOD_MEM_REQS = multidict((
   ("supports_unicode_filenames", ("os.path", (2.3, 3.0))),
   ("unicode_literals", ("__future__", (2.6, 3.0))),
   ("version_info", ("sys", (2.0, 3.0))),
+  ("whitespace_split", ("shlex", (2.3, 3.0))),
   ("with_statement", ("__future__", (2.5, 3.0))),
 ))
 
@@ -409,6 +444,8 @@ KWARGS_REQS = {
   ("CDLL", "use_last_error"): (2.6, 3.0),  # ctypes
   ("CFUNCTYPE", "use_errno"): (2.6, 3.0),  # ctypes
   ("CFUNCTYPE", "use_last_error"): (2.6, 3.0),  # ctypes
+  ("CGIXMLRPCRequestHandler", "allow_none"): (2.5, None),  # SimpleXMLRPCServer
+  ("CGIXMLRPCRequestHandler", "encoding"): (2.5, None),  # SimpleXMLRPCServer
   ("CGIXMLRPCRequestHandler", "use_builtin_types"): (None, 3.3),  # xmlrpc.server
   ("DocXMLRPCServer", "use_builtin_types"): (None, 3.3),  # xmlrpc.server
   ("Filter", "domain"): (None, 3.6),  # tracemalloc
@@ -422,6 +459,9 @@ KWARGS_REQS = {
   ("PrettyPrinter", "compact"): (None, 3.4),  # pprint
   ("Process", "daemon"): (None, 3.3),  # multiprocessing
   ("SequenceMatcher", "autojunk"): (2.7, 3.2),  # difflib
+  ("SimpleXMLRPCServer", "allow_none"): (2.5, None),  # SimpleXMLRPCServer
+  ("SimpleXMLRPCServer", "bind_and_active"): (2.6, None),  # SimpleXMLRPCServer
+  ("SimpleXMLRPCServer", "encoding"): (2.5, None),  # SimpleXMLRPCServer
   ("SimpleXMLRPCServer", "use_builtin_types"): (None, 3.3),  # xmlrpc.server
   ("TextIOWrapper", "write_through"): (None, 3.3),  # io
   ("WinDLL", "use_errno"): (2.6, 3.0),  # ctypes
@@ -445,6 +485,7 @@ KWARGS_REQS = {
   ("debug", "stack_info"): (None, 3.2),  # logging
   ("decompress", "max_length"): (None, 3.5),  # bz2.BZ2Decompressor
   ("deque", "maxlen"): (2.6, 3.0),  # collections
+  ("dis", "annotate"): (None, 3.2),  # pickletools
   ("dup2", "inheritable"): (None, 3.4),  # os
   ("isoformat", "timespec"): (None, 3.6),  # datetime.datetime
   ("link", "dst_dir_fd"): (None, 3.3),  # os
@@ -464,8 +505,11 @@ KWARGS_REQS = {
   ("open", "dir_fd"): (None, 3.3),  # os
   ("pformat", "compact"): (None, 3.4),  # pprint
   ("pprint", "compact"): (None, 3.4),  # pprint
+  ("register_instance", "allow_dotted_names"): (2.3, 3.0),  # SimpleXMLRPCServer
   ("replace", "fold"): (None, 3.6),  # datetime.datetime
+  ("shlex", "punctuation_chars"): (None, 3.6),  # shlex
   ("signature", "follow_wrapped"): (None, 3.5),  # inspect
+  ("split", "posix"): (2.6, 3.0),  # shlex
 }
 
 # datetime+time strftime/strptime requirements: directive -> requirements

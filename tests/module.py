@@ -96,7 +96,7 @@ class VerminModuleTests(VerminTest):
     self.assertOnlyIn(3.0, detect("import xmlrpc"))
 
   def test_sets(self):
-    self.assertOnlyIn(2.0, detect("import sets"))
+    self.assertOnlyIn(2.3, detect("import sets"))
 
   def test_new(self):
     self.assertOnlyIn(2.0, detect("import new"))
@@ -241,3 +241,39 @@ class VerminModuleTests(VerminTest):
 
   def test_logging(self):
     self.assertOnlyIn((2.3, 3.0), detect("import logging"))
+
+  def test_modulefinder(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import modulefinder"))
+
+  def test_msilib(self):
+    self.assertOnlyIn((2.5, 3.0), detect("import msilib"))
+
+  def test_numbers(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import numbers"))
+
+  def test_optparse(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import optparse"))
+
+  def test_ossaudiodev(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import ossaudiodev"))
+
+  def test_pickletools(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import pickletools"))
+
+  def test_pkgutil(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import pkgutil"))
+
+  def test_platform(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import platform"))
+
+  def test_pydoc(self):
+    self.assertOnlyIn((2.1, 3.0), detect("import pydoc"))
+
+  def test_runpy(self):
+    self.assertOnlyIn((2.5, 3.0), detect("import runpy"))
+
+  def test_shlex(self):
+    self.assertOnlyIn((2.0, 3.0), detect("import shlex"))
+
+  def test_SimpleXMLRPCServer(self):
+    self.assertOnlyIn(2.2, detect("import SimpleXMLRPCServer"))

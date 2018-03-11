@@ -704,3 +704,46 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_setLogRecordFactory_from_logging(self):
     self.assertOnlyIn(3.2, detect("import logging\nlogging.setLogRecordFactory()"))
+
+  def test_optimize_from_pickletools(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import pickletools\npickletools.optimize()"))
+
+  def test_get_data_from_pkgutil(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import pkgutil\npkgutil.get_data()"))
+
+  def test_python_branch_from_platform(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import platform\nplatform.python_branch()"))
+
+  def test_python_implementation_from_platform(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import platform\nplatform.python_implementation()"))
+
+  def test_python_revision_from_platform(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import platform\nplatform.python_revision()"))
+
+  def test_linux_distribution_from_platform(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import platform\nplatform.linux_distribution()"))
+
+  def test_run_path_from_runpy(self):
+    self.assertOnlyIn((2.7, 3.2), detect("import runpy\nrunpy.run_path()"))
+
+  def test_split_from_shlex(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import shlex\nshlex.split()"))
+
+  def test_push_source_from_shlex(self):
+    self.assertOnlyIn((2.1, 3.0), detect("import shlex\nshlex.push_source()"))
+
+  def test_pop_source_from_shlex(self):
+    self.assertOnlyIn((2.1, 3.0), detect("import shlex\nshlex.pop_source()"))
+
+  def test_quote_from_shlex(self):
+    self.assertOnlyIn(3.3, detect("import shlex\nshlex.quote()"))
+
+  def test_register_introspection_functions_from_SimpleXMLRPCServer(self):
+    self.assertOnlyIn(2.3,
+                      detect("from SimpleXMLRPCServer import SimpleXMLRPCServer\n"
+                             "srv = SimpleXMLRPCServer()\n"
+                             "srv.register_introspection_functions()"))
+    self.assertOnlyIn(3.0,
+                      detect("from xmlrpc.server import SimpleXMLRPCServer\n"
+                             "srv = SimpleXMLRPCServer()\n"
+                             "srv.register_introspection_functions()"))
