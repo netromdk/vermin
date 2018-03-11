@@ -17,6 +17,8 @@ test-all:
 count:
 	./count.py
 	@echo "Tests: `grep -ri 'def test_' tests | wc -l | xargs echo`"
+	@echo "Vermin SLOC: `sloccount vermin/ vermin.py 2>/dev/null | grep 'python:'`"
+	@echo "Tests  SLOC: `sloccount tests/ runtests.py 2>/dev/null | grep 'python:'`"
 
 setup-venv: clean-venv
 	virtualenv -p python .venv
