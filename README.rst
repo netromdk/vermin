@@ -22,7 +22,8 @@ matches against internal dictionaries with 499 rules divided into 92 modules, 33
 classes/functions/constants members of modules, 70 kwargs of functions, and 4 strftime
 directives. Including looking for v2/v3 ``print expr`` and ``print(expr)``, ``long``, f-strings,
 ``"..".format(..)``, imports (``import X``, ``from X import Y``, ``from X import *``), function
-calls wrt. name and kwargs, and ``strftime`` + ``strptime`` directives used.
+calls wrt. name and kwargs, and ``strftime`` + ``strptime`` directives used. It tries to detect and
+ignore user-defined functions and classes with names that clash with library-defined symbols.
 
 Usage
 =====

@@ -3,7 +3,7 @@ import re
 
 from .rules import MOD_MEM_REQS
 from .config import Config
-from .printing import nprint, vvprint
+from .printing import nprint, vvprint, vvvprint
 
 STRFTIME_DIRECTIVE_REGEX = re.compile(r"(%\w)")
 
@@ -24,6 +24,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__kwargs = []
     self.__depth = 0
     self.__strftime_directives = []
+    self.__user_defs = []
 
   def modules(self):
     return self.__modules
@@ -55,12 +56,23 @@ class SourceVisitor(ast.NodeVisitor):
   def strftime_directives(self):
     return self.__strftime_directives
 
+  def user_defined(self):
+    return self.__user_defs
+
   def __add_module(self, module):
+    if module in self.__user_defs:
+      vvvprint("Ignoring module '{}' because it's user-defined!".format(module))
+      return
+
     if module not in self.__modules:
       self.__modules.append(module)
 
   def __add_member(self, member):
-    """Add member if required module is imported."""
+    """Add member if required module is imported and not be user-defined."""
+    if member in self.__user_defs:
+      vvvprint("Ignoring member '{}' because it's user-defined!".format(member))
+      return
+
     if self.__member_mod_visited(member):
       self.__members.append(member)
 
@@ -68,7 +80,8 @@ class SourceVisitor(ast.NodeVisitor):
     self.__star_imports.append(module)
 
   def __add_kwargs(self, function, keyword):
-    self.__kwargs.append((function, keyword))
+    if function not in self.__user_defs:
+      self.__kwargs.append((function, keyword))
 
   def __member_mod_visited(self, member):
     """Checks if module of member is imported/visited."""
@@ -80,6 +93,21 @@ class SourceVisitor(ast.NodeVisitor):
 
   def __add_strftime_directive(self, group):
     self.__strftime_directives.append(group)
+
+  def __add_user_def(self, name):
+    if name not in self.__user_defs:
+      self.__user_defs.append(name)
+
+    # Remove any modules and members that were added before any known user-definitions.
+    for ud in self.__user_defs:
+      for i in range(len(self.__modules)):
+        if self.__modules[i] == ud:
+          vvvprint("Ignoring module '{}' because it's user-defined!".format(ud))
+          del(self.__modules[i])
+      for i in range(len(self.__members)):
+        if self.__members[i] == ud:
+          vvvprint("Ignoring member '{}' because it's user-defined!".format(ud))
+          del(self.__members[i])
 
   def generic_visit(self, node):
     self.__depth += 1
@@ -179,6 +207,14 @@ class SourceVisitor(ast.NodeVisitor):
 
   def visit_JoinedStr(self, node):
     self.__fstrings = True
+
+  def visit_FunctionDef(self, node):
+    self.__add_user_def(node.name)
+    self.generic_visit(node)
+
+  def visit_ClassDef(self, node):
+    self.__add_user_def(node.name)
+    self.generic_visit(node)
 
   # Ignore unused nodes as a speed optimization.
 

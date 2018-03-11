@@ -34,3 +34,7 @@ class VerminTest(unittest.TestCase):
       value2 = data[key]
       self.assertEqual(value, value2,
                        msg="key={}, value={} != target={}".format(key, value, value2))
+
+  def assertEmpty(self, data):
+    self.assertTrue(len(data) == 0,
+                    msg="Input not empty! size={}, '{}'".format(len(data), data))
