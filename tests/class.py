@@ -114,3 +114,15 @@ class VerminClassMemberTests(VerminTest):
 
   def test_CGIXMLRPCRequestHandler_of_SimpleXMLRPCServer(self):
     self.assertOnlyIn(2.3, detect("from SimpleXMLRPCServer import CGIXMLRPCRequestHandler"))
+
+  def test_SSLContext_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.2), detect("from ssl import SSLContext"))
+
+  def test_SSLSession_of_ssl(self):
+    self.assertOnlyIn(3.6, detect("from ssl import SSLSession"))
+
+  def test_SSLMemoryBIO_of_ssl(self):
+    self.assertOnlyIn(3.6, detect("from ssl import SSLMemoryBIO"))
+
+  def test_SSLObject_of_ssl(self):
+    self.assertOnlyIn(3.6, detect("from ssl import SSLObject"))

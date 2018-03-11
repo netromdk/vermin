@@ -747,3 +747,135 @@ class VerminFunctionMemberTests(VerminTest):
                       detect("from xmlrpc.server import SimpleXMLRPCServer\n"
                              "srv = SimpleXMLRPCServer()\n"
                              "srv.register_introspection_functions()"))
+
+  def test_set_progress_handler_from_sqlite3_Connection(self):
+    self.assertOnlyIn((2.6, 3.0),
+                      detect("from sqlite3 import Connection\n"
+                             "conn = Connection()\n"
+                             "conn.set_progress_handler()"))
+
+  def test_enable_load_extension_from_sqlite3_Connection(self):
+    self.assertOnlyIn((2.7, 3.2),
+                      detect("from sqlite3 import Connection\n"
+                             "conn = Connection()\n"
+                             "conn.enable_load_extension()"))
+
+  def test_load_extension_from_sqlite3_Connection(self):
+    self.assertOnlyIn((2.7, 3.2),
+                      detect("from sqlite3 import Connection\n"
+                             "conn = Connection()\n"
+                             "conn.load_extension()"))
+
+  def test_iter_dump_from_sqlite3_Connection(self):
+    self.assertOnlyIn((2.6, 3.0),
+                      detect("from sqlite3 import Connection\n"
+                             "conn = Connection()\n"
+                             "conn.iter_dump()"))
+
+  def test_set_trace_callback_from_sqlite3_Connection(self):
+    self.assertOnlyIn(3.3,
+                      detect("from sqlite3 import Connection\n"
+                             "conn = Connection()\n"
+                             "conn.set_trace_callback()"))
+
+  def test_keys_from_sqlite3_Row(self):
+    self.assertOnlyIn((2.6, 3.0),
+                      detect("from sqlite3 import Row\n"
+                             "conn = Row()\n"
+                             "conn.keys()"))
+
+  def test_create_default_context_from_ssl(self):
+    self.assertOnlyIn((2.7, 3.4), detect("import ssl\nssl.create_default_context()"))
+
+  def test__https_verify_certificates_from_ssl(self):
+    self.assertOnlyIn(2.7, detect("import ssl\nssl._https_verify_certificates()"))
+
+  def test_RAND_bytes_from_ssl(self):
+    self.assertOnlyIn(3.3, detect("import ssl\nssl.RAND_bytes()"))
+
+  def test_RAND_pseudo_bytes_from_ssl(self):
+    self.assertOnlyIn(3.3, detect("import ssl\nssl.RAND_pseudo_bytes()"))
+
+  def test_match_hostname_from_ssl(self):
+    self.assertOnlyIn((2.7, 3.2), detect("import ssl\nssl.match_hostname()"))
+
+  def test_get_default_verify_paths_from_ssl(self):
+    self.assertOnlyIn((2.7, 3.4), detect("import ssl\nssl.get_default_verify_paths()"))
+
+  def test_enum_certificates_from_ssl(self):
+    self.assertOnlyIn((2.7, 3.4), detect("import ssl\nssl.enum_certificates()"))
+
+  def test_enum_crls_from_ssl(self):
+    self.assertOnlyIn((2.7, 3.4), detect("import ssl\nssl.enum_crls()"))
+
+  def test_compression_from_ssl(self):
+    self.assertOnlyIn((2.7, 3.3), detect("import ssl\nssl.compression()"))
+
+  def test_shared_ciphers_from_ssl(self):
+    self.assertOnlyIn(3.5, detect("import ssl\nssl.shared_ciphers()"))
+
+  def test_get_channel_binding_from_ssl(self):
+    self.assertOnlyIn((2.7, 3.3), detect("import ssl\nssl.get_channel_binding()"))
+
+  def test_selected_alpn_protocol_from_ssl(self):
+    self.assertOnlyIn((2.7, 3.5), detect("import ssl\nssl.selected_alpn_protocol()"))
+
+  def test_selected_npn_protocol_from_ssl(self):
+    self.assertOnlyIn((2.7, 3.3), detect("import ssl\nssl.selected_npn_protocol()"))
+
+  def test_version_from_ssl(self):
+    self.assertOnlyIn((2.7, 3.5), detect("import ssl\nssl.version()"))
+
+  def test_set_alpn_protocols_from_ssl_SSLContext(self):
+    self.assertOnlyIn((2.7, 3.5),
+                      detect("from ssl import SSLContext\n"
+                             "ctx = SSLContext()\n"
+                             "ctx.set_alpn_protocols()"))
+
+  def test_cert_store_stats_from_ssl_SSLContext(self):
+    self.assertOnlyIn(3.4,
+                      detect("from ssl import SSLContext\n"
+                             "ctx = SSLContext()\n"
+                             "ctx.cert_store_stats()"))
+
+  def test_load_default_certs_from_ssl_SSLContext(self):
+    self.assertOnlyIn(3.4,
+                      detect("from ssl import SSLContext\n"
+                             "ctx = SSLContext()\n"
+                             "ctx.load_default_certs()"))
+
+  def test_get_ca_certs_from_ssl_SSLContext(self):
+    self.assertOnlyIn(3.4,
+                      detect("from ssl import SSLContext\n"
+                             "ctx = SSLContext()\n"
+                             "ctx.get_ca_certs()"))
+
+  def test_get_ciphers_from_ssl_SSLContext(self):
+    self.assertOnlyIn(3.6,
+                      detect("from ssl import SSLContext\n"
+                             "ctx = SSLContext()\n"
+                             "ctx.get_ciphers()"))
+
+  def test_set_npn_protocols_from_ssl_SSLContext(self):
+    self.assertOnlyIn((2.7, 3.3),
+                      detect("from ssl import SSLContext\n"
+                             "ctx = SSLContext()\n"
+                             "ctx.set_npn_protocols()"))
+
+  def test_load_dh_params_from_ssl_SSLContext(self):
+    self.assertOnlyIn(3.3,
+                      detect("from ssl import SSLContext\n"
+                             "ctx = SSLContext()\n"
+                             "ctx.load_dh_params()"))
+
+  def test_set_ecdh_curve_from_ssl_SSLContext(self):
+    self.assertOnlyIn(3.3,
+                      detect("from ssl import SSLContext\n"
+                             "ctx = SSLContext()\n"
+                             "ctx.set_ecdh_curve()"))
+
+  def test_set_servername_callback_from_ssl_SSLContext(self):
+    self.assertOnlyIn(3.4,
+                      detect("from ssl import SSLContext\n"
+                             "ctx = SSLContext()\n"
+                             "ctx.set_servername_callback()"))

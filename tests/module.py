@@ -277,3 +277,12 @@ class VerminModuleTests(VerminTest):
 
   def test_SimpleXMLRPCServer(self):
     self.assertOnlyIn(2.2, detect("import SimpleXMLRPCServer"))
+
+  def test_spwd(self):
+    self.assertOnlyIn((2.5, 3.0), detect("import spwd"))
+
+  def test_sqlite3(self):
+    self.assertOnlyIn((2.5, 3.0), detect("import sqlite3"))
+
+  def test_ssl(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import ssl"))

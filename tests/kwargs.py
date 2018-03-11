@@ -241,3 +241,18 @@ class VerminKwargsTests(VerminTest):
                       detect("from xmlrpc.server import SimpleXMLRPCServer\n"
                              "srv = SimpleXMLRPCServer()\n"
                              "srv.register_instance(allow_dotted_names=True)"))
+
+  def test_ciphers_of_wrap_socket_from_ssl(self):
+    self.assertOnlyIn((2.7, 3.2), detect("import ssl\nssl.wrap_socket(ciphers=None)"))
+
+  def test_password_of_load_cert_chain_from_ssl_SSLContext(self):
+    self.assertOnlyIn(3.3,
+                      detect("from ssl import SSLContext\n"
+                             "ctx = SSLContext()\n"
+                             "ctx.load_cert_chain(password=None)"))
+
+  def test_cadata_of_load_verify_locations_from_ssl_SSLContext(self):
+    self.assertOnlyIn(3.4,
+                      detect("from ssl import SSLContext\n"
+                             "ctx = SSLContext()\n"
+                             "ctx.load_verify_locations(cadata=None)"))

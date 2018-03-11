@@ -220,3 +220,120 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn(2.7,
                       detect("from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler\n"
                              "SimpleXMLRPCRequestHandler.encode_threshold"))
+
+  def test_library_of_ssl_SSLError(self):
+    self.assertOnlyIn((2.7, 3.3), detect("from ssl import SSLError\nSSLError.library"))
+
+  def test_reason_of_ssl_SSLError(self):
+    self.assertOnlyIn((2.7, 3.3), detect("from ssl import SSLError\nSSLError.reason"))
+
+  def test_VERIFY_DEFAULT_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.4), detect("from ssl import VERIFY_DEFAULT"))
+
+  def test_VERIFY_CRL_CHECK_LEAF_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.4), detect("from ssl import VERIFY_CRL_CHECK_LEAF"))
+
+  def test_VERIFY_CRL_CHECK_CHAIN_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.4), detect("from ssl import VERIFY_CRL_CHECK_CHAIN"))
+
+  def test_VERIFY_X509_STRICT_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.4), detect("from ssl import VERIFY_X509_STRICT"))
+
+  def test_VERIFY_X509_TRUSTED_FIRST_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.4), detect("from ssl import VERIFY_X509_TRUSTED_FIRST"))
+
+  def test_PROTOCOL_TLS_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.6), detect("from ssl import PROTOCOL_TLS"))
+
+  def test_PROTOCOL_TLSv1_1_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.4), detect("from ssl import PROTOCOL_TLSv1_1"))
+
+  def test_PROTOCOL_TLSv1_2_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.4), detect("from ssl import PROTOCOL_TLSv1_2"))
+
+  def test_OP_ALL_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.2), detect("from ssl import OP_ALL"))
+
+  def test_OP_NO_SSLv2_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.2), detect("from ssl import OP_NO_SSLv2"))
+
+  def test_OP_NO_SSLv3_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.2), detect("from ssl import OP_NO_SSLv3"))
+
+  def test_OP_NO_TLSv1_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.2), detect("from ssl import OP_NO_TLSv1"))
+
+  def test_OP_NO_TLSv1_1_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.4), detect("from ssl import OP_NO_TLSv1_1"))
+
+  def test_OP_NO_TLSv1_2_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.4), detect("from ssl import OP_NO_TLSv1_2"))
+
+  def test_OP_NO_TLSv1_3_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.6), detect("from ssl import OP_NO_TLSv1_3"))
+
+  def test_OP_CIPHER_SERVER_PREFERENCE_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.3), detect("from ssl import OP_CIPHER_SERVER_PREFERENCE"))
+
+  def test_OP_SINGLE_DH_USE_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.3), detect("from ssl import OP_SINGLE_DH_USE"))
+
+  def test_OP_SINGLE_ECDH_USE_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.3), detect("from ssl import OP_SINGLE_ECDH_USE"))
+
+  def test_OP_NO_COMPRESSION_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.3), detect("from ssl import OP_NO_COMPRESSION"))
+
+  def test_HAS_ALPN_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.5), detect("from ssl import HAS_ALPN"))
+
+  def test_HAS_ECDH_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.3), detect("from ssl import HAS_ECDH"))
+
+  def test_HAS_SNI_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.2), detect("from ssl import HAS_SNI"))
+
+  def test_HAS_NPN_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.3), detect("from ssl import HAS_NPN"))
+
+  def test_HAS_TLSv1_3_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.6), detect("from ssl import HAS_TLSv1_3"))
+
+  def test_CHANNEL_BINDING_TYPES_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.3), detect("from ssl import CHANNEL_BINDING_TYPES"))
+
+  def test_OPENSSL_VERSION_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.2), detect("from ssl import OPENSSL_VERSION"))
+
+  def test_OPENSSL_VERSION_INFO_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.2), detect("from ssl import OPENSSL_VERSION_INFO"))
+
+  def test_OPENSSL_VERSION_NUMBER_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.2), detect("from ssl import OPENSSL_VERSION_NUMBER"))
+
+  def test_ALERT_DESCRIPTION_HANDSHAKE_FAILURE_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.4), detect("from ssl import ALERT_DESCRIPTION_HANDSHAKE_FAILURE"))
+
+  def test_ALERT_DESCRIPTION_INTERNAL_ERROR_of_ssl(self):
+    self.assertOnlyIn((2.7, 3.4), detect("from ssl import ALERT_DESCRIPTION_INTERNAL_ERROR"))
+
+  def test_context_of_ssl_SSLSocket(self):
+    self.assertOnlyIn((2.7, 3.2), detect("from ssl import SSLSocket\nSSLSocket.context"))
+
+  def test_server_side_of_ssl_SSLSocket(self):
+    self.assertOnlyIn(3.2, detect("from ssl import SSLSocket\nSSLSocket.server_side"))
+
+  def test_server_hostname_of_ssl_SSLSocket(self):
+    self.assertOnlyIn(3.2, detect("from ssl import SSLSocket\nSSLSocket.server_hostname"))
+
+  def test_session_of_ssl_SSLSocket(self):
+    self.assertOnlyIn(3.2, detect("from ssl import SSLSocket\nSSLSocket.session"))
+
+  def test_session_reused_of_ssl_SSLSocket(self):
+    self.assertOnlyIn(3.2, detect("from ssl import SSLSocket\nSSLSocket.session_reused"))
+
+  def test_check_hostname_of_ssl_SSLContext(self):
+    self.assertOnlyIn(3.4, detect("from ssl import SSLContext\nSSLContext.check_hostname"))
+
+  def test_verify_flags_of_ssl_SSLContext(self):
+    self.assertOnlyIn(3.4, detect("from ssl import SSLContext\nSSLContext.verify_flags"))
