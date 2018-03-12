@@ -337,3 +337,6 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_verify_flags_of_ssl_SSLContext(self):
     self.assertOnlyIn(3.4, detect("from ssl import SSLContext\nSSLContext.verify_flags"))
+
+  def test_DEVNULL_of_subprocess(self):
+    self.assertOnlyIn(3.3, detect("from subprocess import DEVNULL"))

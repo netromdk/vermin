@@ -256,3 +256,48 @@ class VerminKwargsTests(VerminTest):
                       detect("from ssl import SSLContext\n"
                              "ctx = SSLContext()\n"
                              "ctx.load_verify_locations(cadata=None)"))
+
+  def test_encoding_of_run_from_subprocess(self):
+    self.assertOnlyIn(3.6, detect("import subprocess\nsubprocess.run(encoding=None)"))
+
+  def test_errors_of_run_from_subprocess(self):
+    self.assertOnlyIn(3.6, detect("import subprocess\nsubprocess.run(errors=None)"))
+
+  def test_pass_fds_of_Popen_from_subprocess(self):
+    self.assertOnlyIn(3.2,
+                      detect("from subprocess import Popen\n"
+                             "Popen(pass_fds=True)"))
+
+  def test_restore_signals_of_Popen_from_subprocess(self):
+    self.assertOnlyIn(3.2,
+                      detect("from subprocess import Popen\n"
+                             "Popen(restore_signals=True)"))
+
+  def test_start_new_session_of_Popen_from_subprocess(self):
+    self.assertOnlyIn(3.2,
+                      detect("from subprocess import Popen\n"
+                             "Popen(start_new_session=True)"))
+
+  def test_encoding_of_Popen_from_subprocess(self):
+    self.assertOnlyIn(3.6, detect("import subprocess\nsubprocess.Popen(encoding=None)"))
+
+  def test_errors_of_Popen_from_subprocess(self):
+    self.assertOnlyIn(3.6, detect("import subprocess\nsubprocess.Popen(errors=None)"))
+
+  def test_timeout_of_wait_from_subprocess_Popen(self):
+    self.assertOnlyIn(3.3, detect("from subprocess import Popen\nPopen.wait(timeout=None)"))
+
+  def test_timeout_of_communicate_from_subprocess_Popen(self):
+    self.assertOnlyIn(3.3, detect("from subprocess import Popen\nPopen.communicate(timeout=None)"))
+
+  def test_timeout_of_call_from_subprocess(self):
+    self.assertOnlyIn(3.3, detect("import subprocess\nsubprocess.call(timeout=None)"))
+
+  def test_timeout_of_check_call_from_subprocess(self):
+    self.assertOnlyIn(3.3, detect("import subprocess\nsubprocess.check_call(timeout=None)"))
+
+  def test_timeout_of_check_output_from_subprocess(self):
+    self.assertOnlyIn(3.3, detect("import subprocess\nsubprocess.check_output(timeout=None)"))
+
+  def test_input_of_check_output_from_subprocess(self):
+    self.assertOnlyIn(3.4, detect("import subprocess\nsubprocess.check_output(input=None)"))

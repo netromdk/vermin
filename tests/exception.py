@@ -12,3 +12,9 @@ class VerminExceptionMemberTests(VerminTest):
 
   def test_SSLSyscallError_of_ssl(self):
     self.assertOnlyIn((2.7, 3.3), detect("from ssl import SSLSyscallError"))
+
+  def test_SubprocessError_of_subprocess(self):
+    self.assertOnlyIn(3.3, detect("from subprocess import SubprocessError"))
+
+  def test_TimeoutExpired_of_subprocess(self):
+    self.assertOnlyIn(3.3, detect("from subprocess import TimeoutExpired"))

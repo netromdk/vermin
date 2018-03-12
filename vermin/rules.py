@@ -88,6 +88,8 @@ MOD_REQS = {
   "string.letters": (2.0, None),
   "string.lowercase": (2.0, None),
   "string.uppercase": (2.0, None),
+  "stringprep": (2.3, 3.0),
+  "subprocess": (2.4, 3.0),
   "tkinter": (None, 3.0),
   "tracemalloc": (None, 3.4),
   "typing": (None, 3.5),
@@ -111,6 +113,7 @@ MOD_MEM_REQS = multidict((
   ("ChainMap", ("typing", (None, 3.6))),
   ("ClassVar", ("typing", (None, 3.5))),
   ("Collection", ("typing", (None, 3.6))),
+  ("CompletedProcess", ("subprocess", (None, 3.5))),
   ("ContextDecorator", ("contextlib", (None, 3.2))),
   ("ContextManager", ("typing", (None, 3.6))),
   ("Counter", ("collections", (2.7, 3.1))),
@@ -151,6 +154,8 @@ MOD_MEM_REQS = multidict((
   ("SSLWantReadError", ("ssl", (2.7, 3.3))),
   ("SSLWantWriteError", ("ssl", (2.7, 3.3))),
   ("SSLZeroReturnError", ("ssl", (2.7, 3.3))),
+  ("SubprocessError", ("subprocess", (None, 3.3))),
+  ("TimeoutExpired", ("subprocess", (None, 3.3))),
 
   # Functions
   ("NewType", ("typing", (None, 3.5))),
@@ -189,6 +194,9 @@ MOD_MEM_REQS = multidict((
   ("assertTupleEqual", ("unittest.TestCase", (2.7, 3.1))),
   ("canonical", ("decimal.Decimal", (2.6, 3.0))),
   ("cert_store_stats", ("ssl.SSLContext", (None, 3.4))),
+  ("check_call", ("subprocess", (2.5, 3.0))),
+  ("check_output", ("subprocess", (2.7, 3.1))),
+  ("check_returncode", ("subprocess.CompletedProcess", (None, 3.5))),
   ("cleandoc", ("inspect", (2.6, 3.0))),
   ("clear_traps", ("decimal.Context", (None, 3.3))),
   ("cmp_to_key", ("functools", (2.7, 3.2))),
@@ -303,6 +311,7 @@ MOD_MEM_REQS = multidict((
   ("iter_dump", ("sqlite3.Connection", (2.6, 3.0))),
   ("izip_longest", ("itertools", (2.6, 3.0))),
   ("keys", ("sqlite3.Row", (2.6, 3.0))),
+  ("kill", ("subprocess.Popen", (2.6, 3.0))),
   ("lexists", ("os.path", (2.4, 3.0))),
   ("linux_distribution", ("platform", (2.6, 3.0))),
   ("ln", ("decimal.Decimal", (2.6, 3.0))),
@@ -365,12 +374,14 @@ MOD_MEM_REQS = multidict((
   ("remove", ("collections.deque", (2.5, 3.0))),
   ("reverse", ("collections.deque", (2.7, 3.2))),
   ("rotate", ("decimal.Decimal", (2.6, 3.0))),
+  ("run", ("subprocess", (None, 3.5))),
   ("run_path", ("runpy", (2.7, 3.2))),
   ("scaleb", ("decimal.Decimal", (2.6, 3.0))),
   ("scrypt", ("hashlib", (None, 3.6))),
   ("seekable", ("bz2.BZ2File", (None, 3.3))),
   ("selected_alpn_protocol", ("ssl", (2.7, 3.5))),
   ("selected_npn_protocol", ("ssl", (2.7, 3.3))),
+  ("send_signal", ("subprocess.Popen", (2.6, 3.0))),
   ("sendfile", ("os", (None, 3.3))),
   ("setLogRecordFactory", ("logging", (None, 3.2))),
   ("set_alpn_protocols", ("ssl.SSLContext", (2.7, 3.5))),
@@ -399,6 +410,7 @@ MOD_MEM_REQS = multidict((
   ("stopTestRun", ("unittest.TestResult", (2.7, 3.1))),
   ("suppress", ("contextlib", (None, 3.4))),
   ("tee", ("itertools", (2.4, 3.0))),
+  ("terminate", ("subprocess.Popen", (2.6, 3.0))),
   ("timestamp", ("datetime.datetime", (None, 3.3))),
   ("to_integral_exact", ("decimal.Decimal", (2.6, 3.0))),
   ("to_integral_value", ("decimal.Decimal", (2.6, 3.0))),
@@ -418,6 +430,7 @@ MOD_MEM_REQS = multidict((
   ("CO_ASYNC_GENERATOR", ("inspect", (None, 3.6))),
   ("CO_COROUTINE", ("inspect", (None, 3.5))),
   ("CO_ITERABLE_COROUTINE", ("inspect", (None, 3.5))),
+  ("DEVNULL", ("subprocess", (None, 3.3))),
   ("F_LOCK", ("os", (None, 3.3))),
   ("F_TEST", ("os", (None, 3.3))),
   ("F_TLOCK", ("os", (None, 3.3))),
@@ -470,6 +483,7 @@ MOD_MEM_REQS = multidict((
   ("algorithms_available", ("hashlib", (2.7, 3.2))),
   ("algorithms_guaranteed", ("hashlib", (2.7, 3.2))),
   ("api_version", ("sys", (2.3, 3.0))),
+  ("args", ("subprocess.Popen", (None, 3.3))),
   ("block_size", ("hmac.HMAC", (None, 3.4))),
   ("buffer", ("unittest.TestResult", (2.7, 3.0))),
   ("check_hostname", ("ssl.SSLContext", (None, 3.4))),
@@ -538,6 +552,11 @@ KWARGS_REQS = {
   ("OleDLL", "use_last_error"): (2.6, 3.0),  # ctypes
   ("Pool", "context"): (None, 3.4),  # multiprocessing
   ("Pool", "maxtasksperchild"): (None, 3.2),  # multiprocessing
+  ("Popen", "encoding"): (None, 3.6),  # subprocess
+  ("Popen", "errors"): (None, 3.6),  # subprocess
+  ("Popen", "pass_fds"): (None, 3.2),  # subprocess
+  ("Popen", "restore_signals"): (None, 3.2),  # subprocess
+  ("Popen", "start_new_session"): (None, 3.2),  # subprocess
   ("PrettyPrinter", "compact"): (None, 3.4),  # pprint
   ("Process", "daemon"): (None, 3.3),  # multiprocessing
   ("SequenceMatcher", "autojunk"): (2.7, 3.2),  # difflib
@@ -555,12 +574,17 @@ KWARGS_REQS = {
   ("assertAlmostEqual", "delta"): (2.7, 3.0),  # unittest.TestCase
   ("assertNotAlmostEqual", "delta"): (2.7, 3.0),  # unittest.TestCase
   ("byref", "offset"): (2.6, 3.0),  # ctypes
+  ("call", "timeout"): (None, 3.3),  # subprocess
+  ("check_call", "timeout"): (None, 3.3),  # subprocess
+  ("check_output", "input"): (None, 3.4),  # subprocess
+  ("check_output", "timeout"): (None, 3.3),  # subprocess
   ("chflags", "follow_symlinks"): (None, 3.3),  # os
   ("chmod", "dir_fd"): (None, 3.3),  # os
   ("chmod", "follow_symlinks"): (None, 3.3),  # os
   ("chown", "dir_fd"): (None, 3.3),  # os
   ("chown", "follow_symlinks"): (None, 3.3),  # os
   ("combine", "tzinfo"): (None, 3.6),  # datetime.datetime
+  ("communicate", "timeout"): (None, 3.3),  # subprocess.Popen
   ("count", "step"): (None, 3.1),  # itertools
   ("datetime", "fold"): (None, 3.6),  # datetime.datetime
   ("debug", "extra"): (2.5, 3.0),  # logging
@@ -591,9 +615,12 @@ KWARGS_REQS = {
   ("pprint", "compact"): (None, 3.4),  # pprint
   ("register_instance", "allow_dotted_names"): (2.3, 3.0),  # SimpleXMLRPCServer
   ("replace", "fold"): (None, 3.6),  # datetime.datetime
+  ("run", "encoding"): (None, 3.6),  # subprocess
+  ("run", "errors"): (None, 3.6),  # subprocess
   ("shlex", "punctuation_chars"): (None, 3.6),  # shlex
   ("signature", "follow_wrapped"): (None, 3.5),  # inspect
   ("split", "posix"): (2.6, 3.0),  # shlex
+  ("wait", "timeout"): (None, 3.3),  # subprocess.Popen
   ("wrap_socket", "ciphers"): (2.7, 3.2),  # ssl
 }
 

@@ -126,3 +126,6 @@ class VerminClassMemberTests(VerminTest):
 
   def test_SSLObject_of_ssl(self):
     self.assertOnlyIn(3.6, detect("from ssl import SSLObject"))
+
+  def test_CompletedProcess_of_subprocess(self):
+    self.assertOnlyIn(3.5, detect("from subprocess import CompletedProcess"))

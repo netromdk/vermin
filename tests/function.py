@@ -879,3 +879,26 @@ class VerminFunctionMemberTests(VerminTest):
                       detect("from ssl import SSLContext\n"
                              "ctx = SSLContext()\n"
                              "ctx.set_servername_callback()"))
+
+  def test_check_call_from_subprocess(self):
+    self.assertOnlyIn((2.5, 3.0), detect("import subprocess\nsubprocess.check_call()"))
+
+  def test_check_output_from_subprocess(self):
+    self.assertOnlyIn((2.7, 3.1), detect("import subprocess\nsubprocess.check_output()"))
+
+  def test_send_signal_from_subprocess_Popen(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from subprocess import Popen\nPopen.send_signal()"))
+
+  def test_terminate_from_subprocess_Popen(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from subprocess import Popen\nPopen.terminate()"))
+
+  def test_kill_from_subprocess_Popen(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from subprocess import Popen\nPopen.kill()"))
+
+  def test_run_from_subprocess(self):
+    self.assertOnlyIn(3.5, detect("import subprocess\nsubprocess.run()"))
+
+  def test_check_returncode_from_subprocess_CompletedProcess(self):
+    self.assertOnlyIn(3.5, detect("from subprocess import CompletedProcess\n"
+                                  "cp = CompletedProcess()\n"
+                                  "cp.check_returncode()"))

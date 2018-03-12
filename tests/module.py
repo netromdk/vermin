@@ -286,3 +286,9 @@ class VerminModuleTests(VerminTest):
 
   def test_ssl(self):
     self.assertOnlyIn((2.6, 3.0), detect("import ssl"))
+
+  def test_stringprep(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import stringprep"))
+
+  def test_subprocess(self):
+    self.assertOnlyIn((2.4, 3.0), detect("import subprocess"))
