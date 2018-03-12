@@ -4,6 +4,7 @@ import re
 from .rules import MOD_MEM_REQS, KWARGS_REQS
 from .config import Config
 from .printing import nprint, vvprint, vvvprint
+from .utility import reverse_range
 
 STRFTIME_DIRECTIVE_REGEX = re.compile(r"(%\w)")
 
@@ -102,13 +103,15 @@ class SourceVisitor(ast.NodeVisitor):
     if name not in self.__user_defs:
       self.__user_defs.append(name)
 
-    # Remove any modules and members that were added before any known user-definitions.
+    # Remove any modules and members that were added before any known user-definitions. Do it in
+    # reverse so the indices are kept while traversing!
     for ud in self.__user_defs:
-      for i in range(len(self.__modules)):
+      for i in reverse_range(self.__modules):
         if self.__modules[i] == ud:
           vvvprint("Ignoring module '{}' because it's user-defined!".format(ud))
           del(self.__modules[i])
-      for i in range(len(self.__members)):
+
+      for i in reverse_range(self.__members):
         if self.__members[i] == ud:
           vvvprint("Ignoring member '{}' because it's user-defined!".format(ud))
           del(self.__members[i])
