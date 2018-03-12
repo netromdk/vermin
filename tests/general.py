@@ -2,7 +2,7 @@ from os.path import abspath
 from multiprocessing import cpu_count
 
 from vermin import SourceVisitor, parse_source, parse_detect_source, detect_min_versions_source,\
-  combine_versions, InvalidVersionException, detect_paths, process_paths
+  combine_versions, InvalidVersionException, detect_paths, process_paths, reverse_range
 
 from .testutils import VerminTest, current_version
 
@@ -177,3 +177,8 @@ class VerminGeneralTests(VerminTest):
                     "src = SimpleXMLRPCServer()")
     self.assertOnlyIn("SimpleXMLRPCServer", visitor.user_defined())
     self.assertEmpty(visitor.modules())
+
+  def test_reverse_range(self):
+    self.assertEqual(list(reverse_range([1, 2, 3])), [2, 1, 0])
+    self.assertEqual(list(reverse_range([1, 2])), [1, 0])
+    self.assertEqual(list(reverse_range([])), [])
