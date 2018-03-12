@@ -38,7 +38,7 @@ def detect_min_versions_path(path):
     try:
       return detect_min_versions_source(fp.read(), path=path)
     except Exception as ex:
-      nprint("{}: {}".format(path, ex))
+      nprint("{}: {}, {}".format(path, type(ex), ex))
       return [0, 0]
 
 def detect_min_versions_source(source, path=None):
@@ -96,9 +96,11 @@ def detect_min_versions(node):
   kwargs = visitor.kwargs()
   for fn_kw in kwargs:
     if fn_kw in KWARGS_REQS:
-      vers = KWARGS_REQS[fn_kw]
-      vvprint("'{}' requires {}".format(fn_kw, vers))
-      mins = combine_versions(mins, vers)
+      (mod, vers) = KWARGS_REQS[fn_kw]
+      # Only consider if module has been visited.
+      if mod in mods:
+        vvprint("'{}.{}({})' requires {}".format(mod, fn_kw[0], fn_kw[1], vers))
+        mins = combine_versions(mins, vers)
 
   return mins
 

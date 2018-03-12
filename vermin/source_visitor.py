@@ -1,7 +1,7 @@
 import ast
 import re
 
-from .rules import MOD_MEM_REQS
+from .rules import MOD_MEM_REQS, KWARGS_REQS
 from .config import Config
 from .printing import nprint, vvprint, vvvprint
 
@@ -81,7 +81,11 @@ class SourceVisitor(ast.NodeVisitor):
 
   def __add_kwargs(self, function, keyword):
     if function not in self.__user_defs:
-      self.__kwargs.append((function, keyword))
+      fn_kw = (function, keyword)
+      if fn_kw in KWARGS_REQS:
+        (mod, mins) = KWARGS_REQS[fn_kw]
+        if mod in self.__modules or mod in self.__star_imports:
+          self.__kwargs.append(fn_kw)
 
   def __member_mod_visited(self, member):
     """Checks if module of member is imported/visited."""

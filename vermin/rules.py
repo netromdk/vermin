@@ -534,94 +534,94 @@ MOD_MEM_REQS = multidict((
   ("with_statement", ("__future__", (2.5, 3.0))),
 ))
 
-# Keyword arguments requirements: (function, keyword argument) -> requirements
+# Keyword arguments requirements: (function, keyword argument) -> (module, requirements)
 KWARGS_REQS = {
-  ("CDLL", "use_errno"): (2.6, 3.0),  # ctypes
-  ("CDLL", "use_last_error"): (2.6, 3.0),  # ctypes
-  ("CFUNCTYPE", "use_errno"): (2.6, 3.0),  # ctypes
-  ("CFUNCTYPE", "use_last_error"): (2.6, 3.0),  # ctypes
-  ("CGIXMLRPCRequestHandler", "allow_none"): (2.5, None),  # SimpleXMLRPCServer
-  ("CGIXMLRPCRequestHandler", "encoding"): (2.5, None),  # SimpleXMLRPCServer
-  ("CGIXMLRPCRequestHandler", "use_builtin_types"): (None, 3.3),  # xmlrpc.server
-  ("DocXMLRPCServer", "use_builtin_types"): (None, 3.3),  # xmlrpc.server
-  ("Filter", "domain"): (None, 3.6),  # tracemalloc
-  ("Formatter", "style"): (None, 3.2),  # logging
-  ("JSONDecoder", "object_pairs_hook"): (2.7, 3.1),  # json
-  ("LogRecord", "func"): (2.5, 3.0),  # logging
-  ("OleDLL", "use_errno"): (2.6, 3.0),  # ctypes
-  ("OleDLL", "use_last_error"): (2.6, 3.0),  # ctypes
-  ("Pool", "context"): (None, 3.4),  # multiprocessing
-  ("Pool", "maxtasksperchild"): (None, 3.2),  # multiprocessing
-  ("Popen", "encoding"): (None, 3.6),  # subprocess
-  ("Popen", "errors"): (None, 3.6),  # subprocess
-  ("Popen", "pass_fds"): (None, 3.2),  # subprocess
-  ("Popen", "restore_signals"): (None, 3.2),  # subprocess
-  ("Popen", "start_new_session"): (None, 3.2),  # subprocess
-  ("PrettyPrinter", "compact"): (None, 3.4),  # pprint
-  ("Process", "daemon"): (None, 3.3),  # multiprocessing
-  ("SequenceMatcher", "autojunk"): (2.7, 3.2),  # difflib
-  ("SimpleXMLRPCServer", "allow_none"): (2.5, None),  # SimpleXMLRPCServer
-  ("SimpleXMLRPCServer", "bind_and_active"): (2.6, None),  # SimpleXMLRPCServer
-  ("SimpleXMLRPCServer", "encoding"): (2.5, None),  # SimpleXMLRPCServer
-  ("SimpleXMLRPCServer", "use_builtin_types"): (None, 3.3),  # xmlrpc.server
-  ("TextIOWrapper", "write_through"): (None, 3.3),  # io
-  ("WinDLL", "use_errno"): (2.6, 3.0),  # ctypes
-  ("WinDLL", "use_last_error"): (2.6, 3.0),  # ctypes
-  ("access", "dir_fd"): (None, 3.3),  # os
-  ("access", "effective_ids"): (None, 3.3),  # os
-  ("access", "follow_symlinks"): (None, 3.3),  # os
-  ("accumulate", "func"): (None, 3.3),  # itertools
-  ("assertAlmostEqual", "delta"): (2.7, 3.0),  # unittest.TestCase
-  ("assertNotAlmostEqual", "delta"): (2.7, 3.0),  # unittest.TestCase
-  ("byref", "offset"): (2.6, 3.0),  # ctypes
-  ("call", "timeout"): (None, 3.3),  # subprocess
-  ("check_call", "timeout"): (None, 3.3),  # subprocess
-  ("check_output", "input"): (None, 3.4),  # subprocess
-  ("check_output", "timeout"): (None, 3.3),  # subprocess
-  ("chflags", "follow_symlinks"): (None, 3.3),  # os
-  ("chmod", "dir_fd"): (None, 3.3),  # os
-  ("chmod", "follow_symlinks"): (None, 3.3),  # os
-  ("chown", "dir_fd"): (None, 3.3),  # os
-  ("chown", "follow_symlinks"): (None, 3.3),  # os
-  ("combine", "tzinfo"): (None, 3.6),  # datetime.datetime
-  ("communicate", "timeout"): (None, 3.3),  # subprocess.Popen
-  ("count", "step"): (None, 3.1),  # itertools
-  ("datetime", "fold"): (None, 3.6),  # datetime.datetime
-  ("debug", "extra"): (2.5, 3.0),  # logging
-  ("debug", "stack_info"): (None, 3.2),  # logging
-  ("decompress", "max_length"): (None, 3.5),  # bz2.BZ2Decompressor
-  ("deque", "maxlen"): (2.6, 3.0),  # collections
-  ("dis", "annotate"): (None, 3.2),  # pickletools
-  ("dup2", "inheritable"): (None, 3.4),  # os
-  ("isoformat", "timespec"): (None, 3.6),  # datetime.datetime
-  ("link", "dst_dir_fd"): (None, 3.3),  # os
-  ("link", "follow_symlinks"): (None, 3.3),  # os
-  ("link", "src_dir_fd"): (None, 3.3),  # os
-  ("load", "object_pairs_hook"): (2.7, 3.1),  # json
-  ("load_cert_chain", "password"): (None, 3.3),  # ssl.SSLContext
-  ("load_verify_locations", "cadata"): (None, 3.4),  # ssl.SSLContext
-  ("lru_cache", "typed"): (None, 3.3),  # functools
-  ("makeRecord", "extra"): (2.5, 3.0),  # logging.Logger
-  ("makeRecord", "func"): (2.5, 3.0),  # logging.Logger
-  ("make_file", "charset"): (None, 3.5),  # difflib.HtmlDiff
-  ("merge", "key"): (None, 3.5),  # heapq
-  ("merge", "reverse"): (None, 3.5),  # heapq
-  ("namedtuple", "module"): (None, 3.6),  # collections
-  ("namedtuple", "rename"): (2.7, 3.1),  # collections
-  ("nlargest", "key"): (2.4, 3.0),  # heapq
-  ("nsmallest", "key"): (2.4, 3.0),  # heapq
-  ("open", "dir_fd"): (None, 3.3),  # os
-  ("pformat", "compact"): (None, 3.4),  # pprint
-  ("pprint", "compact"): (None, 3.4),  # pprint
-  ("register_instance", "allow_dotted_names"): (2.3, 3.0),  # SimpleXMLRPCServer
-  ("replace", "fold"): (None, 3.6),  # datetime.datetime
-  ("run", "encoding"): (None, 3.6),  # subprocess
-  ("run", "errors"): (None, 3.6),  # subprocess
-  ("shlex", "punctuation_chars"): (None, 3.6),  # shlex
-  ("signature", "follow_wrapped"): (None, 3.5),  # inspect
-  ("split", "posix"): (2.6, 3.0),  # shlex
-  ("wait", "timeout"): (None, 3.3),  # subprocess.Popen
-  ("wrap_socket", "ciphers"): (2.7, 3.2),  # ssl
+  ("CDLL", "use_errno"): ("ctypes", (2.6, 3.0)),
+  ("CDLL", "use_last_error"): ("ctypes", (2.6, 3.0)),
+  ("CFUNCTYPE", "use_errno"): ("ctypes", (2.6, 3.0)),
+  ("CFUNCTYPE", "use_last_error"): ("ctypes", (2.6, 3.0)),
+  ("CGIXMLRPCRequestHandler", "allow_none"): ("SimpleXMLRPCServer", (2.5, None)),
+  ("CGIXMLRPCRequestHandler", "encoding"): ("SimpleXMLRPCServer", (2.5, None)),
+  ("CGIXMLRPCRequestHandler", "use_builtin_types"): ("xmlrpc.server", (None, 3.3)),
+  ("DocXMLRPCServer", "use_builtin_types"): ("xmlrpc.server", (None, 3.3)),
+  ("Filter", "domain"): ("tracemalloc", (None, 3.6)),
+  ("Formatter", "style"): ("logging", (None, 3.2)),
+  ("JSONDecoder", "object_pairs_hook"): ("json", (2.7, 3.1)),
+  ("LogRecord", "func"): ("logging", (2.5, 3.0)),
+  ("OleDLL", "use_errno"): ("ctypes", (2.6, 3.0)),
+  ("OleDLL", "use_last_error"): ("ctypes", (2.6, 3.0)),
+  ("Pool", "context"): ("multiprocessing", (None, 3.4)),
+  ("Pool", "maxtasksperchild"): ("multiprocessing", (None, 3.2)),
+  ("Popen", "encoding"): ("subprocess", (None, 3.6)),
+  ("Popen", "errors"): ("subprocess", (None, 3.6)),
+  ("Popen", "pass_fds"): ("subprocess", (None, 3.2)),
+  ("Popen", "restore_signals"): ("subprocess", (None, 3.2)),
+  ("Popen", "start_new_session"): ("subprocess", (None, 3.2)),
+  ("PrettyPrinter", "compact"): ("pprint", (None, 3.4)),
+  ("Process", "daemon"): ("multiprocessing", (None, 3.3)),
+  ("SequenceMatcher", "autojunk"): ("difflib", (2.7, 3.2)),
+  ("SimpleXMLRPCServer", "allow_none"): ("SimpleXMLRPCServer", (2.5, None)),
+  ("SimpleXMLRPCServer", "bind_and_active"): ("SimpleXMLRPCServer", (2.6, None)),
+  ("SimpleXMLRPCServer", "encoding"): ("SimpleXMLRPCServer", (2.5, None)),
+  ("SimpleXMLRPCServer", "use_builtin_types"): ("xmlrpc.server", (None, 3.3)),
+  ("TextIOWrapper", "write_through"): ("io", (None, 3.3)),
+  ("WinDLL", "use_errno"): ("ctypes", (2.6, 3.0)),
+  ("WinDLL", "use_last_error"): ("ctypes", (2.6, 3.0)),
+  ("access", "dir_fd"): ("os", (None, 3.3)),
+  ("access", "effective_ids"): ("os", (None, 3.3)),
+  ("access", "follow_symlinks"): ("os", (None, 3.3)),
+  ("accumulate", "func"): ("itertools", (None, 3.3)),
+  ("assertAlmostEqual", "delta"): ("unittest.TestCase", (2.7, 3.0)),
+  ("assertNotAlmostEqual", "delta"): ("unittest.TestCase", (2.7, 3.0)),
+  ("byref", "offset"): ("ctypes", (2.6, 3.0)),
+  ("call", "timeout"): ("subprocess", (None, 3.3)),
+  ("check_call", "timeout"): ("subprocess", (None, 3.3)),
+  ("check_output", "input"): ("subprocess", (None, 3.4)),
+  ("check_output", "timeout"): ("subprocess", (None, 3.3)),
+  ("chflags", "follow_symlinks"): ("os", (None, 3.3)),
+  ("chmod", "dir_fd"): ("os", (None, 3.3)),
+  ("chmod", "follow_symlinks"): ("os", (None, 3.3)),
+  ("chown", "dir_fd"): ("os", (None, 3.3)),
+  ("chown", "follow_symlinks"): ("os", (None, 3.3)),
+  ("combine", "tzinfo"): ("datetime.datetime", (None, 3.6)),
+  ("communicate", "timeout"): ("subprocess.Popen", (None, 3.3)),
+  ("count", "step"): ("itertools", (None, 3.1)),
+  ("datetime", "fold"): ("datetime.datetime", (None, 3.6)),
+  ("debug", "extra"): ("logging", (2.5, 3.0)),
+  ("debug", "stack_info"): ("logging", (None, 3.2)),
+  ("decompress", "max_length"): ("bz2.BZ2Decompressor", (None, 3.5)),
+  ("deque", "maxlen"): ("collections", (2.6, 3.0)),
+  ("dis", "annotate"): ("pickletools", (None, 3.2)),
+  ("dup2", "inheritable"): ("os", (None, 3.4)),
+  ("isoformat", "timespec"): ("datetime.datetime", (None, 3.6)),
+  ("link", "dst_dir_fd"): ("os", (None, 3.3)),
+  ("link", "follow_symlinks"): ("os", (None, 3.3)),
+  ("link", "src_dir_fd"): ("os", (None, 3.3)),
+  ("load", "object_pairs_hook"): ("json", (2.7, 3.1)),
+  ("load_cert_chain", "password"): ("ssl.SSLContext", (None, 3.3)),
+  ("load_verify_locations", "cadata"): ("ssl.SSLContext", (None, 3.4)),
+  ("lru_cache", "typed"): ("functools", (None, 3.3)),
+  ("makeRecord", "extra"): ("logging.Logger", (2.5, 3.0)),
+  ("makeRecord", "func"): ("logging.Logger", (2.5, 3.0)),
+  ("make_file", "charset"): ("difflib.HtmlDiff", (None, 3.5)),
+  ("merge", "key"): ("heapq", (None, 3.5)),
+  ("merge", "reverse"): ("heapq", (None, 3.5)),
+  ("namedtuple", "module"): ("collections", (None, 3.6)),
+  ("namedtuple", "rename"): ("collections", (2.7, 3.1)),
+  ("nlargest", "key"): ("heapq", (2.4, 3.0)),
+  ("nsmallest", "key"): ("heapq", (2.4, 3.0)),
+  ("open", "dir_fd"): ("os", (None, 3.3)),
+  ("pformat", "compact"): ("pprint", (None, 3.4)),
+  ("pprint", "compact"): ("pprint", (None, 3.4)),
+  ("register_instance", "allow_dotted_names"): ("SimpleXMLRPCServer", (2.3, 3.0)),
+  ("replace", "fold"): ("datetime.datetime", (None, 3.6)),
+  ("run", "encoding"): ("subprocess", (None, 3.6)),
+  ("run", "errors"): ("subprocess", (None, 3.6)),
+  ("shlex", "punctuation_chars"): ("shlex", (None, 3.6)),
+  ("signature", "follow_wrapped"): ("inspect", (None, 3.5)),
+  ("split", "posix"): ("shlex", (2.6, 3.0)),
+  ("wait", "timeout"): ("subprocess.Popen", (None, 3.3)),
+  ("wrap_socket", "ciphers"): ("ssl", (2.7, 3.2)),
 }
 
 # datetime+time strftime/strptime requirements: directive -> requirements
