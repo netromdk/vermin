@@ -292,3 +292,9 @@ class VerminModuleTests(VerminTest):
 
   def test_subprocess(self):
     self.assertOnlyIn((2.4, 3.0), detect("import subprocess"))
+
+  def test_sysconfig(self):
+    self.assertOnlyIn((2.7, 3.2), detect("import sysconfig"))
+
+  def test_tarfile(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import tarfile"))

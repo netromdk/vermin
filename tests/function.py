@@ -902,3 +902,9 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(3.5, detect("from subprocess import CompletedProcess\n"
                                   "cp = CompletedProcess()\n"
                                   "cp.check_returncode()"))
+
+  def test_extractall_from_tarfile_TarFile(self):
+    self.assertOnlyIn((2.5, 3.0), detect("from tarfile import TarFile\nTarFile.extractall()"))
+
+  def test_fromtarfile_from_tarfile_TarInfo(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from tarfile import TarInfo\nTarInfo.fromtarfile()"))

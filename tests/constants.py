@@ -340,3 +340,9 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_DEVNULL_of_subprocess(self):
     self.assertOnlyIn(3.3, detect("from subprocess import DEVNULL"))
+
+  def test_pax_headers_of_tarfile_TarFile(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from tarfile import TarFile\nTarFile.pax_headers"))
+
+  def test_pax_headers_of_tarfile_TarInfo(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from tarfile import TarInfo\nTarInfo.pax_headers"))

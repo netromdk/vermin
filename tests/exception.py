@@ -18,3 +18,6 @@ class VerminExceptionMemberTests(VerminTest):
 
   def test_TimeoutExpired_of_subprocess(self):
     self.assertOnlyIn(3.3, detect("from subprocess import TimeoutExpired"))
+
+  def test_HeaderError_of_tarfile(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from tarfile import HeaderError"))

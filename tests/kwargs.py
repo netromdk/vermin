@@ -301,3 +301,47 @@ class VerminKwargsTests(VerminTest):
 
   def test_input_of_check_output_from_subprocess(self):
     self.assertOnlyIn(3.4, detect("import subprocess\nsubprocess.check_output(input=None)"))
+
+  def test_exclude_of_add_from_tarfile_TarFile(self):
+    self.assertOnlyIn((2.6, 3.0),
+                      detect("from tarfile import TarFile\ntf = TarFile()\ntf.add(exclude=None)"))
+
+  def test_filter_of_add_from_tarfile_TarFile(self):
+    self.assertOnlyIn((2.7, 3.2),
+                      detect("from tarfile import TarFile\ntf = TarFile()\ntf.add(filter=None)"))
+
+  def test_format_of_tobuf_from_tarfile_TarInfo(self):
+    self.assertOnlyIn((2.6, 3.0),
+                      detect("from tarfile import TarInfo\ntf = TarInfo()\ntf.tobuf(format=None)"))
+
+  def test_encoding_of_tobuf_from_tarfile_TarInfo(self):
+    self.assertOnlyIn((2.6, 3.0),
+                      detect("from tarfile import TarInfo\n"
+                             "tf = TarInfo()\n"
+                             "tf.tobuf(encoding=None)"))
+
+  def test_errors_of_tobuf_from_tarfile_TarInfo(self):
+    self.assertOnlyIn((2.6, 3.0),
+                      detect("from tarfile import TarInfo\ntf = TarInfo()\ntf.tobuf(errors=None)"))
+
+  def test_members_of_list_from_tarfile_TarFile(self):
+    self.assertOnlyIn(3.5,
+                      detect("from tarfile import TarFile\ntf = TarFile()\ntf.list(members=None)"))
+
+  def test_numeric_owner_of_extractall_from_tarfile_TarFile(self):
+    self.assertOnlyIn(3.5,
+                      detect("from tarfile import TarFile\n"
+                             "tf = TarFile()\n"
+                             "tf.extractall(numeric_owner=None)"))
+
+  def test_set_attrs_of_extract_from_tarfile_TarFile(self):
+    self.assertOnlyIn(3.2,
+                      detect("from tarfile import TarFile\n"
+                             "tf = TarFile()\n"
+                             "tf.extract(set_attrs=None)"))
+
+  def test_numeric_owner_of_extract_from_tarfile_TarFile(self):
+    self.assertOnlyIn(3.5,
+                      detect("from tarfile import TarFile\n"
+                             "tf = TarFile()\n"
+                             "tf.extract(numeric_owner=None)"))
