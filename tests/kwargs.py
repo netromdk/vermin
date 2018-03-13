@@ -345,3 +345,19 @@ class VerminKwargsTests(VerminTest):
                       detect("from tarfile import TarFile\n"
                              "tf = TarFile()\n"
                              "tf.extract(numeric_owner=None)"))
+
+  def test_module_globals_of_warn_explicit_from_warnings(self):
+    self.assertOnlyIn((2.5, 3.0),
+                      detect("import warnings\nwarnings.warn_explicit(module_globals=None)"))
+
+  def test_line_of_formatwarning_from_warnings(self):
+    self.assertOnlyIn((2.6, 3.0),
+                      detect("import warnings\nwarnings.formatwarning(line=None)"))
+
+  def test_source_of_warn_explicit_from_warnings(self):
+    self.assertOnlyIn(3.6,
+                      detect("import warnings\nwarnings.warn_explicit(source=None)"))
+
+  def test_source_of_warn_from_warnings(self):
+    self.assertOnlyIn(3.6,
+                      detect("import warnings\nwarnings.warn(source=None)"))

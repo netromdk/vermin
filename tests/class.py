@@ -129,3 +129,15 @@ class VerminClassMemberTests(VerminTest):
 
   def test_CompletedProcess_of_subprocess(self):
     self.assertOnlyIn(3.5, detect("from subprocess import CompletedProcess"))
+
+  def test_catch_warnings_of_warnings(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from warnings import catch_warnings"))
+
+  def test_WeakSet_of_weakref(self):
+    self.assertOnlyIn((2.7, 3.0), detect("from weakref import WeakSet"))
+
+  def test_WeakMethod_of_weakref(self):
+    self.assertOnlyIn(3.4, detect("from weakref import WeakMethod"))
+
+  def test_finalize_of_weakref(self):
+    self.assertOnlyIn(3.4, detect("from weakref import finalize"))

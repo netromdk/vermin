@@ -298,3 +298,18 @@ class VerminModuleTests(VerminTest):
 
   def test_tarfile(self):
     self.assertOnlyIn((2.3, 3.0), detect("import tarfile"))
+
+  def test_textwrap(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import textwrap"))
+
+  def test_timeit(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import timeit"))
+
+  def test_uuid(self):
+    self.assertOnlyIn((2.5, 3.0), detect("import uuid"))
+
+  def test_warnings(self):
+    self.assertOnlyIn((2.1, 3.0), detect("import warnings"))
+
+  def test_weakref(self):
+    self.assertOnlyIn((2.1, 3.0), detect("import weakref"))

@@ -908,3 +908,42 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_fromtarfile_from_tarfile_TarInfo(self):
     self.assertOnlyIn((2.6, 3.0), detect("from tarfile import TarInfo\nTarInfo.fromtarfile()"))
+
+  def test_shorten_from_textwrap(self):
+    self.assertOnlyIn(3.4, detect("import textwrap\ntextwrap.shorten()"))
+
+  def test_indent_from_textwrap(self):
+    self.assertOnlyIn(3.3, detect("import textwrap\ntextwrap.indent()"))
+
+  def test_timeit_from_timeit(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import timeit\ntimeit.timeit()"))
+
+  def test_repeat_from_timeit(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import timeit\ntimeit.repeat()"))
+
+  def test_warnpy3k_from_warnings(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import warnings\nwarnings.warnpy3k()"))
+
+  def test_iterkeyrefs_from_weakref_WeakKeyDictionary(self):
+    self.assertOnlyIn((2.5, 3.0),
+                      detect("from weakref import WeakKeyDictionary\n"
+                             "wkd = WeakKeyDictionary()\n"
+                             "wkd.iterkeyrefs()"))
+
+  def test_keyrefs_from_weakref_WeakKeyDictionary(self):
+    self.assertOnlyIn((2.5, 3.0),
+                      detect("from weakref import WeakKeyDictionary\n"
+                             "wkd = WeakKeyDictionary()\n"
+                             "wkd.keyrefs()"))
+
+  def test_itervaluerefs_from_weakref_WeakValueDictionary(self):
+    self.assertOnlyIn((2.5, 3.0),
+                      detect("from weakref import WeakValueDictionary\n"
+                             "wkd = WeakValueDictionary()\n"
+                             "wkd.itervaluerefs()"))
+
+  def test_valuerefs_from_weakref_WeakValueDictionary(self):
+    self.assertOnlyIn((2.5, 3.0),
+                      detect("from weakref import WeakValueDictionary\n"
+                             "wkd = WeakValueDictionary()\n"
+                             "wkd.valuerefs()"))
