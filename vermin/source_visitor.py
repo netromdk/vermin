@@ -99,6 +99,15 @@ class SourceVisitor(ast.NodeVisitor):
   def __add_strftime_directive(self, group):
     self.__strftime_directives.append(group)
 
+  def __add_user_def_node(self, node):
+    """Add user-defined name from node, like ast.Name, ast.arg or str."""
+    if isinstance(node, str):
+      self.__add_user_def(node)
+    if isinstance(node, ast.Name) and hasattr(node, "id"):
+      self.__add_user_def(node.id)
+    elif hasattr(node, "arg"):
+      self.__add_user_def(node.arg)
+
   def __add_user_def(self, name):
     if name not in self.__user_defs:
       self.__user_defs.append(name)
@@ -226,35 +235,23 @@ class SourceVisitor(ast.NodeVisitor):
   # Mark argument names as user-defined.
   def visit_arguments(self, node):
     for arg in node.args:
-      if isinstance(arg, ast.Name) and hasattr(arg, "id"):
-        self.__user_defs.append(arg.id)
-      elif isinstance(arg, ast.arg) and hasattr(arg, "arg"):
-        self.__user_defs.append(arg.arg)
+      self.__add_user_def_node(arg)
     if node.vararg is not None:
-      varg = node.vararg
-      if isinstance(varg, str):
-        self.__user_defs.append(varg)
-      elif isinstance(varg, ast.arg) and hasattr(varg, "arg"):
-        self.__user_defs.append(varg.arg)
+      self.__add_user_def_node(node.vararg)
     self.generic_visit(node)
 
   # Mark variable names as user-defined.
   def visit_Assign(self, node):
     for target in node.targets:
-      if isinstance(target, ast.Name) and hasattr(target, "id"):
-        self.__user_defs.append(target.id)
+      self.__add_user_def_node(target)
     self.generic_visit(node)
 
   def visit_AugAssign(self, node):
-    target = node.target
-    if isinstance(target, ast.Name) and hasattr(target, "id"):
-      self.__user_defs.append(target.id)
+    self.__add_user_def_node(node.target)
     self.generic_visit(node)
 
   def visit_AnnAssign(self, node):
-    target = node.target
-    if isinstance(target, ast.Name) and hasattr(target, "id"):
-      self.__user_defs.append(target.id)
+    self.__add_user_def_node(node.target)
     self.generic_visit(node)
 
   # Ignore unused nodes as a speed optimization.
