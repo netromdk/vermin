@@ -23,7 +23,8 @@ classes/functions/constants members of modules, 99 kwargs of functions, and 4 st
 directives. Including looking for v2/v3 ``print expr`` and ``print(expr)``, ``long``, f-strings,
 ``"..".format(..)``, imports (``import X``, ``from X import Y``, ``from X import *``), function
 calls wrt. name and kwargs, and ``strftime`` + ``strptime`` directives used. It tries to detect and
-ignore user-defined functions and classes with names that clash with library-defined symbols.
+ignore user-defined functions, classes, arguments, and variables with names that clash with
+library-defined symbols.
 
 Usage
 =====
