@@ -223,6 +223,27 @@ class SourceVisitor(ast.NodeVisitor):
     self.__add_user_def(node.name)
     self.generic_visit(node)
 
+  # Mark argument names as user-defined.
+  def visit_arguments(self, node):
+    for arg in node.args:
+      if isinstance(arg, ast.Name) and hasattr(arg, "id"):
+        self.__user_defs.append(arg.id)
+      elif isinstance(arg, ast.arg) and hasattr(arg, "arg"):
+        self.__user_defs.append(arg.arg)
+    if node.vararg is not None:
+      varg = node.vararg
+      if isinstance(varg, str):
+        self.__user_defs.append(varg)
+      elif isinstance(varg, ast.arg) and hasattr(varg, "arg"):
+        self.__user_defs.append(varg.arg)
+    self.generic_visit(node)
+
+  # Mark variable names as user-defined.
+  def visit_Assign(self, node):
+    for target in node.targets:
+      if isinstance(target, ast.Name) and hasattr(target, "id"):
+        self.__user_defs.append(target.id)
+
   # Ignore unused nodes as a speed optimization.
 
   def visit_Load(self, node):
