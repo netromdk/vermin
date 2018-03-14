@@ -18,7 +18,7 @@ Concurrently detect the minimum Python versions needed to run code. Additionally
 vanilla Python, and it doesn't have any external dependencies, it works with v2.7+ and v3+.
 
 It functions by parsing Python code into an abstract syntax tree (AST), which it traverses and
-matches against internal dictionaries with 647 rules divided into 104 modules, 440
+matches against internal dictionaries with 648 rules divided into 104 modules, 441
 classes/functions/constants members of modules, 99 kwargs of functions, and 4 strftime
 directives. Including looking for v2/v3 ``print expr`` and ``print(expr)``, ``long``, f-strings,
 ``"..".format(..)``, imports (``import X``, ``from X import Y``, ``from X import *``), function
@@ -52,7 +52,7 @@ Examples
 ::
 
   % ./vermin.py
-  Vermin 0.3.1
+  Vermin 0.3.2
   Usage: ./vermin.py [options] <python source files and folders..>
 
   Options:
