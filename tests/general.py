@@ -165,7 +165,7 @@ class VerminGeneralTests(VerminTest):
     visitor = visit("import SimpleXMLRPCServer\n"
                     "def SimpleXMLRPCServer(): pass\n"
                     "src = SimpleXMLRPCServer()")
-    self.assertOnlyIn("SimpleXMLRPCServer", visitor.user_defined())
+    self.assertOnlyIn(["SimpleXMLRPCServer", "src"], visitor.user_defined())
     self.assertEmpty(visitor.modules())
 
   def test_ignore_modules_when_user_defined_classes(self):
@@ -175,7 +175,7 @@ class VerminGeneralTests(VerminTest):
     visitor = visit("import SimpleXMLRPCServer\n"
                     "class SimpleXMLRPCServer: pass\n"
                     "src = SimpleXMLRPCServer()")
-    self.assertOnlyIn("SimpleXMLRPCServer", visitor.user_defined())
+    self.assertOnlyIn(["SimpleXMLRPCServer", "src"], visitor.user_defined())
     self.assertEmpty(visitor.modules())
 
   def test_reverse_range(self):
