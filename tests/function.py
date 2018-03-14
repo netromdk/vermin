@@ -45,7 +45,10 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((2.4, 3.0), detect("from os.path import lexists"))
 
   def test_realpath_of_os_path(self):
-    self.assertOnlyIn((2.6, 3.0), detect("from os.path import realpath"))
+    self.assertOnlyIn((2.2, 3.0), detect("from os.path import realpath"))
+
+  def test_relpath_of_os_path(self):
+    self.assertOnlyIn((2.6, 3.0), detect("from os.path import relpath"))
 
   def test_getpgid_of_os(self):
     self.assertOnlyIn((2.3, 3.0), detect("from os import getpgid"))
