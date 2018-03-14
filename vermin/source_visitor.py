@@ -243,16 +243,19 @@ class SourceVisitor(ast.NodeVisitor):
     for target in node.targets:
       if isinstance(target, ast.Name) and hasattr(target, "id"):
         self.__user_defs.append(target.id)
+    self.generic_visit(node)
 
   def visit_AugAssign(self, node):
     target = node.target
     if isinstance(target, ast.Name) and hasattr(target, "id"):
       self.__user_defs.append(target.id)
+    self.generic_visit(node)
 
   def visit_AnnAssign(self, node):
     target = node.target
     if isinstance(target, ast.Name) and hasattr(target, "id"):
       self.__user_defs.append(target.id)
+    self.generic_visit(node)
 
   # Ignore unused nodes as a speed optimization.
 
