@@ -150,19 +150,19 @@ class VerminFunctionMemberTests(VerminTest):
                       detect("from multiprocessing import Pool\np = Pool()\np.starmap_async()"))
 
   def test_wait_of_multiprocessing_connection(self):
-    self.assertOnlyIn(3.3, detect("import multiprocessing.connection\nwait()"))
+    self.assertOnlyIn(3.3, detect("from multiprocessing import connection\nconnection.wait()"))
 
   def test_get_all_start_methods_of_multiprocessing(self):
-    self.assertOnlyIn(3.4, detect("import multiprocessing\nget_all_start_methods()"))
+    self.assertOnlyIn(3.4, detect("from multiprocessing import get_all_start_methods"))
 
   def test_get_start_method_of_multiprocessing(self):
-    self.assertOnlyIn(3.4, detect("import multiprocessing\nget_start_method()"))
+    self.assertOnlyIn(3.4, detect("from multiprocessing import get_start_method"))
 
   def test_set_start_method_of_multiprocessing(self):
-    self.assertOnlyIn(3.4, detect("import multiprocessing\nset_start_method()"))
+    self.assertOnlyIn(3.4, detect("from multiprocessing import set_start_method"))
 
   def test_get_context_of_multiprocessing(self):
-    self.assertOnlyIn(3.4, detect("import multiprocessing\nget_context()"))
+    self.assertOnlyIn(3.4, detect("from multiprocessing import get_context"))
 
   def test_assertIs_of_unittest_TestCase(self):
     self.assertOnlyIn((2.7, 3.1), detect("from unittest import TestCase\nTestCase.assertIs()"))

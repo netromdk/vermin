@@ -67,18 +67,17 @@ class VerminGeneralTests(VerminTest):
 
   def test_member_class(self):
     visitor = visit("from abc import ABC")
-    self.assertOnlyIn("ABC", visitor.members())
+    self.assertOnlyIn("abc.ABC", visitor.members())
     visitor = visit("import abc\nclass a(abc.ABC): pass")
-    self.assertOnlyIn("ABC", visitor.members())
+    self.assertOnlyIn("abc.ABC", visitor.members())
 
   def test_member_function(self):
     visitor = visit("from sys import exc_clear")
-    self.assertOnlyIn("exc_clear", visitor.members())
-
+    self.assertOnlyIn("sys.exc_clear", visitor.members())
 
   def test_member_constant(self):
     visitor = visit("from sys import version_info")
-    self.assertOnlyIn("version_info", visitor.members())
+    self.assertOnlyIn("sys.version_info", visitor.members())
 
   def test_member_kwargs(self):
     visitor = visit("from os import open\nfd = open(dir_fd = None)")
