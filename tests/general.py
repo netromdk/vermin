@@ -125,54 +125,6 @@ class VerminGeneralTests(VerminTest):
     with self.assertRaises(InvalidVersionException):
       print(detect_min_versions_source("import copy_reg, http"))
 
-  def test_user_defined(self):
-    visitor = visit("def hello(): pass\nhello2()\nclass foo(): pass")
-    self.assertOnlyIn(["hello", "foo"], visitor.user_defined())
-
-  def test_ignore_members_when_user_defined_funcs(self):
-    # These tests rely on the rule for "os.writev".
-
-    # Ignore due to func defs.
-    visitor = visit("import os\ndef writev(): pass\nos.writev()")
-    self.assertOnlyIn("writev", visitor.user_defined())
-    self.assertEmpty(visitor.members())
-
-    visitor = visit("from os import writev\ndef writev(): pass\nwritev()")
-    self.assertOnlyIn("writev", visitor.user_defined())
-    self.assertEmpty(visitor.members())
-
-  def test_ignore_members_when_user_defined_classes(self):
-    # These tests rely on the rule for "os.writev".
-
-    # Ignore due to class defs.
-    visitor = visit("import os\nclass writev: pass\nos.writev()")
-    self.assertOnlyIn("writev", visitor.user_defined())
-    self.assertEmpty(visitor.members())
-
-    visitor = visit("from os import writev\nclass writev: pass\nwritev()")
-    self.assertOnlyIn("writev", visitor.user_defined())
-    self.assertEmpty(visitor.members())
-
-  def test_ignore_modules_when_user_defined_funcs(self):
-    # This test relies on the rule for "SimpleXMLRPCServer" module.
-
-    # Ignore module due to class def.
-    visitor = visit("import SimpleXMLRPCServer\n"
-                    "def SimpleXMLRPCServer(): pass\n"
-                    "src = SimpleXMLRPCServer()")
-    self.assertOnlyIn(["SimpleXMLRPCServer", "src"], visitor.user_defined())
-    self.assertEmpty(visitor.modules())
-
-  def test_ignore_modules_when_user_defined_classes(self):
-    # This test relies on the rule for "SimpleXMLRPCServer" module.
-
-    # Ignore module due to class def.
-    visitor = visit("import SimpleXMLRPCServer\n"
-                    "class SimpleXMLRPCServer: pass\n"
-                    "src = SimpleXMLRPCServer()")
-    self.assertOnlyIn(["SimpleXMLRPCServer", "src"], visitor.user_defined())
-    self.assertEmpty(visitor.modules())
-
   def test_reverse_range(self):
     self.assertEqual(list(reverse_range([1, 2, 3])), [2, 1, 0])
     self.assertEqual(list(reverse_range([1, 2])), [1, 0])
