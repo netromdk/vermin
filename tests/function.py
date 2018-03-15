@@ -4,10 +4,6 @@ class VerminFunctionMemberTests(VerminTest):
   def test_exc_clear_of_sys(self):
     self.assertOnlyIn(2.3, detect("from sys import exc_clear"))
 
-  def test_used_in_context_of_star_import(self):
-    self.assertOnlyIn(2.3, detect("from sys import *\nvar=exc_clear"))
-    self.assertOnlyIn(2.3, detect("from sys import *\nprint(exc_clear)"))
-
   def test_getcheckinterval_of_sys(self):
     self.assertOnlyIn((2.3, 3.0), detect("from sys import getcheckinterval"))
 
@@ -370,7 +366,6 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_find_msvcrt_of_ctypes_util(self):
     self.assertOnlyIn((2.6, 3.0), detect("import ctypes.util\nctypes.util.find_msvcrt()"))
-    self.assertOnlyIn((2.6, 3.0), detect("from ctypes.util import *\nfind_msvcrt()"))
 
   def test_get_errno_of_ctypes(self):
     self.assertOnlyIn((2.6, 3.0), detect("import ctypes\nctypes.get_errno()"))

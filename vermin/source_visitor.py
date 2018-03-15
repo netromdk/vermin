@@ -20,7 +20,6 @@ class SourceVisitor(ast.NodeVisitor):
     self.__longv2 = False
     self.__bytesv3 = False
     self.__fstrings = False
-    self.__star_imports = []
     self.__function_name = None
     self.__kwargs = []
     self.__depth = 0
@@ -77,24 +76,12 @@ class SourceVisitor(ast.NodeVisitor):
     if self.__member_mod_visited(member):
       self.__members.append(member)
 
-  def __add_star_import(self, module):
-    self.__star_imports.append(module)
-
   def __add_kwargs(self, function, keyword):
-    if function not in self.__user_defs:
-      fn_kw = (function, keyword)
-      if fn_kw in KWARGS_REQS:
-        (mod, mins) = KWARGS_REQS[fn_kw]
-        if mod in self.__modules or mod in self.__star_imports:
-          self.__kwargs.append(fn_kw)
-
-  def __member_mod_visited(self, member):
-    """Checks if module of member is imported/visited."""
-    if member in MOD_MEM_REQS:
-      for (mod, vers) in MOD_MEM_REQS[member]:
-        if mod in self.__modules or mod in self.__star_imports:
-          return True
-    return False
+    fn_kw = (function, keyword)
+    if fn_kw in KWARGS_REQS:
+      (mod, mins) = KWARGS_REQS[fn_kw]
+      if mod in self.__modules:
+        self.__kwargs.append(fn_kw)
 
   def __add_strftime_directive(self, group):
     self.__strftime_directives.append(group)
@@ -147,7 +134,8 @@ class SourceVisitor(ast.NodeVisitor):
     # module.
     for name in node.names:
       if name.name == "*":
-        self.__add_star_import(node.module)
+        # Ignore star import.
+        pass
       elif name.name is not None:
         self.__add_module(node.module + "." + name.name)
         self.__add_member(name.name)

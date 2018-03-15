@@ -75,11 +75,6 @@ class VerminGeneralTests(VerminTest):
     visitor = visit("from sys import exc_clear")
     self.assertOnlyIn("exc_clear", visitor.members())
 
-  def test_member_import_star(self):
-    visitor = visit("from abc import *\nclass a(ABC): pass")
-    self.assertOnlyIn("ABC", visitor.members())
-    visitor = visit("from sys import *\nprint(exc_clear())")
-    self.assertOnlyIn("exc_clear", visitor.members())
 
   def test_member_constant(self):
     visitor = visit("from sys import version_info")
