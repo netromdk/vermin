@@ -87,11 +87,9 @@ def detect_min_versions(node):
   mems = visitor.members()
   for mem in mems:
     if mem in MOD_MEM_REQS:
-      for (mod, vers) in MOD_MEM_REQS[mem]:
-        # Only consider if module has been visited.
-        if mod in mods:
-          vvprint("'{}.{}' requires {}".format(mod, mem, vers))
-          mins = combine_versions(mins, vers)
+      vers = MOD_MEM_REQS[mem]
+      vvprint("'{}' requires {}".format(mem, vers))
+      mins = combine_versions(mins, vers)
 
   kwargs = visitor.kwargs()
   for fn_kw in kwargs:
