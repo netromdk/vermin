@@ -100,17 +100,15 @@ class SourceVisitor(ast.NodeVisitor):
         # Ignore star import.
         pass
       elif name.name is not None:
-        self.__add_module(node.module + "." + name.name)
+        comb_name = "{}.{}".format(node.module, name.name)
+        self.__add_module(comb_name)
+        self.__add_member(comb_name)
         self.__add_member(name.name)
 
   def visit_alias(self, node):
     if self.__import:
       self.__add_module(node.name)
-
-      # If the import path has several levels then remember last member, like "ABC" of "abc.ABC".
-      elms = node.name.split(".")
-      if len(elms) >= 2:
-        self.__add_member(elms[-1])
+      self.__add_member(node.name)
 
   def visit_Name(self, node):
     if node.id == "long":
@@ -154,8 +152,12 @@ class SourceVisitor(ast.NodeVisitor):
           if hasattr(attr, "value") and hasattr(attr.value, "id"):
             full_name.insert(0, attr.value.id)
       if len(full_name) > 0:
-        if full_name[0] in self.__modules:
-          self.__add_module(".".join(full_name))
+        for mod in self.__modules:
+          if full_name[0] == mod:
+            self.__add_module(".".join(full_name))
+          elif mod.endswith(full_name[0]):
+            self.__add_member(mod + "." + full_name[-1])
+        self.__add_member(".".join(full_name))
 
     # When a function is called like "os.path.ismount(..)" it is an attribute list where the "first"
     # (this one) is the function name. Stop visiting here.
