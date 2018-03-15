@@ -3,8 +3,7 @@ import re
 
 from .rules import MOD_MEM_REQS, KWARGS_REQS
 from .config import Config
-from .printing import nprint, vvprint, vvvprint
-from .utility import reverse_range
+from .printing import nprint, vvprint
 
 STRFTIME_DIRECTIVE_REGEX = re.compile(r"(%\w)")
 
@@ -24,6 +23,12 @@ class SourceVisitor(ast.NodeVisitor):
     self.__kwargs = []
     self.__depth = 0
     self.__strftime_directives = []
+
+    # Imported members of modules, like "exc_clear" of "sys".
+    self.__import_mem_mod = {}
+
+    # Name -> name resolutions.
+    self.__name_res = {}
 
   def modules(self):
     return self.__modules
@@ -74,6 +79,40 @@ class SourceVisitor(ast.NodeVisitor):
   def __add_strftime_directive(self, group):
     self.__strftime_directives.append(group)
 
+  def __add_name_res(self, source, target):
+    self.__name_res[source] = target
+
+  def __add_name_res_assign_node(self, node):
+    if not hasattr(node, "value"):
+      return
+    if not isinstance(node.value, ast.Call):
+      return
+
+    value_name = None
+    if isinstance(node.value.func, ast.Name):
+      value_name = node.value.func.id
+    elif isinstance(node.value.func, ast.Attribute):
+      full_name = []
+      for attr in ast.walk(node.value.func):
+        if isinstance(attr, ast.Attribute):
+          if hasattr(attr, "attr"):
+            full_name.insert(0, attr.attr)
+          if hasattr(attr, "value") and hasattr(attr.value, "id"):
+            full_name.insert(0, attr.value.id)
+      value_name = ".".join(full_name)
+
+    if value_name is None:
+      return
+
+    targets = []
+    if hasattr(node, "targets"):
+      targets = node.targets
+    elif hasattr(node, "target"):
+      targets.append(node.target)
+    for target in targets:
+      if isinstance(target, ast.Name):
+        target_name = target.id
+        self.__add_name_res(target_name, value_name)
 
   def generic_visit(self, node):
     self.__depth += 1
@@ -100,6 +139,7 @@ class SourceVisitor(ast.NodeVisitor):
         # Ignore star import.
         pass
       elif name.name is not None:
+        self.__import_mem_mod[name.name] = node.module
         comb_name = "{}.{}".format(node.module, name.name)
         self.__add_module(comb_name)
         self.__add_member(comb_name)
@@ -158,6 +198,16 @@ class SourceVisitor(ast.NodeVisitor):
             self.__add_member(mod + "." + full_name[-1])
         self.__add_member(".".join(full_name))
 
+        if full_name[0] in self.__name_res:
+          res = self.__name_res[full_name[0]]
+          if res in self.__import_mem_mod:
+            mod = self.__import_mem_mod[res]
+            self.__add_member("{}.{}.{}".format(mod, res, full_name[-1]))
+
+          # Try as a fully-qualified name.
+          else:
+            self.__add_member("{}.{}".format(res, full_name[-1]))
+
     # When a function is called like "os.path.ismount(..)" it is an attribute list where the "first"
     # (this one) is the function name. Stop visiting here.
     if hasattr(node, "attr"):
@@ -175,12 +225,15 @@ class SourceVisitor(ast.NodeVisitor):
 
   # Mark variable names as user-defined.
   def visit_Assign(self, node):
+    self.__add_name_res_assign_node(node)
     self.generic_visit(node)
 
   def visit_AugAssign(self, node):
+    self.__add_name_res_assign_node(node)
     self.generic_visit(node)
 
   def visit_AnnAssign(self, node):
+    self.__add_name_res_assign_node(node)
     self.generic_visit(node)
 
   # Ignore unused nodes as a speed optimization.
