@@ -114,7 +114,6 @@ class SourceVisitor(ast.NodeVisitor):
     if node.id == "long":
       self.__longv2 = True
       vvprint("long is a v2 feature")
-    self.__add_member(node.id)
 
   def visit_Print(self, node):
     self.__printv2 = True
@@ -163,9 +162,6 @@ class SourceVisitor(ast.NodeVisitor):
     # (this one) is the function name. Stop visiting here.
     if hasattr(node, "attr"):
       self.__function_name = node.attr
-
-      # Also add as a possible module member, like `B` in `class A(B)`.
-      self.__add_member(node.attr)
 
   def visit_keyword(self, node):
     if self.__function_name is not None:
