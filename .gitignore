@@ -102,3 +102,6 @@ ENV/
 
 # Sublime Text
 *.sublime-*
+
+# Mac stuff
+.DS_Store
