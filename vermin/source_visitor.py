@@ -82,6 +82,19 @@ class SourceVisitor(ast.NodeVisitor):
   def __add_name_res(self, source, target):
     self.__name_res[source] = target
 
+  def __get_attribute_name(self, node):
+    """Retrieve full attribute name path, like ["ipaddress", "IPv4Address"] from:
+    Attribute(value=Name(id='ipaddress', ctx=Load()), attr='IPv4Address', ctx=Load())
+    """
+    full_name = []
+    for attr in ast.walk(node):
+      if isinstance(attr, ast.Attribute):
+        if hasattr(attr, "attr"):
+          full_name.insert(0, attr.attr)
+        if hasattr(attr, "value") and hasattr(attr.value, "id"):
+          full_name.insert(0, attr.value.id)
+    return full_name
+
   def __add_name_res_assign_node(self, node):
     if not hasattr(node, "value"):
       return
@@ -92,14 +105,7 @@ class SourceVisitor(ast.NodeVisitor):
     if isinstance(node.value.func, ast.Name):
       value_name = node.value.func.id
     elif isinstance(node.value.func, ast.Attribute):
-      full_name = []
-      for attr in ast.walk(node.value.func):
-        if isinstance(attr, ast.Attribute):
-          if hasattr(attr, "attr"):
-            full_name.insert(0, attr.attr)
-          if hasattr(attr, "value") and hasattr(attr.value, "id"):
-            full_name.insert(0, attr.value.id)
-      value_name = ".".join(full_name)
+      value_name = ".".join(self.__get_attribute_name(node.value.func))
 
     if value_name is None:
       return
@@ -180,33 +186,24 @@ class SourceVisitor(ast.NodeVisitor):
     self.__function_name = None
 
   def visit_Attribute(self, node):
-    # Retrieve full attribute name path, like "ipaddress.IPv4Address" from:
-    # Attribute(value=Name(id='ipaddress', ctx=Load()), attr='IPv4Address', ctx=Load())
-    if hasattr(node, "value"):
-      full_name = []
-      for attr in ast.walk(node):
-        if isinstance(attr, ast.Attribute):
-          if hasattr(attr, "attr"):
-            full_name.insert(0, attr.attr)
-          if hasattr(attr, "value") and hasattr(attr.value, "id"):
-            full_name.insert(0, attr.value.id)
-      if len(full_name) > 0:
-        for mod in self.__modules:
-          if full_name[0] == mod:
-            self.__add_module(".".join(full_name))
-          elif mod.endswith(full_name[0]):
-            self.__add_member(mod + "." + full_name[-1])
-        self.__add_member(".".join(full_name))
+    full_name = self.__get_attribute_name(node)
+    if len(full_name) > 0:
+      for mod in self.__modules:
+        if full_name[0] == mod:
+          self.__add_module(".".join(full_name))
+        elif mod.endswith(full_name[0]):
+          self.__add_member(mod + "." + full_name[-1])
+      self.__add_member(".".join(full_name))
 
-        if full_name[0] in self.__name_res:
-          res = self.__name_res[full_name[0]]
-          if res in self.__import_mem_mod:
-            mod = self.__import_mem_mod[res]
-            self.__add_member("{}.{}.{}".format(mod, res, full_name[-1]))
+      if full_name[0] in self.__name_res:
+        res = self.__name_res[full_name[0]]
+        if res in self.__import_mem_mod:
+          mod = self.__import_mem_mod[res]
+          self.__add_member("{}.{}.{}".format(mod, res, full_name[-1]))
 
-          # Try as a fully-qualified name.
-          else:
-            self.__add_member("{}.{}".format(res, full_name[-1]))
+        # Try as a fully-qualified name.
+        else:
+          self.__add_member("{}.{}".format(res, full_name[-1]))
 
     # When a function is called like "os.path.ismount(..)" it is an attribute list where the "first"
     # (this one) is the function name. Stop visiting here.
