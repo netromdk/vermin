@@ -4,6 +4,7 @@ import re
 from .rules import MOD_MEM_REQS, KWARGS_REQS
 from .config import Config
 from .printing import nprint, vvprint
+from .utility import dotted_name
 
 STRFTIME_DIRECTIVE_REGEX = re.compile(r"(%\w)")
 
@@ -105,7 +106,7 @@ class SourceVisitor(ast.NodeVisitor):
     if isinstance(node.value.func, ast.Name):
       value_name = node.value.func.id
     elif isinstance(node.value.func, ast.Attribute):
-      value_name = ".".join(self.__get_attribute_name(node.value.func))
+      value_name = dotted_name(self.__get_attribute_name(node.value.func))
 
     if value_name is None:
       return
@@ -190,20 +191,20 @@ class SourceVisitor(ast.NodeVisitor):
     if len(full_name) > 0:
       for mod in self.__modules:
         if full_name[0] == mod:
-          self.__add_module(".".join(full_name))
+          self.__add_module(dotted_name(full_name))
         elif mod.endswith(full_name[0]):
-          self.__add_member(mod + "." + full_name[-1])
-      self.__add_member(".".join(full_name))
+          self.__add_member(dotted_name([mod, full_name[1:]]))
+      self.__add_member(dotted_name(full_name))
 
       if full_name[0] in self.__name_res:
         res = self.__name_res[full_name[0]]
         if res in self.__import_mem_mod:
           mod = self.__import_mem_mod[res]
-          self.__add_member("{}.{}.{}".format(mod, res, full_name[-1]))
+          self.__add_member(dotted_name([mod, res, full_name[1:]]))
 
         # Try as a fully-qualified name.
         else:
-          self.__add_member("{}.{}".format(res, full_name[-1]))
+          self.__add_member(dotted_name([res, full_name[1:]]))
 
     # When a function is called like "os.path.ismount(..)" it is an attribute list where the "first"
     # (this one) is the function name. Stop visiting here.
