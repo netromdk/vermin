@@ -7,7 +7,7 @@ from .processing import process_paths
 from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS
 from .arguments import parse_args
 from .config import Config
-from .utility import reverse_range
+from .utility import reverse_range, dotted_name
 
 __all__ = [
   "main",
@@ -26,5 +26,6 @@ __all__ = [
   "STRFTIME_REQS",
   "parse_args",
   "Config",
-  "reverse_range"
+  "reverse_range",
+  "dotted_name"
 ]

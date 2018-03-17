@@ -2,7 +2,7 @@ from os.path import abspath
 from multiprocessing import cpu_count
 
 from vermin import SourceVisitor, parse_source, parse_detect_source, detect_min_versions_source,\
-  combine_versions, InvalidVersionException, detect_paths, process_paths, reverse_range
+  combine_versions, InvalidVersionException, detect_paths, process_paths, reverse_range, dotted_name
 
 from .testutils import VerminTest, current_version
 
@@ -128,3 +128,10 @@ class VerminGeneralTests(VerminTest):
     self.assertEqual(list(reverse_range([1, 2, 3])), [2, 1, 0])
     self.assertEqual(list(reverse_range([1, 2])), [1, 0])
     self.assertEqual(list(reverse_range([])), [])
+
+  def test_dotted_name(self):
+    self.assertEqual(dotted_name(["hello", "world"]), "hello.world")
+    self.assertEqual(dotted_name(["foo", ["bar", "baz"], "boom"]), "foo.bar.baz.boom")
+    self.assertEqual(dotted_name(["foo", ("bar", "baz"), "boom"]), "foo.bar.baz.boom")
+    self.assertEqual(dotted_name([1, 2, 3]), "1.2.3")
+    self.assertEqual(dotted_name("right"), "right")
