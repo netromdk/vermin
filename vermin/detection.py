@@ -109,7 +109,7 @@ def detect_paths(paths):
     if isdir(path):
       try:
         accept_paths += detect_paths([join(path, p) for p in listdir(path)])
-      except PermissionError as ex:
+      except OSError as ex:
         nprint("Ignoring {}: {}".format(path, ex))
       continue
     if not isfile(path) or not path.lower().endswith(".py"):
