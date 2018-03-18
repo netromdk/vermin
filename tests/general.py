@@ -122,7 +122,7 @@ class VerminGeneralTests(VerminTest):
 
     # (2.0, None) vs. (None, 3.0) = both exclude the other major version -> exception!
     with self.assertRaises(InvalidVersionException):
-      print(detect_min_versions_source("import copy_reg, http"))
+      detect_min_versions_source("import copy_reg, http")
 
   def test_reverse_range(self):
     self.assertEqual(list(reverse_range([1, 2, 3])), [2, 1, 0])
@@ -135,3 +135,7 @@ class VerminGeneralTests(VerminTest):
     self.assertEqual(dotted_name(["foo", ("bar", "baz"), "boom"]), "foo.bar.baz.boom")
     self.assertEqual(dotted_name([1, 2, 3]), "1.2.3")
     self.assertEqual(dotted_name("right"), "right")
+
+  def test_assign_rvalue_attribute(self):
+    self.assertEqual([None, 3.3],
+                     detect_min_versions_source("import bz2\nv = bz2.BZ2File\nv.writable"))

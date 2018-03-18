@@ -99,14 +99,19 @@ class SourceVisitor(ast.NodeVisitor):
   def __add_name_res_assign_node(self, node):
     if not hasattr(node, "value"):
       return
-    if not isinstance(node.value, ast.Call):
-      return
 
     value_name = None
-    if isinstance(node.value.func, ast.Name):
-      value_name = node.value.func.id
-    elif isinstance(node.value.func, ast.Attribute):
-      value_name = dotted_name(self.__get_attribute_name(node.value.func))
+
+    # If rvalue is a Call.
+    if isinstance(node.value, ast.Call):
+      if isinstance(node.value.func, ast.Name):
+        value_name = node.value.func.id
+      elif isinstance(node.value.func, ast.Attribute):
+        value_name = dotted_name(self.__get_attribute_name(node.value.func))
+
+    # If rvalue is an Attribute list
+    elif isinstance(node.value, ast.Attribute):
+      value_name = dotted_name(self.__get_attribute_name(node.value))
 
     if value_name is None:
       return

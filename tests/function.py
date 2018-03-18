@@ -321,6 +321,8 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_writable_of_bz2_BZ2File(self):
     self.assertOnlyIn(3.3, detect("from bz2 import BZ2File\nf = BZ2File()\nf.writable()"))
+    self.assertOnlyIn(3.3, detect("import bz2\nf = bz2.BZ2File()\nf.writable()"))
+    self.assertOnlyIn(3.3, detect("import bz2\nf = bz2.BZ2File\nf.writable"))
 
   def test_read1_of_bz2_BZ2File(self):
     self.assertOnlyIn(3.3, detect("from bz2 import BZ2File\nf = BZ2File()\nf.read1()"))
