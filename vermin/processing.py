@@ -41,7 +41,7 @@ def process_paths(paths, processes):
     vprint("{:<12} {}".format(versions_string(min_versions), path))
     try:
       mins = combine_versions(mins, min_versions)
-    except InvalidVersionException as ex:
+    except InvalidVersionException:
       incomp = True
       print_incomp(path)
   return (mins, incomp)
