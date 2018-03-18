@@ -53,14 +53,14 @@ update-coverage-requirements: setup-venv setup-coverage
 	.venv/bin/pip freeze > .coverage-requirements.txt
 
 check-style:
-	flake8 --ignore E111,E114,E121,E126,E127,E302,E305 --max-line-length 100 --count \
+	.venv/bin/flake8 --ignore E111,E114,E121,E126,E127,E302,E305 --max-line-length 100 --count \
           --show-source ${ALL_FILES}
 
 static-analysis:
-	vulture --min-confidence 70 --sort-by-size ${ALL_FILES}
+	.venv/bin/vulture --min-confidence 70 --sort-by-size ${ALL_FILES}
 
 check-unused:
-	vulture --sort-by-size ${VERMIN_FILES}
+	.venv/bin/vulture --sort-by-size ${VERMIN_FILES}
 
 check: check-style static-analysis
 
