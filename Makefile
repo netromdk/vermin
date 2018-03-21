@@ -2,6 +2,7 @@ VERMIN_FILES=vermin.py `find vermin -iname '*.py'`
 TEST_FILES=runtests.py `find tests -iname '*.py'`
 OTHER_FILES=count.py
 ALL_FILES=${VERMIN_FILES} ${TEST_FILES} ${OTHER_FILES}
+MODULES=vermin tests
 
 self-test:
 	./vermin.py -v -t=2.7 -t=3 ${VERMIN_FILES}
@@ -62,7 +63,10 @@ static-analysis:
 check-unused:
 	.venv/bin/vulture --sort-by-size ${VERMIN_FILES}
 
-check: check-style static-analysis
+security-check:
+	.venv/bin/bandit -r -s B101 ${MODULES}
+
+check: check-style static-analysis security-check
 
 test-coverage:
 	.venv/bin/coverage run --source=vermin,tests runtests.py
