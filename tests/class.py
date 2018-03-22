@@ -141,3 +141,15 @@ class VerminClassMemberTests(VerminTest):
 
   def test_finalize_of_weakref(self):
     self.assertOnlyIn(3.4, detect("from weakref import finalize"))
+
+  def test_IISCGIHandler_of_wsgiref_handlers(self):
+    self.assertOnlyIn(3.2, detect("from wsgiref.handlers import IISCGIHandler"))
+
+  def test_ElementTree_of_xml_etree(self):
+    self.assertOnlyIn((2.5, 3.0), detect("from xml.etree import ElementTree"))
+
+  def test_XMLPullParser_of_xml_etree_ElementTree(self):
+    self.assertOnlyIn(3.4, detect("from xml.etree.ElementTree import XMLPullParser"))
+
+  def test_MultiCall_of_xmlrpclib(self):
+    self.assertOnlyIn(2.4, detect("from xmlrpclib import MultiCall"))

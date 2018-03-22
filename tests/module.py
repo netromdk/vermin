@@ -313,3 +313,12 @@ class VerminModuleTests(VerminTest):
 
   def test_weakref(self):
     self.assertOnlyIn((2.1, 3.0), detect("import weakref"))
+
+  def test_wsgiref(self):
+    self.assertOnlyIn((2.5, 3.0), detect("import wsgiref"))
+
+  def test_xmlrpclib(self):
+    self.assertOnlyIn(2.2, detect("import xmlrpclib"))
+
+  def test_zipimport(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import zipimport"))

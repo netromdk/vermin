@@ -947,3 +947,102 @@ class VerminFunctionMemberTests(VerminTest):
                       detect("from weakref import WeakValueDictionary\n"
                              "wkd = WeakValueDictionary()\n"
                              "wkd.valuerefs()"))
+
+  def test_read_environ_from_wsgiref_handlers(self):
+    self.assertOnlyIn(3.2, detect("import wsgiref.handlers\nwsgiref.handlers.read_environ()"))
+
+  def test_fromstringlist_from_xml_etree_ElementTree(self):
+    self.assertOnlyIn((2.7, 3.2),
+                      detect("from xml.etree import ElementTree\n"
+                             "tree = ElementTree()\n"
+                             "tree.fromstringlist()"))
+
+  def test_register_namespace_from_xml_etree_ElementTree(self):
+    self.assertOnlyIn((2.7, 3.2),
+                      detect("from xml.etree import ElementTree\n"
+                             "tree = ElementTree()\n"
+                             "tree.register_namespace()"))
+
+  def test_tostringlist_from_xml_etree_ElementTree(self):
+    self.assertOnlyIn((2.7, 3.2),
+                      detect("from xml.etree import ElementTree\n"
+                             "tree = ElementTree()\n"
+                             "tree.tostringlist()"))
+
+  def test_extend_from_xml_etree_ElementTree_Element(self):
+    self.assertOnlyIn((2.7, 3.2),
+                      detect("from xml.etree.ElementTree import Element\n"
+                             "elm = Element()\n"
+                             "elm.extend()"))
+
+  def test_iter_from_xml_etree_ElementTree_Element(self):
+    self.assertOnlyIn((2.7, 3.2),
+                      detect("from xml.etree.ElementTree import Element\n"
+                             "elm = Element()\n"
+                             "elm.iter()"))
+
+  def test_iterfind_from_xml_etree_ElementTree_Element(self):
+    self.assertOnlyIn((2.7, 3.2),
+                      detect("from xml.etree.ElementTree import Element\n"
+                             "elm = Element()\n"
+                             "elm.iterfind()"))
+
+  def test_itertext_from_xml_etree_ElementTree_Element(self):
+    self.assertOnlyIn((2.7, 3.2),
+                      detect("from xml.etree.ElementTree import Element\n"
+                             "elm = Element()\n"
+                             "elm.itertext()"))
+
+  def test_iterfind_from_xml_etree_ElementTree_ElementTree(self):
+    self.assertOnlyIn((2.7, 3.2),
+                      detect("from xml.etree.ElementTree import ElementTree\n"
+                             "tree = ElementTree()\n"
+                             "tree.iterfind()"))
+
+  def test_doctype_from_xml_etree_ElementTree_TreeBuilder(self):
+    self.assertOnlyIn((2.7, 3.2),
+                      detect("from xml.etree.ElementTree import TreeBuilder\n"
+                             "tree = TreeBuilder()\n"
+                             "tree.doctype()"))
+
+  def test_open_from_zipfile_ZipFile(self):
+    self.assertOnlyIn((2.6, 3.0),
+                      detect("from zipfile import ZipFile\n"
+                             "zf = ZipFile()\n"
+                             "zf.open()"))
+
+  def test_extract_from_zipfile_ZipFile(self):
+    self.assertOnlyIn((2.6, 3.0),
+                      detect("from zipfile import ZipFile\n"
+                             "zf = ZipFile()\n"
+                             "zf.extract()"))
+
+  def test_extractall_from_zipfile_ZipFile(self):
+    self.assertOnlyIn((2.6, 3.0),
+                      detect("from zipfile import ZipFile\n"
+                             "zf = ZipFile()\n"
+                             "zf.extractall()"))
+
+  def test_setpassword_from_zipfile_ZipFile(self):
+    self.assertOnlyIn((2.6, 3.0),
+                      detect("from zipfile import ZipFile\n"
+                             "zf = ZipFile()\n"
+                             "zf.setpassword()"))
+
+  def test_from_file_from_zipfile_ZipInfo(self):
+    self.assertOnlyIn(3.6,
+                      detect("from zipfile import ZipInfo\n"
+                             "zf = ZipInfo()\n"
+                             "zf.from_file()"))
+
+  def test_is_dir_from_zipfile_ZipInfo(self):
+    self.assertOnlyIn(3.6,
+                      detect("from zipfile import ZipInfo\n"
+                             "zf = ZipInfo()\n"
+                             "zf.is_dir()"))
+
+  def test_get_filename_from_zipimport_zipimporter(self):
+    self.assertOnlyIn((2.7, 3.1),
+                      detect("from zipimport import zipimporter\n"
+                             "zi = zipimporter()\n"
+                             "zi.get_filename()"))

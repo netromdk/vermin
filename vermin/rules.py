@@ -101,9 +101,12 @@ MOD_REQS = {
   "warnings": (2.1, 3.0),
   "weakref": (2.1, 3.0),
   "winreg": (None, 3.0),
+  "wsgiref": (2.5, 3.0),
   "xmlrpc": (None, 3.0),
   "xmlrpc.client": (None, 3.0),
   "xmlrpc.server": (None, 3.0),
+  "xmlrpclib": (2.2, None),
+  "zipimport": (2.3, 3.0),
 }
 
 # Module member requirements: member -> (module, requirements)
@@ -156,6 +159,10 @@ MOD_MEM_REQS = {
   "weakref.WeakMethod": (None, 3.4),
   "weakref.WeakSet": (2.7, 3.0),
   "weakref.finalize": (None, 3.4),
+  "wsgiref.handlers.IISCGIHandler": (None, 3.2),
+  "xml.etree.ElementTree": (2.5, 3.0),
+  "xml.etree.ElementTree.XMLPullParser": (None, 3.4),
+  "xmlrpclib.MultiCall": (2.4, None),
 
   # Exceptions
   "ssl.SSLEOFError": (2.7, 3.3),
@@ -166,6 +173,7 @@ MOD_MEM_REQS = {
   "subprocess.SubprocessError": (None, 3.3),
   "subprocess.TimeoutExpired": (None, 3.3),
   "tarfile.HeaderError": (2.6, 3.0),
+  "zipfile.BadZipFile": (None, 3.2),
 
   # Functions
   "SimpleXMLRPCServer.SimpleXMLRPCServer.register_introspection_functions": (2.3, None),
@@ -443,7 +451,24 @@ MOD_MEM_REQS = {
   "weakref.WeakKeyDictionary.keyrefs": (2.5, 3.0),
   "weakref.WeakValueDictionary.itervaluerefs": (2.5, 3.0),
   "weakref.WeakValueDictionary.valuerefs": (2.5, 3.0),
+  "wsgiref.handlers.read_environ": (None, 3.2),
+  "xml.etree.ElementTree.Element.extend": (2.7, 3.2),
+  "xml.etree.ElementTree.Element.iter": (2.7, 3.2),
+  "xml.etree.ElementTree.Element.iterfind": (2.7, 3.2),
+  "xml.etree.ElementTree.Element.itertext": (2.7, 3.2),
+  "xml.etree.ElementTree.ElementTree.iterfind": (2.7, 3.2),
+  "xml.etree.ElementTree.TreeBuilder.doctype": (2.7, 3.2),
+  "xml.etree.ElementTree.fromstringlist": (2.7, 3.2),
+  "xml.etree.ElementTree.register_namespace": (2.7, 3.2),
+  "xml.etree.ElementTree.tostringlist": (2.7, 3.2),
   "xmlrpc.server.SimpleXMLRPCServer.register_introspection_functions": (None, 3.0),
+  "zipfile.ZipFile.extract": (2.6, 3.0),
+  "zipfile.ZipFile.extractall": (2.6, 3.0),
+  "zipfile.ZipFile.open": (2.6, 3.0),
+  "zipfile.ZipFile.setpassword": (2.6, 3.0),
+  "zipfile.ZipInfo.from_file": (None, 3.6),
+  "zipfile.ZipInfo.is_dir": (None, 3.6),
+  "zipimport.zipimporter.get_filename": (2.7, 3.1),
 
   # Variables and Constants
   "SimpleXMLRPCServer.SimpleXMLRPCRequestHandler.encode_threshold": (2.7, None),
@@ -556,6 +581,8 @@ MOD_MEM_REQS = {
   "unittest.TestResult.failfast": (2.7, 3.0),
   "unittest.TestResult.skipped": (2.7, 3.0),
   "xmlrpc.server.SimpleXMLRPCRequestHandler.rpc_paths": (None, 3.0),
+  "zipfile.ZIP_BZIP2": (None, 3.3),
+  "zipfile.ZIP_LZMA": (None, 3.3),
 }
 
 # Keyword arguments requirements: (function, keyword argument) -> (module, requirements)
@@ -583,7 +610,10 @@ KWARGS_REQS = {
   ("Popen", "start_new_session"): ("subprocess", (None, 3.2)),
   ("PrettyPrinter", "compact"): ("pprint", (None, 3.4)),
   ("Process", "daemon"): ("multiprocessing", (None, 3.3)),
+  ("PyZipFile", "optimize"): ("zipfile", (None, 3.2)),
   ("SequenceMatcher", "autojunk"): ("difflib", (2.7, 3.2)),
+  ("ServerProxy", "context"): ("xmlrpclib", (2.7, None)),
+  ("ServerProxy", "use_datetime"): ("xmlrpclib", (2.5, None)),
   ("SimpleXMLRPCServer", "allow_none"): ("SimpleXMLRPCServer", (2.5, None)),
   ("SimpleXMLRPCServer", "bind_and_active"): ("SimpleXMLRPCServer", (2.6, None)),
   ("SimpleXMLRPCServer", "encoding"): ("SimpleXMLRPCServer", (2.5, None)),
@@ -624,6 +654,7 @@ KWARGS_REQS = {
   ("extractall", "numeric_owner"): ("tarfile.TarFile", (None, 3.5)),
   ("formatwarning", "line"): ("warnings", (2.6, 3.0)),
   ("isoformat", "timespec"): ("datetime.datetime", (None, 3.6)),
+  ("iterparse", "parser"): ("xml.etree.ElementTree", (None, 3.4)),
   ("link", "dst_dir_fd"): ("os", (None, 3.3)),
   ("link", "follow_symlinks"): ("os", (None, 3.3)),
   ("link", "src_dir_fd"): ("os", (None, 3.3)),
@@ -631,6 +662,7 @@ KWARGS_REQS = {
   ("load", "object_pairs_hook"): ("json", (2.7, 3.1)),
   ("load_cert_chain", "password"): ("ssl.SSLContext", (None, 3.3)),
   ("load_verify_locations", "cadata"): ("ssl.SSLContext", (None, 3.4)),
+  ("loads", "use_datetime"): ("xmlrpclib", (2.5, None)),
   ("lru_cache", "typed"): ("functools", (None, 3.3)),
   ("makeRecord", "extra"): ("logging.Logger", (2.5, 3.0)),
   ("makeRecord", "func"): ("logging.Logger", (2.5, 3.0)),
@@ -644,6 +676,7 @@ KWARGS_REQS = {
   ("open", "dir_fd"): ("os", (None, 3.3)),
   ("pformat", "compact"): ("pprint", (None, 3.4)),
   ("pprint", "compact"): ("pprint", (None, 3.4)),
+  ("read", "pwd"): ("zipfile.ZipFile", (2.6, 3.0)),
   ("register_instance", "allow_dotted_names"): ("SimpleXMLRPCServer", (2.3, 3.0)),
   ("replace", "fold"): ("datetime.datetime", (None, 3.6)),
   ("run", "encoding"): ("subprocess", (None, 3.6)),
@@ -654,11 +687,16 @@ KWARGS_REQS = {
   ("tobuf", "encoding"): ("tarfile.TarInfo", (2.6, 3.0)),
   ("tobuf", "errors"): ("tarfile.TarInfo", (2.6, 3.0)),
   ("tobuf", "format"): ("tarfile.TarInfo", (2.6, 3.0)),
+  ("tostring", "short_empty_elements"): ("xml.etree.ElementTree", (None, 3.4)),
+  ("tostringlist", "short_empty_elements"): ("xml.etree.ElementTree", (None, 3.4)),
   ("wait", "timeout"): ("subprocess.Popen", (None, 3.3)),
   ("warn", "source"): ("warnings", (None, 3.6)),
   ("warn_explicit", "module_globals"): ("warnings", (2.5, 3.0)),
   ("warn_explicit", "source"): ("warnings", (None, 3.6)),
   ("wrap_socket", "ciphers"): ("ssl", (2.7, 3.2)),
+  ("write", "short_empty_elements"): ("xml.etree.ElementTree", (None, 3.4)),
+  ("writepy", "filterfunc"): ("zipfile.PyZipFile", (None, 3.4)),
+  ("writestr", "compress_type"): ("zipfile.ZipFile", (2.7, 3.2)),
 }
 
 # datetime+time strftime/strptime requirements: directive -> requirements

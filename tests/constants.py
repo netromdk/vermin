@@ -352,3 +352,9 @@ class VerminConstantMemberTests(VerminTest):
 
     # In this test "args" cannot be matched as "subprocess.Popen.args" constant (as above)!
     self.assertOnlyIn((2.4, 3.0), detect("import subprocess\nargs=[]\nsubprocess.Popen(args)"))
+
+  def test_ZIP_BZIP2_of_zipfile(self):
+    self.assertOnlyIn(3.3, detect("import zipfile\nzipfile.ZIP_BZIP2"))
+
+  def test_ZIP_LZMA_of_zipfile(self):
+    self.assertOnlyIn(3.3, detect("import zipfile\nzipfile.ZIP_LZMA"))

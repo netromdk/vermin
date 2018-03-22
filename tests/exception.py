@@ -21,3 +21,6 @@ class VerminExceptionMemberTests(VerminTest):
 
   def test_HeaderError_of_tarfile(self):
     self.assertOnlyIn((2.6, 3.0), detect("from tarfile import HeaderError"))
+
+  def test_BadZipFile_of_zipfile(self):
+    self.assertOnlyIn(3.2, detect("from zipfile import BadZipFile"))

@@ -361,3 +361,61 @@ class VerminKwargsTests(VerminTest):
   def test_source_of_warn_from_warnings(self):
     self.assertOnlyIn(3.6,
                       detect("import warnings\nwarnings.warn(source=None)"))
+
+  def test_parser_of_iterparse_from_xml_etree_ElementTree(self):
+    self.assertOnlyIn(3.4,
+                      detect("from xml.etree import ElementTree\n"
+                             "ElementTree.iterparse(parser=None)"))
+
+  def test_short_empty_elements_of_tostring_from_xml_etree_ElementTree(self):
+    self.assertOnlyIn(3.4,
+                      detect("from xml.etree import ElementTree\n"
+                             "ElementTree.tostring(short_empty_elements=None)"))
+
+  def test_short_empty_elements_of_tostringlist_from_xml_etree_ElementTree(self):
+    self.assertOnlyIn(3.4,
+                      detect("from xml.etree import ElementTree\n"
+                             "ElementTree.tostringlist(short_empty_elements=None)"))
+
+  def test_short_empty_elements_of_write_from_xml_etree_ElementTree(self):
+    self.assertOnlyIn(3.4,
+                      detect("from xml.etree import ElementTree\n"
+                             "ElementTree.write(short_empty_elements=None)"))
+
+  def test_use_datetime_of_ServerProxy_from_xmlrpclib_ServerProxy(self):
+    self.assertOnlyIn(2.5,
+                      detect("from xmlrpclib import ServerProxy\n"
+                             "ServerProxy(use_datetime=None)"))
+
+  def test_context_of_ServerProxy_from_xmlrpclib_ServerProxy(self):
+    self.assertOnlyIn(2.7,
+                      detect("from xmlrpclib import ServerProxy\n"
+                             "ServerProxy(context=None)"))
+
+  def test_use_datetime_of_loads_from_xmlrpclib(self):
+    self.assertOnlyIn(2.5,
+                      detect("import xmlrpclib\n"
+                             "xmlrpclib.loads(use_datetime=None)"))
+
+  def test_pwd_of_read_from_zipfile_ZipFile(self):
+    self.assertOnlyIn((2.6, 3.0),
+                      detect("from zipfile import ZipFile\n"
+                             "zf = ZipFile()\n"
+                             "zf.read(pwd=None)"))
+
+  def test_compress_type_of_writestr_from_zipfile_ZipFile(self):
+    self.assertOnlyIn((2.7, 3.2),
+                      detect("from zipfile import ZipFile\n"
+                             "zf = ZipFile()\n"
+                             "zf.writestr(compress_type=None)"))
+
+  def test_filterfunc_of_writepy_from_zipfile_PyZipFile(self):
+    self.assertOnlyIn(3.4,
+                      detect("from zipfile import PyZipFile\n"
+                             "zf = PyZipFile()\n"
+                             "zf.writepy(filterfunc=None)"))
+
+  def test_optimize_of_PyZipFile_from_zipfile(self):
+    self.assertOnlyIn(3.2,
+                      detect("from zipfile import PyZipFile\n"
+                             "PyZipFile(optimize=None)"))
