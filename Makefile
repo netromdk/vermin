@@ -74,6 +74,9 @@ security-check:
 
 check: check-style static-analysis
 
+# NOTE: `check` doesn't check all because bandit doesn't run on py37+ yet.
+check-all: check security-check
+
 test-coverage:
 	.venv/bin/coverage run --source=vermin,tests runtests.py
 	.venv/bin/coverage run --append --source=vermin ./vermin.py -v -t=2.7 -t=3 ${VERMIN_FILES}
