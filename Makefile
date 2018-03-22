@@ -25,13 +25,13 @@ setup-venv: clean-venv
 	virtualenv -p python .venv
 
 setup-misc: clean
-	.venv/bin/pip install -r .misc-requirements.txt
+	.venv/bin/pip install -r misc/.misc-requirements.txt
 
 setup-coverage: clean
-	.venv/bin/pip install -r .coverage-requirements.txt
+	.venv/bin/pip install -r misc/.coverage-requirements.txt
 
 setup-bandit: clean
-	.venv/bin/pip install -r .bandit-requirements.txt
+	.venv/bin/pip install -r misc/.bandit-requirements.txt
 
 setup: setup-venv setup-misc setup-coverage setup-bandit
 
@@ -51,13 +51,13 @@ pypi-dist: clean-pypi
 	python setup.py bdist_wheel --universal
 
 update-misc-requirements: setup-venv setup-misc
-	.venv/bin/pip freeze > .misc-requirements.txt
+	.venv/bin/pip freeze > misc/.misc-requirements.txt
 
 update-coverage-requirements: setup-venv setup-coverage
-	.venv/bin/pip freeze > .coverage-requirements.txt
+	.venv/bin/pip freeze > misc/.coverage-requirements.txt
 
 update-bandit-requirements: setup-venv setup-bandit
-	.venv/bin/pip freeze > .bandit-requirements.txt
+	.venv/bin/pip freeze > misc/.bandit-requirements.txt
 
 check-style:
 	.venv/bin/flake8 --ignore E111,E114,E121,E126,E127,E302,E305 --max-line-length 100 --count \
