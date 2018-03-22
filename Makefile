@@ -30,7 +30,10 @@ setup-misc: clean
 setup-coverage: clean
 	.venv/bin/pip install -r .coverage-requirements.txt
 
-setup: setup-venv setup-misc setup-coverage
+setup-bandit: clean
+	.venv/bin/pip install -r .bandit-requirements.txt
+
+setup: setup-venv setup-misc setup-coverage setup-bandit
 
 clean:
 	find . -iname __pycache__ | xargs rm -fr
@@ -53,6 +56,9 @@ update-misc-requirements: setup-venv setup-misc
 update-coverage-requirements: setup-venv setup-coverage
 	.venv/bin/pip freeze > .coverage-requirements.txt
 
+update-bandit-requirements: setup-venv setup-bandit
+	.venv/bin/pip freeze > .bandit-requirements.txt
+
 check-style:
 	.venv/bin/flake8 --ignore E111,E114,E121,E126,E127,E302,E305 --max-line-length 100 --count \
           --show-source ${ALL_FILES}
@@ -66,7 +72,7 @@ check-unused:
 security-check:
 	.venv/bin/bandit -r -s B101 ${MODULES}
 
-check: check-style static-analysis security-check
+check: check-style static-analysis
 
 test-coverage:
 	.venv/bin/coverage run --source=vermin,tests runtests.py
