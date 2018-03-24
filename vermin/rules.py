@@ -56,6 +56,7 @@ MOD_REQS = {
   "inspect": (2.1, 3.0),
   "io": (2.6, 3.0),
   "ipaddress": (None, 3.3),
+  "lzma": (None, 3.3),
   "itertools": (2.3, 3.0),
   "json": (2.6, 3.0),
   "logging": (2.3, 3.0),

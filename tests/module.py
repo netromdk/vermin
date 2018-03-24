@@ -322,3 +322,6 @@ class VerminModuleTests(VerminTest):
 
   def test_zipimport(self):
     self.assertOnlyIn((2.3, 3.0), detect("import zipimport"))
+
+  def test_lzma(self):
+    self.assertOnlyIn(3.3, detect("import lzma"))
