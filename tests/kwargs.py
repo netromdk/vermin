@@ -42,13 +42,14 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn(3.3, detect("import os\nv = os.link(follow_symlinks=None)"))
 
   def test_maxtasksperchild_of_Pool_from_multiprocessing(self):
-    self.assertOnlyIn(3.2, detect("import multiprocessing\nPool(maxtasksperchild=3)"))
+    self.assertOnlyIn(3.2,
+                      detect("import multiprocessing\nmultiprocessing.Pool(maxtasksperchild=3)"))
 
   def test_context_of_Pool_from_multiprocessing(self):
-    self.assertOnlyIn(3.4, detect("import multiprocessing\nPool(context=None)"))
+    self.assertOnlyIn(3.4, detect("import multiprocessing\nmultiprocessing.Pool(context=None)"))
 
   def test_daemon_of_Process_from_multiprocessing(self):
-    self.assertOnlyIn(3.3, detect("import multiprocessing\nProcess(daemon=None)"))
+    self.assertOnlyIn(3.3, detect("import multiprocessing\nmultiprocessing.Process(daemon=None)"))
 
   def test_compact_of_PrettyPrinter_from_pprint(self):
     self.assertOnlyIn(3.4, detect("import pprint\npprint.PrettyPrinter(compact=True)"))
@@ -88,6 +89,11 @@ class VerminKwargsTests(VerminTest):
                       detect("from bz2 import BZ2Decompressor\n"
                              "d = BZ2Decompressor()\n"
                              "d.decompress(max_length=1)"))
+
+  def test_max_length_of_decompress_from_lzma(self):
+    self.assertOnlyIn(3.5,
+                      detect("from lzma import decompress\n"
+                             "decompress(max_length=1)"))
 
   def test_maxlen_of_deque_from_collections(self):
     self.assertOnlyIn((2.6, 3.0), detect("import collections\ncollections.deque(maxlen=1)"))
@@ -187,7 +193,7 @@ class VerminKwargsTests(VerminTest):
 
   def test_func_of_LogRecord_from_logging(self):
     self.assertOnlyIn((2.5, 3.0),
-                      detect("from logging import LogRecord\nLogger.LogRecord(func=None)"))
+                      detect("from logging import LogRecord\nLogRecord(func=None)"))
 
   def test_extra_of_debug_from_logging(self):
     self.assertOnlyIn((2.5, 3.0), detect("import logging\nlogging.debug(extra=None)"))

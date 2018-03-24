@@ -81,7 +81,7 @@ class VerminGeneralTests(VerminTest):
 
   def test_member_kwargs(self):
     visitor = visit("from os import open\nfd = open(dir_fd = None)")
-    self.assertOnlyIn([("open", "dir_fd")], visitor.kwargs())
+    self.assertOnlyIn([("os.open", "dir_fd")], visitor.kwargs())
 
   def test_detect_vermin_min_versions(self):
     paths = detect_paths([abspath("vermin")])
