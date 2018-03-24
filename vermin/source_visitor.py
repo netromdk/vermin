@@ -72,10 +72,8 @@ class SourceVisitor(ast.NodeVisitor):
 
   def __add_kwargs(self, function, keyword):
     fn_kw = (function, keyword)
-    if fn_kw in KWARGS_REQS:
-      (mod, mins) = KWARGS_REQS[fn_kw]
-      if mod in self.__modules:
-        self.__kwargs.append(fn_kw)
+    if fn_kw in KWARGS_REQS and fn_kw not in self.__kwargs:
+      self.__kwargs.append(fn_kw)
 
   def __add_strftime_directive(self, group):
     self.__strftime_directives.append(group)
@@ -188,6 +186,8 @@ class SourceVisitor(ast.NodeVisitor):
             if hasattr(arg, "s"):
               for directive in STRFTIME_DIRECTIVE_REGEX.findall(arg.s):
                 self.__add_strftime_directive(directive)
+      if isinstance(func, ast.Attribute):
+        self.__function_name = dotted_name(self.__get_attribute_name(func))
     self.generic_visit(node)
     self.__function_name = None
 
@@ -211,14 +211,31 @@ class SourceVisitor(ast.NodeVisitor):
         else:
           self.__add_member(dotted_name([res, full_name[1:]]))
 
-    # When a function is called like "os.path.ismount(..)" it is an attribute list where the "first"
-    # (this one) is the function name. Stop visiting here.
-    if hasattr(node, "attr"):
-      self.__function_name = node.attr
-
   def visit_keyword(self, node):
     if self.__function_name is not None:
       self.__add_kwargs(self.__function_name, node.arg)
+
+      if self.__function_name in self.__import_mem_mod:
+        mod = self.__import_mem_mod[self.__function_name]
+        self.__add_kwargs(dotted_name([mod, self.__function_name]), node.arg)
+
+      # When having "ElementTree.tostringlist", for instance, and include mapping "{'ElementTree':
+      # 'xml.etree'}" then try piecing them together to form a match.
+      exp_name = self.__function_name.split(".")
+      if exp_name[0] in self.__import_mem_mod:
+        mod = self.__import_mem_mod[exp_name[0]]
+        self.__add_kwargs(dotted_name([mod, self.__function_name]), node.arg)
+
+      # Lookup indirect names via variables.
+      if exp_name[0] in self.__name_res:
+        res = self.__name_res[exp_name[0]]
+        if res in self.__import_mem_mod:
+          mod = self.__import_mem_mod[res]
+          self.__add_kwargs(dotted_name([mod, res, exp_name[1:]]), node.arg)
+
+        # Try as FQN.
+        else:
+          self.__add_kwargs(dotted_name([res, exp_name[1:]]), node.arg)
 
   def visit_Bytes(self, node):
     self.__bytesv3 = True

@@ -94,11 +94,9 @@ def detect_min_versions(node):
   kwargs = visitor.kwargs()
   for fn_kw in kwargs:
     if fn_kw in KWARGS_REQS:
-      (mod, vers) = KWARGS_REQS[fn_kw]
-      # Only consider if module has been visited.
-      if mod in mods:
-        vvprint("'{}.{}({})' requires {}".format(mod, fn_kw[0], fn_kw[1], vers))
-        mins = combine_versions(mins, vers)
+      vers = KWARGS_REQS[fn_kw]
+      vvprint("'{}({})' requires {}".format(fn_kw[0], fn_kw[1], vers))
+      mins = combine_versions(mins, vers)
 
   return mins
 
