@@ -89,6 +89,9 @@ class VerminModuleTests(VerminTest):
   def test_tkinter(self):
     self.assertOnlyIn(3.0, detect("import tkinter"))
 
+  def test_Tkinter(self):
+    self.assertOnlyIn(2.0, detect("import Tkinter"))
+
   def test_urllib2(self):
     self.assertOnlyIn(2.0, detect("import urllib2"))
 
@@ -121,6 +124,9 @@ class VerminModuleTests(VerminTest):
 
   def test_unittest(self):
     self.assertOnlyIn((2.1, 3.0), detect("import unittest"))
+
+  def test_unittest_mock(self):
+    self.assertOnlyIn(3.3, detect("import unittest.mock"))
 
   def test_secrets(self):
     self.assertOnlyIn(3.6, detect("import secrets"))
@@ -325,3 +331,6 @@ class VerminModuleTests(VerminTest):
 
   def test_lzma(self):
     self.assertOnlyIn(3.3, detect("import lzma"))
+
+  def test_venv(self):
+    self.assertOnlyIn(3.3, detect("import venv"))

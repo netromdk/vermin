@@ -425,3 +425,23 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn(3.2,
                       detect("from zipfile import PyZipFile\n"
                              "PyZipFile(optimize=None)"))
+
+  def test_unsafe_of_Mock_from_unittest_mock(self):
+    self.assertOnlyIn(3.5,
+                      detect("from unittest.mock import Mock\n"
+                             "Mock(unsafe=False)"))
+
+  def test_with_pip_of_EnvBuilder_from_venv(self):
+    self.assertOnlyIn(3.4,
+                      detect("from venv import EnvBuilder\n"
+                             "EnvBuilder(with_pip=False)"))
+
+  def test_with_pip_of_create_from_venv(self):
+    self.assertOnlyIn(3.4,
+                      detect("from venv import create\n"
+                             "create(with_pip=False)"))
+
+  def test_prompt_of_EnvBuilder_from_venv(self):
+    self.assertOnlyIn(3.6,
+                      detect("from venv import EnvBuilder\n"
+                             "EnvBuilder(prompt=False)"))

@@ -1046,3 +1046,6 @@ class VerminFunctionMemberTests(VerminTest):
                       detect("from zipimport import zipimporter\n"
                              "zi = zipimporter()\n"
                              "zi.get_filename()"))
+
+  def test_Tcl_from_Tkinter(self):
+    self.assertOnlyIn(2.4, detect("import Tkinter\nTkinter.Tcl()"))
