@@ -539,3 +539,6 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn(3.3,
                       detect("from email.generator import Generator\n"
                              "Generator(policy=None)"))
+
+  def test_base_of_math_log(self):
+    self.assertOnlyIn((2.3, 3.0), detect("import math\nmath.log(base=None)"))

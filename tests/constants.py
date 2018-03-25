@@ -373,3 +373,12 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_methods_of_crypt(self):
     self.assertOnlyIn(3.3, detect("import crypt\ncrypt.methods"))
+
+  def test_tau_of_math(self):
+    self.assertOnlyIn(3.6, detect("import math\nmath.tau"))
+
+  def test_inf_of_math(self):
+    self.assertOnlyIn(3.5, detect("import math\nmath.inf"))
+
+  def test_nan_of_math(self):
+    self.assertOnlyIn(3.5, detect("import math\nmath.nan"))

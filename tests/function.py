@@ -1064,3 +1064,57 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_format_datetime_from_email_utils(self):
     self.assertOnlyIn(3.3, detect("import email.utils\nemail.utils.format_datetime()"))
+
+  def test_copysign_from_math(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import math\nmath.copysign()"))
+
+  def test_fsum_from_math(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import math\nmath.fsum()"))
+
+  def test_isinf_from_math(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import math\nmath.isinf()"))
+
+  def test_isnan_from_math(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import math\nmath.isnan()"))
+
+  def test_trunc_from_math(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import math\nmath.trunc()"))
+
+  def test_expm1_from_math(self):
+    self.assertOnlyIn((2.7, 3.2), detect("import math\nmath.expm1()"))
+
+  def test_log1p_from_math(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import math\nmath.log1p()"))
+
+  def test_asinh_from_math(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import math\nmath.asinh()"))
+
+  def test_acosh_from_math(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import math\nmath.acosh()"))
+
+  def test_atanh_from_math(self):
+    self.assertOnlyIn((2.6, 3.0), detect("import math\nmath.atanh()"))
+
+  def test_erf_from_math(self):
+    self.assertOnlyIn((2.7, 3.2), detect("import math\nmath.erf()"))
+
+  def test_erfc_from_math(self):
+    self.assertOnlyIn((2.7, 3.2), detect("import math\nmath.erfc()"))
+
+  def test_gamma_from_math(self):
+    self.assertOnlyIn((2.7, 3.2), detect("import math\nmath.gamma()"))
+
+  def test_lgamma_from_math(self):
+    self.assertOnlyIn((2.7, 3.2), detect("import math\nmath.lgamma()"))
+
+  def test_gcd_from_math(self):
+    self.assertOnlyIn(3.5, detect("import math\nmath.gcd()"))
+
+  def test_isclose_from_math(self):
+    self.assertOnlyIn(3.5, detect("import math\nmath.isclose()"))
+
+  def test_isfinite_from_math(self):
+    self.assertOnlyIn(3.2, detect("import math\nmath.isfinite()"))
+
+  def test_log2_from_math(self):
+    self.assertOnlyIn(3.3, detect("import math\nmath.log2()"))
