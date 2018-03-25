@@ -445,3 +445,21 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn(3.6,
                       detect("from venv import EnvBuilder\n"
                              "EnvBuilder(prompt=False)"))
+
+  def test_flags_of_compile(self):
+    self.assertOnlyIn((2.3, 3.0), detect("compile(flags=None)"))
+
+  def test_dont_inherit_of_compile(self):
+    self.assertOnlyIn((2.3, 3.0), detect("compile(dont_inherit=None)"))
+
+  def test_start_of_enumerate(self):
+    self.assertOnlyIn((2.6, 3.0), detect("enumerate(start=None)"))
+
+  def test_key_of_max(self):
+    self.assertOnlyIn((2.5, 3.0), detect("max(key=None)"))
+
+  def test_key_of_min(self):
+    self.assertOnlyIn((2.5, 3.0), detect("min(key=None)"))
+
+  def test_level_of___import__(self):
+    self.assertOnlyIn((2.5, 3.0), detect("__import__(level=None)"))

@@ -115,6 +115,14 @@ MOD_REQS = {
 
 # Module member requirements: member -> (module, requirements)
 MOD_MEM_REQS = {
+  # Builtin classes
+  "bool": (2.2, 3.0),
+  "bytearray": (2.6, 3.0),
+  "frozenset": (2.4, 3.0),
+  "object": (2.2, 3.0),
+  "set": (2.4, 3.0),
+  "type": (2.2, 3.0),
+
   # Classes
   "SimpleXMLRPCServer.CGIXMLRPCRequestHandler": (2.3, None),
   "abc.ABC": (None, 3.4),
@@ -179,8 +187,30 @@ MOD_MEM_REQS = {
   "tarfile.HeaderError": (2.6, 3.0),
   "zipfile.BadZipFile": (None, 3.2),
 
+  # Builtin functions
+  "all": (2.5, 3.0),
+  "any": (2.5, 3.0),
+  "basestring": (2.3, 3.0),
+  "bin": (2.6, 3.0),
+  "classmethod": (2.2, 3.0),
+  "enumerate": (2.3, 3.0),
+  "file": (2.2, 3.0),
+  "format": (2.6, 3.0),
+  "help": (2.2, 3.0),
+  "iter": (2.2, 3.0),
+  "next": (2.6, 3.0),
+  "reversed": (2.4, 3.0),
+  "sorted": (2.4, 3.0),
+  "staticmethod": (2.2, 3.0),
+  "sum": (2.3, 3.0),
+  "super": (2.2, 3.0),
+  "unichr": (2.0, 3.0),
+  "unicode": (2.0, 3.0),
+  "zip": (2.0, 3.0),
+
   # Functions
   "SimpleXMLRPCServer.SimpleXMLRPCServer.register_introspection_functions": (2.3, None),
+  "Tkinter.Tcl": (2.4, None),
   "bz2.BZ2File.fileno": (None, 3.3),
   "bz2.BZ2File.peek": (None, 3.3),
   "bz2.BZ2File.read1": (None, 3.3),
@@ -473,7 +503,6 @@ MOD_MEM_REQS = {
   "zipfile.ZipInfo.from_file": (None, 3.6),
   "zipfile.ZipInfo.is_dir": (None, 3.6),
   "zipimport.zipimporter.get_filename": (2.7, 3.1),
-  "Tkinter.Tcl": (2.4, None),
 
   # Variables and Constants
   "SimpleXMLRPCServer.SimpleXMLRPCRequestHandler.encode_threshold": (2.7, None),
@@ -598,10 +627,13 @@ KWARGS_REQS = {
   ("SimpleXMLRPCServer.SimpleXMLRPCServer", "bind_and_active"): (2.6, None),
   ("SimpleXMLRPCServer.SimpleXMLRPCServer", "encoding"): (2.5, None),
   ("SimpleXMLRPCServer.SimpleXMLRPCServer.register_instance", "allow_dotted_names"): (2.3, 3.0),
+  ("__import__", "level"): (2.5, 3.0),
   ("bz2.BZ2Decompressor.decompress", "max_length"): (None, 3.5),
   ("collections.deque", "maxlen"): (2.6, 3.0),
   ("collections.namedtuple", "module"): (None, 3.6),
   ("collections.namedtuple", "rename"): (2.7, 3.1),
+  ("compile", "dont_inherit"): (2.3, 3.0),
+  ("compile", "flags"): (2.3, 3.0),
   ("ctypes.CDLL", "use_errno"): (2.6, 3.0),
   ("ctypes.CDLL", "use_last_error"): (2.6, 3.0),
   ("ctypes.CFUNCTYPE", "use_errno"): (2.6, 3.0),
@@ -617,6 +649,7 @@ KWARGS_REQS = {
   ("datetime.datetime.replace", "fold"): (None, 3.6),
   ("difflib.HtmlDiff.make_file", "charset"): (None, 3.5),
   ("difflib.SequenceMatcher", "autojunk"): (2.7, 3.2),
+  ("enumerate", "start"): (2.6, 3.0),
   ("functools.lru_cache", "typed"): (None, 3.3),
   ("heapq.merge", "key"): (None, 3.5),
   ("heapq.merge", "reverse"): (None, 3.5),
@@ -635,6 +668,8 @@ KWARGS_REQS = {
   ("logging.debug", "extra"): (2.5, 3.0),
   ("logging.debug", "stack_info"): (None, 3.2),
   ("lzma.decompress", "max_length"): (None, 3.5),
+  ("max", "key"): (2.5, 3.0),
+  ("min", "key"): (2.5, 3.0),
   ("multiprocessing.Pool", "context"): (None, 3.4),
   ("multiprocessing.Pool", "maxtasksperchild"): (None, 3.2),
   ("multiprocessing.Process", "daemon"): (None, 3.3),
