@@ -153,3 +153,33 @@ class VerminClassMemberTests(VerminTest):
 
   def test_MultiCall_of_xmlrpclib(self):
     self.assertOnlyIn(2.4, detect("from xmlrpclib import MultiCall"))
+
+  def test_MIMENonMultipart_of_email_mime_nonmultipart(self):
+    self.assertOnlyIn((2.2, 3.0), detect("from email.mime.nonmultipart import MIMENonMultipart"))
+
+  def test_MIMEMultipart_of_email_mime_multipart(self):
+    self.assertOnlyIn((2.2, 3.0), detect("from email.mime.multipart import MIMEMultipart"))
+
+  def test_MIMEApplication_of_email_mime_application(self):
+    self.assertOnlyIn((2.5, 3.0), detect("from email.mime.application import MIMEApplication"))
+
+  def test_FeedParser_of_email_parser(self):
+    self.assertOnlyIn((2.4, 3.0), detect("from email.parser import FeedParser"))
+
+  def test_BytesFeedParser_of_email_parser(self):
+    self.assertOnlyIn(3.2, detect("from email.parser import BytesFeedParser"))
+
+  def test_BytesParser_of_email_parser(self):
+    self.assertOnlyIn(3.2, detect("from email.parser import BytesParser"))
+
+  def test_BytesHeaderParser_of_email_parser(self):
+    self.assertOnlyIn(3.3, detect("from email.parser import BytesHeaderParser"))
+
+  def test_EmailPolicy_of_email_policy(self):
+    self.assertOnlyIn(3.6, detect("from email.policy import EmailPolicy"))
+
+  def test_DecodedGenerator_of_email_generator(self):
+    self.assertOnlyIn((2.2, 3.0), detect("from email.generator import DecodedGenerator"))
+
+  def test_BytesGenerator_of_email_generator(self):
+    self.assertOnlyIn(3.2, detect("from email.generator import BytesGenerator"))

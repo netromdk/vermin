@@ -358,3 +358,18 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_ZIP_LZMA_of_zipfile(self):
     self.assertOnlyIn(3.3, detect("import zipfile\nzipfile.ZIP_LZMA"))
+
+  def test_METHOD_SHA512_of_crypt(self):
+    self.assertOnlyIn(3.3, detect("import crypt\ncrypt.METHOD_SHA512"))
+
+  def test_METHOD_SHA256_of_crypt(self):
+    self.assertOnlyIn(3.3, detect("import crypt\ncrypt.METHOD_SHA256"))
+
+  def test_METHOD_MD5_of_crypt(self):
+    self.assertOnlyIn(3.3, detect("import crypt\ncrypt.METHOD_MD5"))
+
+  def test_METHOD_CRYPT_of_crypt(self):
+    self.assertOnlyIn(3.3, detect("import crypt\ncrypt.METHOD_CRYPT"))
+
+  def test_methods_of_crypt(self):
+    self.assertOnlyIn(3.3, detect("import crypt\ncrypt.methods"))

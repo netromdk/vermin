@@ -480,3 +480,62 @@ class VerminKwargsTests(VerminTest):
     # `print()` is not a function in v2.
     if current_major_version() >= 3:
       self.assertOnlyIn(3.3, detect("print(flush=None)"))
+
+  def test_policy_of_email_mime_base_MIMEBase(self):
+    self.assertOnlyIn(3.6, detect("from email.mime.base import MIMEBase\nMIMEBase(policy=None)"))
+
+  def test_policy_of_email_mime_multipart_MIMEMultipart(self):
+    self.assertOnlyIn(3.6,
+                      detect("from email.mime.multipart import MIMEMultipart\n"
+                             "MIMEMultipart(policy=None)"))
+
+  def test_policy_of_email_mime_application_MIMEApplication(self):
+    self.assertOnlyIn(3.6,
+                      detect("from email.mime.application import MIMEApplication\n"
+                             "MIMEApplication(policy=None)"))
+
+  def test_policy_of_email_mime_audio_MIMEAudio(self):
+    self.assertOnlyIn(3.6, detect("from email.mime.audio import MIMEAudio\nMIMEAudio(policy=None)"))
+
+  def test_policy_of_email_mime_image_MIMEImage(self):
+    self.assertOnlyIn(3.6, detect("from email.mime.image import MIMEImage\nMIMEImage(policy=None)"))
+
+  def test_policy_of_email_mime_message_MIMEMessage(self):
+    self.assertOnlyIn(3.6,
+                      detect("from email.mime.message import MIMEMessage\n"
+                             "MIMEMessage(policy=None)"))
+
+  def test_policy_of_email_mime_text_MIMEText(self):
+    self.assertOnlyIn(3.6, detect("from email.mime.text import MIMEText\nMIMEText(policy=None)"))
+
+  def test_domain_of_email_utils_make_msgid(self):
+    self.assertOnlyIn(3.2, detect("import email.utils\nemail.utils.make_msgid(domain=None)"))
+
+  def test_charset_of_email_utils_formatdate(self):
+    self.assertOnlyIn(3.3, detect("import email.utils\nemail.utils.formatdate(charset=None)"))
+
+  def test_strict_of_email_message_from_string(self):
+    self.assertOnlyIn((2.2, 3.0), detect("import email\nemail.message_from_string(strict=None)"))
+
+  def test_strict_of_email_message_from_file(self):
+    self.assertOnlyIn((2.2, 3.0), detect("import email\nemail.message_from_file(strict=None)"))
+
+  def test_policy_of_email_parser_BytesFeedParser(self):
+    self.assertOnlyIn(3.3,
+                      detect("from email.parser import BytesFeedParser\n"
+                             "BytesFeedParser(policy=None)"))
+
+  def test_policy_of_email_parser_FeedParser(self):
+    self.assertOnlyIn(3.3,
+                      detect("from email.parser import FeedParser\n"
+                             "FeedParser(policy=None)"))
+
+  def test_policy_of_email_generator_BytesGenerator(self):
+    self.assertOnlyIn(3.3,
+                      detect("from email.generator import BytesGenerator\n"
+                             "BytesGenerator(policy=None)"))
+
+  def test_policy_of_email_generator_Generator(self):
+    self.assertOnlyIn(3.3,
+                      detect("from email.generator import Generator\n"
+                             "Generator(policy=None)"))

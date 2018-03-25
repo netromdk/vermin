@@ -24,3 +24,29 @@ class VerminExceptionMemberTests(VerminTest):
 
   def test_BadZipFile_of_zipfile(self):
     self.assertOnlyIn(3.2, detect("from zipfile import BadZipFile"))
+
+  def test_NoBoundaryInMultipartDefect_of_email_errors(self):
+    self.assertOnlyIn((2.4, 3.0), detect("from email.errors import NoBoundaryInMultipartDefect"))
+
+  def test_StartBoundaryNotFoundDefect_of_email_errors(self):
+    self.assertOnlyIn((2.4, 3.0), detect("from email.errors import StartBoundaryNotFoundDefect"))
+
+  def test_FirstHeaderLineIsContinuationDefect_of_email_errors(self):
+    self.assertOnlyIn((2.4, 3.0),
+                      detect("from email.errors import FirstHeaderLineIsContinuationDefect"))
+
+  def test_MisplacedEnvelopeHeaderDefect_of_email_errors(self):
+    self.assertOnlyIn((2.4, 3.0), detect("from email.errors import MisplacedEnvelopeHeaderDefect"))
+
+  def test_MalformedHeaderDefect_of_email_errors(self):
+    self.assertOnlyIn((2.4, 3.0), detect("from email.errors import MalformedHeaderDefect"))
+
+  def test_MultipartInvariantViolationDefect_of_email_errors(self):
+    self.assertOnlyIn((2.4, 3.0),
+                      detect("from email.errors import MultipartInvariantViolationDefect"))
+
+  def test_CloseBoundaryNotFoundDefect_of_email_errors(self):
+    self.assertOnlyIn(3.3, detect("from email.errors import CloseBoundaryNotFoundDefect"))
+
+  def test_MissingHeaderBodySeparatorDefect_of_email_errors(self):
+    self.assertOnlyIn(3.3, detect("from email.errors import MissingHeaderBodySeparatorDefect"))

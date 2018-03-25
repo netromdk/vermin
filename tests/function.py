@@ -1049,3 +1049,18 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_Tcl_from_Tkinter(self):
     self.assertOnlyIn(2.4, detect("import Tkinter\nTkinter.Tcl()"))
+
+  def test_mksalt_from_crypt(self):
+    self.assertOnlyIn(3.3, detect("import crypt\ncrypt.mksalt()"))
+
+  def test_formatdate_from_email_utils(self):
+    self.assertOnlyIn((2.4, 3.0), detect("import email.utils\nemail.utils.formatdate()"))
+
+  def test_localtime_from_email_utils(self):
+    self.assertOnlyIn(3.3, detect("import email.utils\nemail.utils.localtime()"))
+
+  def test_parsedate_to_datetime_from_email_utils(self):
+    self.assertOnlyIn(3.3, detect("import email.utils\nemail.utils.parsedate_to_datetime()"))
+
+  def test_format_datetime_from_email_utils(self):
+    self.assertOnlyIn(3.3, detect("import email.utils\nemail.utils.format_datetime()"))

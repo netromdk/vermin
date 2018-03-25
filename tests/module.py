@@ -212,6 +212,21 @@ class VerminModuleTests(VerminTest):
   def test_email(self):
     self.assertOnlyIn((2.2, 3.0), detect("import email"))
 
+  def test_email_header(self):
+    self.assertOnlyIn((2.2, 3.0), detect("import email.header"))
+
+  def test_email_charset(self):
+    self.assertOnlyIn((2.2, 3.0), detect("import email.charset"))
+
+  def test_email_policy(self):
+    self.assertOnlyIn(3.3, detect("import email.policy"))
+
+  def test_email_contentmanager(self):
+    self.assertOnlyIn(3.6, detect("import email.contentmanager"))
+
+  def test_email_headerregistry(self):
+    self.assertOnlyIn(3.6, detect("import email.headerregistry"))
+
   def test_fractions(self):
     self.assertOnlyIn((2.6, 3.0), detect("import fractions"))
 
