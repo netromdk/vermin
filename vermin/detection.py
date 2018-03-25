@@ -71,6 +71,9 @@ def detect_min_versions(node):
   if visitor.fstrings():
     mins = combine_versions(mins, (None, 3.6))
 
+  if visitor.bool_const():
+    mins = combine_versions(mins, (2.2, 3.0))
+
   for directive in visitor.strftime_directives():
     if directive in STRFTIME_REQS:
       vers = STRFTIME_REQS[directive]

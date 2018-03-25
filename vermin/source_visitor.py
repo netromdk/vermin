@@ -20,6 +20,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__longv2 = False
     self.__bytesv3 = False
     self.__fstrings = False
+    self.__bool_const = False
     self.__function_name = None
     self.__kwargs = []
     self.__depth = 0
@@ -57,6 +58,9 @@ class SourceVisitor(ast.NodeVisitor):
 
   def fstrings(self):
     return self.__fstrings
+
+  def bool_const(self):
+    return self.__bool_const
 
   def kwargs(self):
     return self.__kwargs
@@ -312,6 +316,11 @@ class SourceVisitor(ast.NodeVisitor):
   def visit_ClassDef(self, node):
     self.__add_user_def(node.name)
     self.generic_visit(node)
+
+  def visit_NameConstant(self, node):
+    if node.value is True or node.value is False:
+      self.__bool_const = True
+      vvvprint("True/False constant requires v2.2+.")
 
   # Ignore unused nodes as a speed optimization.
 
