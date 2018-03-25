@@ -139,3 +139,39 @@ class VerminGeneralTests(VerminTest):
   def test_assign_rvalue_attribute(self):
     self.assertEqual([None, 3.3],
                      detect_min_versions_source("import bz2\nv = bz2.BZ2File\nv.writable"))
+
+  def test_user_defined(self):
+    visitor = visit("def hello(): pass\nhello2()\nclass foo(): pass")
+    self.assertOnlyIn(["hello", "foo"], visitor.user_defined())
+
+  def test_ignore_members_when_user_defined_funcs(self):
+    # `next()` was builtin from 2.6.
+    visitor = visit("def next(): pass\nnext()")
+    self.assertOnlyIn("next", visitor.user_defined())
+    self.assertEmpty(visitor.members())
+
+  def test_ignore_members_when_user_defined_classes(self):
+    # `bytearray` was builtin from 2.6.
+    visitor = visit("class bytearray: pass\nba = bytearray()")
+    self.assertOnlyIn(["bytearray", "ba"], visitor.user_defined())
+    self.assertEmpty(visitor.members())
+
+  def test_ignore_modules_when_user_defined_funcs(self):
+    # This test relies on the rule for "SimpleXMLRPCServer" module.
+
+    # Ignore module due to class def.
+    visitor = visit("import SimpleXMLRPCServer\n"
+                    "def SimpleXMLRPCServer(): pass\n"
+                    "src = SimpleXMLRPCServer()")
+    self.assertOnlyIn(["SimpleXMLRPCServer", "src"], visitor.user_defined())
+    self.assertEmpty(visitor.modules())
+
+  def test_ignore_modules_when_user_defined_classes(self):
+    # This test relies on the rule for "SimpleXMLRPCServer" module.
+
+    # Ignore module due to class def.
+    visitor = visit("import SimpleXMLRPCServer\n"
+                    "class SimpleXMLRPCServer: pass\n"
+                    "src = SimpleXMLRPCServer()")
+    self.assertOnlyIn(["SimpleXMLRPCServer", "src"], visitor.user_defined())
+    self.assertEmpty(visitor.modules())

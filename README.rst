@@ -19,10 +19,12 @@ vanilla Python, and it doesn't have any external dependencies, it works with v2.
 
 It functions by parsing Python code into an abstract syntax tree (AST), which it traverses and
 matches against internal dictionaries with 727 rules divided into 111 modules, 491
-classes/functions/constants members of modules, 121 kwargs of functions, and 4 strftime
-directives. Including looking for v2/v3 ``print expr`` and ``print(expr)``, ``long``, f-strings,
+classes/functions/constants members of modules, 121 kwargs of functions, and 4 strftime directives.
+Including looking for v2/v3 ``print expr`` and ``print(expr)``, ``long``, f-strings,
 ``"..".format(..)``, imports (``import X``, ``from X import Y``, ``from X import *``), function
-calls wrt. name and kwargs, and ``strftime`` + ``strptime`` directives used.
+calls wrt. name and kwargs, and ``strftime`` + ``strptime`` directives used. It tries to detect and
+ignore user-defined functions, classes, arguments, and variables with names that clash with library-
+defined symbols.
 
 Usage
 =====

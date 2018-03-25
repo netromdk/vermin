@@ -3,8 +3,8 @@ import re
 
 from .rules import MOD_MEM_REQS, KWARGS_REQS
 from .config import Config
-from .printing import nprint, vvprint
-from .utility import dotted_name
+from .printing import nprint, vvprint, vvvprint
+from .utility import dotted_name, reverse_range
 
 STRFTIME_DIRECTIVE_REGEX = re.compile(r"(%\w)")
 
@@ -30,6 +30,9 @@ class SourceVisitor(ast.NodeVisitor):
 
     # Name -> name resolutions.
     self.__name_res = {}
+
+    # User-defined symbols to be ignored.
+    self.__user_defs = []
 
   def modules(self):
     return self.__modules
@@ -61,22 +64,63 @@ class SourceVisitor(ast.NodeVisitor):
   def strftime_directives(self):
     return self.__strftime_directives
 
+  def user_defined(self):
+    return self.__user_defs
+
   def __add_module(self, module):
+    if module in self.__user_defs:
+      vvvprint("Ignoring module '{}' because it's user-defined!".format(module))
+      return
+
     if module not in self.__modules:
       self.__modules.append(module)
 
   def __add_member(self, member):
     """Add member if fully-qualified name is known."""
+    if member in self.__user_defs:
+      vvvprint("Ignoring member '{}' because it's user-defined!".format(member))
+      return
+
     if member in MOD_MEM_REQS:
       self.__members.append(member)
 
   def __add_kwargs(self, function, keyword):
+    if function in self.__user_defs:
+      vvvprint("Ignoring function '{}' because it's user-defined!".format(function))
+      return
+
     fn_kw = (function, keyword)
     if fn_kw in KWARGS_REQS and fn_kw not in self.__kwargs:
       self.__kwargs.append(fn_kw)
 
   def __add_strftime_directive(self, group):
     self.__strftime_directives.append(group)
+
+  def __add_user_def(self, name):
+    if name not in self.__user_defs:
+      self.__user_defs.append(name)
+
+    # Remove any modules and members that were added before any known user-definitions. Do it in
+    # reverse so the indices are kept while traversing!
+    for ud in self.__user_defs:
+      for i in reverse_range(self.__modules):
+        if self.__modules[i] == ud:
+          vvvprint("Ignoring module '{}' because it's user-defined!".format(ud))
+          del(self.__modules[i])
+
+      for i in reverse_range(self.__members):
+        if self.__members[i] == ud:
+          vvvprint("Ignoring member '{}' because it's user-defined!".format(ud))
+          del(self.__members[i])
+
+  def __add_user_def_node(self, node):
+    """Add user-defined name from node, like ast.Name, ast.arg or str."""
+    if isinstance(node, str):
+      self.__add_user_def(node)
+    if isinstance(node, ast.Name) and hasattr(node, "id"):
+      self.__add_user_def(node.id)
+    elif hasattr(node, "arg"):
+      self.__add_user_def(node.arg)
 
   def __add_name_res(self, source, target):
     self.__name_res[source] = target
@@ -244,17 +288,29 @@ class SourceVisitor(ast.NodeVisitor):
   def visit_JoinedStr(self, node):
     self.__fstrings = True
 
-  # Mark variable names as user-defined.
+  # Mark variable names as aliases.
   def visit_Assign(self, node):
+    for target in node.targets:
+      self.__add_user_def_node(target)
     self.__add_name_res_assign_node(node)
     self.generic_visit(node)
 
   def visit_AugAssign(self, node):
+    self.__add_user_def_node(node.target)
     self.__add_name_res_assign_node(node)
     self.generic_visit(node)
 
   def visit_AnnAssign(self, node):
+    self.__add_user_def_node(node.target)
     self.__add_name_res_assign_node(node)
+    self.generic_visit(node)
+
+  def visit_FunctionDef(self, node):
+    self.__add_user_def(node.name)
+    self.generic_visit(node)
+
+  def visit_ClassDef(self, node):
+    self.__add_user_def(node.name)
     self.generic_visit(node)
 
   # Ignore unused nodes as a speed optimization.
