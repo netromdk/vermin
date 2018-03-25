@@ -1,4 +1,4 @@
-from .testutils import VerminTest, detect
+from .testutils import VerminTest, detect, current_major_version
 
 class VerminKwargsTests(VerminTest):
   def test_inheritable_of_dup2_from_os(self):
@@ -452,14 +452,31 @@ class VerminKwargsTests(VerminTest):
   def test_dont_inherit_of_compile(self):
     self.assertOnlyIn((2.3, 3.0), detect("compile(dont_inherit=None)"))
 
+  def test_optimize_of_compile(self):
+    self.assertOnlyIn(3.2, detect("compile(optimize=None)"))
+
   def test_start_of_enumerate(self):
     self.assertOnlyIn((2.6, 3.0), detect("enumerate(start=None)"))
 
   def test_key_of_max(self):
     self.assertOnlyIn((2.5, 3.0), detect("max(key=None)"))
 
+  def test_default_of_max(self):
+    self.assertOnlyIn(3.4, detect("max(default=None)"))
+
   def test_key_of_min(self):
     self.assertOnlyIn((2.5, 3.0), detect("min(key=None)"))
 
+  def test_default_of_min(self):
+    self.assertOnlyIn(3.4, detect("min(default=None)"))
+
   def test_level_of___import__(self):
     self.assertOnlyIn((2.5, 3.0), detect("__import__(level=None)"))
+
+  def test_opener_of_open(self):
+    self.assertOnlyIn(3.3, detect("open(opener=None)"))
+
+  def test_flush_of_print(self):
+    # `print()` is not a function in v2.
+    if current_major_version() >= 3:
+      self.assertOnlyIn(3.3, detect("print(flush=None)"))
