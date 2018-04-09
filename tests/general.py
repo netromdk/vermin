@@ -34,8 +34,13 @@ class VerminGeneralTests(VerminTest):
       self.assertTrue(visitor.printv2())
 
   def test_format(self):
+    # Empty field name requires 2.7+
     visitor = visit("print('{}'.format(42))")
-    self.assertTrue(visitor.format())
+    self.assertTrue(visitor.format27())
+
+    # Non-empty field name requires 2.6+
+    visitor = visit("print('{0}'.format(42))")
+    self.assertFalse(visitor.format27())
 
   def test_longv2(self):
     visitor = visit("n = long(42)")

@@ -16,7 +16,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__members = []
     self.__printv2 = False
     self.__printv3 = False
-    self.__format = False  # TODO: Maybe remove this because it's in builtin functions in rules?
+    self.__format27 = False  # If format is used so that it requires 2.7+, like '{}' etc.
     self.__longv2 = False
     self.__bytesv3 = False
     self.__fstrings = False
@@ -47,8 +47,8 @@ class SourceVisitor(ast.NodeVisitor):
   def printv3(self):
     return self.__printv3
 
-  def format(self):
-    return self.__format
+  def format27(self):
+    return self.__format27
 
   def longv2(self):
     return self.__longv2
@@ -227,9 +227,10 @@ class SourceVisitor(ast.NodeVisitor):
           self.__printv3 = True
       elif hasattr(func, "attr"):
         attr = func.attr
-        if attr == "format" and hasattr(func, "value") and isinstance(func.value, ast.Str):
-          vvprint("`\"..\".format(..)` requires [2.6, 3.0]")
-          self.__format = True
+        if attr == "format" and hasattr(func, "value") and isinstance(func.value, ast.Str) and \
+           "{}" in func.value.s:
+          vvprint("`\"..{}..\".format(..)` requires (2.7, 3.0)")
+          self.__format27 = True
         elif (attr == "strftime" or attr == "strptime") and hasattr(node, "args"):
           for arg in node.args:
             if hasattr(arg, "s"):

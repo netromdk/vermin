@@ -59,7 +59,7 @@ def detect_min_versions(node):
   if visitor.printv3():
     mins = combine_versions(mins, (2.0, 3.0))
 
-  if visitor.format():
+  if visitor.format27():
     mins = combine_versions(mins, (2.7, 3.0))
 
   if visitor.longv2():
