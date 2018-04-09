@@ -9,9 +9,11 @@ def print_usage():
   print("Usage: {} [options] <python source files and folders..>".format(sys.argv[0]))
   print("\nOptions:")
   print("  -q      Quite mode. It only prints the final versions verdict.")
-  print("  -v..    Verbosity level 1 to 3. -v shows less than -vv but more than no verbosity.")
+  print("  -v..    Verbosity level 1 to 3. -v, -vv, and -vvv shows increasingly more information.\n"
+        "          -v will show the individual versions required per file, -vv will additionally\n"
+        "          show which modules, functions etc. that constitutes the requirements.")
   print("  -t=V    Target version that files must abide by. Can be specified once or twice.\n"
-        "          If not met Vermin will exit with code -1.")
+        "          If not met Vermin will exit with code 1.")
   print("  -p=N    Use N concurrent processes to analyze files (defaults to all cores = {})."
         .format(cpu_count()))
   print("  -i      Ignore incompatible version warnings.")
