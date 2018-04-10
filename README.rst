@@ -87,6 +87,16 @@ Examples
   Minimum required versions:   3.4
   Incompatible versions:         2
 
+  % ./vermin.py -vv /path/to/examples/abc.py
+  Detecting python files..
+  Analyzing using 8 processes..
+  !2, 3.4      /path/to/examples/abc.py
+    'abc' requires (2.6, 3.0)
+    'abc.ABC' requires (None, 3.4)
+
+  Minimum required versions: 3.4
+  Incompatible versions:     2
+
 Contributing
 ============
 
