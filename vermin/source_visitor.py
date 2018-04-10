@@ -1,16 +1,20 @@
 import ast
 import re
 
-from .rules import MOD_MEM_REQS, KWARGS_REQS
+from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS
 from .config import Config
-from .printing import nprint, vvprint, vvvprint
-from .utility import dotted_name, reverse_range
+from .utility import dotted_name, reverse_range, combine_versions
 
 STRFTIME_DIRECTIVE_REGEX = re.compile(r"(%\w)")
 
 class SourceVisitor(ast.NodeVisitor):
-  def __init__(self):
+  def __init__(self, config=None):
     super(SourceVisitor, self).__init__()
+    if config is None:
+      self.__config = Config.get()
+    else:
+      self.__config = config
+
     self.__import = False
     self.__modules = []
     self.__members = []
@@ -34,6 +38,9 @@ class SourceVisitor(ast.NodeVisitor):
 
     # User-defined symbols to be ignored.
     self.__user_defs = []
+
+    # List of lines of output text.
+    self.__output_text = []
 
   def modules(self):
     return self.__modules
@@ -71,9 +78,85 @@ class SourceVisitor(ast.NodeVisitor):
   def user_defined(self):
     return self.__user_defs
 
+  def minimum_versions(self):
+    mins = [0, 0]
+
+    if self.printv2():
+      mins[0] = 2.0
+
+    if self.printv3():
+      mins = combine_versions(mins, (2.0, 3.0))
+
+    if self.format27():
+      mins = combine_versions(mins, (2.7, 3.0))
+
+    if self.longv2():
+      mins = combine_versions(mins, (2.0, None))
+
+    if self.bytesv3():
+      mins[1] = 3.0
+
+    if self.fstrings():
+      mins = combine_versions(mins, (None, 3.6))
+
+    if self.bool_const():
+      mins = combine_versions(mins, (2.2, 3.0))
+
+    for directive in self.strftime_directives():
+      if directive in STRFTIME_REQS:
+        vers = STRFTIME_REQS[directive]
+        self.__vvprint("strftime directive '{}' requires {}".format(directive, vers))
+        mins = combine_versions(mins, vers)
+
+    mods = self.modules()
+    for mod in mods:
+      if mod in MOD_REQS:
+        vers = MOD_REQS[mod]
+        self.__vvprint("'{}' requires {}".format(mod, vers))
+        mins = combine_versions(mins, vers)
+
+    mems = self.members()
+    for mem in mems:
+      if mem in MOD_MEM_REQS:
+        vers = MOD_MEM_REQS[mem]
+        self.__vvprint("'{}' requires {}".format(mem, vers))
+        mins = combine_versions(mins, vers)
+
+    kwargs = self.kwargs()
+    for fn_kw in kwargs:
+      if fn_kw in KWARGS_REQS:
+        vers = KWARGS_REQS[fn_kw]
+        self.__vvprint("'{}({})' requires {}".format(fn_kw[0], fn_kw[1], vers))
+        mins = combine_versions(mins, vers)
+
+    return mins
+
+  def output_text(self):
+    text = "\n".join(self.__output_text)
+    if len(text) > 0:
+      text += "\n"
+    return text
+
+  def __nprint(self, msg):
+    if not self.__config.quiet():
+      self.__output_text.append(msg)
+
+  def __verbose_print(self, msg, level):
+    if self.__config.verbose() >= level and not self.__config.quiet():
+      self.__output_text.append(msg)
+
+  def __vprint(self, msg):
+    self.__verbose_print(msg, 1)
+
+  def __vvprint(self, msg):
+    self.__verbose_print(msg, 2)
+
+  def __vvvprint(self, msg):
+    self.__verbose_print(msg, 3)
+
   def __add_module(self, module):
     if module in self.__user_defs:
-      vvvprint("Ignoring module '{}' because it's user-defined!".format(module))
+      self.__vvvprint("Ignoring module '{}' because it's user-defined!".format(module))
       return
 
     if module not in self.__modules:
@@ -82,7 +165,7 @@ class SourceVisitor(ast.NodeVisitor):
   def __add_member(self, member):
     """Add member if fully-qualified name is known."""
     if member in self.__user_defs:
-      vvvprint("Ignoring member '{}' because it's user-defined!".format(member))
+      self.__vvvprint("Ignoring member '{}' because it's user-defined!".format(member))
       return
 
     if member in MOD_MEM_REQS:
@@ -90,7 +173,7 @@ class SourceVisitor(ast.NodeVisitor):
 
   def __add_kwargs(self, function, keyword):
     if function in self.__user_defs:
-      vvvprint("Ignoring function '{}' because it's user-defined!".format(function))
+      self.__vvvprint("Ignoring function '{}' because it's user-defined!".format(function))
       return
 
     fn_kw = (function, keyword)
@@ -109,12 +192,12 @@ class SourceVisitor(ast.NodeVisitor):
     for ud in self.__user_defs:
       for i in reverse_range(self.__modules):
         if self.__modules[i] == ud:
-          vvvprint("Ignoring module '{}' because it's user-defined!".format(ud))
+          self.__vvvprint("Ignoring module '{}' because it's user-defined!".format(ud))
           del(self.__modules[i])
 
       for i in reverse_range(self.__members):
         if self.__members[i] == ud:
-          vvvprint("Ignoring member '{}' because it's user-defined!".format(ud))
+          self.__vvvprint("Ignoring member '{}' because it's user-defined!".format(ud))
           del(self.__members[i])
 
   def __add_user_def_node(self, node):
@@ -175,7 +258,7 @@ class SourceVisitor(ast.NodeVisitor):
   def generic_visit(self, node):
     self.__depth += 1
     if Config.get().print_visits():
-      nprint("| " * self.__depth + ast.dump(node))
+      self.__nprint("| " * self.__depth + ast.dump(node))
     super(SourceVisitor, self).generic_visit(node)
     self.__depth -= 1
 
@@ -211,7 +294,7 @@ class SourceVisitor(ast.NodeVisitor):
   def visit_Name(self, node):
     if node.id == "long":
       self.__longv2 = True
-      vvprint("long is a v2 feature")
+      self.__vvprint("long is a v2 feature")
 
   def visit_Print(self, node):
     self.__printv2 = True
@@ -229,7 +312,7 @@ class SourceVisitor(ast.NodeVisitor):
         attr = func.attr
         if attr == "format" and hasattr(func, "value") and isinstance(func.value, ast.Str) and \
            "{}" in func.value.s:
-          vvprint("`\"..{}..\".format(..)` requires (2.7, 3.0)")
+          self.__vvprint("`\"..{}..\".format(..)` requires (2.7, 3.0)")
           self.__format27 = True
         elif (attr == "strftime" or attr == "strptime") and hasattr(node, "args"):
           for arg in node.args:
@@ -321,7 +404,7 @@ class SourceVisitor(ast.NodeVisitor):
   def visit_NameConstant(self, node):
     if node.value is True or node.value is False:
       self.__bool_const = True
-      vvvprint("True/False constant requires v2.2+.")
+      self.__vvvprint("True/False constant requires v2.2+.")
 
   # Ignore unused nodes as a speed optimization.
 
