@@ -257,7 +257,7 @@ class SourceVisitor(ast.NodeVisitor):
 
   def generic_visit(self, node):
     self.__depth += 1
-    if Config.get().print_visits():
+    if self.__config.print_visits():
       self.__nprint("| " * self.__depth + ast.dump(node))
     super(SourceVisitor, self).generic_visit(node)
     self.__depth -= 1
