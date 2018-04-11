@@ -372,9 +372,11 @@ class SourceVisitor(ast.NodeVisitor):
 
   def visit_Bytes(self, node):
     self.__bytesv3 = True
+    self.__vvprint("byte strings (b'..') require 3+")
 
   def visit_JoinedStr(self, node):
     self.__fstrings = True
+    self.__vvprint("f-strings require 3.6+")
 
   # Mark variable names as aliases.
   def visit_Assign(self, node):
