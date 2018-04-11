@@ -32,7 +32,12 @@ def main():
   if amount > 1:
     msg += " {} files".format(amount)
   nprint("{} using {} processes..".format(msg, processes))
-  (mins, incomp) = process_paths(paths, processes)
+
+  try:
+    (mins, incomp) = process_paths(paths, processes)
+  except KeyboardInterrupt:
+    print("Aborting..")
+    sys.exit(1)
 
   if incomp and not config.ignore_incomp():
     nprint("Note: Some files had incompatible versions so the results might not be correct!")

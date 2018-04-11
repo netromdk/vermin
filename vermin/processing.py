@@ -26,6 +26,8 @@ def process_path(args):
   with open(path, mode="rb") as fp:
     try:
       (node, mins) = parse_detect_source(fp.read(), path=path)
+    except KeyboardInterrupt:
+      return (path, mins, text)
     except Exception as ex:
       text = "{}: {}, {}".format(path, type(ex), ex)
       mins = [0, 0]
@@ -34,7 +36,11 @@ def process_path(args):
     return (path, mins, text)
 
   visitor = SourceVisitor(config)
-  visitor.visit(node)
+
+  try:
+    visitor.visit(node)
+  except KeyboardInterrupt:
+    return (path, mins, text)
 
   try:
     mins = visitor.minimum_versions()
