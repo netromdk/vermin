@@ -18,7 +18,7 @@ Concurrently detect the minimum Python versions needed to run code. Additionally
 vanilla Python, and it doesn't have any external dependencies, it works with v2.7+ and v3+.
 
 It functions by parsing Python code into an abstract syntax tree (AST), which it traverses and
-matches against internal dictionaries with 802 rules divided into 116 modules, 540
+matches against internal dictionaries with 803 rules divided into 117 modules, 540
 classes/functions/constants members of modules, 142 kwargs of functions, and 4 strftime directives.
 Including looking for v2/v3 ``print expr`` and ``print(expr)``, ``long``, f-strings, boolean
 constants, ``"..".format(..)``, imports (``import X``, ``from X import Y``, ``from X import *``),
@@ -37,7 +37,7 @@ Or via `PyPi <https://pypi.python.org/pypi/vermin/>`__::
 
   % pip install vermin
   % vermin /path/to/your/project
-  
+
 When using continuous integration (CI) tools, like `Travis CI <https://travis-ci.org/>`_, Vermin can be used to check that the minimum required versions didn't change. The following is an exerpt::
 
   install:
@@ -52,7 +52,7 @@ Examples
 ::
 
   % ./vermin.py
-  Vermin 0.4.4
+  Vermin 0.4.5
   Usage: ./vermin.py [options] <python source files and folders..>
 
   Options:
