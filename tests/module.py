@@ -349,3 +349,6 @@ class VerminModuleTests(VerminTest):
 
   def test_venv(self):
     self.assertOnlyIn(3.3, detect("import venv"))
+
+  def test_pathlib(self):
+    self.assertOnlyIn(3.4, detect("import pathlib"))
