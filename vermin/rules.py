@@ -73,6 +73,7 @@ MOD_REQS = {
   "multiprocessing": (2.6, 3.0),
   "new": (2.0, None),
   "numbers": (2.6, 3.0),
+  "pathlib": (None, 3.4),
   "optparse": (2.3, 3.0),
   "ossaudiodev": (2.3, 3.0),
   "pickletools": (2.3, 3.0),
