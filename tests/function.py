@@ -1118,3 +1118,27 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_log2_from_math(self):
     self.assertOnlyIn(3.3, detect("import math\nmath.log2()"))
+  
+  def test_home_from_path(self):
+    self.assertOnlyIn(3.5, detect("from pathlib import Path\np=Path('foo')\np.home()"))
+  
+  def test_expanduser_from_path(self):
+    self.assertOnlyIn(3.5, detect("from pathlib import Path\np=Path('foo')\np.expanduser()"))
+  
+  def test_read_bytes_from_path(self):
+    self.assertOnlyIn(3.5, detect("from pathlib import Path\np=Path('foo')\np.read_bytes()"))
+  
+  def test_is_mount_from_path(self):
+    self.assertOnlyIn(3.7, detect("from pathlib import Path\np=Path('foo')\np.is_mount()"))
+  
+  def test_read_text_from_path(self):
+    self.assertOnlyIn(3.5, detect("from pathlib import Path\np=Path('foo')\np.read_text()"))
+  
+  def test_samefile_from_path(self):
+    self.assertOnlyIn(3.5, detect("from pathlib import Path\np=Path('foo')\np.samefile()"))
+  
+  def test_write_bytes_from_path(self):
+    self.assertOnlyIn(3.5, detect("from pathlib import Path\np=Path('foo')\np.write_bytes()"))
+  
+  def test_write_text_from_path(self):
+    self.assertOnlyIn(3.5, detect("from pathlib import Path\np=Path('foo')\np.write_text()"))
