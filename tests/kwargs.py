@@ -544,7 +544,9 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn((2.3, 3.0), detect("import math\nmath.log(base=None)"))
 
   def test_exit_ok_of_path_mkdir(self):
-    self.assertOnlyIn(3.5, detect("from pathlib import Path\np=Path('foo')\np.mkdir(exist_ok=True)"))
+    self.assertOnlyIn(
+      3.5, detect("from pathlib import Path\np=Path('foo')\np.mkdir(exist_ok=True)"))
 
   def test_strict_of_path_resolve(self):
-    self.assertOnlyIn(3.6, detect("from pathlib import Path\np=Path('foo')\np.resolve(strict=True)"))
+    self.assertOnlyIn(
+      3.6, detect("from pathlib import Path\np=Path('foo')\np.resolve(strict=True)"))
