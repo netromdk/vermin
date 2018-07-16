@@ -542,7 +542,7 @@ class VerminKwargsTests(VerminTest):
 
   def test_base_of_math_log(self):
     self.assertOnlyIn((2.3, 3.0), detect("import math\nmath.log(base=None)"))
-  
+
   def test_exit_ok_of_path_mkdir(self):
     self.assertOnlyIn(3.5, detect("from pathlib import Path\np=Path('foo')\np.mkdir(exist_ok=True)"))
 
