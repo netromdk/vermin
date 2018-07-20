@@ -415,14 +415,14 @@ class SourceVisitor(ast.NodeVisitor):
     self.__add_user_def(node.name)
     self.generic_visit(node)
     # Check if the return annotation is set
-    if hasattr(node, 'returns') and node.returns:
+    if hasattr(node, "returns") and node.returns:
       self.__annotations = True
       return
     # Then we are going to check the args
-    if not hasattr(node, 'args') or not hasattr(node.args, 'args'):
+    if not hasattr(node, "args") or not hasattr(node.args, "args"):
       return
     for arg in node.args.args:
-      if hasattr(arg, 'annotation') and arg.annotation:
+      if hasattr(arg, "annotation") and arg.annotation:
         self.__annotations = True
         break
 

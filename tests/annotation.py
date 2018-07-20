@@ -1,12 +1,14 @@
-from .testutils import VerminTest, detect
+from .testutils import VerminTest, detect, current_version
 
 class VerminModuleTests(VerminTest):
-
   def test_return_annotation(self):
-    self.assertOnlyIn(3.5, detect("def foo() -> str:\n    return ''"))
+    if current_version() >= 3.5:
+      self.assertOnlyIn(3.5, detect("def foo() -> str:\n\treturn ''"))
 
   def test_arg_annotation(self):
-    self.assertOnlyIn(3.5, detect("def foo(bar: int):\n    pass"))
+    if current_version() >= 3.5:
+      self.assertOnlyIn(3.5, detect("def foo(bar: int):\n\tpass"))
 
   def test_var_annotation(self):
-    self.assertOnlyIn(3.6, detect("a: int = 5"))
+    if current_version() >= 3.5:
+      self.assertOnlyIn(3.6, detect("a: int = 5"))
