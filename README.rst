@@ -53,7 +53,7 @@ Examples
 ::
 
   % ./vermin.py
-  Vermin 0.4.6
+  Vermin 0.4.7
   Usage: ./vermin.py [options] <python source files and folders..>
 
   Options:
