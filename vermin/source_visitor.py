@@ -25,6 +25,8 @@ class SourceVisitor(ast.NodeVisitor):
     self.__bytesv3 = False
     self.__fstrings = False
     self.__bool_const = False
+    self.__annotations = False
+    self.__var_annotations = False
     self.__function_name = None
     self.__kwargs = []
     self.__depth = 0
@@ -72,6 +74,12 @@ class SourceVisitor(ast.NodeVisitor):
   def kwargs(self):
     return self.__kwargs
 
+  def annotations(self):
+    return self.__annotations
+
+  def var_annotations(self):
+    return self.__var_annotations
+
   def strftime_directives(self):
     return self.__strftime_directives
 
@@ -101,6 +109,12 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.bool_const():
       mins = combine_versions(mins, (2.2, 3.0))
+
+    if self.annotations():
+      mins = combine_versions(mins, (None, 3.5))
+
+    if self.var_annotations():
+      mins = combine_versions(mins, (None, 3.6))
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
@@ -394,10 +408,23 @@ class SourceVisitor(ast.NodeVisitor):
     self.__add_user_def_node(node.target)
     self.__add_name_res_assign_node(node)
     self.generic_visit(node)
+    self.__annotations = True
+    self.__var_annotations = True
 
   def visit_FunctionDef(self, node):
     self.__add_user_def(node.name)
     self.generic_visit(node)
+    # Check if the return annotation is set
+    if hasattr(node, 'returns') and node.returns:
+      self.__annotations = True
+      return
+    # Then we are going to check the args
+    if not hasattr(node, 'args') or not hasattr(node.args, 'args'):
+      return
+    for arg in node.args.args:
+      if hasattr(arg, 'annotation') and arg.annotation:
+        self.__annotations = True
+        break
 
   def visit_ClassDef(self, node):
     self.__add_user_def(node.name)
