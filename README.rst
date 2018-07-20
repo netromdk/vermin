@@ -8,7 +8,7 @@
 
 .. |Coverage| image:: https://coveralls.io/repos/github/netromdk/vermin/badge.svg?branch=master
    :target: https://coveralls.io/github/netromdk/vermin?branch=master
-   
+
 .. |Commits since last| image:: https://img.shields.io/github/commits-since/netromdk/vermin/latest.svg
 
 Vermin
@@ -22,9 +22,9 @@ matches against internal dictionaries with 813 rules divided into 117 modules, 5
 classes/functions/constants members of modules, 144 kwargs of functions, and 4 strftime directives.
 Including looking for v2/v3 ``print expr`` and ``print(expr)``, ``long``, f-strings, boolean
 constants, ``"..".format(..)``, imports (``import X``, ``from X import Y``, ``from X import *``),
-function calls wrt. name and kwargs, and ``strftime`` + ``strptime`` directives used. It tries to
-detect and ignore user-defined functions, classes, arguments, and variables with names that clash
-with library- defined symbols.
+function calls wrt. name and kwargs, ``strftime`` + ``strptime`` directives used, and function and
+variable annotations. It tries to detect and ignore user-defined functions, classes, arguments, and
+variables with names that clash with library-defined symbols.
 
 Usage
 =====
@@ -38,7 +38,8 @@ Or via `PyPi <https://pypi.python.org/pypi/vermin/>`__::
   % pip install vermin
   % vermin /path/to/your/project
 
-When using continuous integration (CI) tools, like `Travis CI <https://travis-ci.org/>`_, Vermin can be used to check that the minimum required versions didn't change. The following is an exerpt::
+When using continuous integration (CI) tools, like `Travis CI <https://travis-ci.org/>`_, Vermin can
+be used to check that the minimum required versions didn't change. The following is an exerpt::
 
   install:
   - ./setup_virtual_env.sh
