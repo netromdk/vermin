@@ -111,9 +111,11 @@ class SourceVisitor(ast.NodeVisitor):
       mins = combine_versions(mins, (2.2, 3.0))
 
     if self.annotations():
+      self.__vvprint("annotations require 3.5")
       mins = combine_versions(mins, (None, 3.5))
 
     if self.var_annotations():
+      self.__vvprint("variable annotations require 3.6")
       mins = combine_versions(mins, (None, 3.6))
 
     for directive in self.strftime_directives():
