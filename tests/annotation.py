@@ -10,5 +10,5 @@ class VerminModuleTests(VerminTest):
       self.assertOnlyIn(3.5, detect("def foo(bar: int):\n\tpass"))
 
   def test_var_annotation(self):
-    if current_version() >= 3.5:
+    if current_version() >= 3.6:
       self.assertOnlyIn(3.6, detect("a: int = 5"))
