@@ -12,7 +12,6 @@ test: self-test
 
 test-all:
 	python2.7 ./runtests.py
-	python3.2 ./runtests.py
 	python3 ./runtests.py
 
 count:
