@@ -26,7 +26,7 @@ def detect_paths(paths):
       except OSError as ex:
         nprint("Ignoring {}: {}".format(path, ex))
       continue
-    if not isfile(path) or not path.lower().endswith(".py"):
+    if not isfile(path) or (not path.lower().endswith(".py") and not path.lower().endswith(".pyw")):
       continue
     accept_paths.append(path)
   return accept_paths
