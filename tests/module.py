@@ -352,3 +352,12 @@ class VerminModuleTests(VerminTest):
 
   def test_pathlib(self):
     self.assertOnlyIn(3.4, detect("import pathlib"))
+
+  def test_contextvars(self):
+    self.assertOnlyIn(3.7, detect("import contextvars"))
+
+  def test_dataclasses(self):
+    self.assertOnlyIn(3.7, detect("import dataclasses"))
+
+  def test_importlib_resources(self):
+    self.assertOnlyIn(3.7, detect("import importlib.resources"))
