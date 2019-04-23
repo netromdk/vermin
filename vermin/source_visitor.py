@@ -27,6 +27,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__bool_const = False
     self.__annotations = False
     self.__var_annotations = False
+    self.__coroutines = False
     self.__function_name = None
     self.__kwargs = []
     self.__depth = 0
@@ -80,6 +81,9 @@ class SourceVisitor(ast.NodeVisitor):
   def var_annotations(self):
     return self.__var_annotations
 
+  def coroutines(self):
+    return self.__coroutines
+
   def strftime_directives(self):
     return self.__strftime_directives
 
@@ -117,6 +121,10 @@ class SourceVisitor(ast.NodeVisitor):
     if self.var_annotations():
       self.__vvprint("variable annotations require 3.6")
       mins = combine_versions(mins, (None, 3.6))
+
+    if self.coroutines():
+      self.__vvprint("coroutines require 3.5+ (async and await)")
+      mins = combine_versions(mins, (None, 3.5))
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
@@ -427,6 +435,14 @@ class SourceVisitor(ast.NodeVisitor):
       if hasattr(arg, "annotation") and arg.annotation:
         self.__annotations = True
         break
+
+  def visit_AsyncFunctionDef(self, node):
+    self.__coroutines = True
+    self.generic_visit(node)
+
+  def visit_Await(self, node):
+    self.__coroutines = True
+    self.generic_visit(node)
 
   def visit_ClassDef(self, node):
     self.__add_user_def(node.name)
