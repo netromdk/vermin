@@ -382,3 +382,26 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_nan_of_math(self):
     self.assertOnlyIn(3.5, detect("import math\nmath.nan"))
+
+  def test_name_of_contextvars_ContextVar(self):
+    self.assertOnlyIn(3.7, detect("from contextvars import ContextVar\nContextVar.name"))
+
+  def test_SOURCE_SUFFIXES_of_importlib_machinery(self):
+    self.assertOnlyIn(3.3, detect("from importlib import machinery\nmachinery.SOURCE_SUFFIXES"))
+
+  def test_DEBUG_BYTECODE_SUFFIXES_of_importlib_machinery(self):
+    self.assertOnlyIn(3.3,
+                      detect("from importlib import machinery\nmachinery.DEBUG_BYTECODE_SUFFIXES"))
+
+  def test_OPTIMIZED_BYTECODE_SUFFIXES_of_importlib_machinery(self):
+    self.assertOnlyIn(3.3,
+                      detect("from importlib import machinery\n"
+                             "machinery.OPTIMIZED_BYTECODE_SUFFIXES"))
+
+  def test_BYTECODE_SUFFIXES_of_importlib_machinery(self):
+    self.assertOnlyIn(3.3,
+                      detect("from importlib import machinery\nmachinery.BYTECODE_SUFFIXES"))
+
+  def test_EXTENSION_SUFFIXES_of_importlib_machinery(self):
+    self.assertOnlyIn(3.3,
+                      detect("from importlib import machinery\nmachinery.EXTENSION_SUFFIXES"))

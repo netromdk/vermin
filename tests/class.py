@@ -183,3 +183,21 @@ class VerminClassMemberTests(VerminTest):
 
   def test_BytesGenerator_of_email_generator(self):
     self.assertOnlyIn(3.2, detect("from email.generator import BytesGenerator"))
+
+  def test_WindowsRegistryFinder_of_importlib_machinery(self):
+    self.assertOnlyIn(3.3, detect("from importlib.machinery import WindowsRegistryFinder"))
+
+  def test_FileFinder_of_importlib_machinery(self):
+    self.assertOnlyIn(3.3, detect("from importlib.machinery import FileFinder"))
+
+  def test_SourceFileLoader_of_importlib_machinery(self):
+    self.assertOnlyIn(3.3, detect("from importlib.machinery import SourceFileLoader"))
+
+  def test_SourcelessFileLoader_of_importlib_machinery(self):
+    self.assertOnlyIn(3.3, detect("from importlib.machinery import SourcelessFileLoader"))
+
+  def test_ExtensionFileLoader_of_importlib_machinery(self):
+    self.assertOnlyIn(3.3, detect("from importlib.machinery import ExtensionFileLoader"))
+
+  def test_ModuleSpec_of_importlib_machinery(self):
+    self.assertOnlyIn(3.4, detect("from importlib.machinery import ModuleSpec"))

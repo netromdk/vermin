@@ -1142,3 +1142,30 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_write_text_from_path(self):
     self.assertOnlyIn(3.5, detect("from pathlib import Path\np=Path('foo')\np.write_text()"))
+
+  def test_all_suffixes_of_importlib_machinery(self):
+    self.assertOnlyIn(3.3,
+                      detect("from importlib import machinery\nmachinery.all_suffixes()"))
+
+  def test_find_spec_of_importlib_machinery_PathFinder(self):
+    self.assertOnlyIn(3.4,
+                      detect("from importlib.machinery import PathFinder\nPathFinder.find_spec()"))
+
+  def test_find_spec_of_importlib_machinery_FileFinder(self):
+    self.assertOnlyIn(3.4,
+                      detect("from importlib.machinery import FileFinder\nFileFinder.find_spec()"))
+
+  def test_create_module_of_importlib_machinery_ExtensionFileLoader(self):
+    self.assertOnlyIn(3.5,
+                      detect("from importlib.machinery import ExtensionFileLoader\n"
+                             "ExtensionFileLoader.create_module()"))
+
+  def test_exec_module_of_importlib_machinery_ExtensionFileLoader(self):
+    self.assertOnlyIn(3.5,
+                      detect("from importlib.machinery import ExtensionFileLoader\n"
+                             "ExtensionFileLoader.exec_module()"))
+
+  def test_get_filename_of_importlib_machinery_ExtensionFileLoader(self):
+    self.assertOnlyIn(3.4,
+                      detect("from importlib.machinery import ExtensionFileLoader\n"
+                             "ExtensionFileLoader.get_filename()"))
