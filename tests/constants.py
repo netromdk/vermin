@@ -405,3 +405,6 @@ class VerminConstantMemberTests(VerminTest):
   def test_EXTENSION_SUFFIXES_of_importlib_machinery(self):
     self.assertOnlyIn(3.3,
                       detect("from importlib import machinery\nmachinery.EXTENSION_SUFFIXES"))
+
+  def test_MAGIC_NUMBER_of_importlib_util(self):
+    self.assertOnlyIn(3.4, detect("from importlib import util\nutil.MAGIC_NUMBER"))

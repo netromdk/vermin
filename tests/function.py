@@ -1169,3 +1169,30 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(3.4,
                       detect("from importlib.machinery import ExtensionFileLoader\n"
                              "ExtensionFileLoader.get_filename()"))
+
+  def test_cache_from_source_of_importlib_util(self):
+    self.assertOnlyIn(3.4, detect("from importlib import util\nutil.cache_from_source"))
+
+  def test_source_from_cache_of_importlib_util(self):
+    self.assertOnlyIn(3.4, detect("from importlib import util\nutil.source_from_cache"))
+
+  def test_decode_source_of_importlib_util(self):
+    self.assertOnlyIn(3.4, detect("from importlib import util\nutil.decode_source"))
+
+  def test_resolve_name_of_importlib_util(self):
+    self.assertOnlyIn(3.3, detect("from importlib import util\nutil.resolve_name"))
+
+  def test_find_spec_of_importlib_util(self):
+    self.assertOnlyIn(3.4, detect("from importlib import util\nutil.find_spec"))
+
+  def test_module_from_spec_of_importlib_util(self):
+    self.assertOnlyIn(3.5, detect("from importlib import util\nutil.module_from_spec"))
+
+  def test_spec_from_loader_of_importlib_util(self):
+    self.assertOnlyIn(3.4, detect("from importlib import util\nutil.spec_from_loader"))
+
+  def test_spec_from_file_location_of_importlib_util(self):
+    self.assertOnlyIn(3.4, detect("from importlib import util\nutil.spec_from_file_location"))
+
+  def test_source_hash_of_importlib_util(self):
+    self.assertOnlyIn(3.7, detect("from importlib import util\nutil.source_hash"))

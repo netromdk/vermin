@@ -201,3 +201,6 @@ class VerminClassMemberTests(VerminTest):
 
   def test_ModuleSpec_of_importlib_machinery(self):
     self.assertOnlyIn(3.4, detect("from importlib.machinery import ModuleSpec"))
+
+  def test_LazyLoader_of_importlib_util(self):
+    self.assertOnlyIn(3.5, detect("from importlib.util import LazyLoader"))

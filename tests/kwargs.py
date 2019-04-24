@@ -550,3 +550,8 @@ class VerminKwargsTests(VerminTest):
   def test_strict_of_path_resolve(self):
     self.assertOnlyIn(
       3.6, detect("from pathlib import Path\np=Path('foo')\np.resolve(strict=True)"))
+
+  def test_optimization_of_importlib_util_cache_from_source(self):
+    self.assertOnlyIn(3.5,
+                      detect("from importlib.util import cache_from_source\n"
+                             "cache_from_source(optimization=None)"))
