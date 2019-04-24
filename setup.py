@@ -13,7 +13,7 @@ with open(path.join(here, "README.rst"), encoding="utf-8") as f:
 
 setup(
   name="vermin",
-  version="0.4.11",
+  version="0.5.0",
 
   description="Concurrently detect the minimum Python versions needed to run code",
   long_description=long_description,
@@ -26,7 +26,7 @@ setup(
   license="MIT",
 
   classifiers=[
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
 
     "Intended Audience :: Developers",
 
