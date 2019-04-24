@@ -1196,3 +1196,51 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_source_hash_of_importlib_util(self):
     self.assertOnlyIn(3.7, detect("from importlib import util\nutil.source_hash"))
+
+  def test_pthread_getcpuclockid_of_time(self):
+    self.assertOnlyIn(3.7, detect("from time import pthread_getcpuclockid"))
+
+  def test_clock_getres_of_time(self):
+    self.assertOnlyIn(3.3, detect("from time import clock_getres"))
+
+  def test_clock_gettime_of_time(self):
+    self.assertOnlyIn(3.3, detect("from time import clock_gettime"))
+
+  def test_clock_gettime_ns_of_time(self):
+    self.assertOnlyIn(3.7, detect("from time import clock_gettime_ns"))
+
+  def test_clock_settime_of_time(self):
+    self.assertOnlyIn(3.3, detect("from time import clock_settime"))
+
+  def test_clock_settime_ns_of_time(self):
+    self.assertOnlyIn(3.7, detect("from time import clock_settime_ns"))
+
+  def test_get_clock_info_of_time(self):
+    self.assertOnlyIn(3.3, detect("from time import get_clock_info"))
+
+  def test_monotonic_of_time(self):
+    self.assertOnlyIn(3.3, detect("from time import monotonic"))
+
+  def test_monotonic_ns_of_time(self):
+    self.assertOnlyIn(3.7, detect("from time import monotonic_ns"))
+
+  def test_perf_counter_of_time(self):
+    self.assertOnlyIn(3.3, detect("from time import perf_counter"))
+
+  def test_perf_counter_ns_of_time(self):
+    self.assertOnlyIn(3.7, detect("from time import perf_counter_ns"))
+
+  def test_process_time_of_time(self):
+    self.assertOnlyIn(3.3, detect("from time import process_time"))
+
+  def test_process_time_ns_of_time(self):
+    self.assertOnlyIn(3.7, detect("from time import process_time_ns"))
+
+  def test_thread_time_of_time(self):
+    self.assertOnlyIn(3.7, detect("from time import thread_time"))
+
+  def test_thread_time_ns_of_time(self):
+    self.assertOnlyIn(3.7, detect("from time import thread_time_ns"))
+
+  def test_time_ns_of_time(self):
+    self.assertOnlyIn(3.7, detect("from time import time_ns"))

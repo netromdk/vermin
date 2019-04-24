@@ -408,3 +408,30 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_MAGIC_NUMBER_of_importlib_util(self):
     self.assertOnlyIn(3.4, detect("from importlib import util\nutil.MAGIC_NUMBER"))
+
+  def test_CLOCK_BOOTTIME_of_time(self):
+    self.assertOnlyIn(3.7, detect("from time import CLOCK_BOOTTIME"))
+
+  def test_CLOCK_HIGHRES_of_time(self):
+    self.assertOnlyIn(3.3, detect("from time import CLOCK_HIGHRES"))
+
+  def test_CLOCK_MONOTONIC_of_time(self):
+    self.assertOnlyIn(3.3, detect("from time import CLOCK_MONOTONIC"))
+
+  def test_CLOCK_MONOTONIC_RAW_of_time(self):
+    self.assertOnlyIn(3.3, detect("from time import CLOCK_MONOTONIC_RAW"))
+
+  def test_CLOCK_PROCESS_CPUTIME_ID_of_time(self):
+    self.assertOnlyIn(3.3, detect("from time import CLOCK_PROCESS_CPUTIME_ID"))
+
+  def test_CLOCK_THREAD_CPUTIME_ID_of_time(self):
+    self.assertOnlyIn(3.3, detect("from time import CLOCK_THREAD_CPUTIME_ID"))
+
+  def test_CLOCK_PROF_of_time(self):
+    self.assertOnlyIn(3.7, detect("from time import CLOCK_PROF"))
+
+  def test_CLOCK_UPTIME_of_time(self):
+    self.assertOnlyIn(3.7, detect("from time import CLOCK_UPTIME"))
+
+  def test_CLOCK_REALTIME_of_time(self):
+    self.assertOnlyIn(3.3, detect("from time import CLOCK_REALTIME"))

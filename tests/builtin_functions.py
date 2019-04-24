@@ -54,3 +54,6 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
 
   def test_zip(self):
     self.assertOnlyIn((2.0, 3.0), detect("zip()"))
+
+  def test_breakpoint(self):
+    self.assertOnlyIn(3.7, detect("breakpoint()"))
