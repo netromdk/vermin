@@ -339,6 +339,7 @@ MOD_MEM_REQS = {
   "heapq.nlargest": (2.4, 3.0),
   "heapq.nsmallest": (2.4, 3.0),
   "hmac.compare_digest": (2.7, 3.3),
+  "hmac.digest": (None, 3.7),
   "importlib.machinery.ExtensionFileLoader.create_module": (None, 3.5),
   "importlib.machinery.ExtensionFileLoader.exec_module": (None, 3.5),
   "importlib.machinery.ExtensionFileLoader.get_filename": (None, 3.4),
