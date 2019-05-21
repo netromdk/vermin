@@ -567,6 +567,9 @@ class VerminFunctionMemberTests(VerminTest):
   def test_compare_digest_from_hmac(self):
     self.assertOnlyIn((2.7, 3.3), detect("import hmac\nhmac.compare_digest()"))
 
+  def test_hmac_digest(self):
+    self.assertOnlyIn(3.7, detect("import hmac\nhmac.digest()"))
+
   def test_isgenerator_from_inspect(self):
     self.assertOnlyIn((2.6, 3.0), detect("import inspect\ninspect.isgenerator()"))
 
