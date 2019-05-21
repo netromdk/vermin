@@ -59,8 +59,10 @@ Examples
   Options:
     -q      Quite mode. It only prints the final versions verdict.
     -v..    Verbosity level 1 to 3. -v, -vv, and -vvv shows increasingly more information.
-            -v will show the individual versions required per file, -vv will additionally
-            show which modules, functions etc. that constitutes the requirements.
+            -v    will show the individual versions required per file.
+            -vv   will also show which modules, functions etc. that constitutes
+                  the requirements.
+            -vvv  will also show line/col numbers.
     -t=V    Target version that files must abide by. Can be specified once or twice.
             If not met Vermin will exit with code 1.
     -p=N    Use N concurrent processes to analyze files (defaults to all cores = 8).
@@ -94,6 +96,16 @@ Examples
   !2, 3.4      /path/to/examples/abc.py
     'abc' requires (2.6, 3.0)
     'abc.ABC' requires (None, 3.4)
+
+  Minimum required versions: 3.4
+  Incompatible versions:     2
+
+  % ./vermin.py -vvv /path/to/examples/abc.py
+  Detecting python files..
+  Analyzing using 8 processes..
+  !2, 3.4      /path/to/examples/abc.py
+    L1 C7: 'abc' requires (2.6, 3.0)
+    L2: 'abc.ABC' requires (None, 3.4)
 
   Minimum required versions: 3.4
   Incompatible versions:     2
