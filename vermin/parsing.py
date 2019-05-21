@@ -15,8 +15,9 @@ def parse_detect_source(source, path=None):
     # `print expr` is a Python 2 construct, in v3 it's `print(expr)`.
     # NOTE: This is only triggered when running a python 3 on v2 code!
     if err.msg.lower().find("missing parentheses in call to 'print'") != -1:
-      vvprint("`{}` requires 2.0".format(text))
+      vvprint("{}:{}:{}: info: `{}` requires 2.0".
+              format(err.filename, err.lineno, err.offset, text))
       return (None, [2.0, None])
     else:
-      vvprint("{}: {}".format(err, text))
+      vvprint("{}:{}:{}: error: {}: {}".format(err.filename, err.lineno, err.offset, err.msg, text))
   return (None, [0, 0])
