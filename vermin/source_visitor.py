@@ -132,28 +132,29 @@ class SourceVisitor(ast.NodeVisitor):
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
         vers = STRFTIME_REQS[directive]
-        self.__vvprint("strftime directive '{}' requires {}".format(directive, vers))
+        self.__print_with_entity("strftime directive '{}' requires {}".
+                                 format(directive, vers), directive)
         mins = combine_versions(mins, vers)
 
     mods = self.modules()
     for mod in mods:
       if mod in MOD_REQS:
         vers = MOD_REQS[mod]
-        self.__vvprint("'{}' requires {}".format(mod, vers))
+        self.__print_with_entity("'{}' requires {}".format(mod, vers), mod)
         mins = combine_versions(mins, vers)
 
     mems = self.members()
     for mem in mems:
       if mem in MOD_MEM_REQS:
         vers = MOD_MEM_REQS[mem]
-        self.__vvprint("'{}' requires {}".format(mem, vers))
+        self.__print_with_entity("'{}' requires {}".format(mem, vers), mem)
         mins = combine_versions(mins, vers)
 
     kwargs = self.kwargs()
     for fn_kw in kwargs:
       if fn_kw in KWARGS_REQS:
         vers = KWARGS_REQS[fn_kw]
-        self.__vvprint("'{}({})' requires {}".format(fn_kw[0], fn_kw[1], vers))
+        self.__print_with_entity("'{}({})' requires {}".format(fn_kw[0], fn_kw[1], vers), fn_kw)
         mins = combine_versions(mins, vers)
 
     return mins
@@ -168,18 +169,29 @@ class SourceVisitor(ast.NodeVisitor):
     if not self.__config.quiet():
       self.__output_text.append(msg)
 
-  def __verbose_print(self, msg, level):
+  def __verbose_print(self, msg, level, entity):
     if self.__config.verbose() >= level and not self.__config.quiet():
+      if entity is not None and entity in self.__line_col_entities:
+        (l, c) = self.__line_col_entities[entity]
+        if c is not None:
+          msg = "L{} C{}: ".format(l, c) + msg
+        else:
+          msg = "L{}: ".format(l) + msg
       self.__output_text.append(msg)
 
-  def __vprint(self, msg):
-    self.__verbose_print(msg, 1)
+  def __vprint(self, msg, entity=None):
+    self.__verbose_print(msg, 1, entity)
 
-  def __vvprint(self, msg):
-    self.__verbose_print(msg, 2)
+  def __vvprint(self, msg, entity=None):
+    self.__verbose_print(msg, 2, entity)
 
-  def __vvvprint(self, msg):
-    self.__verbose_print(msg, 3)
+  def __vvvprint(self, msg, entity=None):
+    self.__verbose_print(msg, 3, entity)
+
+  # Only print line/col for level 3+.
+  def __print_with_entity(self, msg, entity=None):
+    level = self.__config.verbose()
+    self.__verbose_print(msg, level, entity if level > 2 else None)
 
   def __add_module(self, module, line=None, col=None):
     if module in self.__user_defs:
