@@ -31,6 +31,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__function_name = None
     self.__kwargs = []
     self.__depth = 0
+    self.__line = 0
     self.__strftime_directives = []
 
     # Imported members of modules, like "exc_clear" of "sys".
@@ -289,6 +290,8 @@ class SourceVisitor(ast.NodeVisitor):
       self.__line_col_entities[entity] = (line, col)
 
   def generic_visit(self, node):
+    if hasattr(node, "lineno"):
+      self.__line = node.lineno
     self.__depth += 1
     if self.__config.print_visits():
       self.__nprint("| " * self.__depth + ast.dump(node))
