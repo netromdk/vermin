@@ -10,8 +10,10 @@ def print_usage():
   print("\nOptions:")
   print("  -q      Quite mode. It only prints the final versions verdict.")
   print("  -v..    Verbosity level 1 to 3. -v, -vv, and -vvv shows increasingly more information.\n"
-        "          -v will show the individual versions required per file, -vv will additionally\n"
-        "          show which modules, functions etc. that constitutes the requirements.")
+        "          -v    will show the individual versions required per file.\n"
+        "          -vv   will also show which modules, functions etc. that constitutes\n"
+        "                the requirements.\n"
+        "          -vvv  will also show line/col numbers.")
   print("  -t=V    Target version that files must abide by. Can be specified once or twice.\n"
         "          If not met Vermin will exit with code 1.")
   print("  -p=N    Use N concurrent processes to analyze files (defaults to all cores = {})."
