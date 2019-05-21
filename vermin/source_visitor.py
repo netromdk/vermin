@@ -45,6 +45,9 @@ class SourceVisitor(ast.NodeVisitor):
     # List of lines of output text.
     self.__output_text = []
 
+    # Line/column of entities for vvv-printing.
+    self.__line_col_entities = {}
+
   def modules(self):
     return self.__modules
 
@@ -278,6 +281,12 @@ class SourceVisitor(ast.NodeVisitor):
       if isinstance(target, ast.Name):
         target_name = target.id
         self.__add_name_res(target_name, value_name)
+
+  def __add_line_col(self, entity, line, col):
+    if line is not None and col is None:
+      self.__line_col_entities[entity] = (line, None)
+    elif line is not None and col is not None:
+      self.__line_col_entities[entity] = (line, col)
 
   def generic_visit(self, node):
     self.__depth += 1
