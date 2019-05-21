@@ -15,7 +15,6 @@ class SourceVisitor(ast.NodeVisitor):
     else:
       self.__config = config
 
-    self.__import = False
     self.__modules = []
     self.__members = []
     self.__printv2 = False
@@ -182,15 +181,16 @@ class SourceVisitor(ast.NodeVisitor):
   def __vvvprint(self, msg):
     self.__verbose_print(msg, 3)
 
-  def __add_module(self, module):
+  def __add_module(self, module, line=None, col=None):
     if module in self.__user_defs:
       self.__vvvprint("Ignoring module '{}' because it's user-defined!".format(module))
       return
 
     if module not in self.__modules:
       self.__modules.append(module)
+      self.__add_line_col(module, line, col)
 
-  def __add_member(self, member):
+  def __add_member(self, member, line=None, col=None):
     """Add member if fully-qualified name is known."""
     if member in self.__user_defs:
       self.__vvvprint("Ignoring member '{}' because it's user-defined!".format(member))
@@ -198,8 +198,9 @@ class SourceVisitor(ast.NodeVisitor):
 
     if member in MOD_MEM_REQS:
       self.__members.append(member)
+      self.__add_line_col(member, line, col)
 
-  def __add_kwargs(self, function, keyword):
+  def __add_kwargs(self, function, keyword, line=None, col=None):
     if function in self.__user_defs:
       self.__vvvprint("Ignoring function '{}' because it's user-defined!".format(function))
       return
@@ -207,9 +208,11 @@ class SourceVisitor(ast.NodeVisitor):
     fn_kw = (function, keyword)
     if fn_kw in KWARGS_REQS and fn_kw not in self.__kwargs:
       self.__kwargs.append(fn_kw)
+      self.__add_line_col(fn_kw, line, col)
 
-  def __add_strftime_directive(self, group):
+  def __add_strftime_directive(self, group, line=None, col=None):
     self.__strftime_directives.append(group)
+    self.__add_line_col(group, line, col)
 
   def __add_user_def(self, name):
     if name not in self.__user_defs:
@@ -299,15 +302,19 @@ class SourceVisitor(ast.NodeVisitor):
     self.__depth -= 1
 
   def visit_Import(self, node):
-    self.__import = True
+    for name in node.names:
+      line = node.lineno
+      col = node.col_offset + 7  # "import" = 6 + 1
+      self.__add_module(name.name, line, col)
+      self.__add_member(name.name, line, col)
     self.generic_visit(node)
-    self.__import = False
 
   def visit_ImportFrom(self, node):
     if node.module is None:
       return
 
-    self.__add_module(node.module)
+    from_col = 5  # "from" = 4 + 1
+    self.__add_module(node.module, node.lineno, node.col_offset + from_col)
 
     # Remember module members and full module paths, like "ABC" member of module "abc" and "abc.ABC"
     # module.
@@ -318,14 +325,11 @@ class SourceVisitor(ast.NodeVisitor):
       elif name.name is not None:
         self.__import_mem_mod[name.name] = node.module
         comb_name = "{}.{}".format(node.module, name.name)
-        self.__add_module(comb_name)
-        self.__add_member(comb_name)
-        self.__add_member(name.name)
-
-  def visit_alias(self, node):
-    if self.__import:
-      self.__add_module(node.name)
-      self.__add_member(node.name)
+        line = node.lineno
+        col = node.col_offset + from_col
+        self.__add_module(comb_name, line, col)
+        self.__add_member(comb_name, line, col)
+        self.__add_member(name.name, line, col)
 
   def visit_Name(self, node):
     if node.id == "long":
@@ -341,7 +345,7 @@ class SourceVisitor(ast.NodeVisitor):
       func = node.func
       if hasattr(func, "id"):
         self.__function_name = func.id
-        self.__add_member(func.id)
+        self.__add_member(func.id, node.lineno, node.col_offset)
         if func.id == "print":
           self.__printv3 = True
       elif hasattr(func, "attr"):
@@ -354,7 +358,7 @@ class SourceVisitor(ast.NodeVisitor):
           for arg in node.args:
             if hasattr(arg, "s"):
               for directive in STRFTIME_DIRECTIVE_REGEX.findall(arg.s):
-                self.__add_strftime_directive(directive)
+                self.__add_strftime_directive(directive, node.lineno)
       if isinstance(func, ast.Attribute):
         self.__function_name = dotted_name(self.__get_attribute_name(func))
     self.generic_visit(node)
@@ -362,49 +366,50 @@ class SourceVisitor(ast.NodeVisitor):
 
   def visit_Attribute(self, node):
     full_name = self.__get_attribute_name(node)
+    line = node.lineno
     if len(full_name) > 0:
       for mod in self.__modules:
         if full_name[0] == mod:
-          self.__add_module(dotted_name(full_name))
+          self.__add_module(dotted_name(full_name), line)
         elif mod.endswith(full_name[0]):
-          self.__add_member(dotted_name([mod, full_name[1:]]))
-      self.__add_member(dotted_name(full_name))
+          self.__add_member(dotted_name([mod, full_name[1:]]), line)
+      self.__add_member(dotted_name(full_name), line)
 
       if full_name[0] in self.__name_res:
         res = self.__name_res[full_name[0]]
         if res in self.__import_mem_mod:
           mod = self.__import_mem_mod[res]
-          self.__add_member(dotted_name([mod, res, full_name[1:]]))
+          self.__add_member(dotted_name([mod, res, full_name[1:]]), line)
 
         # Try as a fully-qualified name.
         else:
-          self.__add_member(dotted_name([res, full_name[1:]]))
+          self.__add_member(dotted_name([res, full_name[1:]]), line)
 
   def visit_keyword(self, node):
     if self.__function_name is not None:
-      self.__add_kwargs(self.__function_name, node.arg)
+      self.__add_kwargs(self.__function_name, node.arg, self.__line)
 
       if self.__function_name in self.__import_mem_mod:
         mod = self.__import_mem_mod[self.__function_name]
-        self.__add_kwargs(dotted_name([mod, self.__function_name]), node.arg)
+        self.__add_kwargs(dotted_name([mod, self.__function_name]), node.arg, self.__line)
 
       # When having "ElementTree.tostringlist", for instance, and include mapping "{'ElementTree':
       # 'xml.etree'}" then try piecing them together to form a match.
       exp_name = self.__function_name.split(".")
       if exp_name[0] in self.__import_mem_mod:
         mod = self.__import_mem_mod[exp_name[0]]
-        self.__add_kwargs(dotted_name([mod, self.__function_name]), node.arg)
+        self.__add_kwargs(dotted_name([mod, self.__function_name]), node.arg, self.__line)
 
       # Lookup indirect names via variables.
       if exp_name[0] in self.__name_res:
         res = self.__name_res[exp_name[0]]
         if res in self.__import_mem_mod:
           mod = self.__import_mem_mod[res]
-          self.__add_kwargs(dotted_name([mod, res, exp_name[1:]]), node.arg)
+          self.__add_kwargs(dotted_name([mod, res, exp_name[1:]]), node.arg, self.__line)
 
         # Try as FQN.
         else:
-          self.__add_kwargs(dotted_name([res, exp_name[1:]]), node.arg)
+          self.__add_kwargs(dotted_name([res, exp_name[1:]]), node.arg, self.__line)
 
   def visit_Bytes(self, node):
     self.__bytesv3 = True
@@ -466,6 +471,9 @@ class SourceVisitor(ast.NodeVisitor):
       self.__vvvprint("True/False constant requires v2.2+.")
 
   # Ignore unused nodes as a speed optimization.
+
+  def visit_alias(self, node):
+    pass
 
   def visit_Load(self, node):
     pass
