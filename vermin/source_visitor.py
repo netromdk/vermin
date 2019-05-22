@@ -132,7 +132,7 @@ class SourceVisitor(ast.NodeVisitor):
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
         vers = STRFTIME_REQS[directive]
-        self.__print_with_entity("strftime directive '{}' requires {}".
+        self.__vvprint("strftime directive '{}' requires {}".
                                  format(directive, vers), directive)
         mins = combine_versions(mins, vers)
 
@@ -140,21 +140,21 @@ class SourceVisitor(ast.NodeVisitor):
     for mod in mods:
       if mod in MOD_REQS:
         vers = MOD_REQS[mod]
-        self.__print_with_entity("'{}' requires {}".format(mod, vers), mod)
+        self.__vvprint("'{}' requires {}".format(mod, vers), mod)
         mins = combine_versions(mins, vers)
 
     mems = self.members()
     for mem in mems:
       if mem in MOD_MEM_REQS:
         vers = MOD_MEM_REQS[mem]
-        self.__print_with_entity("'{}' requires {}".format(mem, vers), mem)
+        self.__vvprint("'{}' requires {}".format(mem, vers), mem)
         mins = combine_versions(mins, vers)
 
     kwargs = self.kwargs()
     for fn_kw in kwargs:
       if fn_kw in KWARGS_REQS:
         vers = KWARGS_REQS[fn_kw]
-        self.__print_with_entity("'{}({})' requires {}".format(fn_kw[0], fn_kw[1], vers), fn_kw)
+        self.__vvprint("'{}({})' requires {}".format(fn_kw[0], fn_kw[1], vers), fn_kw)
         mins = combine_versions(mins, vers)
 
     return mins
@@ -169,10 +169,12 @@ class SourceVisitor(ast.NodeVisitor):
     if not self.__config.quiet():
       self.__output_text.append(msg)
 
-  def __verbose_print(self, msg, level, entity):
+  def __verbose_print(self, msg, level, entity=None, line=None):
     if self.__config.verbose() >= level and not self.__config.quiet():
+      (l, c) = (line, None)
       if entity is not None and entity in self.__line_col_entities:
         (l, c) = self.__line_col_entities[entity]
+      if l is not None:
         if c is not None:
           msg = "L{} C{}: ".format(l, c) + msg
         else:
@@ -183,15 +185,13 @@ class SourceVisitor(ast.NodeVisitor):
     self.__verbose_print(msg, 1, entity)
 
   def __vvprint(self, msg, entity=None):
-    self.__verbose_print(msg, 2, entity)
+    level = self.__config.verbose()
+    entity = entity if level > 2 else None
+    line = self.__line if level > 2 else None
+    self.__verbose_print(msg, 2, entity, line)
 
   def __vvvprint(self, msg, entity=None):
-    self.__verbose_print(msg, 3, entity)
-
-  # Only print line/col for level 3+.
-  def __print_with_entity(self, msg, entity=None):
-    level = self.__config.verbose()
-    self.__verbose_print(msg, level, entity if level > 2 else None)
+    self.__verbose_print(msg, 3, entity, line=self.__line)
 
   def __add_module(self, module, line=None, col=None):
     if module in self.__user_defs:
