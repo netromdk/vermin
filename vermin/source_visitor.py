@@ -30,7 +30,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__function_name = None
     self.__kwargs = []
     self.__depth = 0
-    self.__line = 0
+    self.__line = None
     self.__strftime_directives = []
 
     # Imported members of modules, like "exc_clear" of "sys".
