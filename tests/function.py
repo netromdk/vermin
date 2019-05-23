@@ -1247,3 +1247,28 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_time_ns_of_time(self):
     self.assertOnlyIn(3.7, detect("from time import time_ns"))
+
+  def test_run_of_asyncio(self):
+    self.assertOnlyIn(3.7, detect("import asyncio\nasyncio.run()"))
+
+  def test_run_coroutine_threadsafe_of_asyncio(self):
+    self.assertOnlyIn(3.5, detect("import asyncio\nasyncio.run_coroutine_threadsafe()"))
+
+  def test_create_task_of_asyncio(self):
+    self.assertOnlyIn(3.7, detect("import asyncio\nasyncio.create_task()"))
+
+  def test_current_task_of_asyncio(self):
+    self.assertOnlyIn(3.7, detect("import asyncio\nasyncio.current_task()"))
+
+  def test_all_tasks_of_asyncio(self):
+    self.assertOnlyIn(3.7, detect("import asyncio\nasyncio.all_tasks()"))
+
+  def test_parse_intermixed_args_of_argparse_ArgumentParser(self):
+    self.assertOnlyIn(3.7,
+                      detect("from argparse import ArgumentParser\n"
+                             "ap = ArgumentParser()\nap.parse_intermixed_args()"))
+
+  def test_parse_known_intermixed_args_of_argparse_ArgumentParser(self):
+    self.assertOnlyIn(3.7,
+                      detect("from argparse import ArgumentParser\n"
+                             "ap = ArgumentParser()\nap.parse_known_intermixed_args()"))

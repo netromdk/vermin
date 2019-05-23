@@ -555,3 +555,6 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn(3.5,
                       detect("from importlib.util import cache_from_source\n"
                              "cache_from_source(optimization=None)"))
+
+  def test_allow_abbrev_of_argparse_ArgumentParser(self):
+    self.assertOnlyIn(3.5, detect("import argparse\nargparse.ArgumentParser(allow_abbrev=True)"))
