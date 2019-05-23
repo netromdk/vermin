@@ -1,7 +1,7 @@
 import ast
 import re
 
-from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS
+from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, ARRAY_TYPECODE_REQS
 from .config import Config
 from .utility import dotted_name, reverse_range, combine_versions
 
@@ -48,6 +48,9 @@ class SourceVisitor(ast.NodeVisitor):
     # Line/column of entities for vvv-printing.
     self.__line_col_entities = {}
 
+    # Typecodes for use with `array.array(typecode, [init..])`.
+    self.__array_typecodes = []
+
   def modules(self):
     return self.__modules
 
@@ -93,6 +96,9 @@ class SourceVisitor(ast.NodeVisitor):
   def user_defined(self):
     return self.__user_defs
 
+  def array_typecodes(self):
+    return self.__array_typecodes
+
   def minimum_versions(self):
     mins = [0, 0]
 
@@ -134,6 +140,12 @@ class SourceVisitor(ast.NodeVisitor):
         vers = STRFTIME_REQS[directive]
         self.__vvprint("strftime directive '{}' requires {}".
                                  format(directive, vers), directive)
+        mins = combine_versions(mins, vers)
+
+    for typecode in self.array_typecodes():
+      if typecode in ARRAY_TYPECODE_REQS:
+        vers = ARRAY_TYPECODE_REQS[typecode]
+        self.__vvprint("array typecode '{}' requires {}".format(typecode, vers), typecode)
         mins = combine_versions(mins, vers)
 
     mods = self.modules()
@@ -304,6 +316,11 @@ class SourceVisitor(ast.NodeVisitor):
     elif line is not None and col is not None:
       self.__line_col_entities[entity] = (line, col)
 
+  def __add_array_typecode(self, typecode, line=None, col=None):
+    if typecode not in self.__array_typecodes:
+      self.__array_typecodes.append(typecode)
+      self.__add_line_col(typecode, line, col)
+
   def generic_visit(self, node):
     if hasattr(node, "lineno"):
       self.__line = node.lineno
@@ -360,6 +377,10 @@ class SourceVisitor(ast.NodeVisitor):
         self.__add_member(func.id, node.lineno, node.col_offset)
         if func.id == "print":
           self.__printv3 = True
+        elif func.id == "array":
+          for arg in node.args:
+            if isinstance(arg, ast.Str) and hasattr(arg, "s"):
+              self.__add_array_typecode(arg.s, node.lineno, node.col_offset + 6)  # "array" = 5 + 1
       elif hasattr(func, "attr"):
         attr = func.attr
         if attr == "format" and hasattr(func, "value") and isinstance(func.value, ast.Str) and \

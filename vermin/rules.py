@@ -905,3 +905,9 @@ STRFTIME_REQS = {
   "%f": (2.6, 3.0),
   "%u": (None, 3.6),
 }
+
+# array.array typecode requirements: typecode -> requirements
+ARRAY_TYPECODE_REQS = {
+  "q": (None, 3.3),
+  "Q": (None, 3.3),
+}
