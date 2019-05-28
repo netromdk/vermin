@@ -1272,3 +1272,24 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(3.7,
                       detect("from argparse import ArgumentParser\n"
                              "ap = ArgumentParser()\nap.parse_known_intermixed_args()"))
+
+  def test_byteswap_of_audioop(self):
+    self.assertOnlyIn(3.4, detect("import audioop\naudioop.byteswap()"))
+
+  def test_a85encode_of_base64(self):
+    self.assertOnlyIn(3.4, detect("import base64\nbase64.a85encode()"))
+
+  def test_a85decode_of_base64(self):
+    self.assertOnlyIn(3.4, detect("import base64\nbase64.a85decode()"))
+
+  def test_decodebytes_of_base64(self):
+    self.assertOnlyIn(3.1, detect("import base64\nbase64.decodebytes()"))
+
+  def test_decodestring_of_base64(self):
+    self.assertOnlyIn(3.1, detect("import base64\nbase64.decodestring()"))
+
+  def test_encodebytes_of_base64(self):
+    self.assertOnlyIn(3.1, detect("import base64\nbase64.encodebytes()"))
+
+  def test_encodestring_of_base64(self):
+    self.assertOnlyIn(3.1, detect("import base64\nbase64.encodestring()"))
