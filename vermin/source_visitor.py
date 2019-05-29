@@ -1,7 +1,8 @@
 import ast
 import re
 
-from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, ARRAY_TYPECODE_REQS
+from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, ARRAY_TYPECODE_REQS, \
+  CODECS_ERROR_HANDLERS, CODECS_FUNCTIONS
 from .config import Config
 from .utility import dotted_name, reverse_range, combine_versions
 
@@ -32,6 +33,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__depth = 0
     self.__line = None
     self.__strftime_directives = []
+    self.__codecs_error_handlers = []
 
     # Imported members of modules, like "exc_clear" of "sys".
     self.__import_mem_mod = {}
@@ -102,6 +104,9 @@ class SourceVisitor(ast.NodeVisitor):
   def array_typecodes(self):
     return self.__array_typecodes
 
+  def codecs_error_handlers(self):
+    return self.__codecs_error_handlers
+
   def minimum_versions(self):
     mins = [0, 0]
 
@@ -142,13 +147,20 @@ class SourceVisitor(ast.NodeVisitor):
       if directive in STRFTIME_REQS:
         vers = STRFTIME_REQS[directive]
         self.__vvprint("strftime directive '{}' requires {}".
-                                 format(directive, vers), directive)
+                       format(directive, vers), directive)
         mins = combine_versions(mins, vers)
 
     for typecode in self.array_typecodes():
       if typecode in ARRAY_TYPECODE_REQS:
         vers = ARRAY_TYPECODE_REQS[typecode]
         self.__vvprint("array typecode '{}' requires {}".format(typecode, vers), typecode)
+        mins = combine_versions(mins, vers)
+
+    for name in self.codecs_error_handlers():
+      if name in CODECS_ERROR_HANDLERS:
+        vers = CODECS_ERROR_HANDLERS[name]
+        self.__vvprint("codecs error handler name '{}' requires {}".
+                       format(name, vers), name)
         mins = combine_versions(mins, vers)
 
     mods = self.modules()
@@ -241,6 +253,27 @@ class SourceVisitor(ast.NodeVisitor):
     self.__strftime_directives.append(group)
     self.__add_line_col(group, line, col)
 
+  def __add_codecs_error_handler(self, func, node):
+    if func in CODECS_FUNCTIONS:
+      idx = CODECS_FUNCTIONS[func]
+
+      # Check indexed arguments.
+      if idx >= 0 and idx < len(node.args):
+        arg = node.args[idx]
+        if hasattr(arg, "s"):
+          name = arg.s
+          self.__codecs_error_handlers.append(name)
+          self.__add_line_col(name, node.lineno)
+
+      # Check for "errors" keyword arguments.
+      for kw in node.keywords:
+        if kw.arg == "errors":
+          value = kw.value
+          if hasattr(value, "s"):
+            name = kw.value.s
+            self.__codecs_error_handlers.append(name)
+            self.__add_line_col(name, node.lineno)
+
   def __add_user_def(self, name):
     if name not in self.__user_defs:
       self.__user_defs.append(name)
@@ -313,7 +346,7 @@ class SourceVisitor(ast.NodeVisitor):
         target_name = target.id
         self.__add_name_res(target_name, value_name)
 
-  def __add_line_col(self, entity, line, col):
+  def __add_line_col(self, entity, line, col=None):
     if line is not None and col is None:
       self.__line_col_entities[entity] = (line, None)
     elif line is not None and col is not None:
@@ -382,6 +415,14 @@ class SourceVisitor(ast.NodeVisitor):
       if hasattr(func, "id"):
         self.__function_name = func.id
         self.__add_member(func.id, node.lineno, node.col_offset)
+
+        if func.id in self.__import_mem_mod:
+          name = self.__import_mem_mod[func.id] + "." + func.id
+          self.__add_codecs_error_handler(name, node)
+        elif func.id in self.__module_as_name:
+          name = self.__module_as_name[func.id]
+          self.__add_codecs_error_handler(name, node)
+
         if func.id == "print":
           self.__printv3 = True
         elif func.id == "array":
@@ -401,6 +442,7 @@ class SourceVisitor(ast.NodeVisitor):
                 self.__add_strftime_directive(directive, node.lineno)
       if isinstance(func, ast.Attribute):
         self.__function_name = dotted_name(self.__get_attribute_name(func))
+        self.__add_codecs_error_handler(self.__function_name, node)
     self.generic_visit(node)
     self.__function_name = None
 

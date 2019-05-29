@@ -940,3 +940,27 @@ ARRAY_TYPECODE_REQS = {
   "q": (None, 3.3),
   "Q": (None, 3.3),
 }
+
+# codecs error handler requirements: error name -> requirements
+CODECS_ERROR_HANDLERS = {
+  "surrogateescape": (None, 3.1),
+  "surrogatepass": (None, 3.1),
+  "namereplace": (None, 3.5),
+}
+
+# Correlate the value of kwarg "errors" of the following functions/constructors with
+# CODECS_ERROR_HANDLERS: function -> argument index
+CODECS_FUNCTIONS = {
+  "codecs.encode": 2,
+  "codecs.decode": 2,
+  "codecs.open": 3,
+  "codecs.EncodedFile": 3,
+  "codecs.iterencode": 2,
+  "codecs.iterdecode": 2,
+  "codecs.IncrementalEncoder": 0,
+  "codecs.IncrementalDecoder": 0,
+  "codecs.StreamWriter": 1,
+  "codecs.StreamReader": 1,
+  "codecs.StreamReaderWriter": 3,
+  "codecs.StreamRecorder": 5,
+}
