@@ -435,3 +435,43 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_CLOCK_REALTIME_of_time(self):
     self.assertOnlyIn(3.3, detect("from time import CLOCK_REALTIME"))
+
+  def test_cssclass_noday_of_calendar_HTMLCalendar(self):
+    self.assertOnlyIn(3.7,
+                      detect("from calendar import HTMLCalendar\n"
+                             "c=HTMLCalendar()\nc.cssclass_noday"))
+
+  def test_cssclasses_weekday_head_of_calendar_HTMLCalendar(self):
+    self.assertOnlyIn(3.7,
+                      detect("from calendar import HTMLCalendar\n"
+                             "c=HTMLCalendar()\nc.cssclasses_weekday_head"))
+
+  def test_cssclass_month_head_of_calendar_HTMLCalendar(self):
+    self.assertOnlyIn(3.7,
+                      detect("from calendar import HTMLCalendar\n"
+                             "c=HTMLCalendar()\nc.cssclass_month_head"))
+
+  def test_cssclass_year_of_calendar_HTMLCalendar(self):
+    self.assertOnlyIn(3.7,
+                      detect("from calendar import HTMLCalendar\n"
+                             "c=HTMLCalendar()\nc.cssclass_year"))
+
+  def test_cssclass_year_head_of_calendar_HTMLCalendar(self):
+    self.assertOnlyIn(3.7,
+                      detect("from calendar import HTMLCalendar\n"
+                             "c=HTMLCalendar()\nc.cssclass_year_head"))
+
+  def test_tau_of_cmath(self):
+    self.assertOnlyIn(3.6, detect("from cmath import tau"))
+
+  def test_inf_of_cmath(self):
+    self.assertOnlyIn(3.6, detect("from cmath import inf"))
+
+  def test_infj_of_cmath(self):
+    self.assertOnlyIn(3.6, detect("from cmath import infj"))
+
+  def test_nan_of_cmath(self):
+    self.assertOnlyIn(3.6, detect("from cmath import nan"))
+
+  def test_nanj_of_cmath(self):
+    self.assertOnlyIn(3.6, detect("from cmath import nanj"))

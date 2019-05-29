@@ -1293,3 +1293,23 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_encodestring_of_base64(self):
     self.assertOnlyIn(3.1, detect("import base64\nbase64.encodestring()"))
+
+  def test_bpformat_of_bdb_Breakpoint(self):
+    self.assertOnlyIn(3.2, detect("from bdb import Breakpoint\nbp=Breakpoint()\nbp.bpformat()"))
+
+  def test_get_bpbynumber_of_bdb_Bdb(self):
+    self.assertOnlyIn(3.2, detect("from bdb import Bdb\nbp=Bdb()\nbp.get_bpbynumber()"))
+
+  def test_itermonthdays3_of_calendar_Calendar(self):
+    self.assertOnlyIn(3.7,
+                      detect("from calendar import Calendar\nc=Calendar()\nc.itermonthdays3()"))
+
+  def test_itermonthdays4_of_calendar_Calendar(self):
+    self.assertOnlyIn(3.7,
+                      detect("from calendar import Calendar\nc=Calendar()\nc.itermonthdays4()"))
+
+  def test_isfinite_of_cmath(self):
+    self.assertOnlyIn(3.2, detect("import cmath\ncmath.isfinite()"))
+
+  def test_isclose_of_cmath(self):
+    self.assertOnlyIn(3.5, detect("import cmath\ncmath.isclose()"))

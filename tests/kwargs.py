@@ -558,3 +558,21 @@ class VerminKwargsTests(VerminTest):
 
   def test_allow_abbrev_of_argparse_ArgumentParser(self):
     self.assertOnlyIn(3.5, detect("import argparse\nargparse.ArgumentParser(allow_abbrev=True)"))
+
+  def test_skip_of_bdb_Bdb(self):
+    self.assertOnlyIn(3.1, detect("import bdb\nbdb.Bdb(skip=True)"))
+
+  def test_backtick_of_binascii_b2a_uu(self):
+    self.assertOnlyIn(3.7, detect("import binascii\nbinascii.b2a_uu(backtick=True)"))
+
+  def test_newline_of_binascii_b2a_base64(self):
+    self.assertOnlyIn(3.6, detect("import binascii\nbinascii.b2a_base64(newline=True)"))
+
+  def test_encoding_of_cgi_parse_multipart(self):
+    self.assertOnlyIn(3.7, detect("import cgi\ncgi.parse_multipart(encoding='utf-8')"))
+
+  def test_errors_of_cgi_parse_multipart(self):
+    self.assertOnlyIn(3.7, detect("import cgi\ncgi.parse_multipart(errors='utf-8')"))
+
+  def test_exitmsg_of_code_interact(self):
+    self.assertOnlyIn(3.6, detect("import code\ncode.interact(exitmsg='hello')"))
