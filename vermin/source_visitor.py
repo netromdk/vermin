@@ -51,6 +51,9 @@ class SourceVisitor(ast.NodeVisitor):
     # Typecodes for use with `array.array(typecode, [init..])`.
     self.__array_typecodes = []
 
+    # Module as-name -> name.
+    self.__module_as_name = {}
+
   def modules(self):
     return self.__modules
 
@@ -336,6 +339,8 @@ class SourceVisitor(ast.NodeVisitor):
       col = node.col_offset + 7  # "import" = 6 + 1
       self.__add_module(name.name, line, col)
       self.__add_member(name.name, line, col)
+      if hasattr(name, "asname") and name.asname is not None:
+        self.__module_as_name[name.asname] = name.name
     self.generic_visit(node)
 
   def visit_ImportFrom(self, node):
@@ -359,6 +364,8 @@ class SourceVisitor(ast.NodeVisitor):
         self.__add_module(comb_name, line, col)
         self.__add_member(comb_name, line, col)
         self.__add_member(name.name, line, col)
+      if hasattr(name, "asname") and name.asname is not None:
+        self.__module_as_name[name.asname] = node.module + "." + name.name
 
   def visit_Name(self, node):
     if node.id == "long":
