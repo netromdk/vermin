@@ -37,11 +37,11 @@ def combine_versions(list1, list2):
   for i in range(len(list1)):
     v1 = list1[i]
     v2 = list2[i]
-    if v1 is 0 and v2 is 0:
+    if v1 == 0 and v2 == 0:
       res.append(0)
-    elif v1 is 0:
+    elif v1 == 0:
       res.append(v2)
-    elif v2 is 0:
+    elif v2 == 0:
       res.append(v1)
     elif v1 is None or v2 is None:
       res.append(None)
