@@ -460,7 +460,8 @@ class SourceVisitor(ast.NodeVisitor):
 
         if func.id == "print":
           self.__printv3 = True
-        elif func.id == "array":
+        elif func.id == "array" or\
+             (func.id in self.__module_as_name and self.__module_as_name[func.id] == "array.array"):
           for arg in node.args:
             if isinstance(arg, ast.Str) and hasattr(arg, "s"):
               self.__add_array_typecode(arg.s, node.lineno, node.col_offset + 6)  # "array" = 5 + 1
