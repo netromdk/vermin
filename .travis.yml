@@ -16,7 +16,7 @@ python:
 install:
 - pip install -U pip virtualenv
 script:
-- if [[ $TRAVIS_PYTHON_VERSION != 3.2 && $TRAVIS_PYTHON_VERSION != 3.3 ]]; then make setup-venv setup-coverage test-coverage; else make test; fi
+- if [[ $TRAVIS_PYTHON_VERSION != 2.7 && $TRAVIS_PYTHON_VERSION != 3.2 && $TRAVIS_PYTHON_VERSION != 3.3 ]]; then make setup-venv setup-coverage test-coverage; else make test; fi
 - if [[ $TRAVIS_PYTHON_VERSION > 3.3 ]]; then make setup-misc; source .venv/bin/activate; make check; fi
 - if [[ $TRAVIS_PYTHON_VERSION > 3.3 ]]; then make setup-bandit; source .venv/bin/activate; make security-check; fi
 after_success:
