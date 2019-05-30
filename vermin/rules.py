@@ -950,7 +950,7 @@ CODECS_ERROR_HANDLERS = {
 
 # Correlate the value of kwarg "errors" of the following functions/constructors with
 # CODECS_ERROR_HANDLERS: function -> argument index
-CODECS_FUNCTIONS = {
+CODECS_ERRORS_INDICES = {
   "codecs.encode": 2,
   "codecs.decode": 2,
   "codecs.open": 3,
@@ -963,4 +963,41 @@ CODECS_FUNCTIONS = {
   "codecs.StreamReader": 1,
   "codecs.StreamReaderWriter": 3,
   "codecs.StreamRecorder": 5,
+}
+
+# codecs encodings and aliases -> requirements
+# Checks case-insensitively.
+CODECS_ENCODINGS = {
+  # German
+  ("cp273", "273", "ibm273", "csibm273"): (None, 3.4),
+
+  # Ukrainian
+  ("cp1125", "1125", "ibm1125", "cp866u", "ruscii"): (None, 3.4),
+
+  # Windows UTF-8 (CP_UTF8)
+  ("cp65001",): (None, 3.3),
+
+  # Tajik
+  ("koi8_t",): (None, 3.5),
+
+  # Kazakh
+  ("kz1048", "kz_1048", "strk1048_2002", "kz-1048", "strk1048-2002", "rk1048"): (None, 3.5),
+}
+
+# Correlate the value of kwarg "encoding", "file_encoding", "data_encoding" of the following
+# functions with CODECS_ENCODINGS: function -> set of argument indices
+CODECS_ENCODINGS_INDICES = {
+  "codecs.encode": (1,),
+  "codecs.decode": (1,),
+  "codecs.lookup": (0,),
+  "codecs.getencoder": (0,),
+  "codecs.getdecoder": (0,),
+  "codecs.getincrementalencoder": (0,),
+  "codecs.getincrementaldecoder": (0,),
+  "codecs.getreader": (0,),
+  "codecs.getwriter": (0,),
+  "codecs.open": (2,),
+  "codecs.EncodedFile": (1, 2),
+  "codecs.iterencode": (2,),
+  "codecs.iterdecode": (2,),
 }
