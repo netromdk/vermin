@@ -22,6 +22,7 @@ MOD_REQS = {
   "cProfile": (2.5, 3.0),
   "cgitb": (2.2, 3.0),
   "collections": (2.4, 3.0),
+  "collections.abc": (None, 3.3),
   "configparser": (None, 3.0),
   "contextlib": (2.5, 3.0),
   "contextvars": (None, 3.7),
@@ -135,6 +136,7 @@ MOD_MEM_REQS = {
   # Classes
   "SimpleXMLRPCServer.CGIXMLRPCRequestHandler": (2.3, None),
   "abc.ABC": (None, 3.4),
+  "collections.ChainMap": (None, 3.3),
   "collections.Counter": (2.7, 3.1),
   "collections.OrderedDict": (2.7, 3.1),
   "collections.UserDict": (None, 3.0),
@@ -203,6 +205,7 @@ MOD_MEM_REQS = {
   "xmlrpclib.MultiCall": (2.4, None),
 
   # Exceptions
+  "codecs.namereplace_errors": (None, 3.5),
   "email.errors.CloseBoundaryNotFoundDefect": (None, 3.3),
   "email.errors.FirstHeaderLineIsContinuationDefect": (2.4, 3.0),
   "email.errors.MalformedHeaderDefect": (2.4, 3.0),
@@ -274,6 +277,7 @@ MOD_MEM_REQS = {
   "calendar.Calendar.itermonthdays4": (None, 3.7),
   "cmath.isclose": (None, 3.5),
   "cmath.isfinite": (None, 3.2),
+  "collections.Counter.subtract": (None, 3.2),
   "collections.OrderedDict.move_to_end": (None, 3.2),
   "collections.deque.copy": (None, 3.5),
   "collections.deque.count": (2.7, 3.2),
@@ -788,7 +792,9 @@ KWARGS_REQS = {
   ("cgi.parse_multipart", "encoding"): (None, 3.7),
   ("cgi.parse_multipart", "errors"): (None, 3.7),
   ("code.interact", "exitmsg"): (None, 3.6),
+  ("collections.ChainMap.new_child", "m"): (None, 3.4),
   ("collections.deque", "maxlen"): (2.6, 3.0),
+  ("collections.namedtuple", "defaults"): (None, 3.7),
   ("collections.namedtuple", "module"): (None, 3.6),
   ("collections.namedtuple", "rename"): (2.7, 3.1),
   ("compile", "dont_inherit"): (2.3, 3.0),
@@ -982,6 +988,35 @@ CODECS_ENCODINGS = {
 
   # Kazakh
   ("kz1048", "kz_1048", "strk1048_2002", "kz-1048", "strk1048-2002", "rk1048"): (None, 3.5),
+
+  # Windows OEM
+  ("oem",): (None, 3.6),
+
+  # == Binary transforms ==
+
+  ("base64_codec", "base64-codec"): (None, 3.2),
+  ("base64", "base_64", "base-64"): (None, 3.4),
+
+  ("bz2_codec", "bz2-codec"): (None, 3.2),
+  ("bz2"): (None, 3.4),
+
+  ("hex_codec", "hex-codec"): (None, 3.2),
+  ("hex"): (None, 3.4),
+
+  ("quopri_codec", "quopri-codec"): (None, 3.2),
+  ("quopri", "quotedprintable", "quoted_printable", "quoted-printable"): (None, 3.4),
+
+  ("uu_codec", "uu-codec"): (None, 3.2),
+  ("uu"): (None, 3.4),
+
+  ("zip_codec", "zip-codec"): (None, 3.2),
+  ("zip", "zlib"): (None, 3.4),
+
+  # == Text transforms ==
+
+  # Caesar cipher
+  ("rot_13", "rot-13"): (None, 3.2),
+  ("rot13"): (None, 3.4),
 }
 
 # Correlate the value of kwarg "encoding", "file_encoding", "data_encoding" of the following

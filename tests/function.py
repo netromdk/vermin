@@ -354,6 +354,12 @@ class VerminFunctionMemberTests(VerminTest):
                              "d = OrderedDict()\n"
                              "d.move_to_end()"))
 
+  def test_subtract_of_collections_Counter(self):
+    self.assertOnlyIn(3.2,
+                      detect("from collections import Counter\n"
+                             "c = Counter()\n"
+                             "c.subtract()"))
+
   def test_suppress_of_contextlib(self):
     self.assertOnlyIn(3.4, detect("import contextlib\ncontextlib.suppress()"))
 

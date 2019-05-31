@@ -28,6 +28,50 @@ class VerminCodecsEncodingTests(VerminTest):
     self.assertOnlyIn(3.5, detect("import codecs\ncodecs.encode('test', 'strk1048-2002')"))
     self.assertOnlyIn(3.5, detect("import codecs\ncodecs.encode('test', 'rk1048')"))
 
+  def test_encoding_windows_owm(self):
+    self.assertOnlyIn(3.6, detect("import codecs\ncodecs.encode('test', 'oem')"))
+
+  def test_encoding_base64(self):
+    self.assertOnlyIn(3.2, detect("import codecs\ncodecs.encode('test', 'base64_codec')"))
+    self.assertOnlyIn(3.2, detect("import codecs\ncodecs.encode('test', 'base64-codec')"))
+    self.assertOnlyIn(3.4, detect("import codecs\ncodecs.encode('test', 'base64')"))
+    self.assertOnlyIn(3.4, detect("import codecs\ncodecs.encode('test', 'base_64')"))
+    self.assertOnlyIn(3.4, detect("import codecs\ncodecs.encode('test', 'base-64')"))
+
+  def test_encoding_bz2(self):
+    self.assertOnlyIn(3.2, detect("import codecs\ncodecs.encode('test', 'bz2_codec')"))
+    self.assertOnlyIn(3.2, detect("import codecs\ncodecs.encode('test', 'bz2-codec')"))
+    self.assertOnlyIn(3.4, detect("import codecs\ncodecs.encode('test', 'bz2')"))
+
+  def test_encoding_hex(self):
+    self.assertOnlyIn(3.2, detect("import codecs\ncodecs.encode('test', 'hex_codec')"))
+    self.assertOnlyIn(3.2, detect("import codecs\ncodecs.encode('test', 'hex-codec')"))
+    self.assertOnlyIn(3.4, detect("import codecs\ncodecs.encode('test', 'hex')"))
+
+  def test_encoding_quopri(self):
+    self.assertOnlyIn(3.2, detect("import codecs\ncodecs.encode('test', 'quopri_codec')"))
+    self.assertOnlyIn(3.2, detect("import codecs\ncodecs.encode('test', 'quopri-codec')"))
+    self.assertOnlyIn(3.4, detect("import codecs\ncodecs.encode('test', 'quopri')"))
+    self.assertOnlyIn(3.4, detect("import codecs\ncodecs.encode('test', 'quotedprintable')"))
+    self.assertOnlyIn(3.4, detect("import codecs\ncodecs.encode('test', 'quoted_printable')"))
+    self.assertOnlyIn(3.4, detect("import codecs\ncodecs.encode('test', 'quoted-printable')"))
+
+  def test_encoding_uu(self):
+    self.assertOnlyIn(3.2, detect("import codecs\ncodecs.encode('test', 'uu_codec')"))
+    self.assertOnlyIn(3.2, detect("import codecs\ncodecs.encode('test', 'uu-codec')"))
+    self.assertOnlyIn(3.4, detect("import codecs\ncodecs.encode('test', 'uu')"))
+
+  def test_encoding_zip(self):
+    self.assertOnlyIn(3.2, detect("import codecs\ncodecs.encode('test', 'zip_codec')"))
+    self.assertOnlyIn(3.2, detect("import codecs\ncodecs.encode('test', 'zip-codec')"))
+    self.assertOnlyIn(3.4, detect("import codecs\ncodecs.encode('test', 'zip')"))
+    self.assertOnlyIn(3.4, detect("import codecs\ncodecs.encode('test', 'zlib')"))
+
+  def test_encoding_rot13(self):
+    self.assertOnlyIn(3.2, detect("import codecs\ncodecs.encode('test', 'rot_13')"))
+    self.assertOnlyIn(3.2, detect("import codecs\ncodecs.encode('test', 'rot-13')"))
+    self.assertOnlyIn(3.4, detect("import codecs\ncodecs.encode('test', 'rot13')"))
+
   def test_function_encode(self):
     self.assertOnlyIn(3.5, detect("import codecs\ncodecs.encode('test', 'koi8_t')"))
     self.assertOnlyIn(3.5, detect("import codecs\ncodecs.encode('test', encoding='koi8_t')"))

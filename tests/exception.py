@@ -50,3 +50,6 @@ class VerminExceptionMemberTests(VerminTest):
 
   def test_MissingHeaderBodySeparatorDefect_of_email_errors(self):
     self.assertOnlyIn(3.3, detect("from email.errors import MissingHeaderBodySeparatorDefect"))
+
+  def test_namereplace_errors_of_codecs(self):
+    self.assertOnlyIn(3.5, detect("from codecs import namereplace_errors"))

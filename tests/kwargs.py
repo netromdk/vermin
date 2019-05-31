@@ -104,6 +104,12 @@ class VerminKwargsTests(VerminTest):
   def test_module_of_namedtuple_from_collections(self):
     self.assertOnlyIn(3.6, detect("import collections\ncollections.namedtuple(module=None)"))
 
+  def test_defaults_of_namedtuple_from_collections(self):
+    self.assertOnlyIn(3.7, detect("import collections\ncollections.namedtuple(defaults=None)"))
+
+  def test_m_of_ChainMap_new_child_from_collections(self):
+    self.assertOnlyIn(3.4, detect("import collections\ncollections.ChainMap.new_child(m=None)"))
+
   def test_use_last_error_of_CDLL_from_ctypes(self):
     self.assertOnlyIn((2.6, 3.0), detect("import ctypes\nctypes.CDLL(use_last_error=True)"))
 

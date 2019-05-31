@@ -164,6 +164,9 @@ class VerminModuleTests(VerminTest):
   def test_collections(self):
     self.assertOnlyIn((2.4, 3.0), detect("import collections"))
 
+  def test_collections_abc(self):
+    self.assertOnlyIn(3.3, detect("import collections.abc"))
+
   def test_contextlib(self):
     self.assertOnlyIn((2.5, 3.0), detect("import contextlib"))
 

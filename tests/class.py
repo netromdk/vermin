@@ -70,6 +70,9 @@ class VerminClassMemberTests(VerminTest):
   def test_UserString_of_collections(self):
     self.assertOnlyIn(3.0, detect("from collections import UserString"))
 
+  def test_ChainMap_of_collections(self):
+    self.assertOnlyIn(3.3, detect("from collections import ChainMap"))
+
   def test_AbstractContextManager_of_contextlib(self):
     self.assertOnlyIn(3.6, detect("from contextlib import AbstractContextManager"))
 
