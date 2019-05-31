@@ -73,6 +73,27 @@ class VerminClassMemberTests(VerminTest):
   def test_ChainMap_of_collections(self):
     self.assertOnlyIn(3.3, detect("from collections import ChainMap"))
 
+  def test_Collection_of_collections_abc(self):
+    self.assertOnlyIn(3.6, detect("from collections.abc import Collection"))
+
+  def test_Reversible_of_collections_abc(self):
+    self.assertOnlyIn(3.6, detect("from collections.abc import Reversible"))
+
+  def test_Generator_of_collections_abc(self):
+    self.assertOnlyIn(3.5, detect("from collections.abc import Generator"))
+
+  def test_Coroutine_of_collections_abc(self):
+    self.assertOnlyIn(3.5, detect("from collections.abc import Coroutine"))
+
+  def test_AsyncIterable_of_collections_abc(self):
+    self.assertOnlyIn(3.5, detect("from collections.abc import AsyncIterable"))
+
+  def test_AsyncIterator_of_collections_abc(self):
+    self.assertOnlyIn(3.5, detect("from collections.abc import AsyncIterator"))
+
+  def test_AsyncGenerator_of_collections_abc(self):
+    self.assertOnlyIn(3.6, detect("from collections.abc import AsyncGenerator"))
+
   def test_AbstractContextManager_of_contextlib(self):
     self.assertOnlyIn(3.6, detect("from contextlib import AbstractContextManager"))
 

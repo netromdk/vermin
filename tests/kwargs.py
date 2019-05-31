@@ -582,3 +582,65 @@ class VerminKwargsTests(VerminTest):
 
   def test_exitmsg_of_code_interact(self):
     self.assertOnlyIn(3.6, detect("import code\ncode.interact(exitmsg='hello')"))
+
+  def test_legacy_of_compileall_compile_dir(self):
+    self.assertOnlyIn(3.2, detect("import compileall\ncompileall.compile_dir(legacy='hello')"))
+
+  def test_optimize_of_compileall_compile_dir(self):
+    self.assertOnlyIn(3.2, detect("import compileall\ncompileall.compile_dir(optimize='hello')"))
+
+  def test_invalidation_mode_of_compileall_compile_dir(self):
+    self.assertOnlyIn(3.7,
+                      detect("import compileall\n"
+                             "compileall.compile_dir(invalidation_mode='hello')"))
+
+  def test_legacy_of_compileall_compile_path(self):
+    self.assertOnlyIn(3.2, detect("import compileall\ncompileall.compile_path(legacy='hello')"))
+
+  def test_optimize_of_compileall_compile_path(self):
+    self.assertOnlyIn(3.2, detect("import compileall\ncompileall.compile_path(optimize='hello')"))
+
+  def test_invalidation_mode_of_compileall_compile_path(self):
+    self.assertOnlyIn(3.7,
+                      detect("import compileall\n"
+                             "compileall.compile_path(invalidation_mode='hello')"))
+
+  def test_invalidation_mode_of_compileall_compile_file(self):
+    self.assertOnlyIn(3.7,
+                      detect("import compileall\n"
+                             "compileall.compile_file(invalidation_mode='hello')"))
+
+  def test_chunksize_of_concurrent_futures_Executor(self):
+    self.assertOnlyIn(3.5,
+                      detect("from concurrent.futures import Executor\n"
+                             "Executor(chunksize=123)"))
+
+  def test_thread_name_prefix_of_concurrent_futures_ThreadPoolExecutor(self):
+    self.assertOnlyIn(3.6,
+                      detect("from concurrent.futures import ThreadPoolExecutor\n"
+                             "ThreadPoolExecutor(thread_name_prefix='123')"))
+
+  def test_initializer_of_concurrent_futures_ThreadPoolExecutor(self):
+    self.assertOnlyIn(3.7,
+                      detect("from concurrent.futures import ThreadPoolExecutor\n"
+                             "ThreadPoolExecutor(initializer='123')"))
+
+  def test_initargs_of_concurrent_futures_ThreadPoolExecutor(self):
+    self.assertOnlyIn(3.7,
+                      detect("from concurrent.futures import ThreadPoolExecutor\n"
+                             "ThreadPoolExecutor(initargs=0)"))
+
+  def test_mp_context_of_concurrent_futures_ProcessPoolExecutor(self):
+    self.assertOnlyIn(3.7,
+                      detect("from concurrent.futures import ProcessPoolExecutor\n"
+                             "ProcessPoolExecutor(mp_context='123')"))
+
+  def test_initializer_of_concurrent_futures_ProcessPoolExecutor(self):
+    self.assertOnlyIn(3.7,
+                      detect("from concurrent.futures import ProcessPoolExecutor\n"
+                             "ProcessPoolExecutor(initializer='123')"))
+
+  def test_initargs_of_concurrent_futures_ProcessPoolExecutor(self):
+    self.assertOnlyIn(3.7,
+                      detect("from concurrent.futures import ProcessPoolExecutor\n"
+                             "ProcessPoolExecutor(initargs=0)"))

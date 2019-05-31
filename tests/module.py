@@ -364,3 +364,6 @@ class VerminModuleTests(VerminTest):
 
   def test_importlib_resources(self):
     self.assertOnlyIn(3.7, detect("import importlib.resources"))
+
+  def test_concurrent_futures(self):
+    self.assertOnlyIn(3.2, detect("import concurrent.futures"))

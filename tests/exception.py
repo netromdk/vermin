@@ -53,3 +53,12 @@ class VerminExceptionMemberTests(VerminTest):
 
   def test_namereplace_errors_of_codecs(self):
     self.assertOnlyIn(3.5, detect("from codecs import namereplace_errors"))
+
+  def test_BrokenExecutor_of_concurrent_futures(self):
+    self.assertOnlyIn(3.7, detect("from concurrent.futures import BrokenExecutor"))
+
+  def test_BrokenThreadPool_of_concurrent_futures_thread(self):
+    self.assertOnlyIn(3.7, detect("from concurrent.futures.thread import BrokenThreadPool"))
+
+  def test_BrokenProcessPool_of_concurrent_futures_process(self):
+    self.assertOnlyIn(3.3, detect("from concurrent.futures.process import BrokenProcessPool"))

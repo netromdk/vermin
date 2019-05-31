@@ -1319,3 +1319,6 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_isclose_of_cmath(self):
     self.assertOnlyIn(3.5, detect("import cmath\ncmath.isclose()"))
+
+  def test_compile_file_of_compileall(self):
+    self.assertOnlyIn((2.7, 3.2), detect("import compileall\ncompileall.compile_file()"))
