@@ -1322,3 +1322,6 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_compile_file_of_compileall(self):
     self.assertOnlyIn((2.7, 3.2), detect("import compileall\ncompileall.compile_file()"))
+
+  def test_nullcontext_of_contextlib(self):
+    self.assertOnlyIn(3.7, detect("import contextlib\ncontextlib.nullcontext()"))

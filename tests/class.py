@@ -97,11 +97,17 @@ class VerminClassMemberTests(VerminTest):
   def test_AbstractContextManager_of_contextlib(self):
     self.assertOnlyIn(3.6, detect("from contextlib import AbstractContextManager"))
 
+  def test_AbstractAsyncContextManager_of_contextlib(self):
+    self.assertOnlyIn(3.7, detect("from contextlib import AbstractAsyncContextManager"))
+
   def test_ContextDecorator_of_contextlib(self):
     self.assertOnlyIn(3.2, detect("from contextlib import ContextDecorator"))
 
   def test_ExitStack_of_contextlib(self):
     self.assertOnlyIn(3.3, detect("from contextlib import ExitStack"))
+
+  def test_AsyncExitStack_of_contextlib(self):
+    self.assertOnlyIn(3.7, detect("from contextlib import AsyncExitStack"))
 
   def test_unix_dialect_of_csv(self):
     self.assertOnlyIn(3.2, detect("from csv import unix_dialect"))

@@ -338,6 +338,18 @@ class SourceVisitor(ast.NodeVisitor):
   def __add_name_res(self, source, target):
     self.__name_res[source] = target
 
+  def __get_name(self, node):
+    full_name = []
+    if isinstance(node, ast.Attribute):
+      if hasattr(node, "attr"):
+        full_name.insert(0, node.attr)
+      if hasattr(node, "value") and hasattr(node.value, "id"):
+        full_name.insert(0, node.value.id)
+    elif isinstance(node, ast.Name):
+      if hasattr(node, "id"):
+        full_name.insert(0, node.id)
+    return full_name
+
   def __get_attribute_name(self, node):
     """Retrieve full attribute name path, like ["ipaddress", "IPv4Address"] from:
     Attribute(value=Name(id='ipaddress', ctx=Load()), attr='IPv4Address', ctx=Load())
@@ -556,9 +568,10 @@ class SourceVisitor(ast.NodeVisitor):
     self.__annotations = True
     self.__var_annotations = True
 
-  def visit_FunctionDef(self, node):
+  def __handle_FunctionDef(self, node):
     self.__add_user_def(node.name)
     self.generic_visit(node)
+
     # Check if the return annotation is set
     if hasattr(node, "returns") and node.returns:
       self.__annotations = True
@@ -571,9 +584,12 @@ class SourceVisitor(ast.NodeVisitor):
         self.__annotations = True
         break
 
+  def visit_FunctionDef(self, node):
+    self.__handle_FunctionDef(node)
+
   def visit_AsyncFunctionDef(self, node):
     self.__coroutines = True
-    self.generic_visit(node)
+    self.__handle_FunctionDef(node)
 
   def visit_Await(self, node):
     self.__coroutines = True

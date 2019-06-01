@@ -154,7 +154,9 @@ MOD_MEM_REQS = {
   "collections.defaultdict": (2.5, 3.0),
   "collections.deque": (2.4, 3.0),
   "collections.namedtuple": (2.6, 3.0),
+  "contextlib.AbstractAsyncContextManager": (None, 3.7),
   "contextlib.AbstractContextManager": (None, 3.6),
+  "contextlib.AsyncExitStack": (None, 3.7),
   "contextlib.ContextDecorator": (None, 3.2),
   "contextlib.ExitStack": (None, 3.3),
   "csv.unix_dialect": (None, 3.2),
@@ -298,8 +300,12 @@ MOD_MEM_REQS = {
   "collections.deque.remove": (2.5, 3.0),
   "collections.deque.reverse": (2.7, 3.2),
   "compileall.compile_file": (2.7, 3.2),
+  "contextlib.nullcontext": (None, 3.7),
+  "contextlib.redirect_stderr": (None, 3.5),
   "contextlib.redirect_stderr": (None, 3.5),
   "contextlib.redirect_stdout": (None, 3.4),
+  "contextlib.redirect_stdout": (None, 3.4),
+  "contextlib.suppress": (None, 3.4),
   "contextlib.suppress": (None, 3.4),
   "crypt.mksalt": (None, 3.3),
   "csv.field_size_limit": (2.5, 3.0),
@@ -786,6 +792,9 @@ MOD_MEM_REQS = {
   "xmlrpc.server.SimpleXMLRPCRequestHandler.rpc_paths": (None, 3.0),
   "zipfile.ZIP_BZIP2": (None, 3.3),
   "zipfile.ZIP_LZMA": (None, 3.3),
+
+  # Decorators
+  "contextlib.asynccontextmanager": (None, 3.7),
 }
 
 # Keyword arguments requirements: (function, keyword argument) -> (requirements)
