@@ -109,6 +109,9 @@ class VerminConstantMemberTests(VerminTest):
   def test_fold_of_datetime_datetime(self):
     self.assertOnlyIn(3.6, detect("from datetime import datetime\np = datetime()\np.fold"))
 
+  def test_fold_of_datetime_time(self):
+    self.assertOnlyIn(3.6, detect("from datetime import time\np = time()\np.fold"))
+
   def test_TYPE_CHECKING_of_typing(self):
     self.assertOnlyIn(3.5, detect("from typing import TYPE_CHECKING"))
 
@@ -370,6 +373,9 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_METHOD_CRYPT_of_crypt(self):
     self.assertOnlyIn(3.3, detect("import crypt\ncrypt.METHOD_CRYPT"))
+
+  def test_METHOD_BLOWFISH_of_crypt(self):
+    self.assertOnlyIn(3.7, detect("import crypt\ncrypt.METHOD_BLOWFISH"))
 
   def test_methods_of_crypt(self):
     self.assertOnlyIn(3.3, detect("import crypt\ncrypt.methods"))

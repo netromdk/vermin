@@ -81,6 +81,12 @@ class VerminKwargsTests(VerminTest):
   def test_timespec_of_isoformat_from_datetime(self):
     self.assertOnlyIn(3.6, detect("from datetime import datetime\ndatetime.isoformat(timespec=1)"))
 
+  def test_fold_of_replace_from_datetime_time(self):
+    self.assertOnlyIn(3.6, detect("from datetime import time\ntime.replace(fold=1)"))
+
+  def test_timespec_of_isoformat_from_datetime_time(self):
+    self.assertOnlyIn(3.6, detect("from datetime import time\ntime.isoformat(timespec=1)"))
+
   def test_domain_of_Filter_from_tracemalloc(self):
     self.assertOnlyIn(3.6, detect("import tracemalloc\ntracemalloc.Filter(domain=1)"))
 
@@ -644,3 +650,6 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn(3.7,
                       detect("from concurrent.futures import ProcessPoolExecutor\n"
                              "ProcessPoolExecutor(initargs=0)"))
+
+  def test_rounds_of_crypt_mksalt(self):
+    self.assertOnlyIn(3.7, detect("import crypt\ncrypt.mksalt(rounds=8)"))

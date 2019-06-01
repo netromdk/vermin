@@ -1325,3 +1325,21 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_nullcontext_of_contextlib(self):
     self.assertOnlyIn(3.7, detect("import contextlib\ncontextlib.nullcontext()"))
+
+  def test_writeheader_of_csv_DictWriter(self):
+    self.assertOnlyIn(3.2, detect("from csv import DictWriter\nDictWriter.writeheader()"))
+
+  def test_update_lines_cols_of_curses(self):
+    self.assertOnlyIn(3.5, detect("import curses\ncurses.update_lines_cols()"))
+
+  def test_unget_wch_of_curses(self):
+    self.assertOnlyIn(3.3, detect("import curses\ncurses.unget_wch()"))
+
+  def test_fromisoformat_of_datetime_date(self):
+    self.assertOnlyIn(3.7, detect("from datetime import date\ndate.fromisoformat()"))
+
+  def test_fromisoformat_of_datetime_time(self):
+    self.assertOnlyIn(3.7, detect("from datetime import time\ntime.fromisoformat()"))
+
+  def test_fromisoformat_of_datetime_datetime(self):
+    self.assertOnlyIn(3.7, detect("from datetime import datetime\ndatetime.fromisoformat()"))
