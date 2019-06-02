@@ -1343,3 +1343,15 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_fromisoformat_of_datetime_datetime(self):
     self.assertOnlyIn(3.7, detect("from datetime import datetime\ndatetime.fromisoformat()"))
+
+  def test_code_info_of_dis(self):
+    self.assertOnlyIn(3.2, detect("import dis\ndis.code_info()"))
+
+  def test_show_code_of_dis(self):
+    self.assertOnlyIn(3.2, detect("import dis\ndis.show_code()"))
+
+  def test_get_instructions_of_dis(self):
+    self.assertOnlyIn(3.4, detect("import dis\ndis.get_instructions()"))
+
+  def test_stack_effect_of_dis(self):
+    self.assertOnlyIn(3.4, detect("import dis\ndis.stack_effect()"))

@@ -481,3 +481,9 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_nanj_of_cmath(self):
     self.assertOnlyIn(3.6, detect("from cmath import nanj"))
+
+  def test_is_jump_target_of_dis_Instruction(self):
+    self.assertOnlyIn(3.4, detect("from dis import Instruction\ni=Instruction()\ni.is_jump_target"))
+
+  def test_FAIL_FAST_of_doctest(self):
+    self.assertOnlyIn(3.4, detect("import doctest\ndoctest.FAIL_FAST"))

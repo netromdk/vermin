@@ -234,3 +234,6 @@ class VerminClassMemberTests(VerminTest):
 
   def test_LazyLoader_of_importlib_util(self):
     self.assertOnlyIn(3.5, detect("from importlib.util import LazyLoader"))
+
+  def test_Bytecode_of_dis(self):
+    self.assertOnlyIn(3.4, detect("from dis import Bytecode"))

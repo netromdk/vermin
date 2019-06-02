@@ -74,6 +74,12 @@ class VerminModuleTests(VerminTest):
   def test_dbm_whichdb(self):
     self.assertOnlyIn(3.0, detect("import dbm.whichdb"))
 
+  def test_dbm_gnu(self):
+    self.assertOnlyIn(3.0, detect("import dbm.gnu"))
+
+  def test_dbm_dumb(self):
+    self.assertOnlyIn(3.0, detect("import dbm.dumb"))
+
   def test_html(self):
     self.assertOnlyIn(3.0, detect("import html"))
 

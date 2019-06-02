@@ -552,6 +552,16 @@ class VerminKwargsTests(VerminTest):
                       detect("from email.generator import Generator\n"
                              "Generator(policy=None)"))
 
+  def test_linesep_of_email_generator_Generator_flatten(self):
+    self.assertOnlyIn(3.2,
+                      detect("from email.generator import Generator\n"
+                             "g=Generator()\ng.flatten(linesep=None)"))
+
+  def test_linesep_of_email_header_Header_encode(self):
+    self.assertOnlyIn(3.2,
+                      detect("from email.header import Header\n"
+                             "g=Header()\ng.encode(linesep=None)"))
+
   def test_base_of_math_log(self):
     self.assertOnlyIn((2.3, 3.0), detect("import math\nmath.log(base=None)"))
 
@@ -653,3 +663,21 @@ class VerminKwargsTests(VerminTest):
 
   def test_rounds_of_crypt_mksalt(self):
     self.assertOnlyIn(3.7, detect("import crypt\ncrypt.mksalt(rounds=8)"))
+
+  def test_file_of_dis_show_code(self):
+    self.assertOnlyIn(3.4, detect("import dis\ndis.show_code(file=8)"))
+
+  def test_file_of_dis_dis(self):
+    self.assertOnlyIn(3.4, detect("import dis\ndis.dis(file=8)"))
+
+  def test_depth_of_dis_dis(self):
+    self.assertOnlyIn(3.7, detect("import dis\ndis.dis(depth=8)"))
+
+  def test_file_of_dis_distb(self):
+    self.assertOnlyIn(3.4, detect("import dis\ndis.distb(file=8)"))
+
+  def test_file_of_dis_disco(self):
+    self.assertOnlyIn(3.4, detect("import dis\ndis.disco(file=8)"))
+
+  def test_file_of_dis_disassemble(self):
+    self.assertOnlyIn(3.4, detect("import dis\ndis.disassemble(file=8)"))
