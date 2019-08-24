@@ -83,4 +83,6 @@ def process_paths(paths, processes):
     except InvalidVersionException:
       incomp = True
       print_incomp(path)
+
+  pool.close()
   return (mins, incomp)
