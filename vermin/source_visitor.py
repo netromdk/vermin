@@ -545,6 +545,11 @@ class SourceVisitor(ast.NodeVisitor):
     self.__bytesv3 = True
     self.__vvprint("byte strings (b'..') require 3+")
 
+  def visit_Constant(self, node):
+    if hasattr(node, "value") and type(node.value) == bytes:
+      self.__bytesv3 = True
+      self.__vvprint("byte strings (b'..') require 3+")
+
   def visit_JoinedStr(self, node):
     self.__fstrings = True
     self.__vvprint("f-strings require 3.6+")
