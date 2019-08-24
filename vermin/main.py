@@ -21,8 +21,11 @@ def main():
   processes = args["processes"]
   targets = args["targets"]
 
+  # Detect paths, remove duplicates, and sort for deterministic results.
   nprint("Detecting python files..")
-  paths = set(detect_paths(args["paths"]))
+  paths = list(set(detect_paths(args["paths"])))
+  paths.sort()
+
   amount = len(paths)
   if amount == 0:
     print("No files specified to analyze!")
