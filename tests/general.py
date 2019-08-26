@@ -72,6 +72,11 @@ class VerminGeneralTests(VerminTest):
       visitor = visit("name = 'world'\nf'hello {name}'")
       self.assertTrue(visitor.fstrings())
 
+  def test_named_expressions(self):
+    if current_version() >= 3.8:
+      visitor = visit("a = 1\nif (b := a) == 1:\n\tprint(b)")
+      self.assertTrue(visitor.named_expressions())
+
   def test_strftime_directives(self):
     visitor = visit("from datetime import datetime\ndatetime.now().strftime('%A %d. %B %Y')")
     self.assertOnlyIn(("%A", "%d", "%B", "%Y"), visitor.strftime_directives())

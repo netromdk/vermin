@@ -28,6 +28,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__annotations = False
     self.__var_annotations = False
     self.__coroutines = False
+    self.__named_exprs = False
     self.__function_name = None
     self.__kwargs = []
     self.__depth = 0
@@ -83,6 +84,9 @@ class SourceVisitor(ast.NodeVisitor):
 
   def bool_const(self):
     return self.__bool_const
+
+  def named_expressions(self):
+    return self.__named_exprs
 
   def kwargs(self):
     return self.__kwargs
@@ -152,6 +156,10 @@ class SourceVisitor(ast.NodeVisitor):
     if self.coroutines():
       self.__vvprint("coroutines require 3.5+ (async and await)")
       mins = combine_versions(mins, (None, 3.5))
+
+    if self.named_expressions():
+      self.__vvprint("named expressions require 3.8+")
+      mins = combine_versions(mins, (None, 3.8))
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
@@ -614,6 +622,10 @@ class SourceVisitor(ast.NodeVisitor):
     if node.value is True or node.value is False:
       self.__bool_const = True
       self.__vvvprint("True/False constant requires v2.2+.")
+
+  def visit_NamedExpr(self, node):
+    self.__named_exprs = True
+    self.generic_visit(node)
 
   # Lax mode skips conditional blocks if enabled.
 
