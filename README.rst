@@ -24,9 +24,9 @@ directives, **2** array typecodes, **3** codecs error handler names, and **20** 
 encodings. Including looking for v2/v3 ``print expr`` and ``print(expr)``, ``long``, f-strings,
 coroutines (``async`` and ``await``), boolean constants, ``"..".format(..)``, imports (``import X``,
 ``from X import Y``, ``from X import *``), function calls wrt. name and kwargs, ``strftime`` +
-``strptime`` directives used, and function, variable annotations, array typecodes, codecs error
-handler names and encodings. It tries to detect and ignore user-defined functions, classes,
-arguments, and variables with names that clash with library-defined symbols.
+``strptime`` directives used, and function, function and variable annotations, array typecodes,
+codecs error handler names and encodings. It tries to detect and ignore user-defined functions,
+classes, arguments, and variables with names that clash with library-defined symbols.
 
 Usage
 =====
