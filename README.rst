@@ -69,6 +69,9 @@ Examples
             If not met Vermin will exit with code 1.
     -p=N    Use N concurrent processes to analyze files (defaults to all cores = 8).
     -i      Ignore incompatible version warnings.
+    -l      Lax mode: ignores conditionals (if, ternary, for, while, try, bool op) on AST
+            traversal, which can be useful when minimum versions are detected in
+            conditionals that it is known does not affect the results.
     -d      Dump AST node visits.
 
   % ./vermin.py -q vermin
@@ -111,6 +114,26 @@ Examples
 
   Minimum required versions: 3.4
   Incompatible versions:     2
+
+Known Limitations
+=================
+
+Vermin parses Python source code into abstract syntax trees (ASTs) which it traverses to do
+analysis. However, it doesn't do conditional logic, i.e. deciding which branches will be taken at
+runtime, since it can cause unexpected side-effects to actually evaluate code. As an example,
+analysis of the following:
+
+.. code-block:: python
+
+  if False:
+    print(f"..but I won't be evaluated")
+
+Will yield "f-strings require 3.6+" even though the branch will not be evaluated at runtime.
+
+The lax mode, via argument ``-l``, was created to circumvent cases like this. *But it's not a
+perfect solution* since it will skip all ``if``, ternarys, ``for``, ``while``, ``try``, and boolean
+operations. Therefore it is recommended to run with and without lax mode to get a better
+understanding of individual cases.
 
 Contributing
 ============

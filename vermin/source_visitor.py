@@ -609,6 +609,36 @@ class SourceVisitor(ast.NodeVisitor):
       self.__bool_const = True
       self.__vvvprint("True/False constant requires v2.2+.")
 
+  # Lax mode skips conditional blocks if enabled.
+
+  def visit_If(self, node):
+    if not self.__config.lax_mode():
+      self.generic_visit(node)
+
+  def visit_IfExp(self, node):
+    if not self.__config.lax_mode():
+      self.generic_visit(node)
+
+  def visit_For(self, node):
+    if not self.__config.lax_mode():
+      self.generic_visit(node)
+
+  def visit_While(self, node):
+    if not self.__config.lax_mode():
+      self.generic_visit(node)
+
+  def visit_Try(self, node):
+    if not self.__config.lax_mode():
+      self.generic_visit(node)
+
+  def visit_TryExcept(self, node):
+    if not self.__config.lax_mode():
+      self.generic_visit(node)
+
+  def visit_BoolOp(self, node):
+    if not self.__config.lax_mode():
+      self.generic_visit(node)
+
   # Ignore unused nodes as a speed optimization.
 
   def visit_alias(self, node):

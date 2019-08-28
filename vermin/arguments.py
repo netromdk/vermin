@@ -19,6 +19,9 @@ def print_usage():
   print("  -p=N    Use N concurrent processes to analyze files (defaults to all cores = {})."
         .format(cpu_count()))
   print("  -i      Ignore incompatible version warnings.")
+  print("  -l      Lax mode: ignores conditionals (if, ternary, for, while, try, bool op) on AST\n"
+        "          traversal, which can be useful when minimum versions are detected in\n"
+        "          conditionals that it is known does not affect the results.")
   print("  -d      Dump AST node visits.")
 
 def parse_args(args):
@@ -62,6 +65,10 @@ def parse_args(args):
       if processes <= 0:
         print("Non-positive number: {}".format(processes))
         return {"code": 1}
+      path_pos += 1
+    elif arg == "-l":
+      print("Running in lax mode!")
+      config.set_lax_mode(True)
       path_pos += 1
     elif arg == "-d":
       config.set_print_visits(True)

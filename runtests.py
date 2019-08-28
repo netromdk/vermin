@@ -12,6 +12,7 @@ def runsuite(suite):
 if __name__ == '__main__':
   runsuite("general")
   runsuite("arguments")
+  runsuite("lax_mode")
   runsuite("lang")
   runsuite("module")
   runsuite("builtin_classes")

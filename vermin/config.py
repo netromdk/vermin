@@ -17,6 +17,7 @@ class Config:
     self.__verbose = 0
     self.__print_visits = False
     self.__ignore_incomp = False
+    self.__lax_mode = False
 
   def quiet(self):
     return self.__quiet
@@ -41,3 +42,9 @@ class Config:
 
   def set_ignore_incomp(self, ignore):
     self.__ignore_incomp = ignore
+
+  def lax_mode(self):
+    return self.__lax_mode
+
+  def set_lax_mode(self, lax):
+    self.__lax_mode = lax
