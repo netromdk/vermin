@@ -1292,13 +1292,13 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(3.1, detect("import base64\nbase64.decodebytes()"))
 
   def test_decodestring_of_base64(self):
-    self.assertOnlyIn(3.1, detect("import base64\nbase64.decodestring()"))
+    self.assertOnlyIn((2.4, 3), detect("import base64\nbase64.decodestring()"))
 
   def test_encodebytes_of_base64(self):
     self.assertOnlyIn(3.1, detect("import base64\nbase64.encodebytes()"))
 
   def test_encodestring_of_base64(self):
-    self.assertOnlyIn(3.1, detect("import base64\nbase64.encodestring()"))
+    self.assertOnlyIn((2.4, 3), detect("import base64\nbase64.encodestring()"))
 
   def test_bpformat_of_bdb_Breakpoint(self):
     self.assertOnlyIn(3.2, detect("from bdb import Breakpoint\nbp=Breakpoint()\nbp.bpformat()"))
