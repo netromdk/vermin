@@ -8,21 +8,23 @@ def print_usage():
   print("Vermin {}".format(VERSION))
   print("Usage: {} [options] <python source files and folders..>".format(sys.argv[0]))
   print("\nOptions:")
-  print("  -q      Quite mode. It only prints the final versions verdict.")
-  print("  -v..    Verbosity level 1 to 3. -v, -vv, and -vvv shows increasingly more information.\n"
-        "          -v    will show the individual versions required per file.\n"
-        "          -vv   will also show which modules, functions etc. that constitutes\n"
-        "                the requirements.\n"
-        "          -vvv  will also show line/col numbers.")
-  print("  -t=V    Target version that files must abide by. Can be specified once or twice.\n"
-        "          If not met Vermin will exit with code 1.")
-  print("  -p=N    Use N concurrent processes to analyze files (defaults to all cores = {})."
+  print("  -q    Quite mode. It only prints the final versions verdict.")
+  print("  -v..  Verbosity level 1 to 3. -v, -vv, and -vvv shows increasingly more information.\n"
+        "        -v    will show the individual versions required per file.\n"
+        "        -vv   will also show which modules, functions etc. that constitutes\n"
+        "              the requirements.\n"
+        "        -vvv  will also show line/col numbers.")
+  print("  -t=V  Target version that files must abide by. Can be specified once or twice.\n"
+        "        If not met Vermin will exit with code 1.")
+  print("  -p=N  Use N concurrent processes to analyze files (defaults to all cores = {})."
         .format(cpu_count()))
-  print("  -i      Ignore incompatible version warnings.")
-  print("  -l      Lax mode: ignores conditionals (if, ternary, for, while, try, bool op) on AST\n"
-        "          traversal, which can be useful when minimum versions are detected in\n"
-        "          conditionals that it is known does not affect the results.")
-  print("  -d      Dump AST node visits.")
+  print("  -i    Ignore incompatible version warnings.")
+  print("  -l    Lax mode: ignores conditionals (if, ternary, for, while, try, bool op) on AST\n"
+        "        traversal, which can be useful when minimum versions are detected in\n"
+        "        conditionals that it is known does not affect the results.")
+  print("  -d    Dump AST node visits.")
+  print("  --hidden\n"
+        "        Analyze 'hidden' files and folders starting with '.' (ignored by default).")
 
 def parse_args(args):
   if len(args) == 0:
@@ -32,6 +34,7 @@ def parse_args(args):
   path_pos = 0
   processes = cpu_count()
   targets = []
+  hidden = False
   for i in range(len(args)):
     arg = args[i].lower()
     if arg == "-q":
@@ -73,6 +76,9 @@ def parse_args(args):
     elif arg == "-d":
       config.set_print_visits(True)
       path_pos += 1
+    elif arg == "--hidden":
+      hidden = True
+      path_pos += 1
 
   if config.quiet() and config.verbose() > 0:
     print("Cannot use quiet and verbose modes together!")
@@ -87,4 +93,5 @@ def parse_args(args):
   return {"code": 0,
           "paths": paths,
           "processes": processes,
-          "targets": targets}
+          "targets": targets,
+          "hidden": hidden}

@@ -85,3 +85,6 @@ class VerminArgumentsTests(VerminTest):
     self.assertFalse(self.config.lax_mode())
     self.assertContainsDict({"code": 0, "paths": []}, parse_args(["-l"]))
     self.assertTrue(self.config.lax_mode())
+
+  def test_hidden(self):
+    self.assertContainsDict({"hidden": True}, parse_args(["--hidden"]))

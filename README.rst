@@ -59,20 +59,22 @@ Examples
   Usage: ./vermin.py [options] <python source files and folders..>
 
   Options:
-    -q      Quite mode. It only prints the final versions verdict.
-    -v..    Verbosity level 1 to 3. -v, -vv, and -vvv shows increasingly more information.
-            -v    will show the individual versions required per file.
-            -vv   will also show which modules, functions etc. that constitutes
-                  the requirements.
-            -vvv  will also show line/col numbers.
-    -t=V    Target version that files must abide by. Can be specified once or twice.
-            If not met Vermin will exit with code 1.
-    -p=N    Use N concurrent processes to analyze files (defaults to all cores = 8).
-    -i      Ignore incompatible version warnings.
-    -l      Lax mode: ignores conditionals (if, ternary, for, while, try, bool op) on AST
-            traversal, which can be useful when minimum versions are detected in
-            conditionals that it is known does not affect the results.
-    -d      Dump AST node visits.
+    -q    Quite mode. It only prints the final versions verdict.
+    -v..  Verbosity level 1 to 3. -v, -vv, and -vvv shows increasingly more information.
+          -v    will show the individual versions required per file.
+          -vv   will also show which modules, functions etc. that constitutes
+                the requirements.
+          -vvv  will also show line/col numbers.
+    -t=V  Target version that files must abide by. Can be specified once or twice.
+          If not met Vermin will exit with code 1.
+    -p=N  Use N concurrent processes to analyze files (defaults to all cores = 8).
+    -i    Ignore incompatible version warnings.
+    -l    Lax mode: ignores conditionals (if, ternary, for, while, try, bool op) on AST
+          traversal, which can be useful when minimum versions are detected in
+          conditionals that it is known does not affect the results.
+    -d    Dump AST node visits.
+    --hidden
+          Analyze 'hidden' files and folders starting with '.' (ignored by default).
 
   % ./vermin.py -q vermin
   Minimum required versions: 2.7, 3.0
