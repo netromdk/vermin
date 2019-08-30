@@ -55,8 +55,9 @@ def main():
       reqs.append(ver)
 
   if len(reqs) == 0 and len(incomps) == 0:
-    print("Could not determine minimum required versions!")
-    sys.exit(1)
+    print("No rules were triggered. Cannot guarantee minimum version requirements.")
+    print("Might work with 2+ and/or 3+.")
+    sys.exit(0)
 
   if len(reqs) > 0:
     print("Minimum required versions: {}".format(version_strings(reqs)))
