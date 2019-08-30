@@ -10,9 +10,10 @@ def versions_string(vers):
   res = []
   for i in range(len(vers)):
     ver = vers[i]
+    # When versions aren't known, show something instead of nothing. It might run with any version.
     if ver == 0:
-      continue
-    if ver is None:
+      res.append("~{}".format(i + 2))
+    elif ver is None:
       res.append("!{}".format(i + 2))
     else:
       res.append(str(ver))
