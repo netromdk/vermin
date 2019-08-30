@@ -57,6 +57,8 @@ def main():
   if len(reqs) == 0 and len(incomps) == 0:
     print("No rules were triggered. Cannot guarantee minimum version requirements.")
     print("Might work with 2+ and/or 3+.")
+    if config.lax_mode():
+      print("Tip: Try without using lax mode for more thorough analysis.")
     sys.exit(0)
 
   if len(reqs) > 0:
