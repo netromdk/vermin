@@ -118,6 +118,7 @@ class SourceVisitor(ast.NodeVisitor):
       mins[0] = 2.0
 
     if self.printv3():
+      self.__vvprint("print(expr) requires 2+ or 3+")
       mins = combine_versions(mins, (2.0, 3.0))
 
     if self.format27():
