@@ -55,8 +55,8 @@ def main():
       reqs.append(ver)
 
   if len(reqs) == 0 and len(incomps) == 0:
-    print("No rules were triggered. Cannot guarantee minimum version requirements.")
-    print("Might work with 2+ and/or 3+.")
+    print("No known reason found that it will not work with 2+ and 3+.")
+    print("Please report if it does not: https://github.com/netromdk/vermin/issues/")
     if config.lax_mode():
       print("Tip: Try without using lax mode for more thorough analysis.")
     sys.exit(0)
