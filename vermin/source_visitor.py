@@ -115,6 +115,11 @@ class SourceVisitor(ast.NodeVisitor):
     mins = [0, 0]
 
     if self.printv2():
+      # Must be like this, not `combine_versions(2.0, None)`, since in py2 all print statements call
+      # `visit_Print()` but in py3 it's just a regular function via
+      # `Call(func=Name(id="print"..)..)`. Otherwise it will say not compatible with 3 when run on
+      # py3. The reason for now using `combine_versions(2.0, 3.0)` is that in py2 we cannot
+      # distinguish `print x` from `print(x)` - the first fails in py3 but not the second form.
       mins[0] = 2.0
 
     if self.printv3():

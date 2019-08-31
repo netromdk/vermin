@@ -25,6 +25,7 @@ class VerminGeneralTests(VerminTest):
     else:  # < 3.0
       visitor = visit(source)
       self.assertTrue(visitor.printv2())
+      self.assertEqual([2.0, 0], visitor.minimum_versions())
 
   def test_printv3(self):
     visitor = visit("print('hello')")
