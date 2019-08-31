@@ -49,11 +49,22 @@ class VerminGeneralTests(VerminTest):
     self.assertTrue(visitor.longv2())
 
   def test_bytesv3(self):
-    if current_version() >= 3.0:
+    v = current_version()
+
+    # py2: type(b'hello') = <type 'str'>
+    if v >= 2.0 and v < 3.0:
+      visitor = visit("s = b'hello'")
+      self.assertFalse(visitor.bytesv3())
+      self.assertEqual([0, 0], visitor.minimum_versions())
+
+    # py3: type(b'hello') = <type 'bytes'>
+    elif v >= 3.0:
       visitor = visit("s = b'hello'")
       self.assertTrue(visitor.bytesv3())
+      self.assertEqual([None, 3.0], visitor.minimum_versions())
       visitor = visit("s = B'hello'")
       self.assertTrue(visitor.bytesv3())
+      self.assertEqual([None, 3.0], visitor.minimum_versions())
 
   def test_fstrings(self):
     if current_version() >= 3.6:

@@ -128,7 +128,7 @@ class SourceVisitor(ast.NodeVisitor):
       mins = combine_versions(mins, (2.0, None))
 
     if self.bytesv3():
-      mins[1] = 3.0
+      mins = combine_versions(mins, (None, 3.0))
 
     if self.fstrings():
       mins = combine_versions(mins, (None, 3.6))
