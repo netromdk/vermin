@@ -76,6 +76,12 @@ Examples
     --hidden
           Analyze 'hidden' files and folders starting with '.' (ignored by default).
 
+  Results interpretation:
+    ~2       No known reason it won't work with py2.
+    !2       It is known that it won't work with py2.
+    2.5, !3  Works with 2.5+ but it is known it won't work with py3.
+    ~2, 3.4  No known reason it won't work with py2, works with 3.4+
+
   % ./vermin.py -q vermin
   Minimum required versions: 2.7, 3.0
 

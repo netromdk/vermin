@@ -25,6 +25,11 @@ def print_usage():
   print("  -d    Dump AST node visits.")
   print("  --hidden\n"
         "        Analyze 'hidden' files and folders starting with '.' (ignored by default).")
+  print("\nResults interpretation:")
+  print("  ~2       No known reason it won't work with py2.")
+  print("  !2       It is known that it won't work with py2.")
+  print("  2.5, !3  Works with 2.5+ but it is known it won't work with py3.")
+  print("  ~2, 3.4  No known reason it won't work with py2, works with 3.4+")
 
 def parse_args(args):
   if len(args) == 0:
