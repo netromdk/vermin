@@ -374,7 +374,10 @@ class SourceVisitor(ast.NodeVisitor):
 
   def __get_attribute_name(self, node):
     """Retrieve full attribute name path, like ["ipaddress", "IPv4Address"] from:
-    Attribute(value=Name(id='ipaddress', ctx=Load()), attr='IPv4Address', ctx=Load())
+    `Attribute(value=Name(id='ipaddress', ctx=Load()), attr='IPv4Address', ctx=Load())`
+    Or ["Fraction", "as_integer_ratio"] from:
+    `Attribute(value=Call(func=Name(id='Fraction', ctx=Load()), args=[Num(n=42)], keywords=[]),
+               attr='as_integer_ratio', ctx=Load())`
     """
     full_name = []
     for attr in ast.walk(node):
@@ -383,6 +386,9 @@ class SourceVisitor(ast.NodeVisitor):
           full_name.insert(0, attr.attr)
         if hasattr(attr, "value") and hasattr(attr.value, "id"):
           full_name.insert(0, attr.value.id)
+      elif isinstance(attr, ast.Call):
+        if hasattr(attr, "func") and hasattr(attr.func, "id"):
+          full_name.insert(0, attr.func.id)
     return full_name
 
   def __add_name_res_assign_node(self, node):
