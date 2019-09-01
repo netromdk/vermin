@@ -289,6 +289,12 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((2.7, 3.1),
                       detect("from unittest import TestResult\nTestResult.stopTestRun()"))
 
+  def test_addModuleCleanup_of_unittest(self):
+    self.assertOnlyIn(3.8, detect("from unittest import addModuleCleanup"))
+
+  def test_doModuleCleanups_of_unittest(self):
+    self.assertOnlyIn(3.8, detect("from unittest import doModuleCleanups"))
+
   def test_total_seconds_of_datetime_timedelta(self):
     self.assertOnlyIn(3.2, detect("from datetime import timedelta\ntimedelta.total_seconds()"))
 
@@ -738,6 +744,9 @@ class VerminFunctionMemberTests(VerminTest):
   def test_split_from_shlex(self):
     self.assertOnlyIn((2.3, 3.0), detect("import shlex\nshlex.split()"))
 
+  def test_join_from_shlex(self):
+    self.assertOnlyIn(3.8, detect("import shlex\nshlex.join()"))
+
   def test_push_source_from_shlex(self):
     self.assertOnlyIn((2.1, 3.0), detect("import shlex\nshlex.push_source()"))
 
@@ -889,6 +898,12 @@ class VerminFunctionMemberTests(VerminTest):
                              "ctx = SSLContext()\n"
                              "ctx.set_servername_callback()"))
 
+  def test_verify_client_post_handshake_from_ssl_SSLSocket(self):
+    self.assertOnlyIn(3.8,
+                      detect("from ssl import SSLSocket\n"
+                             "sock = SSLSocket()\n"
+                             "sock.verify_client_post_handshake()"))
+
   def test_check_call_from_subprocess(self):
     self.assertOnlyIn((2.5, 3.0), detect("import subprocess\nsubprocess.check_call()"))
 
@@ -1014,6 +1029,30 @@ class VerminFunctionMemberTests(VerminTest):
                              "tree = TreeBuilder()\n"
                              "tree.doctype()"))
 
+  def test_comment_from_xml_etree_ElementTree_TreeBuilder(self):
+    self.assertOnlyIn(3.8,
+                      detect("from xml.etree.ElementTree import TreeBuilder\n"
+                             "tree = TreeBuilder()\n"
+                             "tree.comment()"))
+
+  def test_start_ns_from_xml_etree_ElementTree_TreeBuilder(self):
+    self.assertOnlyIn(3.8,
+                      detect("from xml.etree.ElementTree import TreeBuilder\n"
+                             "tree = TreeBuilder()\n"
+                             "tree.start_ns()"))
+
+  def test_end_ns_from_xml_etree_ElementTree_TreeBuilder(self):
+    self.assertOnlyIn(3.8,
+                      detect("from xml.etree.ElementTree import TreeBuilder\n"
+                             "tree = TreeBuilder()\n"
+                             "tree.end_ns()"))
+
+  def test_canonicalize_from_xml_etree_ElementTree(self):
+    self.assertOnlyIn(3.8,
+                      detect("from xml.etree import ElementTree\n"
+                             "tree = ElementTree()\n"
+                             "tree.canonicalize()"))
+
   def test_open_from_zipfile_ZipFile(self):
     self.assertOnlyIn((2.6, 3.0),
                       detect("from zipfile import ZipFile\n"
@@ -1128,6 +1167,24 @@ class VerminFunctionMemberTests(VerminTest):
   def test_log2_from_math(self):
     self.assertOnlyIn(3.3, detect("import math\nmath.log2()"))
 
+  def test_dist_from_math(self):
+    self.assertOnlyIn(3.8, detect("import math\nmath.dist()"))
+
+  def test_comb_from_math(self):
+    self.assertOnlyIn(3.8, detect("import math\nmath.comb()"))
+
+  def test_isqrt_from_math(self):
+    self.assertOnlyIn(3.8, detect("import math\nmath.isqrt()"))
+
+  def test_perm_from_math(self):
+    self.assertOnlyIn(3.8, detect("import math\nmath.perm()"))
+
+  def test_prod_from_math(self):
+    self.assertOnlyIn(3.8, detect("import math\nmath.prod()"))
+
+  def test_remainder_from_math(self):
+    self.assertOnlyIn(3.7, detect("import math\nmath.remainder()"))
+
   def test_home_from_path(self):
     self.assertOnlyIn(3.5, detect("from pathlib import Path\np=Path('foo')\np.home()"))
 
@@ -1151,6 +1208,9 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_write_text_from_path(self):
     self.assertOnlyIn(3.5, detect("from pathlib import Path\np=Path('foo')\np.write_text()"))
+
+  def test_link_to_from_path(self):
+    self.assertOnlyIn(3.8, detect("from pathlib import Path\np=Path('foo')\np.link_to()"))
 
   def test_all_suffixes_of_importlib_machinery(self):
     self.assertOnlyIn(3.3,
@@ -1344,6 +1404,12 @@ class VerminFunctionMemberTests(VerminTest):
   def test_fromisoformat_of_datetime_datetime(self):
     self.assertOnlyIn(3.7, detect("from datetime import datetime\ndatetime.fromisoformat()"))
 
+  def test_fromisocalendar_of_datetime_date(self):
+    self.assertOnlyIn(3.8, detect("from datetime import date\ndate.fromisocalendar()"))
+
+  def test_fromisocalendar_of_datetime_datetime(self):
+    self.assertOnlyIn(3.8, detect("from datetime import datetime\ndatetime.fromisocalendar()"))
+
   def test_code_info_of_dis(self):
     self.assertOnlyIn(3.2, detect("import dis\ndis.code_info()"))
 
@@ -1355,3 +1421,178 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_stack_effect_of_dis(self):
     self.assertOnlyIn(3.4, detect("import dis\ndis.stack_effect()"))
+
+  def test_as_integer_ratio_of_franctions_Fraction(self):
+    self.assertOnlyIn(3.8,
+                      detect("from fractions import Fraction\nFraction(42).as_integer_ratio()"))
+    self.assertOnlyIn(3.8,
+                      detect("from fractions import Fraction\n"
+                             "f=Fraction(42)\nf.as_integer_ratio()"))
+
+  def test_pgettext_of_gettext(self):
+    self.assertOnlyIn(3.8, detect("import gettext\ngettext.pgettext()"))
+
+  def test_dpgettext_of_gettext(self):
+    self.assertOnlyIn(3.8, detect("import gettext\ngettext.dpgettext()"))
+
+  def test_npgettext_of_gettext(self):
+    self.assertOnlyIn(3.8, detect("import gettext\ngettext.npgettext()"))
+
+  def test_dnpgettext_of_gettext(self):
+    self.assertOnlyIn(3.8, detect("import gettext\ngettext.dnpgettext()"))
+
+  def test_compress_of_gzip(self):
+    self.assertOnlyIn(3.2, detect("import gzip\ngzip.compress()"))
+
+  def test_decompress_of_gzip(self):
+    self.assertOnlyIn(3.2, detect("import gzip\ngzip.decompress()"))
+
+  def test_peek_of_gzip_GzipFile(self):
+    self.assertOnlyIn(3.2, detect("from gzip import GzipFile\nGzipFile.peek()"))
+
+  def test_madvise_of_mmap_mmap(self):
+    self.assertOnlyIn(3.8, detect("from mmap import mmap\nmmap.madvise()"))
+
+  def test_add_dll_directory_of_os(self):
+    self.assertOnlyIn(3.8, detect("import os\nos.add_dll_directory()"))
+
+  def test_memfd_create_of_os(self):
+    self.assertOnlyIn(3.8, detect("import os\nos.memfd_create()"))
+
+  def test_getxattr_of_os(self):
+    self.assertOnlyIn(3.3, detect("from os import getxattr"))
+
+  def test_setxattr_of_os(self):
+    self.assertOnlyIn(3.3, detect("from os import setxattr"))
+
+  def test_removexattr_of_os(self):
+    self.assertOnlyIn(3.3, detect("from os import removexattr"))
+
+  def test_listxattr_of_os(self):
+    self.assertOnlyIn(3.3, detect("from os import listxattr"))
+
+  def test_reducer_override_from_pickle_Pickler(self):
+    self.assertOnlyIn(3.8,
+                      detect("from pickle import Pickler\n"
+                             "p=Pickler('foo')\n"
+                             "p.reducer_override(None, None)"))
+
+  def test_dump_of_plistlib(self):
+    self.assertOnlyIn(3.4, detect("from plistlib import dump"))
+
+  def test_dumps_of_plistlib(self):
+    self.assertOnlyIn(3.4, detect("from plistlib import dumps"))
+
+  def test_load_of_plistlib(self):
+    self.assertOnlyIn(3.4, detect("from plistlib import load"))
+
+  def test_loads_of_plistlib(self):
+    self.assertOnlyIn(3.4, detect("from plistlib import loads"))
+
+  def test_create_server_of_socket(self):
+    self.assertOnlyIn(3.8, detect("from socket import create_server"))
+
+  def test_has_dualstack_ipv6_of_socket(self):
+    self.assertOnlyIn(3.8, detect("from socket import has_dualstack_ipv6"))
+
+  def test_fromshare_of_socket(self):
+    self.assertOnlyIn(3.3, detect("from socket import fromshare"))
+
+  def test_share_of_socket(self):
+    self.assertOnlyIn(3.3, detect("from socket import share"))
+
+  def test_close_of_socket(self):
+    self.assertOnlyIn(3.7, detect("from socket import close"))
+
+  def test_CMSG_LEN_of_socket(self):
+    self.assertOnlyIn(3.3, detect("from socket import CMSG_LEN"))
+
+  def test_CMSG_SPACE_of_socket(self):
+    self.assertOnlyIn(3.3, detect("from socket import CMSG_SPACE"))
+
+  def test_sethostname_of_socket(self):
+    self.assertOnlyIn(3.3, detect("from socket import sethostname"))
+
+  def test_if_nameindex_of_socket(self):
+    self.assertOnlyIn(3.3, detect("from socket import if_nameindex"))
+
+  def test_if_nametoindex_of_socket(self):
+    self.assertOnlyIn(3.3, detect("from socket import if_nametoindex"))
+
+  def test_if_indextoname_of_socket(self):
+    self.assertOnlyIn(3.3, detect("from socket import if_indextoname"))
+
+  def test_detach_of_socket(self):
+    self.assertOnlyIn(3.2, detect("from socket import detach"))
+
+  def test_get_inheritable_of_socket(self):
+    self.assertOnlyIn(3.4, detect("from socket import get_inheritable"))
+
+  def test_set_inheritable_of_socket(self):
+    self.assertOnlyIn(3.4, detect("from socket import set_inheritable"))
+
+  def test_getblocking_of_socket(self):
+    self.assertOnlyIn(3.7, detect("from socket import getblocking"))
+
+  def test_recvmsg_of_socket(self):
+    self.assertOnlyIn(3.3, detect("from socket import recvmsg"))
+
+  def test_recvmsg_into_of_socket(self):
+    self.assertOnlyIn(3.3, detect("from socket import recvmsg_into"))
+
+  def test_sendmsg_of_socket(self):
+    self.assertOnlyIn(3.3, detect("from socket import sendmsg"))
+
+  def test_sendmsg_afalg_of_socket(self):
+    self.assertOnlyIn(3.6, detect("from socket import sendmsg_afalg"))
+
+  def test_sendfile_of_socket(self):
+    self.assertOnlyIn(3.5, detect("from socket import sendfile"))
+
+  def test_fmean_of_statistics(self):
+    self.assertOnlyIn(3.8, detect("from statistics import fmean"))
+
+  def test_geometric_mean_of_statistics(self):
+    self.assertOnlyIn(3.8, detect("from statistics import geometric_mean"))
+
+  def test_harmonic_mean_of_statistics(self):
+    self.assertOnlyIn(3.6, detect("from statistics import harmonic_mean"))
+
+  def test_multimode_of_statistics(self):
+    self.assertOnlyIn(3.8, detect("from statistics import multimode"))
+
+  def test_quantiles_of_statistics(self):
+    self.assertOnlyIn(3.8, detect("from statistics import quantiles"))
+
+  def test_unraisablehook_of_sys(self):
+    self.assertOnlyIn(3.8, detect("from sys import unraisablehook"))
+
+  def test_excepthook_of_threading(self):
+    self.assertOnlyIn(3.8, detect("from threading import excepthook"))
+
+  def test_get_native_id_of_threading(self):
+    self.assertOnlyIn(3.8, detect("from threading import get_native_id"))
+
+  def test_get_ident_of_threading(self):
+    self.assertOnlyIn(3.3, detect("from threading import get_ident"))
+
+  def test_main_thread_of_threading(self):
+    self.assertOnlyIn(3.4, detect("from threading import main_thread"))
+
+  def test_generate_tokens_of_tokenize(self):
+    self.assertOnlyIn((2.2, 3.0), detect("from tokenize import generate_tokens"))
+
+  def test_untokenize_of_tokenize(self):
+    self.assertOnlyIn((2.5, 3.0), detect("from tokenize import untokenize"))
+
+  def test_open_of_tokenize(self):
+    self.assertOnlyIn(3.2, detect("from tokenize import open"))
+
+  def test_get_origin_of_typing(self):
+    self.assertOnlyIn(3.8, detect("from typing import get_origin"))
+
+  def test_get_args_of_typing(self):
+    self.assertOnlyIn(3.8, detect("from typing import get_args"))
+
+  def test_is_normalized_of_unicodedata(self):
+    self.assertOnlyIn(3.8, detect("from unicodedata import is_normalized"))

@@ -62,3 +62,6 @@ class VerminExceptionMemberTests(VerminTest):
 
   def test_BrokenProcessPool_of_concurrent_futures_process(self):
     self.assertOnlyIn(3.3, detect("from concurrent.futures.process import BrokenProcessPool"))
+
+  def test_BadGzipFile_of_gzip(self):
+    self.assertOnlyIn(3.8, detect("from gzip import BadGzipFile"))

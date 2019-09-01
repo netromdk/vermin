@@ -390,10 +390,30 @@ class VerminKwargsTests(VerminTest):
                       detect("from xml.etree import ElementTree\n"
                              "ElementTree.tostring(short_empty_elements=None)"))
 
+  def test_xml_declaration_of_tostring_from_xml_etree_ElementTree(self):
+    self.assertOnlyIn(3.8,
+                      detect("from xml.etree import ElementTree\n"
+                             "ElementTree.tostring(xml_declaration=None)"))
+
+  def test_default_namespace_of_tostring_from_xml_etree_ElementTree(self):
+    self.assertOnlyIn(3.8,
+                      detect("from xml.etree import ElementTree\n"
+                             "ElementTree.tostring(default_namespace=None)"))
+
   def test_short_empty_elements_of_tostringlist_from_xml_etree_ElementTree(self):
     self.assertOnlyIn(3.4,
                       detect("from xml.etree import ElementTree\n"
                              "ElementTree.tostringlist(short_empty_elements=None)"))
+
+  def test_xml_declaration_of_tostringlist_from_xml_etree_ElementTree(self):
+    self.assertOnlyIn(3.8,
+                      detect("from xml.etree import ElementTree\n"
+                             "ElementTree.tostringlist(xml_declaration=None)"))
+
+  def test_default_namespace_of_tostringlist_from_xml_etree_ElementTree(self):
+    self.assertOnlyIn(3.8,
+                      detect("from xml.etree import ElementTree\n"
+                             "ElementTree.tostringlist(default_namespace=None)"))
 
   def test_short_empty_elements_of_write_from_xml_etree_ElementTree(self):
     self.assertOnlyIn(3.4,
@@ -681,3 +701,15 @@ class VerminKwargsTests(VerminTest):
 
   def test_file_of_dis_disassemble(self):
     self.assertOnlyIn(3.4, detect("import dis\ndis.disassemble(file=8)"))
+
+  def test_mtime_of_gzip_compress(self):
+    self.assertOnlyIn(3.8, detect("import gzip\ngzip.compress(mtime=8)"))
+
+  def test_encoding_of_gzip_open(self):
+    self.assertOnlyIn(3.3, detect("import gzip\ngzip.open(encoding='utf-8')"))
+
+  def test_errors_of_gzip_open(self):
+    self.assertOnlyIn(3.3, detect("import gzip\ngzip.open(errors=True)"))
+
+  def test_newline_of_gzip_open(self):
+    self.assertOnlyIn(3.3, detect("import gzip\ngzip.open(newline=None)"))

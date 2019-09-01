@@ -341,6 +341,13 @@ class VerminConstantMemberTests(VerminTest):
   def test_verify_flags_of_ssl_SSLContext(self):
     self.assertOnlyIn(3.4, detect("from ssl import SSLContext\nSSLContext.verify_flags"))
 
+  def test_post_handshake_auth_of_ssl_SSLContext(self):
+    self.assertOnlyIn(3.8, detect("from ssl import SSLContext\nSSLContext.post_handshake_auth"))
+
+  def test_hostname_checks_common_name_of_ssl_SSLContext(self):
+    self.assertOnlyIn(3.7,
+                      detect("from ssl import SSLContext\nSSLContext.hostname_checks_common_name"))
+
   def test_DEVNULL_of_subprocess(self):
     self.assertOnlyIn(3.3, detect("from subprocess import DEVNULL"))
 
@@ -439,6 +446,9 @@ class VerminConstantMemberTests(VerminTest):
   def test_CLOCK_UPTIME_of_time(self):
     self.assertOnlyIn(3.7, detect("from time import CLOCK_UPTIME"))
 
+  def test_CLOCK_UPTIME_RAW_of_time(self):
+    self.assertOnlyIn(3.8, detect("from time import CLOCK_UPTIME_RAW"))
+
   def test_CLOCK_REALTIME_of_time(self):
     self.assertOnlyIn(3.3, detect("from time import CLOCK_REALTIME"))
 
@@ -487,3 +497,147 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_FAIL_FAST_of_doctest(self):
     self.assertOnlyIn(3.4, detect("import doctest\ndoctest.FAIL_FAST"))
+
+  def test_ACCESS_DEFAULT_of_mmap(self):
+    self.assertOnlyIn(3.7, detect("import mmap\nmmap.ACCESS_DEFAULT"))
+
+  def test_MADV_NORMAL_of_mmap(self):
+    self.assertOnlyIn(3.8, detect("import mmap\nmmap.MADV_NORMAL"))
+
+  def test_MADV_RANDOM_of_mmap(self):
+    self.assertOnlyIn(3.8, detect("import mmap\nmmap.MADV_RANDOM"))
+
+  def test_MADV_SEQUENTIAL_of_mmap(self):
+    self.assertOnlyIn(3.8, detect("import mmap\nmmap.MADV_SEQUENTIAL"))
+
+  def test_MADV_WILLNEED_of_mmap(self):
+    self.assertOnlyIn(3.8, detect("import mmap\nmmap.MADV_WILLNEED"))
+
+  def test_MADV_DONTNEED_of_mmap(self):
+    self.assertOnlyIn(3.8, detect("import mmap\nmmap.MADV_DONTNEED"))
+
+  def test_MADV_REMOVE_of_mmap(self):
+    self.assertOnlyIn(3.8, detect("import mmap\nmmap.MADV_REMOVE"))
+
+  def test_MADV_DONTFORK_of_mmap(self):
+    self.assertOnlyIn(3.8, detect("import mmap\nmmap.MADV_DONTFORK"))
+
+  def test_MADV_DOFORK_of_mmap(self):
+    self.assertOnlyIn(3.8, detect("import mmap\nmmap.MADV_DOFORK"))
+
+  def test_MADV_HWPOISON_of_mmap(self):
+    self.assertOnlyIn(3.8, detect("import mmap\nmmap.MADV_HWPOISON"))
+
+  def test_MADV_MERGEABLE_of_mmap(self):
+    self.assertOnlyIn(3.8, detect("import mmap\nmmap.MADV_MERGEABLE"))
+
+  def test_MADV_UNMERGEABLE_of_mmap(self):
+    self.assertOnlyIn(3.8, detect("import mmap\nmmap.MADV_UNMERGEABLE"))
+
+  def test_MADV_SOFT_OFFLINE_of_mmap(self):
+    self.assertOnlyIn(3.8, detect("import mmap\nmmap.MADV_SOFT_OFFLINE"))
+
+  def test_MADV_HUGEPAGE_of_mmap(self):
+    self.assertOnlyIn(3.8, detect("import mmap\nmmap.MADV_HUGEPAGE"))
+
+  def test_MADV_NOHUGEPAGE_of_mmap(self):
+    self.assertOnlyIn(3.8, detect("import mmap\nmmap.MADV_NOHUGEPAGE"))
+
+  def test_MADV_DONTDUMP_of_mmap(self):
+    self.assertOnlyIn(3.8, detect("import mmap\nmmap.MADV_DONTDUMP"))
+
+  def test_MADV_DODUMP_of_mmap(self):
+    self.assertOnlyIn(3.8, detect("import mmap\nmmap.MADV_DODUMP"))
+
+  def test_MADV_FREE_of_mmap(self):
+    self.assertOnlyIn(3.8, detect("import mmap\nmmap.MADV_FREE"))
+
+  def test_MADV_NOSYNC_of_mmap(self):
+    self.assertOnlyIn(3.8, detect("import mmap\nmmap.MADV_NOSYNC"))
+
+  def test_MADV_AUTOSYNC_of_mmap(self):
+    self.assertOnlyIn(3.8, detect("import mmap\nmmap.MADV_AUTOSYNC"))
+
+  def test_MADV_NOCORE_of_mmap(self):
+    self.assertOnlyIn(3.8, detect("import mmap\nmmap.MADV_NOCORE"))
+
+  def test_MADV_CORE_of_mmap(self):
+    self.assertOnlyIn(3.8, detect("import mmap\nmmap.MADV_CORE"))
+
+  def test_MADV_PROTECT_of_mmap(self):
+    self.assertOnlyIn(3.8, detect("import mmap\nmmap.MADV_PROTECT"))
+
+  def test_MFD_CLOEXEC_of_os(self):
+    self.assertOnlyIn(3.8, detect("from os import MFD_CLOEXEC"))
+
+  def test_MFD_ALLOW_SEALING_of_os(self):
+    self.assertOnlyIn(3.8, detect("from os import MFD_ALLOW_SEALING"))
+
+  def test_MFD_HUGETLB_of_os(self):
+    self.assertOnlyIn(3.8, detect("from os import MFD_HUGETLB"))
+
+  def test_MFD_HUGE_SHIFT_of_os(self):
+    self.assertOnlyIn(3.8, detect("from os import MFD_HUGE_SHIFT"))
+
+  def test_MFD_HUGE_MASK_of_os(self):
+    self.assertOnlyIn(3.8, detect("from os import MFD_HUGE_MASK"))
+
+  def test_MFD_HUGE_64KB_of_os(self):
+    self.assertOnlyIn(3.8, detect("from os import MFD_HUGE_64KB"))
+
+  def test_MFD_HUGE_512KB_of_os(self):
+    self.assertOnlyIn(3.8, detect("from os import MFD_HUGE_512KB"))
+
+  def test_MFD_HUGE_1MB_of_os(self):
+    self.assertOnlyIn(3.8, detect("from os import MFD_HUGE_1MB"))
+
+  def test_MFD_HUGE_2MB_of_os(self):
+    self.assertOnlyIn(3.8, detect("from os import MFD_HUGE_2MB"))
+
+  def test_MFD_HUGE_8MB_of_os(self):
+    self.assertOnlyIn(3.8, detect("from os import MFD_HUGE_8MB"))
+
+  def test_MFD_HUGE_16MB_of_os(self):
+    self.assertOnlyIn(3.8, detect("from os import MFD_HUGE_16MB"))
+
+  def test_MFD_HUGE_32MB_of_os(self):
+    self.assertOnlyIn(3.8, detect("from os import MFD_HUGE_32MB"))
+
+  def test_MFD_HUGE_256MB_of_os(self):
+    self.assertOnlyIn(3.8, detect("from os import MFD_HUGE_256MB"))
+
+  def test_MFD_HUGE_512MB_of_os(self):
+    self.assertOnlyIn(3.8, detect("from os import MFD_HUGE_512MB"))
+
+  def test_MFD_HUGE_1GB_of_os(self):
+    self.assertOnlyIn(3.8, detect("from os import MFD_HUGE_1GB"))
+
+  def test_MFD_HUGE_2GB_of_os(self):
+    self.assertOnlyIn(3.8, detect("from os import MFD_HUGE_2GB"))
+
+  def test_MFD_HUGE_16GB_of_os(self):
+    self.assertOnlyIn(3.8, detect("from os import MFD_HUGE_16GB"))
+
+  def test_XATTR_SIZE_MAX_of_os(self):
+    self.assertOnlyIn(3.3, detect("from os import XATTR_SIZE_MAX"))
+
+  def test_XATTR_CREATE_of_os(self):
+    self.assertOnlyIn(3.3, detect("from os import XATTR_CREATE"))
+
+  def test_XATTR_REPLACE_of_os(self):
+    self.assertOnlyIn(3.3, detect("from os import XATTR_REPLACE"))
+
+  def test_ncurses_version_of_curses(self):
+    self.assertOnlyIn(3.8, detect("from curses import ncurses_version"))
+
+  def test_A_ITALIC_of_curses(self):
+    self.assertOnlyIn(3.7, detect("from curses import A_ITALIC"))
+
+  def test_FMT_XML_of_plistlib(self):
+    self.assertOnlyIn(3.4, detect("from plistlib import FMT_XML"))
+
+  def test_FMT_BINARY_of_plistlib(self):
+    self.assertOnlyIn(3.4, detect("from plistlib import FMT_BINARY"))
+
+  def test_TIMEOUT_MAX_of_threading(self):
+    self.assertOnlyIn(3.2, detect("from threading import TIMEOUT_MAX"))

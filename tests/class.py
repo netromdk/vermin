@@ -28,6 +28,9 @@ class VerminClassMemberTests(VerminTest):
   def test_ContextManager_of_typing(self):
     self.assertOnlyIn(3.6, detect("from typing import ContextManager"))
 
+  def test_AsyncContextManager_of_typing(self):
+    self.assertOnlyIn(3.6, detect("from typing import AsyncContextManager"))
+
   def test_Counter_of_typing(self):
     self.assertOnlyIn(3.6, detect("from typing import Counter"))
 
@@ -42,6 +45,24 @@ class VerminClassMemberTests(VerminTest):
 
   def test_ClassVar_of_typing(self):
     self.assertOnlyIn(3.5, detect("from typing import ClassVar"))
+
+  def test_Protocol_of_typing(self):
+    self.assertOnlyIn(3.8, detect("from typing import Protocol"))
+
+  def test_Type_of_typing(self):
+    self.assertOnlyIn(3.5, detect("from typing import Type"))
+
+  def test_SupportsIndex_of_typing(self):
+    self.assertOnlyIn(3.8, detect("from typing import SupportsIndex"))
+
+  def test_Awaitable_of_typing(self):
+    self.assertOnlyIn(3.5, detect("from typing import Awaitable"))
+
+  def test_AsyncIterable_of_typing(self):
+    self.assertOnlyIn(3.5, detect("from typing import AsyncIterable"))
+
+  def test_AsyncIterator_of_typing(self):
+    self.assertOnlyIn(3.5, detect("from typing import AsyncIterator"))
 
   def test_DomainFilter_of_tracemalloc(self):
     self.assertOnlyIn(3.6, detect("from tracemalloc import DomainFilter"))
@@ -178,6 +199,9 @@ class VerminClassMemberTests(VerminTest):
   def test_ElementTree_of_xml_etree(self):
     self.assertOnlyIn((2.5, 3.0), detect("from xml.etree import ElementTree"))
 
+  def test_C14NWriterTarget_of_xml_etree_ElementTree(self):
+    self.assertOnlyIn(3.8, detect("from xml.etree.ElementTree import C14NWriterTarget"))
+
   def test_XMLPullParser_of_xml_etree_ElementTree(self):
     self.assertOnlyIn(3.4, detect("from xml.etree.ElementTree import XMLPullParser"))
 
@@ -237,3 +261,9 @@ class VerminClassMemberTests(VerminTest):
 
   def test_Bytecode_of_dis(self):
     self.assertOnlyIn(3.4, detect("from dis import Bytecode"))
+
+  def test_UID_of_plistlib(self):
+    self.assertOnlyIn(3.8, detect("from plistlib import UID"))
+
+  def test_NormalDist_of_statistics(self):
+    self.assertOnlyIn(3.8, detect("from statistics import NormalDist"))

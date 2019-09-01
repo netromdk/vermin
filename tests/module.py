@@ -373,3 +373,12 @@ class VerminModuleTests(VerminTest):
 
   def test_concurrent_futures(self):
     self.assertOnlyIn(3.2, detect("import concurrent.futures"))
+
+  def test_importlib_metadata(self):
+    self.assertOnlyIn(3.8, detect("import importlib.metadata"))
+
+  def test_multiprocessing_shared_memory(self):
+    self.assertOnlyIn(3.8, detect("import multiprocessing.shared_memory"))
+
+  def test_statistics(self):
+    self.assertOnlyIn(3.4, detect("import statistics"))
