@@ -536,6 +536,7 @@ class SourceVisitor(ast.NodeVisitor):
         # Try as a fully-qualified name.
         else:
           self.__add_member(dotted_name([res, full_name[1:]]), line)
+    self.generic_visit(node)
 
   def visit_keyword(self, node):
     if self.__function_name is not None:
