@@ -88,3 +88,6 @@ class VerminArgumentsTests(VerminTest):
 
   def test_hidden(self):
     self.assertContainsDict({"hidden": True}, parse_args(["--hidden"]))
+
+  def test_versions(self):
+    self.assertContainsDict({"versions": True}, parse_args(["--versions"]))

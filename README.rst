@@ -76,6 +76,8 @@ Examples
     -d    Dump AST node visits.
     --hidden
           Analyze 'hidden' files and folders starting with '.' (ignored by default).
+    --versions
+          In the end, print all unique versions required by the analysed code.
 
   Results interpretation:
     ~2       No known reason it won't work with py2.
@@ -91,6 +93,10 @@ Examples
   Target versions not met:   3.3
   % echo $?
   1
+
+  % ./vermin.py -q --versions vermin
+  Minimum required versions: 2.7, 3.0
+  Version range:             2.0, 2.2, 2.5, 2.7, 3.0
 
   % ./vermin.py -v examples
   Detecting python files..

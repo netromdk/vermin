@@ -112,7 +112,7 @@ class VerminGeneralTests(VerminTest):
 
   def test_detect_vermin_min_versions(self):
     paths = detect_paths([abspath("vermin")])
-    (mins, incomp) = process_paths(paths, cpu_count())
+    (mins, incomp, unique_versions) = process_paths(paths, cpu_count())
     self.assertOnlyIn((2.7, 3.0), mins)
 
   def test_combine_versions(self):

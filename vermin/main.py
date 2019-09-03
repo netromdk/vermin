@@ -37,7 +37,7 @@ def main():
   nprint("{} using {} processes..".format(msg, processes))
 
   try:
-    (mins, incomp) = process_paths(paths, processes)
+    (mins, incomp, unique_versions) = process_paths(paths, processes)
   except KeyboardInterrupt:
     print("Aborting..")
     sys.exit(1)
@@ -59,12 +59,13 @@ def main():
     print("Please report if it does not: https://github.com/netromdk/vermin/issues/")
     if config.lax_mode():
       print("Tip: Try without using lax mode for more thorough analysis.")
-    sys.exit(0)
 
   if len(reqs) > 0:
     print("Minimum required versions: {}".format(version_strings(reqs)))
   if len(incomps) > 0:
     print("Incompatible versions:     {}".format(version_strings(incomps)))
+  if args["versions"] and len(unique_versions) > 0:
+    print("Version range:             {}".format(version_strings(unique_versions)))
 
   if len(targets) > 0 and targets != reqs:
     print("Target versions not met:   {}".format(version_strings(targets)))

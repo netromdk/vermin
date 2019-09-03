@@ -25,6 +25,8 @@ def print_usage():
   print("  -d    Dump AST node visits.")
   print("  --hidden\n"
         "        Analyze 'hidden' files and folders starting with '.' (ignored by default).")
+  print("  --versions\n"
+        "        In the end, print all unique versions required by the analysed code.")
   print("\nResults interpretation:")
   print("  ~2       No known reason it won't work with py2.")
   print("  !2       It is known that it won't work with py2.")
@@ -40,6 +42,7 @@ def parse_args(args):
   processes = cpu_count()
   targets = []
   hidden = False
+  versions = False
   for i in range(len(args)):
     arg = args[i].lower()
     if arg == "-q":
@@ -84,6 +87,9 @@ def parse_args(args):
     elif arg == "--hidden":
       hidden = True
       path_pos += 1
+    elif arg == "--versions":
+      versions = True
+      path_pos += 1
 
   if config.quiet() and config.verbose() > 0:
     print("Cannot use quiet and verbose modes together!")
@@ -99,4 +105,5 @@ def parse_args(args):
           "paths": paths,
           "processes": processes,
           "targets": targets,
-          "hidden": hidden}
+          "hidden": hidden,
+          "versions": versions}

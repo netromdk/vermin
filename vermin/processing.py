@@ -62,11 +62,16 @@ def process_paths(paths, processes):
     if not config.ignore_incomp():
       nprint("File with incompatible versions: {}".format(path))
 
+  unique_versions = set()
   for (path, min_versions, text) in pool.imap(process_path, ((path, config) for path in paths)):
     if min_versions is None:
       incomp = True
       print_incomp(path)
       continue
+
+    for ver in min_versions:
+      if ver is not None and ver > 0:
+        unique_versions.add(ver)
 
     # Indent subtext.
     subtext = ""
@@ -86,4 +91,7 @@ def process_paths(paths, processes):
       print_incomp(path)
 
   pool.close()
-  return (mins, incomp)
+
+  unique_versions = list(unique_versions)
+  unique_versions.sort()
+  return (mins, incomp, unique_versions)
