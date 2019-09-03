@@ -1,4 +1,5 @@
 import sys
+from os.path import abspath
 
 from .config import Config
 from .printing import nprint
@@ -23,7 +24,8 @@ def main():
 
   # Detect paths, remove duplicates, and sort for deterministic results.
   nprint("Detecting python files..")
-  paths = list(set(detect_paths(args["paths"], args["hidden"])))
+  paths = [abspath(p) for p in args["paths"]]
+  paths = list(set(detect_paths(paths, args["hidden"])))
   paths.sort()
 
   amount = len(paths)
