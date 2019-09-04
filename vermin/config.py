@@ -53,6 +53,14 @@ class Config:
   def add_exclusion(self, name):
     self.__exclusions.add(name)
 
+  def add_exclusion_file(self, filename):
+    try:
+      with open(filename, mode="r") as f:
+        for line in f.readlines():
+          self.add_exclusion(line.strip())
+    except Exception as ex:
+      print(ex)
+
   def exclusions(self):
     res = list(self.__exclusions)
     res.sort()

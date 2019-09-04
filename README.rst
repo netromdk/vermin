@@ -92,6 +92,10 @@ Examples
             Exclude 'bar' codecs error handler:  --exclude 'ceh=bar'
             Exclude 'baz' codecs encoding:       --exclude 'ce=baz'
 
+    [--exclude-file <file name>] ...
+          Exclude full names like --exclude but from a specified file instead. Each line
+          constitues an exclusion with the same format as with --exclude.
+
   Results interpretation:
     ~2       No known reason it won't work with py2.
     !2       It is known that it won't work with py2.

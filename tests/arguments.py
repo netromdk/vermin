@@ -1,4 +1,6 @@
+import os
 from multiprocessing import cpu_count
+from tempfile import NamedTemporaryFile
 
 from vermin import parse_args, Config
 
@@ -110,3 +112,14 @@ class VerminArgumentsTests(VerminTest):
     self.assertTrue(self.config.is_excluded_kwarg("foo.bar", "baz"))
     self.assertTrue(self.config.is_excluded_codecs_error_handler("surrogateescape"))
     self.assertTrue(self.config.is_excluded_codecs_encoding("utf-8"))
+
+  def test_exclude_file(self):
+    self.assertContainsDict({"code": 1}, parse_args(["--exclude-file"]))  # Needs <file> part.
+    self.assertEmpty(self.config.exclusions())
+
+    fp = NamedTemporaryFile(delete=False)
+    fp.write(b"bbb\naaa\n")
+    fp.close()
+    self.assertContainsDict({"code": 0}, parse_args(["--exclude-file", fp.name]))
+    os.remove(fp.name)
+    self.assertEqual(["aaa", "bbb"], self.config.exclusions())  # Expect it sorted.
