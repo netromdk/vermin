@@ -91,3 +91,22 @@ class VerminArgumentsTests(VerminTest):
 
   def test_versions(self):
     self.assertContainsDict({"versions": True}, parse_args(["--versions"]))
+
+  def test_exclude(self):
+    self.assertContainsDict({"code": 1}, parse_args(["--exclude"]))  # Needs <file> part.
+    self.assertEmpty(self.config.exclusions())
+
+    self.assertContainsDict({"code": 0}, parse_args(["--exclude", "bbb", "--exclude", "aaa"]))
+    self.assertEqual(["aaa", "bbb"], self.config.exclusions())  # Expect it sorted.
+    self.assertFalse(self.config.is_excluded("iamnotthere"))
+    self.assertTrue(self.config.is_excluded("aaa"))
+    self.assertTrue(self.config.is_excluded("bbb"))
+
+    self.config.reset()
+    args = ["--exclude", "foo.bar(baz)",
+            "--exclude", "ceh=surrogateescape",
+            "--exclude", "ce=utf-8"]
+    self.assertContainsDict({"code": 0}, parse_args(args))
+    self.assertTrue(self.config.is_excluded_kwarg("foo.bar", "baz"))
+    self.assertTrue(self.config.is_excluded_codecs_error_handler("surrogateescape"))
+    self.assertTrue(self.config.is_excluded_codecs_encoding("utf-8"))

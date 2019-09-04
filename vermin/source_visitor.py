@@ -257,6 +257,10 @@ class SourceVisitor(ast.NodeVisitor):
       self.__vvvprint("Ignoring module '{}' because it's user-defined!".format(module))
       return
 
+    if self.__config.is_excluded(module):
+      self.__vvprint("Excluding module: {}".format(module))
+      return
+
     if module not in self.__modules:
       self.__modules.append(module)
       self.__add_line_col(module, line, col)
@@ -267,6 +271,10 @@ class SourceVisitor(ast.NodeVisitor):
       self.__vvvprint("Ignoring member '{}' because it's user-defined!".format(member))
       return
 
+    if self.__config.is_excluded(member):
+      self.__vvprint("Excluding member: {}".format(member))
+      return
+
     if member in MOD_MEM_REQS:
       self.__members.append(member)
       self.__add_line_col(member, line, col)
@@ -274,6 +282,10 @@ class SourceVisitor(ast.NodeVisitor):
   def __add_kwargs(self, function, keyword, line=None, col=None):
     if function in self.__user_defs:
       self.__vvvprint("Ignoring function '{}' because it's user-defined!".format(function))
+      return
+
+    if self.__config.is_excluded_kwarg(function, keyword):
+      self.__vvprint("Excluding kwarg: {}({})".format(function, keyword))
       return
 
     fn_kw = (function, keyword)
@@ -294,8 +306,11 @@ class SourceVisitor(ast.NodeVisitor):
         arg = node.args[idx]
         if hasattr(arg, "s"):
           name = arg.s
-          self.__codecs_error_handlers.append(name)
-          self.__add_line_col(name, node.lineno)
+          if self.__config.is_excluded_codecs_error_handler(name):
+            self.__vvprint("Excluding codecs error handler: {}".format(name))
+          else:
+            self.__codecs_error_handlers.append(name)
+            self.__add_line_col(name, node.lineno)
 
       # Check for "errors" keyword arguments.
       for kw in node.keywords:
@@ -303,6 +318,9 @@ class SourceVisitor(ast.NodeVisitor):
           value = kw.value
           if hasattr(value, "s"):
             name = kw.value.s
+            if self.__config.is_excluded_codecs_error_handler(name):
+              self.__vvprint("Excluding codecs error handler: {}".format(name))
+              continue
             self.__codecs_error_handlers.append(name)
             self.__add_line_col(name, node.lineno)
 
@@ -315,6 +333,9 @@ class SourceVisitor(ast.NodeVisitor):
           arg = node.args[idx]
           if hasattr(arg, "s"):
             name = arg.s
+            if self.__config.is_excluded_codecs_encoding(name):
+              self.__vvprint("Excluding codecs encoding: {}".format(name))
+              continue
             self.__codecs_encodings.append(name)
             self.__add_line_col(name, node.lineno)
 
@@ -324,6 +345,9 @@ class SourceVisitor(ast.NodeVisitor):
             value = kw.value
             if hasattr(value, "s"):
               name = kw.value.s
+              if self.__config.is_excluded_codecs_encoding(name):
+                self.__vvprint("Excluding codecs encoding: {}".format(name))
+                continue
               self.__codecs_encodings.append(name)
               self.__add_line_col(name, node.lineno)
 

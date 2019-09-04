@@ -23,10 +23,19 @@ def print_usage():
         "        traversal, which can be useful when minimum versions are detected in\n"
         "        conditionals that it is known does not affect the results.")
   print("  -d    Dump AST node visits.")
-  print("  --hidden\n"
+  print("\n  --hidden\n"
         "        Analyze 'hidden' files and folders starting with '.' (ignored by default).")
-  print("  --versions\n"
+  print("\n  --versions\n"
         "        In the end, print all unique versions required by the analysed code.")
+  print("\n  [--exclude <name>] ...\n"
+        "        Exclude full names, like 'email.parser.FeedParser', from analysis. Useful to\n"
+        "        ignore conditional logic that can trigger incompatible results. It's more fine\n"
+        "        grained than lax mode.\n\n"
+        "        Examples:\n"
+        "          Exclude 'foo.bar.baz' module/member: --exclude 'foo.bar.baz'\n"
+        "          Exclude 'foo' kwarg:                 --exclude 'somemodule.func(foo)'\n"
+        "          Exclude 'bar' codecs error handler:  --exclude 'ceh=bar'\n"
+        "          Exclude 'baz' codecs encoding:       --exclude 'ce=baz'")
   print("\nResults interpretation:")
   print("  ~2       No known reason it won't work with py2.")
   print("  !2       It is known that it won't work with py2.")
@@ -90,6 +99,12 @@ def parse_args(args):
     elif arg == "--versions":
       versions = True
       path_pos += 1
+    elif arg == "--exclude":
+      if (i + 1) >= len(args):
+        print("Exclusion requires a name! Example: --exclude email.parser.FeedParser")
+        return {"code": 1}
+      config.add_exclusion(args[i + 1])
+      path_pos += 2
 
   if config.quiet() and config.verbose() > 0:
     print("Cannot use quiet and verbose modes together!")

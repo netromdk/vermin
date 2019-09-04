@@ -74,10 +74,23 @@ Examples
           traversal, which can be useful when minimum versions are detected in
           conditionals that it is known does not affect the results.
     -d    Dump AST node visits.
+
     --hidden
           Analyze 'hidden' files and folders starting with '.' (ignored by default).
+
     --versions
           In the end, print all unique versions required by the analysed code.
+
+    [--exclude <name>] ...
+          Exclude full names, like 'email.parser.FeedParser', from analysis. Useful to
+          ignore conditional logic that can trigger incompatible results. It's more fine
+          grained than lax mode.
+
+          Examples:
+            Exclude 'foo.bar.baz' module/member: --exclude 'foo.bar.baz'
+            Exclude 'foo' kwarg:                 --exclude 'somemodule.func(foo)'
+            Exclude 'bar' codecs error handler:  --exclude 'ceh=bar'
+            Exclude 'baz' codecs encoding:       --exclude 'ce=baz'
 
   Results interpretation:
     ~2       No known reason it won't work with py2.
@@ -130,8 +143,8 @@ Examples
   Minimum required versions: 3.4
   Incompatible versions:     2
 
-Known Limitations
-=================
+Lax Mode
+========
 
 Vermin parses Python source code into abstract syntax trees (ASTs) which it traverses to do
 analysis. However, it doesn't do conditional logic, i.e. deciding which branches will be taken at
@@ -149,6 +162,25 @@ The lax mode, via argument ``-l``, was created to circumvent cases like this. *B
 perfect solution* since it will skip all ``if``, ternarys, ``for``, ``while``, ``try``, and boolean
 operations. Therefore it is recommended to run with and without lax mode to get a better
 understanding of individual cases.
+
+Analysis Exclusions
+===================
+
+Another approach to conditional logic than lax mode, is to exclude modules, members, kwargs, codecs
+error handler names, or codecs encodings by name from being analysed via argument ``--exclude
+<name>`` (multiple can be specified). Consider the following code block that checks if
+``PROTOCOL_TLS`` is an attribute of ``ssl``:
+
+.. code-block:: python
+
+  import ssl
+  tls_version = ssl.PROTOCOL_TLSv1
+  if hasattr(ssl, "PROTOCOL_TLS"):
+    tls_version = ssl.PROTOCOL_TLS
+
+It will state that "'ssl.PROTOCOL_TLS' requires (2.7, 3.6)" but to exclude that from the results,
+use ``--exclude 'ssl.PROTOCOL_TLS'``. Afterwards, only "'ssl' requires (2.6, 3.0)" will be shown and
+the final minimum required versions are v2.6 and v3.0 instead of v2.7 and v3.6.
 
 Contributing
 ============

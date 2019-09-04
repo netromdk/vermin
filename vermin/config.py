@@ -18,6 +18,7 @@ class Config:
     self.__print_visits = False
     self.__ignore_incomp = False
     self.__lax_mode = False
+    self.__exclusions = set()
 
   def quiet(self):
     return self.__quiet
@@ -48,3 +49,23 @@ class Config:
 
   def set_lax_mode(self, lax):
     self.__lax_mode = lax
+
+  def add_exclusion(self, name):
+    self.__exclusions.add(name)
+
+  def exclusions(self):
+    res = list(self.__exclusions)
+    res.sort()
+    return res
+
+  def is_excluded(self, name):
+    return name in self.__exclusions
+
+  def is_excluded_kwarg(self, function, keyword):
+    return "{}({})".format(function, keyword) in self.__exclusions
+
+  def is_excluded_codecs_error_handler(self, name):
+    return "ceh={}".format(name) in self.__exclusions
+
+  def is_excluded_codecs_encoding(self, name):
+    return "ce={}".format(name) in self.__exclusions
