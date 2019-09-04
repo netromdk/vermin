@@ -262,6 +262,7 @@ MOD_MEM_REQS = {
   "bin": (2.6, 3.0),
   "breakpoint": (None, 3.7),
   "classmethod": (2.2, 3.0),
+  "dict.has_key": (2.2, None),
   "enumerate": (2.3, 3.0),
   "file": (2.2, 3.0),
   "format": (2.6, 3.0),

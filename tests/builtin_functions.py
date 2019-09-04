@@ -57,3 +57,7 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
 
   def test_breakpoint(self):
     self.assertOnlyIn(3.7, detect("breakpoint()"))
+
+  def test_has_key_of_dict(self):
+    self.assertOnlyIn(2.2, detect("d={}\nd.has_key('a')"))
+    self.assertOnlyIn(2.2, detect("d=dict()\nd.has_key('a')"))

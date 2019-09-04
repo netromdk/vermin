@@ -432,6 +432,10 @@ class SourceVisitor(ast.NodeVisitor):
     elif isinstance(node.value, ast.Attribute):
       value_name = dotted_name(self.__get_attribute_name(node.value))
 
+    # if rvalue is a Dict.
+    elif isinstance(node.value, ast.Dict):
+      value_name = "dict"
+
     if value_name is None:
       return
 
