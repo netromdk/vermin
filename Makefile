@@ -5,7 +5,7 @@ ALL_FILES=${VERMIN_FILES} ${TEST_FILES} ${OTHER_FILES}
 MODULES=vermin tests
 
 self-test:
-	./vermin.py -v -t=2.7 -t=3 ${VERMIN_FILES}
+	./vermin.py -v --exclude long -t=2.7 -t=3 ${VERMIN_FILES}
 
 test: self-test
 	./runtests.py
