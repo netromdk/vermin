@@ -1,5 +1,6 @@
 import ast
 import re
+import sys
 
 from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, ARRAY_TYPECODE_REQS, \
   CODECS_ERROR_HANDLERS, CODECS_ERRORS_INDICES, CODECS_ENCODINGS, CODECS_ENCODINGS_INDICES
@@ -396,6 +397,9 @@ class SourceVisitor(ast.NodeVisitor):
         full_name.insert(0, node.id)
     return full_name
 
+  def __is_builtin_type(self, name):
+    return name in {"dict", "set", "list", "unicode", "str", "int", "float", "long"}
+
   def __get_attribute_name(self, node):
     """Retrieve full attribute name path, like ["ipaddress", "IPv4Address"] from:
     `Attribute(value=Name(id='ipaddress', ctx=Load()), attr='IPv4Address', ctx=Load())`
@@ -404,7 +408,10 @@ class SourceVisitor(ast.NodeVisitor):
                attr='as_integer_ratio', ctx=Load())`
     """
     full_name = []
+    primi_type = False
     for attr in ast.walk(node):
+      if len(full_name) > 0 and self.__is_builtin_type(full_name[0]):
+        primi_type = True
       if isinstance(attr, ast.Attribute):
         if hasattr(attr, "attr"):
           full_name.insert(0, attr.attr)
@@ -413,6 +420,34 @@ class SourceVisitor(ast.NodeVisitor):
       elif isinstance(attr, ast.Call):
         if hasattr(attr, "func") and hasattr(attr.func, "id"):
           full_name.insert(0, attr.func.id)
+      elif not primi_type and isinstance(attr, ast.Dict):
+        if len(full_name) == 0 or (full_name[0] != "dict" and len(full_name) == 1):
+          full_name.insert(0, "dict")
+      elif not primi_type and isinstance(attr, ast.Set):
+        if len(full_name) == 0 or (full_name[0] != "set" and len(full_name) == 1):
+          full_name.insert(0, "set")
+      elif not primi_type and isinstance(attr, ast.List):
+        if len(full_name) == 0 or (full_name[0] != "list" and len(full_name) == 1):
+          full_name.insert(0, "list")
+      elif not primi_type and isinstance(attr, ast.Str):
+        if sys.version_info.major == 2 and type(attr.s) == unicode:
+          name = "unicode"
+        else:
+          name = "str"
+        if len(full_name) == 0 or (full_name[0] != name and len(full_name) == 1):
+          full_name.insert(0, name)
+      elif not primi_type and isinstance(attr, ast.Num):
+        t = type(attr.n)
+        name = None
+        if t == int:
+          name = "int"
+        elif t == float:
+          name = "float"
+        if sys.version_info.major == 2 and t == long:
+          name = "long"
+        if name is not None and len(full_name) == 0 or \
+          (full_name[0] != name and len(full_name) == 1):
+          full_name.insert(0, name)
     return full_name
 
   def __add_name_res_assign_node(self, node):
@@ -432,9 +467,25 @@ class SourceVisitor(ast.NodeVisitor):
     elif isinstance(node.value, ast.Attribute):
       value_name = dotted_name(self.__get_attribute_name(node.value))
 
-    # if rvalue is a Dict.
     elif isinstance(node.value, ast.Dict):
       value_name = "dict"
+    elif isinstance(node.value, ast.Set):
+      value_name = "set"
+    elif isinstance(node.value, ast.List):
+      value_name = "list"
+    elif isinstance(node.value, ast.Str):
+      if sys.version_info.major == 2 and type(node.value.s) == unicode:
+        value_name = "unicode"
+      else:
+        value_name = "str"
+    elif isinstance(node.value, ast.Num):
+      t = type(node.value.n)
+      if t == int:
+        value_name = "int"
+      elif sys.version_info.major == 2 and t == long:
+        value_name = "long"
+      elif t == float:
+        value_name = "float"
 
     if value_name is None:
       return

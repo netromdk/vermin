@@ -59,8 +59,8 @@ update-bandit-requirements: setup-venv setup-bandit
 	.venv/bin/pip freeze > misc/.bandit-requirements.txt
 
 check-style:
-	.venv/bin/flake8 --ignore E111,E114,E121,E126,E127,E302,E305,W504 --max-line-length 100\
-          --count --show-source ${ALL_FILES}
+	.venv/bin/flake8 --ignore E111,E114,E121,E126,E127,E302,E305,W504,F821\
+          --max-line-length 100 --count --show-source ${ALL_FILES}
 
 static-analysis:
 	.venv/bin/vulture --min-confidence 70 --sort-by-size ${ALL_FILES}
