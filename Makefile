@@ -78,7 +78,8 @@ check-all: check security-check
 
 test-coverage:
 	.venv/bin/coverage run --source=vermin,tests runtests.py
-	.venv/bin/coverage run --append --source=vermin ./vermin.py -v -t=2.7 -t=3 ${VERMIN_FILES}
+	.venv/bin/coverage run --append --source=vermin ./vermin.py -v --exclude long\
+          -t=2.7 -t=3 ${VERMIN_FILES}
 
 coveralls:
 	COVERALLS_REPO_TOKEN=twBSHlgE5AMFEQNmUK04LDcN7SVth3lDV .venv/bin/coveralls
