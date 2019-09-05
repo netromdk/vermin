@@ -556,8 +556,11 @@ class SourceVisitor(ast.NodeVisitor):
 
   def visit_Name(self, node):
     if node.id == "long":
-      self.__longv2 = True
-      self.__vvprint("long is a v2 feature")
+      if self.__config.is_excluded("long"):
+        self.__vvprint("Excluding long type")
+      else:
+        self.__longv2 = True
+        self.__vvprint("long is a v2 feature")
 
   def visit_Print(self, node):
     self.__printv2 = True
