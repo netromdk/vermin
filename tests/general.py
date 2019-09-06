@@ -214,3 +214,57 @@ class VerminGeneralTests(VerminTest):
                     "src = SimpleXMLRPCServer()")
     self.assertOnlyIn(["SimpleXMLRPCServer", "src"], visitor.user_defined())
     self.assertEmpty(visitor.modules())
+
+  def test_str_from_type(self):
+    visitor = visit("\"\".zfill(1)")
+    self.assertIn("str.zfill", visitor.members())
+    visitor = visit("str().zfill(1)")
+    self.assertIn("str.zfill", visitor.members())
+
+  def test_unicode_from_type(self):
+    if current_version() < 3.0:
+      visitor = visit("u\"\".isdecimal()")
+      self.assertIn("unicode.isdecimal", visitor.members())
+      visitor = visit("unicode().isdecimal()")
+      self.assertIn("unicode.isdecimal", visitor.members())
+
+  def test_list_from_type(self):
+    visitor = visit("[].clear()")
+    self.assertIn("list.clear", visitor.members())
+    visitor = visit("list().clear()")
+    self.assertIn("list.clear", visitor.members())
+
+  def test_dict_from_type(self):
+    visitor = visit("{}.pop()")
+    self.assertIn("dict.pop", visitor.members())
+    visitor = visit("dict().pop()")
+    self.assertIn("dict.pop", visitor.members())
+
+  def test_set_from_type(self):
+    visitor = visit("{1}.isdisjoint()")
+    self.assertIn("set.isdisjoint", visitor.members())
+    visitor = visit("set().isdisjoint()")
+    self.assertIn("set.isdisjoint", visitor.members())
+
+  def test_frozenset_from_type(self):
+    visitor = visit("frozenset().isdisjoint()")
+    self.assertIn("frozenset.isdisjoint", visitor.members())
+
+  def test_int_from_type(self):
+    visitor = visit("(1).bit_length()")
+    self.assertIn("int.bit_length", visitor.members())
+    visitor = visit("int().bit_length()")
+    self.assertIn("int.bit_length", visitor.members())
+
+  def test_long_from_type(self):
+    if current_version() < 3.0:
+      visitor = visit("(1L).bit_length()")
+      self.assertIn("long.bit_length", visitor.members())
+      visitor = visit("long().bit_length()")
+      self.assertIn("long.bit_length", visitor.members())
+
+  def test_float_from_type(self):
+    visitor = visit("(4.2).hex()")
+    self.assertIn("float.hex", visitor.members())
+    visitor = visit("float().hex()")
+    self.assertIn("float.hex", visitor.members())
