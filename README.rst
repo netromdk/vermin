@@ -18,8 +18,8 @@ Concurrently detect the minimum Python versions needed to run code. Additionally
 vanilla Python, and it doesn't have any external dependencies, it works with v2.7+ and v3+.
 
 It functions by parsing Python code into an abstract syntax tree (AST), which it traverses and
-matches against internal dictionaries with **1180** rules, covering v2.0-2.7 and v3.0-3.8, divided
-into **127** modules, **837** classes/functions/constants members of modules, **187** kwargs of
+matches against internal dictionaries with **1188** rules, covering v2.0-2.7 and v3.0-3.8, divided
+into **127** modules, **841** classes/functions/constants members of modules, **191** kwargs of
 functions, **4** strftime directives, **2** array typecodes, **3** codecs error handler names, and
 **20** codecs encodings. Including looking for v2/v3 ``print expr`` and ``print(expr)``, ``long``,
 f-strings, coroutines (``async`` and ``await``), boolean constants, named expressions,

@@ -204,6 +204,30 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
     self.assertOnlyIn(3.0, detect("s=str()\ns.maketrans()"))
     self.assertOnlyIn(3.0, detect("str().maketrans()"))
 
+  def test_partition_of_str(self):
+    self.assertOnlyIn((2.5, 3.0), detect("s=\"\"\ns.partition('a')"))
+    self.assertOnlyIn((2.5, 3.0), detect("\"\".partition('a')"))
+    self.assertOnlyIn((2.5, 3.0), detect("s=str()\ns.partition('a')"))
+    self.assertOnlyIn((2.5, 3.0), detect("str().partition('a')"))
+
+  def test_rpartition_of_str(self):
+    self.assertOnlyIn((2.5, 3.0), detect("s=\"\"\ns.rpartition('a')"))
+    self.assertOnlyIn((2.5, 3.0), detect("\"\".rpartition('a')"))
+    self.assertOnlyIn((2.5, 3.0), detect("s=str()\ns.rpartition('a')"))
+    self.assertOnlyIn((2.5, 3.0), detect("str().rpartition('a')"))
+
+  def test_rsplit_of_str(self):
+    self.assertOnlyIn((2.4, 3.0), detect("s=\"\"\ns.rsplit('a')"))
+    self.assertOnlyIn((2.4, 3.0), detect("\"\".rsplit('a')"))
+    self.assertOnlyIn((2.4, 3.0), detect("s=str()\ns.rsplit('a')"))
+    self.assertOnlyIn((2.4, 3.0), detect("str().rsplit('a')"))
+
+  def test_zfill_of_str(self):
+    self.assertOnlyIn((2.2, 3.0), detect("s=\"\"\ns.zfill(2)"))
+    self.assertOnlyIn((2.2, 3.0), detect("\"\".zfill(2)"))
+    self.assertOnlyIn((2.2, 3.0), detect("s=str()\ns.zfill(2)"))
+    self.assertOnlyIn((2.2, 3.0), detect("str().zfill(2)"))
+
   def test_bit_length_of_int(self):
     self.assertOnlyIn((2.7, 3.1), detect("(42).bit_length()"))
     self.assertOnlyIn((2.7, 3.1), detect("n=42\nn.bit_length()"))

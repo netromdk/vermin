@@ -713,3 +713,15 @@ class VerminKwargsTests(VerminTest):
 
   def test_newline_of_gzip_open(self):
     self.assertOnlyIn(3.3, detect("import gzip\ngzip.open(newline=None)"))
+
+  def test_encoding_of_str_decode(self):
+    self.assertOnlyIn(2.7, detect("'test'.decode(encoding=None)"))
+
+  def test_errors_of_str_decode(self):
+    self.assertOnlyIn(2.7, detect("'test'.decode(errors=None)"))
+
+  def test_encoding_of_str_encode(self):
+    self.assertOnlyIn((2.7, 3.1), detect("'test'.encode(encoding=None)"))
+
+  def test_errors_of_str_encode(self):
+    self.assertOnlyIn((2.7, 3.1), detect("'test'.encode(errors=None)"))
