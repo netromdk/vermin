@@ -452,7 +452,7 @@ class SourceVisitor(ast.NodeVisitor):
           name = "int"
         elif t == float:
           name = "float"
-        if sys.version_info.major == 2 and t == long:
+        if sys.version_info.major == 2 and t == long:  # novm
           name = "long"
         if name is not None and len(full_name) == 0 or \
           (full_name[0] != name and len(full_name) == 1):
@@ -491,7 +491,7 @@ class SourceVisitor(ast.NodeVisitor):
       t = type(node.value.n)
       if t == int:
         value_name = "int"
-      elif sys.version_info.major == 2 and t == long:
+      elif sys.version_info.major == 2 and t == long:  # novm
         value_name = "long"
       elif t == float:
         value_name = "float"

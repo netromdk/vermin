@@ -102,16 +102,16 @@ Examples
     2.5, !3  Works with 2.5+ but it is known it won't work with py3.
     ~2, 3.4  No known reason it won't work with py2, works with 3.4+
 
-  % ./vermin.py -q --exclude long vermin
+  % ./vermin.py -q vermin
   Minimum required versions: 2.7, 3.0
 
-  % ./vermin.py -q --exclude long -t=3.3 vermin
+  % ./vermin.py -q -t=3.3 vermin
   Minimum required versions: 2.7, 3.0
   Target versions not met:   3.3
   % echo $?
   1
 
-  % ./vermin.py -q --exclude long --versions vermin
+  % ./vermin.py -q --versions vermin
   Minimum required versions: 2.7, 3.0
   Version range:             2.0, 2.2, 2.5, 2.7, 3.0
 
