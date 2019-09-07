@@ -3,6 +3,7 @@ import sys
 
 # Export as short function name for tests.
 from vermin import detect_min_versions_source as detect  # noqa:401
+from vermin import SourceVisitor, parse_source
 
 def current_major_version():
   return float(sys.version_info.major)
@@ -38,3 +39,10 @@ class VerminTest(unittest.TestCase):
   def assertEmpty(self, data):
     self.assertTrue(len(data) == 0,
                     msg="Input not empty! size={}, '{}'".format(len(data), data))
+
+def visit(source):
+  visitor = SourceVisitor()
+  (node, novermin) = parse_source(source)
+  visitor.set_no_lines(novermin)
+  visitor.visit(node)
+  return visitor

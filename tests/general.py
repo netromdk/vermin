@@ -1,16 +1,11 @@
 from os.path import abspath
 from multiprocessing import cpu_count
 
-from vermin import SourceVisitor, parse_source, parse_detect_source, detect_min_versions_source,\
+from vermin import parse_detect_source, detect_min_versions_source,\
   combine_versions, InvalidVersionException, detect_paths, process_paths, reverse_range,\
   dotted_name, Config
 
-from .testutils import VerminTest, current_version
-
-def visit(source):
-  visitor = SourceVisitor()
-  visitor.visit(parse_source(source))
-  return visitor
+from .testutils import VerminTest, current_version, visit
 
 class VerminGeneralTests(VerminTest):
   def __init__(self, methodName):
@@ -25,7 +20,7 @@ class VerminGeneralTests(VerminTest):
 
   def test_printv2(self):
     source = "print 'hello'"
-    (node, mins) = parse_detect_source(source)
+    (node, mins, novermin) = parse_detect_source(source)
     v = current_version()
     if v >= 3.4:
       self.assertEqual(node, None)

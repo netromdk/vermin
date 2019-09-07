@@ -6,7 +6,7 @@ from .source_visitor import SourceVisitor
 from .printing import nprint
 
 def detect_min_versions_source(source, path=None):
-  (node, mins) = parse_detect_source(source, path)
+  (node, mins, novermin) = parse_detect_source(source, path)
   if node is None:
     return mins
   return detect_min_versions(node)

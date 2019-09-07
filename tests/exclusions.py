@@ -1,11 +1,6 @@
-from vermin import Config, SourceVisitor, parse_source
+from vermin import Config
 
-from .testutils import VerminTest
-
-def visit(source):
-  visitor = SourceVisitor()
-  visitor.visit(parse_source(source))
-  return visitor
+from .testutils import VerminTest, visit
 
 class VerminExclusionsTests(VerminTest):
   def __init__(self, methodName):

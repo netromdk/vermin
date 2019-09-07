@@ -24,9 +24,10 @@ def process_path(args):
   node = None
   mins = None
   text = ""
+  novermin = set()
   with open(path, mode="rb") as fp:
     try:
-      (node, mins) = parse_detect_source(fp.read(), path=path)
+      (node, mins, novermin) = parse_detect_source(fp.read(), path=path)
     except KeyboardInterrupt:
       return (path, mins, text)
     except Exception as ex:
@@ -37,6 +38,7 @@ def process_path(args):
     return (path, mins, text)
 
   visitor = SourceVisitor(config)
+  visitor.set_no_lines(novermin)
 
   try:
     visitor.visit(node)

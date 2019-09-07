@@ -34,7 +34,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__function_name = None
     self.__kwargs = []
     self.__depth = 0
-    self.__line = None
+    self.__line = 1
     self.__strftime_directives = []
     self.__codecs_error_handlers = []
     self.__codecs_encodings = []
@@ -59,6 +59,9 @@ class SourceVisitor(ast.NodeVisitor):
 
     # Module as-name -> name.
     self.__module_as_name = {}
+
+    # Lines that should be ignored if they have the comment "novermin" or "novm".
+    self.__no_lines = set()
 
   def modules(self):
     return self.__modules
@@ -224,6 +227,12 @@ class SourceVisitor(ast.NodeVisitor):
     if len(text) > 0:
       text += "\n"
     return text
+
+  def set_no_lines(self, lines):
+    self.__no_lines = lines
+
+  def no_lines(self):
+    return self.__no_lines
 
   def __nprint(self, msg):
     if not self.__config.quiet():
@@ -510,6 +519,10 @@ class SourceVisitor(ast.NodeVisitor):
     if typecode not in self.__array_typecodes:
       self.__array_typecodes.append(typecode)
       self.__add_line_col(typecode, line, col)
+
+  def __is_no_line(self, line):
+    print("line: {}, no_lines: {}".format(line, self.__no_lines))
+    return line in self.__no_lines
 
   def generic_visit(self, node):
     if hasattr(node, "lineno"):
