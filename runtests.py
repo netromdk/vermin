@@ -29,3 +29,4 @@ if __name__ == '__main__':
   runsuite("codecs_error_handlers")
   runsuite("codecs_encodings")
   runsuite("exclusions")
+  runsuite("comment_exclusions")

@@ -521,7 +521,6 @@ class SourceVisitor(ast.NodeVisitor):
       self.__add_line_col(typecode, line, col)
 
   def __is_no_line(self, line):
-    print("line: {}, no_lines: {}".format(line, self.__no_lines))
     return line in self.__no_lines
 
   def generic_visit(self, node):
@@ -534,6 +533,9 @@ class SourceVisitor(ast.NodeVisitor):
     self.__depth -= 1
 
   def visit_Import(self, node):
+    if self.__is_no_line(node.lineno):
+      return
+
     for name in node.names:
       line = node.lineno
       col = node.col_offset + 7  # "import" = 6 + 1
@@ -545,6 +547,9 @@ class SourceVisitor(ast.NodeVisitor):
 
   def visit_ImportFrom(self, node):
     if node.module is None:
+      return
+
+    if self.__is_no_line(node.lineno):
       return
 
     from_col = 5  # "from" = 4 + 1
@@ -580,6 +585,9 @@ class SourceVisitor(ast.NodeVisitor):
     self.generic_visit(node)
 
   def visit_Call(self, node):
+    if self.__is_no_line(node.lineno):
+      return
+
     if hasattr(node, "func"):
       func = node.func
       if hasattr(func, "id"):
@@ -707,33 +715,39 @@ class SourceVisitor(ast.NodeVisitor):
     self.__var_annotations = True
 
   def __handle_FunctionDef(self, node):
+    if self.__is_no_line(node.lineno):
+      return False
+
     self.__add_user_def(node.name)
     self.generic_visit(node)
 
     # Check if the return annotation is set
     if hasattr(node, "returns") and node.returns:
       self.__annotations = True
-      return
+      return True
     # Then we are going to check the args
     if not hasattr(node, "args") or not hasattr(node.args, "args"):
-      return
+      return True
     for arg in node.args.args:
       if hasattr(arg, "annotation") and arg.annotation:
         self.__annotations = True
         break
+    return True
 
   def visit_FunctionDef(self, node):
     self.__handle_FunctionDef(node)
 
   def visit_AsyncFunctionDef(self, node):
-    self.__coroutines = True
-    self.__handle_FunctionDef(node)
+    if self.__handle_FunctionDef(node):
+      self.__coroutines = True
 
   def visit_Await(self, node):
     self.__coroutines = True
     self.generic_visit(node)
 
   def visit_ClassDef(self, node):
+    if self.__is_no_line(node.lineno):
+      return
     self.__add_user_def(node.name)
     self.generic_visit(node)
 
@@ -751,34 +765,34 @@ class SourceVisitor(ast.NodeVisitor):
       self.__pos_only_args = True
     self.generic_visit(node)
 
-  # Lax mode skips conditional blocks if enabled.
+  # Lax mode and comment-excluded lines skip conditional blocks if enabled.
 
   def visit_If(self, node):
-    if not self.__config.lax_mode():
+    if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
       self.generic_visit(node)
 
   def visit_IfExp(self, node):
-    if not self.__config.lax_mode():
+    if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
       self.generic_visit(node)
 
   def visit_For(self, node):
-    if not self.__config.lax_mode():
+    if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
       self.generic_visit(node)
 
   def visit_While(self, node):
-    if not self.__config.lax_mode():
+    if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
       self.generic_visit(node)
 
   def visit_Try(self, node):
-    if not self.__config.lax_mode():
+    if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
       self.generic_visit(node)
 
   def visit_TryExcept(self, node):
-    if not self.__config.lax_mode():
+    if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
       self.generic_visit(node)
 
   def visit_BoolOp(self, node):
-    if not self.__config.lax_mode():
+    if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
       self.generic_visit(node)
 
   # Ignore unused nodes as a speed optimization.
