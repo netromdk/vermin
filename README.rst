@@ -29,6 +29,8 @@ function, function and variable annotations, array typecodes, codecs error handl
 encodings. It tries to detect and ignore user-defined functions, classes, arguments, and variables
 with names that clash with library-defined symbols.
 
+The project is fairly well-tested with **1282** unit and integration tests.
+
 Usage
 =====
 
@@ -185,6 +187,17 @@ error handler names, or codecs encodings by name from being analysed via argumen
 It will state that "'ssl.PROTOCOL_TLS' requires (2.7, 3.6)" but to exclude that from the results,
 use ``--exclude 'ssl.PROTOCOL_TLS'``. Afterwards, only "'ssl' requires (2.6, 3.0)" will be shown and
 the final minimum required versions are v2.6 and v3.0 instead of v2.7 and v3.6.
+
+Code can even be excluded on a more fine grained level using the ``# novermin`` or ``# novm``
+comments at line level. The following yields the same behavior as the previous code block, but only
+for that particular ``if`` and its body:
+
+.. code-block:: python
+
+  import ssl
+  tls_version = ssl.PROTOCOL_TLSv1
+  if hasattr(ssl, "PROTOCOL_TLS"):  # novermin
+    tls_version = ssl.PROTOCOL_TLS
 
 Contributing
 ============
