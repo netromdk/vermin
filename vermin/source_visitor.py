@@ -614,6 +614,15 @@ class SourceVisitor(ast.NodeVisitor):
       if isinstance(func, ast.Attribute):
         self.__function_name = dotted_name(self.__get_attribute_name(func))
         self.__check_codecs_function(self.__function_name, node)
+
+    # Visit arguments and keywords.
+    if hasattr(node, "args"):
+      for arg in node.args:
+        self.generic_visit(arg)
+    if hasattr(node, "keywords"):
+      for kw in node.keywords:
+        self.generic_visit(kw)
+
     self.generic_visit(node)
     self.__function_name = None
 
