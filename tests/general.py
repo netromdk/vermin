@@ -88,6 +88,10 @@ class VerminGeneralTests(VerminTest):
       visitor = visit("raise Exception() from None")
       self.assertTrue(visitor.raise_cause())
 
+  def test_dict_comprehension(self):
+    visitor = visit("{key: value for ld in lod for key, value in ld.items()}")
+    self.assertTrue(visitor.dict_comprehension())
+
   def test_strftime_directives(self):
     visitor = visit("from datetime import datetime\ndatetime.now().strftime('%A %d. %B %Y')")
     self.assertOnlyIn(("%A", "%d", "%B", "%Y"), visitor.strftime_directives())
