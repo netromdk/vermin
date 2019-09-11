@@ -31,6 +31,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__coroutines = False
     self.__named_exprs = False
     self.__pos_only_args = False
+    self.__yield_from = False
     self.__function_name = None
     self.__kwargs = []
     self.__depth = 0
@@ -123,6 +124,9 @@ class SourceVisitor(ast.NodeVisitor):
   def codecs_encodings(self):
     return self.__codecs_encodings
 
+  def yield_from(self):
+    return self.__yield_from
+
   def minimum_versions(self):
     mins = [0, 0]
 
@@ -172,6 +176,10 @@ class SourceVisitor(ast.NodeVisitor):
     if self.pos_only_args():
       self.__vvprint("positional-only parameters require 3.8+")
       mins = combine_versions(mins, (None, 3.8))
+
+    if self.yield_from():
+      self.__vvprint("`yield from` requires 3.3+")
+      mins = combine_versions(mins, (None, 3.3))
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
@@ -763,6 +771,10 @@ class SourceVisitor(ast.NodeVisitor):
   def visit_arguments(self, node):
     if hasattr(node, "posonlyargs") and len(node.posonlyargs) > 0:
       self.__pos_only_args = True
+    self.generic_visit(node)
+
+  def visit_YieldFrom(self, node):
+    self.__yield_from = True
     self.generic_visit(node)
 
   # Lax mode and comment-excluded lines skip conditional blocks if enabled.
