@@ -32,6 +32,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__named_exprs = False
     self.__pos_only_args = False
     self.__yield_from = False
+    self.__raise_cause = False
     self.__function_name = None
     self.__kwargs = []
     self.__depth = 0
@@ -127,6 +128,9 @@ class SourceVisitor(ast.NodeVisitor):
   def yield_from(self):
     return self.__yield_from
 
+  def raise_cause(self):
+    return self.__raise_cause
+
   def minimum_versions(self):
     mins = [0, 0]
 
@@ -179,6 +183,10 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.yield_from():
       self.__vvprint("`yield from` requires 3.3+")
+      mins = combine_versions(mins, (None, 3.3))
+
+    if self.raise_cause():
+      self.__vvprint("exception cause requires 3.3+")
       mins = combine_versions(mins, (None, 3.3))
 
     for directive in self.strftime_directives():
@@ -775,6 +783,11 @@ class SourceVisitor(ast.NodeVisitor):
 
   def visit_YieldFrom(self, node):
     self.__yield_from = True
+    self.generic_visit(node)
+
+  def visit_Raise(self, node):
+    if hasattr(node, "cause") and node.cause is not None:
+      self.__raise_cause = True
     self.generic_visit(node)
 
   # Lax mode and comment-excluded lines skip conditional blocks if enabled.

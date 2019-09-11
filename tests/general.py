@@ -83,6 +83,11 @@ class VerminGeneralTests(VerminTest):
       visitor = visit("def foo(x): yield from range(x)")
       self.assertTrue(visitor.yield_from())
 
+  def test_raise_cause(self):
+    if current_version() >= 3.3:
+      visitor = visit("raise Exception() from None")
+      self.assertTrue(visitor.raise_cause())
+
   def test_strftime_directives(self):
     visitor = visit("from datetime import datetime\ndatetime.now().strftime('%A %d. %B %Y')")
     self.assertOnlyIn(("%A", "%d", "%B", "%Y"), visitor.strftime_directives())
