@@ -30,6 +30,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__var_annotations = False
     self.__coroutines = False
     self.__async_generator = False
+    self.__async_comprehension = False
     self.__seen_yield = False
     self.__seen_await = False
     self.__named_exprs = False
@@ -115,6 +116,9 @@ class SourceVisitor(ast.NodeVisitor):
   def async_generator(self):
     return self.__async_generator
 
+  def async_comprehension(self):
+    return self.__async_comprehension
+
   def pos_only_args(self):
     return self.__pos_only_args
 
@@ -189,6 +193,10 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.async_generator():
       self.__vvprint("async generators require 3.6+ (await and yield in same func)")
+      mins = combine_versions(mins, (None, 3.6))
+
+    if self.async_comprehension():
+      self.__vvprint("async comprehensions require 3.6+")
       mins = combine_versions(mins, (None, 3.6))
 
     if self.named_expressions():
@@ -838,6 +846,10 @@ class SourceVisitor(ast.NodeVisitor):
     self.__mat_mult = True
     self.generic_visit(node)
 
+  def visit_comprehension(self, node):
+    if hasattr(node, "is_async") and node.is_async == 1:
+      self.__async_comprehension = True
+    self.generic_visit(node)
   # Lax mode and comment-excluded lines skip conditional blocks if enabled.
 
   def visit_If(self, node):
