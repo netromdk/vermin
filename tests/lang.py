@@ -46,9 +46,9 @@ class VerminLanguageTests(VerminTest):
       self.assertOnlyIn(3.6, detect("async def func():\n\tyield 42\n\tawait something()"))
 
   def test_async_comprehension(self):
-    if current_version() >= 3.6:
-      self.assertOnlyIn(3.6, detect("[i async for i in aiter() if i % 2]"))
+    if current_version() >= 3.7:
+      self.assertOnlyIn(3.7, detect("[i async for i in aiter() if i % 2]"))
 
   def test_await_in_comprehension(self):
-    if current_version() >= 3.6:
-      self.assertOnlyIn(3.6, detect("[await fun() for fun in funcs if await condition()]"))
+    if current_version() >= 3.7:
+      self.assertOnlyIn(3.7, detect("[await fun() for fun in funcs if await condition()]"))

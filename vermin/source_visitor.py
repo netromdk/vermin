@@ -201,13 +201,16 @@ class SourceVisitor(ast.NodeVisitor):
       self.__vvprint("async generators require 3.6+ (await and yield in same func)")
       mins = combine_versions(mins, (None, 3.6))
 
+    # NOTE: While async comprehensions and await in comprehensions should be in 3.6, they were first
+    # put into 3.7 for some reason!
+
     if self.async_comprehension():
-      self.__vvprint("async comprehensions require 3.6+")
-      mins = combine_versions(mins, (None, 3.6))
+      self.__vvprint("async comprehensions require 3.7+")
+      mins = combine_versions(mins, (None, 3.7))
 
     if self.await_in_comprehension():
-      self.__vvprint("await in comprehensions require 3.6+")
-      mins = combine_versions(mins, (None, 3.6))
+      self.__vvprint("await in comprehensions require 3.7+")
+      mins = combine_versions(mins, (None, 3.7))
 
     if self.named_expressions():
       self.__vvprint("named expressions require 3.8+")
