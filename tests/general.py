@@ -67,35 +67,42 @@ class VerminGeneralTests(VerminTest):
     if current_version() >= 3.6:
       visitor = visit("name = 'world'\nf'hello {name}'")
       self.assertTrue(visitor.fstrings())
+      self.assertEqual([None, 3.6], visitor.minimum_versions())
 
   def test_named_expressions(self):
     if current_version() >= 3.8:
       visitor = visit("a = 1\nif (b := a) == 1:\n\tprint(b)")
       self.assertTrue(visitor.named_expressions())
+      self.assertEqual([None, 3.8], visitor.minimum_versions())
 
   def test_pos_only_args(self):
     if current_version() >= 3.8:
       visitor = visit("def foo(a, /, b): return a + b")
       self.assertTrue(visitor.pos_only_args())
+      self.assertEqual([None, 3.8], visitor.minimum_versions())
 
   def test_yield_from(self):
     if current_version() >= 3.3:
       visitor = visit("def foo(x): yield from range(x)")
       self.assertTrue(visitor.yield_from())
+      self.assertEqual([None, 3.3], visitor.minimum_versions())
 
   def test_raise_cause(self):
     if current_version() >= 3.3:
       visitor = visit("raise Exception() from None")
       self.assertTrue(visitor.raise_cause())
+      self.assertEqual([None, 3.3], visitor.minimum_versions())
 
   def test_dict_comprehension(self):
     visitor = visit("{key: value for ld in lod for key, value in ld.items()}")
     self.assertTrue(visitor.dict_comprehension())
+    self.assertEqual([2.7, 3.0], visitor.minimum_versions())
 
   def test_infix_matrix_multiplication(self):
     if current_version() >= 3.5:
       visitor = visit("M @ N")
       self.assertTrue(visitor.infix_matrix_multiplication())
+      self.assertEqual([None, 3.5], visitor.minimum_versions())
 
   def test_strftime_directives(self):
     visitor = visit("from datetime import datetime\ndatetime.now().strftime('%A %d. %B %Y')")

@@ -203,7 +203,7 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.infix_matrix_multiplication():
       self.__vvprint("infix matrix multiplication requires 3.5+")
-      mins = combine_versions(mins, (2.7, 3.0))
+      mins = combine_versions(mins, (None, 3.5))
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
