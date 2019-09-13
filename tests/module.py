@@ -382,3 +382,15 @@ class VerminModuleTests(VerminTest):
 
   def test_statistics(self):
     self.assertOnlyIn(3.4, detect("import statistics"))
+
+  def test_ensurepip(self):
+    self.assertOnlyIn((2.7, 3.4), detect("import ensurepip"))
+
+  def test_enum(self):
+    self.assertOnlyIn(3.4, detect("import enum"))
+
+  def test_selectors(self):
+    self.assertOnlyIn(3.4, detect("import selectors"))
+
+  def test_zipapp(self):
+    self.assertOnlyIn(3.5, detect("import zipapp"))

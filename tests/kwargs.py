@@ -725,3 +725,9 @@ class VerminKwargsTests(VerminTest):
 
   def test_errors_of_str_encode(self):
     self.assertOnlyIn((2.7, 3.1), detect("'test'.encode(errors=None)"))
+
+  def test_filter_of_zipapp_create_archive(self):
+    self.assertOnlyIn(3.7, detect("import zipapp\nzipapp.create_archive(filter=None)"))
+
+  def test_compressed_of_zipapp_create_archive(self):
+    self.assertOnlyIn(3.7, detect("import zipapp\nzipapp.create_archive(compressed=True)"))

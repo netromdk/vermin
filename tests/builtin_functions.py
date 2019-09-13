@@ -259,3 +259,21 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
   def test_fromhex_of_float(self):
     self.assertOnlyIn((2.6, 3.0), detect("(42.0).fromhex()"))
     self.assertOnlyIn((2.6, 3.0), detect("n=42.0\nn.fromhex()"))
+
+  def test_hex_of_bytes(self):
+    if current_version() >= 3.0:
+      self.assertOnlyIn(3.5, detect("b'\x10'.hex()"))
+      self.assertOnlyIn(3.5, detect("b=b'\x10'\nb.hex()"))
+
+  def test_hex_of_bytearray(self):
+    self.assertOnlyIn(3.5, detect("bytearray(b'\x10').hex()"))
+    self.assertOnlyIn(3.5, detect("b=bytearray(b'\x10')\nb.hex()"))
+
+  def test_hex_of_memoryview(self):
+    self.assertOnlyIn(3.5, detect("memoryview(b'1').hex()"))
+
+  def test_release_of_memoryview(self):
+    self.assertOnlyIn(3.2, detect("memoryview(b'1').release()"))
+
+  def test_cast_of_memoryview(self):
+    self.assertOnlyIn(3.3, detect("memoryview(b'1').cast()"))

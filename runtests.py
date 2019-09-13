@@ -19,6 +19,7 @@ if __name__ == '__main__':
   runsuite("class")
   runsuite("exception")
   runsuite("builtin_functions")
+  runsuite("builtin_constants")
   runsuite("function")
   runsuite("constants")
   runsuite("decorators")
