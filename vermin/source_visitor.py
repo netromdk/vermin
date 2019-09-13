@@ -431,7 +431,7 @@ class SourceVisitor(ast.NodeVisitor):
     return full_name
 
   def __is_builtin_type(self, name):
-    return name in {"dict", "set", "list", "unicode", "str", "int", "float", "long"}
+    return name in {"dict", "set", "list", "unicode", "str", "int", "float", "long", "bytes"}
 
   def __get_attribute_name(self, node):
     """Retrieve full attribute name path, like ["ipaddress", "IPv4Address"] from:
@@ -481,6 +481,9 @@ class SourceVisitor(ast.NodeVisitor):
         if name is not None and len(full_name) == 0 or \
           (full_name[0] != name and len(full_name) == 1):
           full_name.insert(0, name)
+      elif not primi_type and hasattr(ast, "Bytes") and isinstance(attr, ast.Bytes):
+        if len(full_name) == 0 or (full_name[0] != "bytes" and len(full_name) == 1):
+          full_name.insert(0, "bytes")
     return full_name
 
   def __add_name_res_assign_node(self, node):
@@ -519,6 +522,8 @@ class SourceVisitor(ast.NodeVisitor):
         value_name = "long"
       elif t == float:
         value_name = "float"
+    elif hasattr(ast, "Bytes") and isinstance(node.value, ast.Bytes):
+      value_name = "bytes"
 
     if value_name is None:
       return
