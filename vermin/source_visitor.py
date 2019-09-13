@@ -33,6 +33,9 @@ class SourceVisitor(ast.NodeVisitor):
     self.__async_comprehension = False
     self.__seen_yield = False
     self.__seen_await = False
+    self.__seen_comp_await = False
+    self.__comprehension = False
+    self.__await_in_comprehension = False
     self.__named_exprs = False
     self.__pos_only_args = False
     self.__yield_from = False
@@ -119,6 +122,9 @@ class SourceVisitor(ast.NodeVisitor):
   def async_comprehension(self):
     return self.__async_comprehension
 
+  def await_in_comprehension(self):
+    return self.__await_in_comprehension
+
   def pos_only_args(self):
     return self.__pos_only_args
 
@@ -197,6 +203,10 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.async_comprehension():
       self.__vvprint("async comprehensions require 3.6+")
+      mins = combine_versions(mins, (None, 3.6))
+
+    if self.await_in_comprehension():
+      self.__vvprint("await in comprehensions require 3.6+")
       mins = combine_versions(mins, (None, 3.6))
 
     if self.named_expressions():
@@ -803,6 +813,8 @@ class SourceVisitor(ast.NodeVisitor):
   def visit_Await(self, node):
     self.__coroutines = True
     self.__seen_await = True
+    if self.__comprehension:
+      self.__seen_comp_await = True
     self.generic_visit(node)
 
   def visit_ClassDef(self, node):
@@ -849,7 +861,12 @@ class SourceVisitor(ast.NodeVisitor):
   def visit_comprehension(self, node):
     if hasattr(node, "is_async") and node.is_async == 1:
       self.__async_comprehension = True
+    self.__comprehension = True
     self.generic_visit(node)
+    if self.__seen_comp_await:
+      self.__await_in_comprehension = True
+    self.__comprehension = False
+
   # Lax mode and comment-excluded lines skip conditional blocks if enabled.
 
   def visit_If(self, node):

@@ -49,3 +49,6 @@ class VerminLanguageTests(VerminTest):
     if current_version() >= 3.6:
       self.assertOnlyIn(3.6, detect("[i async for i in aiter() if i % 2]"))
 
+  def test_await_in_comprehension(self):
+    if current_version() >= 3.6:
+      self.assertOnlyIn(3.6, detect("[await fun() for fun in funcs if await condition()]"))
