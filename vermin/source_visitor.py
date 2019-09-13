@@ -29,6 +29,9 @@ class SourceVisitor(ast.NodeVisitor):
     self.__annotations = False
     self.__var_annotations = False
     self.__coroutines = False
+    self.__async_generator = False
+    self.__seen_yield = False
+    self.__seen_await = False
     self.__named_exprs = False
     self.__pos_only_args = False
     self.__yield_from = False
@@ -109,6 +112,9 @@ class SourceVisitor(ast.NodeVisitor):
   def coroutines(self):
     return self.__coroutines
 
+  def async_generator(self):
+    return self.__async_generator
+
   def pos_only_args(self):
     return self.__pos_only_args
 
@@ -180,6 +186,10 @@ class SourceVisitor(ast.NodeVisitor):
     if self.coroutines():
       self.__vvprint("coroutines require 3.5+ (async and await)")
       mins = combine_versions(mins, (None, 3.5))
+
+    if self.async_generator():
+      self.__vvprint("async generators require 3.6+ (await and yield in same func)")
+      mins = combine_versions(mins, (None, 3.6))
 
     if self.named_expressions():
       self.__vvprint("named expressions require 3.8+")
@@ -775,11 +785,16 @@ class SourceVisitor(ast.NodeVisitor):
     self.__handle_FunctionDef(node)
 
   def visit_AsyncFunctionDef(self, node):
+    self.__seen_yield = False
+    self.__seen_await = False
     if self.__handle_FunctionDef(node):
       self.__coroutines = True
+      if self.__seen_yield and self.__seen_await:
+        self.__async_generator = True
 
   def visit_Await(self, node):
     self.__coroutines = True
+    self.__seen_await = True
     self.generic_visit(node)
 
   def visit_ClassDef(self, node):
@@ -804,6 +819,10 @@ class SourceVisitor(ast.NodeVisitor):
 
   def visit_YieldFrom(self, node):
     self.__yield_from = True
+    self.generic_visit(node)
+
+  def visit_Yield(self, node):
+    self.__seen_yield = True
     self.generic_visit(node)
 
   def visit_Raise(self, node):

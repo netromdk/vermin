@@ -40,3 +40,7 @@ class VerminLanguageTests(VerminTest):
   def test_coroutines_await(self):
     if current_version() >= 3.5:
       self.assertOnlyIn(3.5, detect("async def func():\n\tawait something()"))
+
+  def test_async_generator(self):
+    if current_version() >= 3.6:
+      self.assertOnlyIn(3.6, detect("async def func():\n\tyield 42\n\tawait something()"))
