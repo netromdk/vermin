@@ -34,6 +34,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__yield_from = False
     self.__raise_cause = False
     self.__dict_comp = False
+    self.__mat_mult = False
     self.__function_name = None
     self.__kwargs = []
     self.__depth = 0
@@ -135,6 +136,9 @@ class SourceVisitor(ast.NodeVisitor):
   def dict_comprehension(self):
     return self.__dict_comp
 
+  def infix_matrix_multiplication(self):
+    return self.__mat_mult
+
   def minimum_versions(self):
     mins = [0, 0]
 
@@ -195,6 +199,10 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.dict_comprehension():
       self.__vvprint("dict comprehensions require (2.7, 3.0)")
+      mins = combine_versions(mins, (2.7, 3.0))
+
+    if self.infix_matrix_multiplication():
+      self.__vvprint("infix matrix multiplication requires 3.5+")
       mins = combine_versions(mins, (2.7, 3.0))
 
     for directive in self.strftime_directives():
@@ -805,6 +813,10 @@ class SourceVisitor(ast.NodeVisitor):
 
   def visit_DictComp(self, node):
     self.__dict_comp = True
+    self.generic_visit(node)
+
+  def visit_MatMult(self, node):
+    self.__mat_mult = True
     self.generic_visit(node)
 
   # Lax mode and comment-excluded lines skip conditional blocks if enabled.

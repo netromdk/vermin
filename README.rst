@@ -24,11 +24,11 @@ functions, **4** strftime directives, **2** array typecodes, **3** codecs error 
 **20** codecs encodings. Including looking for v2/v3 ``print expr`` and ``print(expr)``, ``long``,
 f-strings, coroutines (``async`` and ``await``), boolean constants, named expressions,
 positional-only parameters, ``yield from``, exception context cause (``raise .. from ..``), ``dict``
-comprehensions, ``"..".format(..)``, imports (``import X``, ``from X import Y``, ``from X import
-*``), function calls wrt. name and kwargs, ``strftime`` + ``strptime`` directives used, and
-function, function and variable annotations, array typecodes, codecs error handler names and
-encodings. It tries to detect and ignore user-defined functions, classes, arguments, and variables
-with names that clash with library-defined symbols.
+comprehensions, infix matrix multiplication, ``"..".format(..)``, imports (``import X``, ``from X
+import Y``, ``from X import *``), function calls wrt. name and kwargs, ``strftime`` + ``strptime``
+directives used, and function, function and variable annotations, array typecodes, codecs error
+handler names and encodings. It tries to detect and ignore user-defined functions, classes,
+arguments, and variables with names that clash with library-defined symbols.
 
 The project is fairly well-tested with **1302** unit and integration tests.
 
