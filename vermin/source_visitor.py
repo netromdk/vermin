@@ -324,14 +324,20 @@ class SourceVisitor(ast.NodeVisitor):
   def __vprint(self, msg, entity=None):
     self.__verbose_print(msg, 1, entity)
 
-  def __vvprint(self, msg, entity=None):
+  def __vvprint(self, msg, entity=None, line=None):
     level = self.__config.verbose()
     entity = entity if level > 2 else None
-    line = self.__line if level > 2 else None
+    if line is None and level > 2:
+      line = self.__line
+    elif line == -1:
+      line = None
     self.__verbose_print(msg, 2, entity, line)
 
-  def __vvvprint(self, msg, entity=None):
-    self.__verbose_print(msg, 3, entity, line=self.__line)
+  def __vvvprint(self, msg, entity=None, line=None):
+    line = self.__line if line is None else line
+    if line == -1:
+      line = None
+    self.__verbose_print(msg, 3, entity, line=line)
 
   def __add_module(self, module, line=None, col=None):
     if module in self.__user_defs:
