@@ -171,7 +171,8 @@ class SourceVisitor(ast.NodeVisitor):
       mins[0] = 2.0
 
     if self.printv3():
-      self.__vvprint("print(expr) requires 2+ or 3+")
+      # print() is used so often that we only want to show it once, and with no line.
+      self.__vvprint("print(expr) requires 2+ or 3+", line=-1)
       mins = combine_versions(mins, (2.0, 3.0))
 
     if self.format27():
@@ -187,61 +188,48 @@ class SourceVisitor(ast.NodeVisitor):
       mins = combine_versions(mins, (None, 3.6))
 
     if self.fstrings_self_doc():
-      self.__vvprint("self-documenting fstrings require 3.8+")
       mins = combine_versions(mins, (None, 3.8))
 
     if self.bool_const():
       mins = combine_versions(mins, (2.2, 3.0))
 
     if self.annotations():
-      self.__vvprint("annotations require 3+")
       mins = combine_versions(mins, (None, 3.0))
 
     if self.var_annotations():
-      self.__vvprint("variable annotations require 3.6+")
       mins = combine_versions(mins, (None, 3.6))
 
     if self.coroutines():
-      self.__vvprint("coroutines require 3.5+ (async and await)")
       mins = combine_versions(mins, (None, 3.5))
 
     if self.async_generator():
-      self.__vvprint("async generators require 3.6+ (await and yield in same func)")
       mins = combine_versions(mins, (None, 3.6))
 
     # NOTE: While async comprehensions and await in comprehensions should be in 3.6, they were first
     # put into 3.7 for some reason!
 
     if self.async_comprehension():
-      self.__vvprint("async comprehensions require 3.7+")
       mins = combine_versions(mins, (None, 3.7))
 
     if self.await_in_comprehension():
-      self.__vvprint("await in comprehensions require 3.7+")
       mins = combine_versions(mins, (None, 3.7))
 
     if self.named_expressions():
-      self.__vvprint("named expressions require 3.8+")
       mins = combine_versions(mins, (None, 3.8))
 
     if self.pos_only_args():
-      self.__vvprint("positional-only parameters require 3.8+")
       mins = combine_versions(mins, (None, 3.8))
 
     if self.yield_from():
-      self.__vvprint("`yield from` requires 3.3+")
       mins = combine_versions(mins, (None, 3.3))
 
     if self.raise_cause():
-      self.__vvprint("exception cause requires 3.3+")
       mins = combine_versions(mins, (None, 3.3))
 
     if self.dict_comprehension():
-      self.__vvprint("dict comprehensions require (2.7, 3.0)")
       mins = combine_versions(mins, (2.7, 3.0))
 
     if self.infix_matrix_multiplication():
-      self.__vvprint("infix matrix multiplication requires 3.5+")
       mins = combine_versions(mins, (None, 3.5))
 
     for directive in self.strftime_directives():
@@ -778,10 +766,10 @@ class SourceVisitor(ast.NodeVisitor):
     self.__vvprint("f-strings require 3.6+")
     if hasattr(node, "values"):
       for val in node.values:
-        if type(val) == ast.Constant and hasattr(val, "value"):
-          val = val.value
-          if type(val) == str and val.endswith("="):
+        if type(val) == ast.Constant and hasattr(val, "value") and \
+           type(val.value) == str and val.value.endswith("="):
             self.__fstrings_self_doc = True
+            self.__vvprint("self-documenting fstrings require 3.8+")
 
   # Mark variable names as aliases.
   def visit_Assign(self, node):
@@ -801,6 +789,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.generic_visit(node)
     self.__annotations = True
     self.__var_annotations = True
+    self.__vvprint("variable annotations require 3.6+")
 
   def __handle_FunctionDef(self, node):
     if self.__is_no_line(node.lineno):
@@ -812,6 +801,7 @@ class SourceVisitor(ast.NodeVisitor):
     # Check if the return annotation is set
     if hasattr(node, "returns") and node.returns:
       self.__annotations = True
+      self.__vvprint("annotations require 3+")
       return True
     # Then we are going to check the args
     if not hasattr(node, "args") or not hasattr(node.args, "args"):
@@ -819,6 +809,7 @@ class SourceVisitor(ast.NodeVisitor):
     for arg in node.args.args:
       if hasattr(arg, "annotation") and arg.annotation:
         self.__annotations = True
+        self.__vvprint("annotations require 3+")
         break
     return True
 
@@ -830,11 +821,15 @@ class SourceVisitor(ast.NodeVisitor):
     self.__seen_await = False
     if self.__handle_FunctionDef(node):
       self.__coroutines = True
+      self.__vvprint("coroutines require 3.5+ (async)", line=node.lineno)
       if self.__seen_yield and self.__seen_await:
         self.__async_generator = True
+        self.__vvprint("async generators require 3.6+ (await and yield in same func)",
+                       line=node.lineno)
 
   def visit_Await(self, node):
     self.__coroutines = True
+    self.__vvprint("coroutines require 3.5+ (await)")
     self.__seen_await = True
     if self.__comprehension:
       self.__seen_comp_await = True
@@ -853,15 +848,18 @@ class SourceVisitor(ast.NodeVisitor):
 
   def visit_NamedExpr(self, node):
     self.__named_exprs = True
+    self.__vvprint("named expressions require 3.8+")
     self.generic_visit(node)
 
   def visit_arguments(self, node):
     if hasattr(node, "posonlyargs") and len(node.posonlyargs) > 0:
       self.__pos_only_args = True
+      self.__vvprint("positional-only parameters require 3.8+")
     self.generic_visit(node)
 
   def visit_YieldFrom(self, node):
     self.__yield_from = True
+    self.__vvprint("`yield from` requires 3.3+")
     self.generic_visit(node)
 
   def visit_Yield(self, node):
@@ -871,23 +869,28 @@ class SourceVisitor(ast.NodeVisitor):
   def visit_Raise(self, node):
     if hasattr(node, "cause") and node.cause is not None:
       self.__raise_cause = True
+      self.__vvprint("exception cause requires 3.3+", line=node.lineno)
     self.generic_visit(node)
 
   def visit_DictComp(self, node):
     self.__dict_comp = True
+    self.__vvprint("dict comprehensions require (2.7, 3.0)")
     self.generic_visit(node)
 
   def visit_MatMult(self, node):
     self.__mat_mult = True
+    self.__vvprint("infix matrix multiplication requires 3.5+")
     self.generic_visit(node)
 
   def visit_comprehension(self, node):
     if hasattr(node, "is_async") and node.is_async == 1:
       self.__async_comprehension = True
+      self.__vvprint("async comprehensions require 3.7+")
     self.__comprehension = True
     self.generic_visit(node)
     if self.__seen_comp_await:
       self.__await_in_comprehension = True
+      self.__vvprint("await in comprehensions require 3.7+")
     self.__comprehension = False
 
   # Lax mode and comment-excluded lines skip conditional blocks if enabled.
