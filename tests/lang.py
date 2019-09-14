@@ -47,7 +47,25 @@ class VerminLanguageTests(VerminTest):
 
   def test_async_generator(self):
     if current_version() >= 3.6:
-      self.assertOnlyIn(3.6, detect("async def func():\n\tyield 42\n\tawait something()"))
+      visitor = visit("async def func():\n"
+                      "  yield 42\n"
+                      "  await something()")
+      self.assertTrue(visitor.async_generator())
+      self.assertOnlyIn(3.6, visitor.minimum_versions())
+
+      visitor = visit("async def func():\n"
+                      "  yield 42\n"
+                      "  async def func2():\n"
+                      "    await other()")
+      self.assertFalse(visitor.async_generator())
+
+    # 3.7 = await in comprehension.
+    if current_version() >= 3.7:
+      visitor = visit("async def func():\n"
+                      "  yield 42\n"
+                      "  d = [v for v in await other()]")
+      self.assertFalse(visitor.async_generator())
+      self.assertTrue(visitor.await_in_comprehension())
 
   def test_async_comprehension(self):
     if current_version() >= 3.7:
@@ -55,7 +73,9 @@ class VerminLanguageTests(VerminTest):
 
   def test_await_in_comprehension(self):
     if current_version() >= 3.7:
-      self.assertOnlyIn(3.7, detect("[await fun() for fun in funcs if await condition()]"))
+      visitor = visit("[await fun() for fun in funcs if await condition()]")
+      self.assertTrue(visitor.await_in_comprehension())
+      self.assertOnlyIn(3.7, visitor.minimum_versions())
 
   def test_continue_in_finally(self):
     if current_version() >= 3.8:

@@ -32,10 +32,8 @@ class SourceVisitor(ast.NodeVisitor):
     self.__coroutines = False
     self.__async_generator = False
     self.__async_comprehension = False
-    self.__seen_yield = False
-    self.__seen_await = False
-    self.__seen_comp_await = False
-    self.__comprehension = False
+    self.__seen_yield = 0
+    self.__seen_await = 0
     self.__await_in_comprehension = False
     self.__named_exprs = False
     self.__pos_only_args = False
@@ -824,25 +822,30 @@ class SourceVisitor(ast.NodeVisitor):
     return True
 
   def visit_FunctionDef(self, node):
-    self.__handle_FunctionDef(node)
+    seen_yield = self.__seen_yield
+    if self.__handle_FunctionDef(node):
+      # Reset to seen yields before function.
+      self.__seen_yield = seen_yield
 
   def visit_AsyncFunctionDef(self, node):
-    self.__seen_yield = False
-    self.__seen_await = False
+    seen_await = self.__seen_await
+    seen_yield = self.__seen_yield
     if self.__handle_FunctionDef(node):
       self.__coroutines = True
       self.__vvprint("coroutines require 3.5+ (async)", line=node.lineno)
-      if self.__seen_yield and self.__seen_await:
+      if self.__seen_yield > seen_yield and self.__seen_await > seen_await:
         self.__async_generator = True
         self.__vvprint("async generators require 3.6+ (await and yield in same func)",
                        line=node.lineno)
 
+      # Reset to seen awaits/yields before async function.
+      self.__seen_await = seen_await
+      self.__seen_yield = seen_yield
+
   def visit_Await(self, node):
     self.__coroutines = True
     self.__vvprint("coroutines require 3.5+ (await)")
-    self.__seen_await = True
-    if self.__comprehension:
-      self.__seen_comp_await = True
+    self.__seen_await += 1
     self.generic_visit(node)
 
   def visit_ClassDef(self, node):
@@ -873,7 +876,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.generic_visit(node)
 
   def visit_Yield(self, node):
-    self.__seen_yield = True
+    self.__seen_yield += 1
     self.generic_visit(node)
 
   def visit_Raise(self, node):
@@ -896,12 +899,15 @@ class SourceVisitor(ast.NodeVisitor):
     if hasattr(node, "is_async") and node.is_async == 1:
       self.__async_comprehension = True
       self.__vvprint("async comprehensions require 3.7+")
-    self.__comprehension = True
+
+    seen_await = self.__seen_await
     self.generic_visit(node)
-    if self.__seen_comp_await:
+    if self.__seen_await > seen_await:
       self.__await_in_comprehension = True
       self.__vvprint("await in comprehensions require 3.7+")
-    self.__comprehension = False
+
+    # Reset to seen awaits before comprehension.
+    self.__seen_await = seen_await
 
   def visit_Continue(self, node):
     # Only accept continue in try-finally if no intermediary loops have been encountered.
