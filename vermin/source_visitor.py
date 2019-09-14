@@ -43,6 +43,10 @@ class SourceVisitor(ast.NodeVisitor):
     self.__raise_cause = False
     self.__dict_comp = False
     self.__mat_mult = False
+    self.__continue_in_finally = False
+    self.__seen_for = 0
+    self.__seen_while = 0
+    self.__try_finally = []
     self.__function_name = None
     self.__kwargs = []
     self.__depth = 0
@@ -159,6 +163,9 @@ class SourceVisitor(ast.NodeVisitor):
   def infix_matrix_multiplication(self):
     return self.__mat_mult
 
+  def continue_in_finally(self):
+    return self.__continue_in_finally
+
   def minimum_versions(self):
     mins = [0, 0]
 
@@ -231,6 +238,9 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.infix_matrix_multiplication():
       mins = combine_versions(mins, (None, 3.5))
+
+    if self.continue_in_finally():
+      mins = combine_versions(mins, (None, 3.8))
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
@@ -893,6 +903,14 @@ class SourceVisitor(ast.NodeVisitor):
       self.__vvprint("await in comprehensions require 3.7+")
     self.__comprehension = False
 
+  def visit_Continue(self, node):
+    # Only accept continue in try-finally if no intermediary loops have been encountered.
+    if len(self.__try_finally) > 0:
+      (seen_for, seen_while) = self.__try_finally[-1]
+      if seen_for == self.__seen_for and seen_while == self.__seen_while:
+        self.__continue_in_finally = True
+        self.__vvprint("continue in finally block requires 3.8+", line=node.lineno)
+
   # Lax mode and comment-excluded lines skip conditional blocks if enabled.
 
   def visit_If(self, node):
@@ -905,19 +923,34 @@ class SourceVisitor(ast.NodeVisitor):
 
   def visit_For(self, node):
     if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
+      self.__seen_for += 1
       self.generic_visit(node)
+      self.__seen_for -= 1
 
   def visit_While(self, node):
     if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
+      self.__seen_while += 1
+      self.generic_visit(node)
+      self.__seen_while -= 1
+
+  def __handle_Try(self, node):
+    if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
+      if hasattr(node, "finalbody"):
+        self.__try_finally.append((self.__seen_for, self.__seen_while))
+        for stm in node.finalbody:
+          self.visit(stm)
+        if len(self.__try_finally) > 0:
+          self.__try_finally.pop()
       self.generic_visit(node)
 
   def visit_Try(self, node):
-    if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
-      self.generic_visit(node)
+    self.__handle_Try(node)
 
   def visit_TryExcept(self, node):
-    if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
-      self.generic_visit(node)
+    self.__handle_Try(node)
+
+  def visit_TryFinally(self, node):
+    self.__handle_Try(node)
 
   def visit_BoolOp(self, node):
     if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
@@ -980,9 +1013,6 @@ class SourceVisitor(ast.NodeVisitor):
     pass
 
   def visit_Is(self, node):
-    pass
-
-  def visit_Continue(self, node):
     pass
 
   def visit_Break(self, node):

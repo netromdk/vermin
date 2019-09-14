@@ -1,4 +1,4 @@
-from .testutils import VerminTest, detect, current_version, current_major_version
+from .testutils import VerminTest, detect, current_version, current_major_version, visit
 
 class VerminLanguageTests(VerminTest):
   def test_printv2(self):
@@ -56,3 +56,45 @@ class VerminLanguageTests(VerminTest):
   def test_await_in_comprehension(self):
     if current_version() >= 3.7:
       self.assertOnlyIn(3.7, detect("[await fun() for fun in funcs if await condition()]"))
+
+  def test_continue_in_finally(self):
+    if current_version() >= 3.8:
+      visitor = visit("try: pass\nfinally: continue")
+      self.assertTrue(visitor.continue_in_finally())
+      self.assertOnlyIn(3.8, visitor.minimum_versions())
+
+      visitor = visit("for i in range(3):\n"
+                      "  try:\n"
+                      "    pass\n"
+                      "  finally:\n"
+                      "    continue")
+      self.assertTrue(visitor.continue_in_finally())
+      self.assertOnlyIn(3.8, visitor.minimum_versions())
+
+      visitor = visit("for i in range(3):\n"
+                      "  try:\n"
+                      "    pass\n"
+                      "  finally:\n"
+                      "    for j in []:\n"
+                      "      continue")  # Skip due to inline for-loop.
+      self.assertFalse(visitor.continue_in_finally())
+
+      visitor = visit("for i in range(3):\n"
+                      "  try:\n"
+                      "    pass\n"
+                      "  finally:\n"
+                      "    while i < 2:\n"
+                      "      continue")  # Skip due to inline while-loop.
+      self.assertFalse(visitor.continue_in_finally())
+
+      visitor = visit("for i in range(3):\n"
+                      "  try:\n"
+                      "    pass\n"
+                      "  finally:\n"
+                      "    for j in []:\n"
+                      "      continue\n"  # Skip due to inline for-loop.
+                      "    while i < 2:\n"
+                      "      continue\n"  # Skip due to inline while-loop.
+                      "    continue")  # Accept this one.
+      self.assertTrue(visitor.continue_in_finally())
+      self.assertOnlyIn(3.8, visitor.minimum_versions())
