@@ -33,6 +33,10 @@ class VerminLanguageTests(VerminTest):
     if current_version() >= 3.6:
       self.assertOnlyIn(3.6, detect("name = 'world'\nf'hello {name}'"))
 
+  def test_fstrings_self_doc(self):
+    if current_version() >= 3.8:
+      self.assertOnlyIn(3.8, detect("name = 'world'\nf'hello {name=}'"))
+
   def test_coroutines_async(self):
     if current_version() >= 3.5:
       self.assertOnlyIn(3.5, detect("async def func():\n\tpass"))

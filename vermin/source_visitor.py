@@ -25,6 +25,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__longv2 = False
     self.__bytesv3 = False
     self.__fstrings = False
+    self.__fstrings_self_doc = False
     self.__bool_const = False
     self.__annotations = False
     self.__var_annotations = False
@@ -97,6 +98,9 @@ class SourceVisitor(ast.NodeVisitor):
 
   def fstrings(self):
     return self.__fstrings
+
+  def fstrings_self_doc(self):
+    return self.__fstrings_self_doc
 
   def bool_const(self):
     return self.__bool_const
@@ -181,6 +185,10 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.fstrings():
       mins = combine_versions(mins, (None, 3.6))
+
+    if self.fstrings_self_doc():
+      self.__vvprint("self-documenting fstrings require 3.8+")
+      mins = combine_versions(mins, (None, 3.8))
 
     if self.bool_const():
       mins = combine_versions(mins, (2.2, 3.0))
@@ -762,6 +770,12 @@ class SourceVisitor(ast.NodeVisitor):
   def visit_JoinedStr(self, node):
     self.__fstrings = True
     self.__vvprint("f-strings require 3.6+")
+    if hasattr(node, "values"):
+      for val in node.values:
+        if type(val) == ast.Constant and hasattr(val, "value"):
+          val = val.value
+          if type(val) == str and val.endswith("="):
+            self.__fstrings_self_doc = True
 
   # Mark variable names as aliases.
   def visit_Assign(self, node):
