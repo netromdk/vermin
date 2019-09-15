@@ -1,5 +1,5 @@
 from .main import main
-from .detection import detect_min_versions_source, detect_paths
+from .detection import detect_paths
 from .source_visitor import SourceVisitor
 from .parsing import parse_source, parse_detect_source
 from .processing import process_paths
@@ -22,7 +22,6 @@ __all__ = [
   "STRFTIME_REQS",
   "SourceVisitor",
   "combine_versions",
-  "detect_min_versions_source",
   "detect_paths",
   "dotted_name",
   "main",

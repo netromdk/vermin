@@ -2,8 +2,7 @@ import unittest
 import sys
 
 # Export as short function name for tests.
-from vermin import detect_min_versions_source as detect  # noqa:401
-from vermin import SourceVisitor, parse_source
+from vermin import SourceVisitor, parse_source, parse_detect_source
 
 def current_major_version():
   return float(sys.version_info.major)
@@ -46,3 +45,12 @@ def visit(source):
   visitor.set_no_lines(novermin)
   visitor.visit(node)
   return visitor
+
+def detect(source, path=None):
+  (node, mins, novermin) = parse_detect_source(source, path)
+  if node is None:
+    return mins
+  visitor = SourceVisitor()
+  visitor.set_no_lines(novermin)
+  visitor.visit(node)
+  return visitor.minimum_versions()
