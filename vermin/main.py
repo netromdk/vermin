@@ -5,7 +5,7 @@ from .config import Config
 from .printing import nprint
 from .detection import detect_paths
 from .processing import process_paths
-from .arguments import parse_args, print_usage
+from .arguments import Arguments
 
 def version_strings(vers):
   return ", ".join(str(v) for v in vers)
@@ -13,9 +13,9 @@ def version_strings(vers):
 def main():
   config = Config.get()
 
-  args = parse_args(sys.argv[1:])
+  args = Arguments(sys.argv[1:]).parse()
   if "usage" in args:
-    print_usage()
+    Arguments.print_usage()
   if args["code"] != 0:
     sys.exit(args["code"])
 

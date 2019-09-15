@@ -2,9 +2,12 @@ import os
 from multiprocessing import cpu_count
 from tempfile import NamedTemporaryFile
 
-from vermin import parse_args, Config
+from vermin import Arguments, Config
 
 from .testutils import VerminTest
+
+def parse_args(args):
+  return Arguments(args).parse()
 
 class VerminArgumentsTests(VerminTest):
   def __init__(self, methodName):
