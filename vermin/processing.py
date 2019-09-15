@@ -3,7 +3,7 @@ from multiprocessing import Pool
 from .printing import nprint, vprint
 from .config import Config
 from .utility import combine_versions, InvalidVersionException
-from .parsing import parse_detect_source
+from .parser import Parser
 from .source_visitor import SourceVisitor
 
 def versions_string(vers):
@@ -27,7 +27,8 @@ def process_path(args):
   novermin = set()
   with open(path, mode="rb") as fp:
     try:
-      (node, mins, novermin) = parse_detect_source(fp.read(), path=path)
+      parser = Parser(fp.read(), path)
+      (node, mins, novermin) = parser.detect()
     except KeyboardInterrupt:
       return (path, mins, text)
     except Exception as ex:

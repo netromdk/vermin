@@ -1,7 +1,7 @@
 from .main import main
 from .detection import detect_paths
 from .source_visitor import SourceVisitor
-from .parsing import parse_source, parse_detect_source
+from .parser import Parser
 from .processing import process_paths
 from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, ARRAY_TYPECODE_REQS,\
   CODECS_ERROR_HANDLERS, CODECS_ENCODINGS
@@ -19,14 +19,13 @@ __all__ = [
   "KWARGS_REQS",
   "MOD_MEM_REQS",
   "MOD_REQS",
+  "Parser",
   "STRFTIME_REQS",
   "SourceVisitor",
   "combine_versions",
   "detect_paths",
   "dotted_name",
   "main",
-  "parse_detect_source",
-  "parse_source",
   "process_paths",
   "reverse_range",
 ]

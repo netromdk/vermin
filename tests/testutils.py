@@ -1,8 +1,7 @@
 import unittest
 import sys
 
-# Export as short function name for tests.
-from vermin import SourceVisitor, parse_source, parse_detect_source
+from vermin import SourceVisitor, Parser
 
 def current_major_version():
   return float(sys.version_info.major)
@@ -40,14 +39,16 @@ class VerminTest(unittest.TestCase):
                     msg="Input not empty! size={}, '{}'".format(len(data), data))
 
 def visit(source):
+  parser = Parser(source)
+  (node, novermin) = parser.parse()
   visitor = SourceVisitor()
-  (node, novermin) = parse_source(source)
   visitor.set_no_lines(novermin)
   visitor.visit(node)
   return visitor
 
 def detect(source, path=None):
-  (node, mins, novermin) = parse_detect_source(source, path)
+  parser = Parser(source, path)
+  (node, mins, novermin) = parser.detect()
   if node is None:
     return mins
   visitor = SourceVisitor()
