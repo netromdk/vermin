@@ -1,8 +1,7 @@
 from os.path import abspath
-from multiprocessing import cpu_count
 
 from vermin import Parser, combine_versions, InvalidVersionException, detect_paths,\
-  process_paths, reverse_range, dotted_name
+  Processor, reverse_range, dotted_name
 
 from .testutils import VerminTest, current_version, visit, detect
 
@@ -134,7 +133,8 @@ class VerminGeneralTests(VerminTest):
 
   def test_detect_vermin_min_versions(self):
     paths = detect_paths([abspath("vermin")])
-    (mins, incomp, unique_versions) = process_paths(paths, cpu_count())
+    processor = Processor()
+    (mins, incomp, unique_versions) = processor.process(paths)
     self.assertOnlyIn((2.7, 3.0), mins)
 
   def test_combine_versions(self):

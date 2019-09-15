@@ -4,7 +4,7 @@ from os.path import abspath
 from .config import Config
 from .printing import nprint
 from .detection import detect_paths
-from .processing import process_paths
+from .processor import Processor
 from .arguments import Arguments
 
 def version_strings(vers):
@@ -39,7 +39,8 @@ def main():
   nprint("{} using {} processes..".format(msg, processes))
 
   try:
-    (mins, incomp, unique_versions) = process_paths(paths, processes)
+    processor = Processor()
+    (mins, incomp, unique_versions) = processor.process(paths, processes)
   except KeyboardInterrupt:
     print("Aborting..")
     sys.exit(1)
