@@ -28,11 +28,12 @@ comprehensions, boolean constants, named expressions, positional-only parameters
 exception context cause (``raise .. from ..``), ``dict`` comprehensions, infix matrix
 multiplication, ``"..".format(..)``, imports (``import X``, ``from X import Y``, ``from X import
 *``), function calls wrt. name and kwargs, ``strftime`` + ``strptime`` directives used, and
-function, function and variable annotations, ``continue`` in ``finally`` block, array typecodes,
-codecs error handler names and encodings. It tries to detect and ignore user-defined functions,
-classes, arguments, and variables with names that clash with library-defined symbols.
+function, function and variable annotations, ``continue`` in ``finally`` block, modular inverse
+``pow()``, array typecodes, codecs error handler names and encodings. It tries to detect and ignore
+user-defined functions, classes, arguments, and variables with names that clash with library-defined
+symbols.
 
-The project is fairly well-tested with **1307** unit and integration tests.
+The project is fairly well-tested with **1309** unit and integration tests.
 
 Usage
 =====

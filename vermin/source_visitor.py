@@ -45,6 +45,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__seen_for = 0
     self.__seen_while = 0
     self.__try_finally = []
+    self.__mod_inverse_pow = False
     self.__function_name = None
     self.__kwargs = []
     self.__depth = 0
@@ -164,6 +165,9 @@ class SourceVisitor(ast.NodeVisitor):
   def continue_in_finally(self):
     return self.__continue_in_finally
 
+  def modular_inverse_pow(self):
+    return self.__mod_inverse_pow
+
   def minimum_versions(self):
     mins = [0, 0]
 
@@ -238,6 +242,9 @@ class SourceVisitor(ast.NodeVisitor):
       mins = combine_versions(mins, (None, 3.5))
 
     if self.continue_in_finally():
+      mins = combine_versions(mins, (None, 3.8))
+
+    if self.modular_inverse_pow():
       mins = combine_versions(mins, (None, 3.8))
 
     for directive in self.strftime_directives():
@@ -601,6 +608,16 @@ class SourceVisitor(ast.NodeVisitor):
   def __is_no_line(self, line):
     return line in self.__no_lines
 
+  def __is_int(self, node):
+    return (isinstance(node, ast.Num) and type(node.n) == int) or \
+      (isinstance(node, ast.UnaryOp) and isinstance(node.operand, ast.Num) and
+       type(node.operand.n) == int)
+
+  def __is_neg_int(self, node):
+    return (isinstance(node, ast.Num) and type(node.n) == int and node.n < 0) or \
+      (isinstance(node, ast.UnaryOp) and type(node.op) == ast.USub and
+       isinstance(node.operand, ast.Num) and type(node.operand.n) == int)
+
   def generic_visit(self, node):
     if hasattr(node, "lineno"):
       self.__line = node.lineno
@@ -686,6 +703,12 @@ class SourceVisitor(ast.NodeVisitor):
           for arg in node.args:
             if isinstance(arg, ast.Str) and hasattr(arg, "s"):
               self.__add_array_typecode(arg.s, node.lineno, node.col_offset + 6)  # "array" = 5 + 1
+        elif func.id == "pow" and len(node.args) == 3:
+          # Check if the second of three arguments of pow() is negative.
+          if self.__is_int(node.args[0]) and self.__is_neg_int(node.args[1]) and \
+             self.__is_int(node.args[2]):
+            self.__mod_inverse_pow = True
+            self.__vvprint("modular inverse pow() requires 3.8+")
       elif hasattr(func, "attr"):
         attr = func.attr
         if attr == "format" and hasattr(func, "value") and isinstance(func.value, ast.Str) and \

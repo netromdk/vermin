@@ -278,3 +278,17 @@ class VerminGeneralTests(VerminTest):
     self.assertIn("float.hex", visitor.members())
     visitor = visit("float().hex()")
     self.assertIn("float.hex", visitor.members())
+
+  def test_mod_inverse_pow(self):
+    # All arguments must be ints.
+    visitor = visit("pow(1.1, -1, 3)")
+    self.assertFalse(visitor.modular_inverse_pow())
+    visitor = visit("pow(1, -1.0, 3)")
+    self.assertFalse(visitor.modular_inverse_pow())
+    visitor = visit("pow(1, -1, 3.0)")
+    self.assertFalse(visitor.modular_inverse_pow())
+
+    # The second argument can be negative to yield modular inverse calculation.
+    visitor = visit("pow(1, -2, 3)")
+    self.assertTrue(visitor.modular_inverse_pow())
+    self.assertOnlyIn(3.8, visitor.minimum_versions())
