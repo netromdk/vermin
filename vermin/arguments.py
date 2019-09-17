@@ -14,11 +14,13 @@ class Arguments:
     print("Usage: {} [options] <python source files and folders..>".format(sys.argv[0]))
     print("\nOptions:")
     print("  -q    Quite mode. It only prints the final versions verdict.")
-    print("  -v..  Verbosity level 1 to 3. -v, -vv, and -vvv shows increasingly more information.\n"
-          "        -v    will show the individual versions required per file.\n"
-          "        -vv   will also show which modules, functions etc. that constitutes\n"
-          "              the requirements.\n"
-          "        -vvv  will also show line/col numbers.")
+    print("  -v..  Verbosity level 1 to 4. -v, -vv, -vvv, and -vvvv shows increasingly more\n"
+          "        information.\n"
+          "        -v     will show the individual versions required per file.\n"
+          "        -vv    will also show which modules, functions etc. that constitutes\n"
+          "               the requirements.\n"
+          "        -vvv   will also show line/col numbers.\n"
+          "        -vvvv  will also show user-defined symbols being ignored.")
     print("  -t=V  Target version that files must abide by. Can be specified once or twice.\n"
           "        If not met Vermin will exit with code 1.")
     print("  -p=N  Use N concurrent processes to analyze files (defaults to all cores = {})."

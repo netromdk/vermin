@@ -67,11 +67,13 @@ Examples
 
   Options:
     -q    Quite mode. It only prints the final versions verdict.
-    -v..  Verbosity level 1 to 3. -v, -vv, and -vvv shows increasingly more information.
-          -v    will show the individual versions required per file.
-          -vv   will also show which modules, functions etc. that constitutes
-                the requirements.
-          -vvv  will also show line/col numbers.
+    -v..  Verbosity level 1 to 4. -v, -vv, -vvv, and -vvvv shows increasingly more
+          information.
+          -v     will show the individual versions required per file.
+          -vv    will also show which modules, functions etc. that constitutes
+                 the requirements.
+          -vvv   will also show line/col numbers.
+          -vvvv  will also show user-defined symbols being ignored.
     -t=V  Target version that files must abide by. Can be specified once or twice.
           If not met Vermin will exit with code 1.
     -p=N  Use N concurrent processes to analyze files (defaults to all cores = 8).

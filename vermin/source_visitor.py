@@ -345,9 +345,12 @@ class SourceVisitor(ast.NodeVisitor):
   def __vvvprint(self, msg, entity=None, line=None):
     self.__verbose_print(msg, 3, entity, line)
 
+  def __vvvvprint(self, msg, entity=None, line=None):
+    self.__verbose_print(msg, 4, entity, line)
+
   def __add_module(self, module, line=None, col=None):
     if module in self.__user_defs:
-      self.__vvvprint("Ignoring module '{}' because it's user-defined!".format(module))
+      self.__vvvvprint("Ignoring module '{}' because it's user-defined!".format(module))
       return
 
     if self.__config.is_excluded(module):
@@ -361,7 +364,7 @@ class SourceVisitor(ast.NodeVisitor):
   def __add_member(self, member, line=None, col=None):
     """Add member if fully-qualified name is known."""
     if member in self.__user_defs:
-      self.__vvvprint("Ignoring member '{}' because it's user-defined!".format(member))
+      self.__vvvvprint("Ignoring member '{}' because it's user-defined!".format(member))
       return
 
     if self.__config.is_excluded(member):
@@ -374,7 +377,7 @@ class SourceVisitor(ast.NodeVisitor):
 
   def __add_kwargs(self, function, keyword, line=None, col=None):
     if function in self.__user_defs:
-      self.__vvvprint("Ignoring function '{}' because it's user-defined!".format(function))
+      self.__vvvvprint("Ignoring function '{}' because it's user-defined!".format(function))
       return
 
     if self.__config.is_excluded_kwarg(function, keyword):
@@ -457,12 +460,12 @@ class SourceVisitor(ast.NodeVisitor):
     for ud in self.__user_defs:
       for i in reverse_range(self.__modules):
         if self.__modules[i] == ud:
-          self.__vvvprint("Ignoring module '{}' because it's user-defined!".format(ud))
+          self.__vvvvprint("Ignoring module '{}' because it's user-defined!".format(ud))
           del(self.__modules[i])
 
       for i in reverse_range(self.__members):
         if self.__members[i] == ud:
-          self.__vvvprint("Ignoring member '{}' because it's user-defined!".format(ud))
+          self.__vvvvprint("Ignoring member '{}' because it's user-defined!".format(ud))
           del(self.__members[i])
 
   def __add_user_def_node(self, node):
