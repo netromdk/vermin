@@ -1,34 +1,11 @@
 from os.path import abspath
 
-from vermin import Parser, combine_versions, InvalidVersionException, detect_paths,\
+from vermin import combine_versions, InvalidVersionException, detect_paths,\
   Processor, reverse_range, dotted_name
 
-from .testutils import VerminTest, current_version, visit, detect
+from .testutils import VerminTest, visit, detect
 
 class VerminGeneralTests(VerminTest):
-  def test_printv2(self):
-    source = "print 'hello'"
-    parser = Parser(source)
-    (node, mins, novermin) = parser.detect()
-    v = current_version()
-    if v >= 3.4:
-      self.assertEqual(node, None)
-      self.assertOnlyIn(2.0, mins)
-    elif v >= 3.0 and v < 3.4:
-      self.assertEqual(node, None)
-      self.assertEqual(mins, [0, 0])
-    else:  # < 3.0
-      visitor = visit(source)
-      self.assertTrue(visitor.printv2())
-      self.assertEqual([2.0, 0], visitor.minimum_versions())
-
-  def test_printv3(self):
-    visitor = visit("print('hello')")
-    if current_version() >= 3.0:
-      self.assertTrue(visitor.printv3())
-    else:
-      self.assertTrue(visitor.printv2())
-
   def test_format(self):
     # Empty field name requires 2.7+
     visitor = visit("print('{}'.format(42))")
@@ -37,71 +14,6 @@ class VerminGeneralTests(VerminTest):
     # Non-empty field name requires 2.6+
     visitor = visit("print('{0}'.format(42))")
     self.assertFalse(visitor.format27())
-
-  def test_longv2(self):
-    visitor = visit("n = long(42)")
-    self.assertTrue(visitor.longv2())
-    visitor = visit("isinstance(42, long)")
-    self.assertTrue(visitor.longv2())
-
-  def test_bytesv3(self):
-    v = current_version()
-
-    # py2: type(b'hello') = <type 'str'>
-    if v >= 2.0 and v < 3.0:
-      visitor = visit("s = b'hello'")
-      self.assertFalse(visitor.bytesv3())
-      self.assertEqual([0, 0], visitor.minimum_versions())
-
-    # py3: type(b'hello') = <type 'bytes'>
-    elif v >= 3.0:
-      visitor = visit("s = b'hello'")
-      self.assertTrue(visitor.bytesv3())
-      self.assertEqual([None, 3.0], visitor.minimum_versions())
-      visitor = visit("s = B'hello'")
-      self.assertTrue(visitor.bytesv3())
-      self.assertEqual([None, 3.0], visitor.minimum_versions())
-
-  def test_fstrings(self):
-    if current_version() >= 3.6:
-      visitor = visit("name = 'world'\nf'hello {name}'")
-      self.assertTrue(visitor.fstrings())
-      self.assertEqual([None, 3.6], visitor.minimum_versions())
-
-  def test_named_expressions(self):
-    if current_version() >= 3.8:
-      visitor = visit("a = 1\nif (b := a) == 1:\n\tprint(b)")
-      self.assertTrue(visitor.named_expressions())
-      self.assertEqual([None, 3.8], visitor.minimum_versions())
-
-  def test_pos_only_args(self):
-    if current_version() >= 3.8:
-      visitor = visit("def foo(a, /, b): return a + b")
-      self.assertTrue(visitor.pos_only_args())
-      self.assertEqual([None, 3.8], visitor.minimum_versions())
-
-  def test_yield_from(self):
-    if current_version() >= 3.3:
-      visitor = visit("def foo(x): yield from range(x)")
-      self.assertTrue(visitor.yield_from())
-      self.assertEqual([None, 3.3], visitor.minimum_versions())
-
-  def test_raise_cause(self):
-    if current_version() >= 3.3:
-      visitor = visit("raise Exception() from None")
-      self.assertTrue(visitor.raise_cause())
-      self.assertEqual([None, 3.3], visitor.minimum_versions())
-
-  def test_dict_comprehension(self):
-    visitor = visit("{key: value for ld in lod for key, value in ld.items()}")
-    self.assertTrue(visitor.dict_comprehension())
-    self.assertEqual([2.7, 3.0], visitor.minimum_versions())
-
-  def test_infix_matrix_multiplication(self):
-    if current_version() >= 3.5:
-      visitor = visit("M @ N")
-      self.assertTrue(visitor.infix_matrix_multiplication())
-      self.assertEqual([None, 3.5], visitor.minimum_versions())
 
   def test_strftime_directives(self):
     visitor = visit("from datetime import datetime\ndatetime.now().strftime('%A %d. %B %Y')")
@@ -222,60 +134,6 @@ class VerminGeneralTests(VerminTest):
                     "src = SimpleXMLRPCServer()")
     self.assertOnlyIn(["SimpleXMLRPCServer", "src"], visitor.user_defined())
     self.assertEmpty(visitor.modules())
-
-  def test_str_from_type(self):
-    visitor = visit("\"\".zfill(1)")
-    self.assertIn("str.zfill", visitor.members())
-    visitor = visit("str().zfill(1)")
-    self.assertIn("str.zfill", visitor.members())
-
-  def test_unicode_from_type(self):
-    if current_version() < 3.0:
-      visitor = visit("u\"\".isdecimal()")
-      self.assertIn("unicode.isdecimal", visitor.members())
-      visitor = visit("unicode().isdecimal()")
-      self.assertIn("unicode.isdecimal", visitor.members())
-
-  def test_list_from_type(self):
-    visitor = visit("[].clear()")
-    self.assertIn("list.clear", visitor.members())
-    visitor = visit("list().clear()")
-    self.assertIn("list.clear", visitor.members())
-
-  def test_dict_from_type(self):
-    visitor = visit("{}.pop()")
-    self.assertIn("dict.pop", visitor.members())
-    visitor = visit("dict().pop()")
-    self.assertIn("dict.pop", visitor.members())
-
-  def test_set_from_type(self):
-    visitor = visit("{1}.isdisjoint()")
-    self.assertIn("set.isdisjoint", visitor.members())
-    visitor = visit("set().isdisjoint()")
-    self.assertIn("set.isdisjoint", visitor.members())
-
-  def test_frozenset_from_type(self):
-    visitor = visit("frozenset().isdisjoint()")
-    self.assertIn("frozenset.isdisjoint", visitor.members())
-
-  def test_int_from_type(self):
-    visitor = visit("(1).bit_length()")
-    self.assertIn("int.bit_length", visitor.members())
-    visitor = visit("int().bit_length()")
-    self.assertIn("int.bit_length", visitor.members())
-
-  def test_long_from_type(self):
-    if current_version() < 3.0:
-      visitor = visit("(1L).bit_length()")
-      self.assertIn("long.bit_length", visitor.members())
-      visitor = visit("long().bit_length()")
-      self.assertIn("long.bit_length", visitor.members())
-
-  def test_float_from_type(self):
-    visitor = visit("(4.2).hex()")
-    self.assertIn("float.hex", visitor.members())
-    visitor = visit("float().hex()")
-    self.assertIn("float.hex", visitor.members())
 
   def test_mod_inverse_pow(self):
     # All arguments must be ints.

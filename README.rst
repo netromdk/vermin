@@ -33,7 +33,7 @@ function, function and variable annotations, ``continue`` in ``finally`` block, 
 user-defined functions, classes, arguments, and variables with names that clash with library-defined
 symbols.
 
-The project is fairly well-tested with **1309** unit and integration tests.
+The project is fairly well-tested with **1305** unit and integration tests.
 
 Usage
 =====
