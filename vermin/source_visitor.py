@@ -313,34 +313,37 @@ class SourceVisitor(ast.NodeVisitor):
       self.__output_text.append(msg)
 
   def __verbose_print(self, msg, level, entity=None, line=None):
-    if self.__config.verbose() >= level and not self.__config.quiet():
-      (l, c) = (line, None)
-      if entity is not None and entity in self.__line_col_entities:
-        (l, c) = self.__line_col_entities[entity]
-      if l is not None:
-        if c is not None:
-          msg = "L{} C{}: ".format(l, c) + msg
-        else:
-          msg = "L{}: ".format(l) + msg
-      self.__output_text.append(msg)
+    config_level = self.__config.verbose()
+    if self.__config.quiet() or config_level < level:
+      return
+
+    col = None
+
+    # Line/column numbers start at level 3+.
+    entity = entity if config_level > 2 else None
+    if entity is not None and entity in self.__line_col_entities:
+      (line, col) = self.__line_col_entities[entity]
+
+    if line == -1:
+      line = None
+    elif line is None and config_level > 2:
+      line = self.__line
+
+    if line is not None:
+      if col is not None:
+        msg = "L{} C{}: ".format(line, col) + msg
+      else:
+        msg = "L{}: ".format(line) + msg
+    self.__output_text.append(msg)
 
   def __vprint(self, msg, entity=None):
     self.__verbose_print(msg, 1, entity)
 
   def __vvprint(self, msg, entity=None, line=None):
-    level = self.__config.verbose()
-    entity = entity if level > 2 else None
-    if line is None and level > 2:
-      line = self.__line
-    elif line == -1:
-      line = None
     self.__verbose_print(msg, 2, entity, line)
 
   def __vvvprint(self, msg, entity=None, line=None):
-    line = self.__line if line is None else line
-    if line == -1:
-      line = None
-    self.__verbose_print(msg, 3, entity, line=line)
+    self.__verbose_print(msg, 3, entity, line)
 
   def __add_module(self, module, line=None, col=None):
     if module in self.__user_defs:
