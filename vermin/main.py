@@ -73,3 +73,5 @@ def main():
   if len(targets) > 0 and targets != reqs:
     print("Target versions not met:   {}".format(version_strings(targets)))
     sys.exit(1)
+
+  sys.exit(0)

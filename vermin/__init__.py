@@ -2,7 +2,7 @@ from .main import main
 from .detection import detect_paths
 from .source_visitor import SourceVisitor
 from .parser import Parser
-from .processor import Processor
+from .processor import Processor, process_individual
 from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, ARRAY_TYPECODE_REQS,\
   CODECS_ERROR_HANDLERS, CODECS_ENCODINGS
 from .arguments import Arguments
@@ -27,5 +27,6 @@ __all__ = [
   "detect_paths",
   "dotted_name",
   "main",
+  "process_individual",
   "reverse_range",
 ]

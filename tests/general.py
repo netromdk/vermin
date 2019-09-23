@@ -1,11 +1,24 @@
-from os.path import abspath
+import sys
+import os
+from os.path import abspath, basename
+from tempfile import NamedTemporaryFile
 
 from vermin import combine_versions, InvalidVersionException, detect_paths,\
-  Processor, reverse_range, dotted_name
+  Processor, process_individual, reverse_range, dotted_name, main, Config
 
-from .testutils import VerminTest, visit, detect
+from .testutils import VerminTest, visit, detect, current_version
 
 class VerminGeneralTests(VerminTest):
+  def __init__(self, methodName):
+    super(VerminGeneralTests, self).__init__(methodName)
+    self.config = Config.get()
+
+  def setUp(self):
+    self.config.reset()
+
+  def tearDown(self):
+    self.config.reset()
+
   def test_format(self):
     # Empty field name requires 2.7+
     visitor = visit("print('{}'.format(42))")
@@ -42,6 +55,10 @@ class VerminGeneralTests(VerminTest):
   def test_member_kwargs(self):
     visitor = visit("from os import open\nfd = open(dir_fd = None)")
     self.assertOnlyIn([("os.open", "dir_fd")], visitor.kwargs())
+
+  def test_detect_paths(self):
+    paths = detect_paths([abspath("vermin")])
+    self.assertEqual(12, len(paths))
 
   def test_detect_vermin_min_versions(self):
     paths = detect_paths([abspath("vermin")])
@@ -148,3 +165,73 @@ class VerminGeneralTests(VerminTest):
     visitor = visit("pow(1, -2, 3)")
     self.assertTrue(visitor.modular_inverse_pow())
     self.assertOnlyIn(3.8, visitor.minimum_versions())
+
+  def test_main_no_args(self):
+    # Print usage and exit with code 1.
+    with self.assertRaises(SystemExit) as ex:
+      main()
+    self.assertEqual(ex.exception.code, 1)
+
+  def test_main_no_paths(self):
+    # The path doesn't exist and isn't a .py file which means no paths are detected.
+    with self.assertRaises(SystemExit) as ex:
+      sys.argv = [sys.argv[0], "nonexistentfilethatisntpy"]
+      main()
+    sys.argv = [sys.argv[0]]
+    self.assertEqual(ex.exception.code, 1)
+
+  def test_main_no_rules_hit(self):
+    # Python file that doesn't hit any rules should exit successfully.
+    fp = NamedTemporaryFile(suffix=".py", delete=False)
+    fp.close()
+    with self.assertRaises(SystemExit) as ex:
+      sys.argv = [sys.argv[0], fp.name]
+      main()
+    os.remove(fp.name)
+    sys.argv = [sys.argv[0]]
+    self.assertEqual(ex.exception.code, 0)
+
+  def test_main_target_not_met(self):
+    # Ensure exit code 1 when target isn't met.
+    fp = NamedTemporaryFile(suffix=".py", delete=False)
+    fp.close()
+    with self.assertRaises(SystemExit) as ex:
+      sys.argv = [sys.argv[0], "-t=3.0", fp.name]
+      main()
+    os.remove(fp.name)
+    sys.argv = [sys.argv[0]]
+    self.assertEqual(ex.exception.code, 1)
+
+  def test_process_file_not_Found(self):
+    if current_version() >= 3.0:
+      exc = FileNotFoundError
+    else:
+      exc = Exception
+    with self.assertRaises(exc):
+      process_individual(("nonexistent", self.config))
+
+  def test_process_runtests_py(self):
+    (path, mins, text) = process_individual((sys.argv[0], self.config))
+    self.assertEqual(basename(path), "runtests.py")
+    self.assertEqual(mins, [2.7, 3.0])
+    self.assertEmpty(text)
+
+  def test_process_syntax_error(self):
+    # Syntax error triggers minimum versions [0, 0].
+    fp = NamedTemporaryFile(suffix=".py", delete=False)
+    fp.write(b"(")  # SyntaxError: unexpected EOF while parsing
+    fp.close()
+    (path, mins, text) = process_individual((fp.name, self.config))
+    self.assertEqual(mins, [0, 0])
+    self.assertEmpty(text)
+    os.remove(fp.name)
+
+  def test_process_invalid_versions(self):
+    fp = NamedTemporaryFile(suffix=".py", delete=False)
+    fp.write(b"long(42)\n")  # long is a v2 feature: 2.0 !3
+    fp.write(b"breakpoint()\n")  # breakpoint(): !2, 3.7
+    fp.close()
+    (path, mins, text) = process_individual((fp.name, self.config))
+    self.assertEqual(mins, None)
+    self.assertTrue(text.startswith("Versions could not be combined"))
+    os.remove(fp.name)
