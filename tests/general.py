@@ -1,7 +1,8 @@
 import sys
 import os
-from os.path import abspath, basename
-from tempfile import NamedTemporaryFile
+from os.path import abspath, basename, join
+from tempfile import NamedTemporaryFile, mkdtemp
+from shutil import rmtree
 
 from vermin import combine_versions, InvalidVersionException, detect_paths,\
   Processor, process_individual, reverse_range, dotted_name, main, Config
@@ -59,6 +60,26 @@ class VerminGeneralTests(VerminTest):
   def test_detect_paths(self):
     paths = detect_paths([abspath("vermin")])
     self.assertEqual(12, len(paths))
+
+  def test_detect_hidden_paths(self):
+    tmp_fld = mkdtemp()
+
+    def touch(name):
+      filename = join(tmp_fld, name)
+      fp = open(filename, mode="w")
+      fp.close()
+      return filename
+    files = [touch(".test.py"), touch("test.py"), touch(".test2.py"), touch("test2.py")]
+
+    paths = detect_paths([tmp_fld], hidden=False)
+    self.assertEqual([files[1], files[3]], paths)
+
+    paths2 = detect_paths([tmp_fld], hidden=True)
+    paths2.sort()
+    files.sort()
+    self.assertEqual(files, paths2)
+
+    rmtree(tmp_fld)
 
   def test_detect_vermin_min_versions(self):
     paths = detect_paths([abspath("vermin")])
