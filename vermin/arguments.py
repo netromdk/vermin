@@ -12,6 +12,10 @@ class Arguments:
   def print_usage():
     print("Vermin {}".format(VERSION))
     print("Usage: {} [options] <python source files and folders..>".format(sys.argv[0]))
+    print("\nHeuristics are employed when files don't have extensions 'py' or 'pyw':")
+    print("  - Magic lines with 'python' are accepted, like: #!/usr/bin/env python")
+    print("  - 'pyc' are ignored")
+    print("  - Files that cannot be opened for reading as text devices are ignored")
     print("\nOptions:")
     print("  -q    Quite mode. It only prints the final versions verdict.")
     print("  -v..  Verbosity level 1 to 4. -v, -vv, -vvv, and -vvvv shows increasingly more\n"

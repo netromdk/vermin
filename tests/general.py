@@ -5,9 +5,15 @@ from tempfile import NamedTemporaryFile, mkdtemp
 from shutil import rmtree
 
 from vermin import combine_versions, InvalidVersionException, detect_paths,\
-  Processor, process_individual, reverse_range, dotted_name, main, Config
+  probably_python_file, Processor, process_individual, reverse_range, dotted_name, main, Config
 
 from .testutils import VerminTest, visit, detect, current_version
+
+def touch(fld, name):
+  filename = join(fld, name)
+  fp = open(filename, mode="w")
+  fp.close()
+  return filename
 
 class VerminGeneralTests(VerminTest):
   def __init__(self, methodName):
@@ -57,19 +63,38 @@ class VerminGeneralTests(VerminTest):
     visitor = visit("from os import open\nfd = open(dir_fd = None)")
     self.assertOnlyIn([("os.open", "dir_fd")], visitor.kwargs())
 
+  def test_probably_python_file(self):
+    tmp_fld = mkdtemp()
+
+    self.assertTrue(probably_python_file(touch(tmp_fld, "test.py")))
+    self.assertTrue(probably_python_file(touch(tmp_fld, "test.pyw")))
+    self.assertFalse(probably_python_file(touch(tmp_fld, "test.pyc")))
+
+    # Empty file isn't python.
+    f = touch(tmp_fld, "test")
+    self.assertFalse(probably_python_file(f))
+
+    # Magic line.
+    with open(f, mode="w") as fp:
+      fp.write("#!/usr/bin/env python\n")
+    self.assertTrue(probably_python_file(f))
+
+    # Binary file isn't python code.
+    f = touch(tmp_fld, "binary")
+    with open(f, mode="wb") as fp:
+      fp.write(b"\x80\x89\x90")
+    self.assertFalse(probably_python_file(f))
+
+    rmtree(tmp_fld)
+
   def test_detect_paths(self):
     paths = detect_paths([abspath("vermin")])
     self.assertEqual(12, len(paths))
 
   def test_detect_hidden_paths(self):
     tmp_fld = mkdtemp()
-
-    def touch(name):
-      filename = join(tmp_fld, name)
-      fp = open(filename, mode="w")
-      fp.close()
-      return filename
-    files = [touch(".test.py"), touch("test.py"), touch(".test2.py"), touch("test2.py")]
+    files = [touch(tmp_fld, ".test.py"), touch(tmp_fld, "test.py"), touch(tmp_fld, ".test2.py"),
+             touch(tmp_fld, "test2.py")]
 
     paths = detect_paths([tmp_fld], hidden=False)
     self.assertEqual([files[1], files[3]], paths)

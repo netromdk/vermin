@@ -28,6 +28,15 @@ def process_individual(args):
       (node, mins, novermin) = parser.detect()
     except KeyboardInterrupt:
       return (path, mins, text)
+
+    # When input isn't python code, ignore it.
+    except ValueError:
+      # source code string cannot contain null bytes
+      return (None, None, None)
+    except TypeError:
+      # compile() expected string without null bytes
+      return (None, None, None)
+
     except Exception as ex:
       text = "{}: {}, {}".format(path, type(ex), ex)
       mins = [0, 0]
@@ -80,6 +89,10 @@ class Processor:
     unique_versions = set()
     for (path, min_versions, text) in \
           pool.imap(process_individual, ((path, config) for path in paths)):
+      # Ignore paths that didn't contain python code.
+      if path is None and min_versions is None and text is None:
+        continue
+
       if min_versions is None:
         incomp = True
         print_incomp(path)
