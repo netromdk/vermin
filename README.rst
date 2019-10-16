@@ -83,6 +83,9 @@ Examples
           conditionals that it is known does not affect the results.
     -d    Dump AST node visits.
 
+    --help | -h
+          Shows this information.
+
     --hidden
           Analyze 'hidden' files and folders starting with '.' (ignored by default).
 

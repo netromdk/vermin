@@ -23,6 +23,10 @@ class VerminArgumentsTests(VerminTest):
   def test_not_enough_args(self):
     self.assertContainsDict({"code": 1, "usage": True}, parse_args([]))
 
+  def test_help(self):
+    self.assertContainsDict({"code": 0, "usage": True}, parse_args(["-h"]))
+    self.assertContainsDict({"code": 0, "usage": True}, parse_args(["--help"]))
+
   def test_files(self):
     self.assertContainsDict({"code": 0, "paths": ["file.py", "file2.py", "folder/folder2"]},
                             parse_args(["file.py", "file2.py", "folder/folder2"]))

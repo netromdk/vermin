@@ -16,6 +16,8 @@ def main():
   args = Arguments(sys.argv[1:]).parse()
   if "usage" in args:
     Arguments.print_usage()
+    sys.exit(args["code"])
+
   if args["code"] != 0:
     sys.exit(args["code"])
 

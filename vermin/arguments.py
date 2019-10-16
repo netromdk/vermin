@@ -30,6 +30,8 @@ class Arguments:
           "        traversal, which can be useful when minimum versions are detected in\n"
           "        conditionals that it is known does not affect the results.")
     print("  -d    Dump AST node visits.")
+    print("\n  --help | -h\n"
+          "        Shows this information.")
     print("\n  --hidden\n"
           "        Analyze 'hidden' files and folders starting with '.' (ignored by default).")
     print("\n  --versions\n"
@@ -64,6 +66,8 @@ class Arguments:
     versions = False
     for i in range(len(self.__args)):
       arg = self.__args[i].lower()
+      if arg == "-h" or arg == "--help":
+        return {"code": 0, "usage": True}
       if arg == "-q":
         config.set_quiet(True)
         path_pos += 1
