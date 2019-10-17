@@ -29,7 +29,9 @@ class Arguments:
           "        If not met Vermin will exit with code 1.")
     print("  -p=N  Use N concurrent processes to analyze files (defaults to all cores = {})."
           .format(cpu_count()))
-    print("  -i    Ignore incompatible version warnings.")
+    print("  -i    Ignore incompatible versions and warnings. However, if no compatible versions\n"
+          "        are found then incompatible versions will be shown in the end to not have an\n"
+          "        absence of results.")
     print("  -l    Lax mode: ignores conditionals (if, ternary, for, while, try, bool op) on AST\n"
           "        traversal, which can be useful when minimum versions are detected in\n"
           "        conditionals that it is known does not affect the results.")

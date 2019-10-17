@@ -67,8 +67,15 @@ def main():
 
   if len(reqs) > 0:
     print("Minimum required versions: {}".format(version_strings(reqs)))
-  if len(incomps) > 0:
+
+  # Don't show incompatible versions when -i is given, unless there are no non-incompatible versions
+  # found then we need must show the incompatible versions - nothing will be shown otherwise. That
+  # case is when both py2 and py3 incompatibilities were found - in which case `incomps = [2, 3]`
+  # and `reqs = []`. But if `incomps = [2]` and `reqs = [3.4]`, for instance, then it makes sense
+  # not to show incompatible versions with -i specified.
+  if len(incomps) > 0 and (not config.ignore_incomp() or len(reqs) == 0):
     print("Incompatible versions:     {}".format(version_strings(incomps)))
+
   if args["versions"] and len(unique_versions) > 0:
     print("Version range:             {}".format(version_strings(unique_versions)))
 

@@ -82,7 +82,9 @@ Examples
     -t=V  Target version that files must abide by. Can be specified once or twice.
           If not met Vermin will exit with code 1.
     -p=N  Use N concurrent processes to analyze files (defaults to all cores = 8).
-    -i    Ignore incompatible version warnings.
+    -i    Ignore incompatible versions and warnings. However, if no compatible versions
+          are found then incompatible versions will be shown in the end to not have an
+          absence of results.
     -l    Lax mode: ignores conditionals (if, ternary, for, while, try, bool op) on AST
           traversal, which can be useful when minimum versions are detected in
           conditionals that it is known does not affect the results.
