@@ -17,7 +17,7 @@ class Arguments:
     print("  - 'pyc' are ignored")
     print("  - Files that cannot be opened for reading as text devices are ignored")
     print("\nOptions:")
-    print("  -q    Quite mode. It only prints the final versions verdict.")
+    print("  -q    Quiet mode. It only prints the final versions verdict.")
     print("  -v..  Verbosity level 1 to 4. -v, -vv, -vvv, and -vvvv shows increasingly more\n"
           "        information.\n"
           "        -v     will show the individual versions required per file.\n"
@@ -51,7 +51,7 @@ class Arguments:
           "          Exclude 'baz' codecs encoding:       --exclude 'ce=baz'")
     print("\n  [--exclude-file <file name>] ...\n"
           "        Exclude full names like --exclude but from a specified file instead. Each line\n"
-          "        constitues an exclusion with the same format as with --exclude.")
+          "        constitutes an exclusion with the same format as with --exclude.")
     print("\nResults interpretation:")
     print("  ~2       No known reason it won't work with py2.")
     print("  !2       It is known that it won't work with py2.")

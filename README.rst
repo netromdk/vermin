@@ -48,7 +48,7 @@ Or via `PyPi <https://pypi.python.org/pypi/vermin/>`__::
   % vermin /path/to/your/project
 
 When using continuous integration (CI) tools, like `Travis CI <https://travis-ci.org/>`_, Vermin can
-be used to check that the minimum required versions didn't change. The following is an exerpt::
+be used to check that the minimum required versions didn't change. The following is an excerpt::
 
   install:
   - ./setup_virtual_env.sh
@@ -71,7 +71,7 @@ Examples
     - Files that cannot be opened for reading as text devices are ignored
 
   Options:
-    -q    Quite mode. It only prints the final versions verdict.
+    -q    Quiet mode. It only prints the final versions verdict.
     -v..  Verbosity level 1 to 4. -v, -vv, -vvv, and -vvvv shows increasingly more
           information.
           -v     will show the individual versions required per file.
@@ -110,7 +110,7 @@ Examples
 
     [--exclude-file <file name>] ...
           Exclude full names like --exclude but from a specified file instead. Each line
-          constitues an exclusion with the same format as with --exclude.
+          constitutes an exclusion with the same format as with --exclude.
 
   Results interpretation:
     ~2       No known reason it won't work with py2.
