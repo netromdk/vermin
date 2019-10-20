@@ -119,6 +119,7 @@ MOD_REQS = {
   "unittest": (2.1, 3.0),
   "unittest.mock": (None, 3.3),
   "urllib2": (2.0, None),
+  "urlparse": (2.0, None),
   "uuid": (2.5, 3.0),
   "venv": (None, 3.3),
   "warnings": (2.1, 3.0),

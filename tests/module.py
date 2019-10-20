@@ -394,3 +394,6 @@ class VerminModuleTests(VerminTest):
 
   def test_zipapp(self):
     self.assertOnlyIn(3.5, detect("import zipapp"))
+
+  def test_urlparse(self):
+    self.assertOnlyIn(2.0, detect("import urlparse"))
