@@ -33,7 +33,7 @@ function, function and variable annotations, ``continue`` in ``finally`` block, 
 user-defined functions, classes, arguments, and variables with names that clash with library-defined
 symbols.
 
-The project is fairly well-tested with **1317** unit and integration tests.
+The project is fairly well-tested with **1318** unit and integration tests.
 
 Usage
 =====
@@ -69,6 +69,9 @@ Examples
     - Magic lines with 'python' are accepted, like: #!/usr/bin/env python
     - 'pyc' are ignored
     - Files that cannot be opened for reading as text devices are ignored
+
+  However, files directly specified are always attempted parsing, even without
+  accepted extensions or heuristics.
 
   Options:
     -q    Quiet mode. It only prints the final versions verdict.

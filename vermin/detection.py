@@ -25,8 +25,10 @@ def probably_python_file(path):
 
   return False
 
-# Some detected paths might not be python code since not all files use ".py" and ".pyw".
-def detect_paths(paths, hidden=False):
+# Some detected paths might not be python code since not all files use ".py" and ".pyw". But try
+# directly specified files on CLI, on depth 0, in any case (non-pyhton files will be ignored when
+# trying to parse them).
+def detect_paths(paths, hidden=False, depth=0):
   accept_paths = []
   for path in paths:
     if not hidden and path != "." and path[0] == ".":
@@ -34,7 +36,7 @@ def detect_paths(paths, hidden=False):
     path = abspath(path)
     if isdir(path):
       files = [join(path, p) for p in listdir(path) if hidden or p[0] != "."]
-      accept_paths += detect_paths(files)
-    if probably_python_file(path):
+      accept_paths += detect_paths(files, hidden, depth + 1)
+    elif isfile(path) and (depth == 0 or probably_python_file(path)):
       accept_paths.append(path)
   return accept_paths

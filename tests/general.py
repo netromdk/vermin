@@ -106,6 +106,24 @@ class VerminGeneralTests(VerminTest):
 
     rmtree(tmp_fld)
 
+  # Files directly specified at depth 0 should be accepted in any case, even if not with .py or
+  # heuristics, but extensions and heuristics must be used further down.
+  def test_detect_vermin_paths_directly(self):
+    tmp_fld = mkdtemp()
+
+    # Won't be picked by heuristics.
+    f = touch(tmp_fld, "no-shebang")
+    with open(f, mode="w") as fp:
+      fp.write("print('this is code')")
+
+    paths = detect_paths([tmp_fld])
+    self.assertEmpty(paths)
+
+    paths = detect_paths([join(tmp_fld, "no-shebang")])
+    self.assertEqual(paths, [f])
+
+    rmtree(tmp_fld)
+
   def test_detect_vermin_min_versions(self):
     paths = detect_paths([abspath("vermin")])
     processor = Processor()

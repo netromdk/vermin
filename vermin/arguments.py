@@ -16,6 +16,8 @@ class Arguments:
     print("  - Magic lines with 'python' are accepted, like: #!/usr/bin/env python")
     print("  - 'pyc' are ignored")
     print("  - Files that cannot be opened for reading as text devices are ignored")
+    print("\nHowever, files directly specified are always attempted parsing, even without\n"
+          "accepted extensions or heuristics.")
     print("\nOptions:")
     print("  -q    Quiet mode. It only prints the final versions verdict.")
     print("  -v..  Verbosity level 1 to 4. -v, -vv, -vvv, and -vvvv shows increasingly more\n"
