@@ -19,7 +19,7 @@ vanilla Python, and it doesn't have any external dependencies, it works with v2.
 
 It functions by parsing Python code into an abstract syntax tree (AST), which it traverses and
 matches against internal dictionaries with **1206** rules, covering v2.0-2.7 and v3.0-3.8, divided
-into **131** modules, **852** classes/functions/constants members of modules, **193** kwargs of
+into **132** modules, **852** classes/functions/constants members of modules, **193** kwargs of
 functions, **4** strftime directives, **2** array typecodes, **3** codecs error handler names, and
 **20** codecs encodings. Including looking for v2/v3 ``print expr`` and ``print(expr)``, ``long``,
 f-strings, self-documenting f-strings, coroutines (``async`` and ``await``), asynchronous generators
