@@ -41,7 +41,8 @@ class Arguments:
     print("\n  --help | -h\n"
           "        Shows this information.")
     print("\n  --hidden\n"
-          "        Analyze 'hidden' files and folders starting with '.' (ignored by default).")
+          "        Analyze 'hidden' files and folders starting with '.' (ignored by default when\n"
+          "        not specified directly).")
     print("\n  --versions\n"
           "        In the end, print all unique versions required by the analysed code.")
     print("\n  [--exclude <name>] ...\n"

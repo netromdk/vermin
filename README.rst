@@ -97,7 +97,8 @@ Examples
           Shows this information.
 
     --hidden
-          Analyze 'hidden' files and folders starting with '.' (ignored by default).
+          Analyze 'hidden' files and folders starting with '.' (ignored by default when not
+          specified directly).
 
     --versions
           In the end, print all unique versions required by the analysed code.
