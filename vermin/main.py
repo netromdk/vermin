@@ -2,7 +2,7 @@ import sys
 from os.path import abspath
 
 from .config import Config
-from .printing import nprint
+from .printing import nprint, vprint
 from .detection import detect_paths
 from .processor import Processor
 from .arguments import Arguments
@@ -25,7 +25,7 @@ def main():
   targets = args["targets"]
 
   # Detect paths, remove duplicates, and sort for deterministic results.
-  nprint("Detecting python files..")
+  vprint("Detecting python files..")
   paths = [abspath(p) for p in args["paths"]]
   paths = list(set(detect_paths(paths, args["hidden"])))
   paths.sort()
@@ -38,7 +38,7 @@ def main():
   msg = "Analyzing"
   if amount > 1:
     msg += " {} files".format(amount)
-  nprint("{} using {} processes..".format(msg, processes))
+  vprint("{} using {} processes..".format(msg, processes))
 
   try:
     processor = Processor()
