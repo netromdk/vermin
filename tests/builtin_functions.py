@@ -146,6 +146,12 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
     self.assertOnlyIn(3.3, detect("s=str()\ns.casefold()"))
     self.assertOnlyIn(3.3, detect("str().casefold()"))
 
+  def test_format_of_str(self):
+    self.assertOnlyIn((2.6, 3.0), detect("s=\"\"\ns.format()"))
+    self.assertOnlyIn((2.6, 3.0), detect("\"\".format()"))
+    self.assertOnlyIn((2.6, 3.0), detect("s=str()\ns.format()"))
+    self.assertOnlyIn((2.6, 3.0), detect("str().format()"))
+
   def test_format_map_of_str(self):
     self.assertOnlyIn(3.2, detect("s=\"\"\ns.format_map()"))
     self.assertOnlyIn(3.2, detect("\"\".format_map()"))

@@ -305,6 +305,7 @@ MOD_MEM_REQS = {
   "staticmethod": (2.2, 3.0),
   "str.casefold": (None, 3.3),
   "str.decode": (2.2, None),
+  "str.format": (2.6, 3.0),
   "str.format_map": (None, 3.2),
   "str.isascii": (None, 3.7),
   "str.isdecimal": (None, 3.0),
