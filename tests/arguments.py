@@ -32,7 +32,7 @@ class VerminArgumentsTests(VerminTest):
                             parse_args(["file.py", "file2.py", "folder/folder2"]))
 
   def test_mix_options_and_files(self):
-    self.assertContainsDict({"code": 0, "paths": ["file.py"], "targets": [2.7]},
+    self.assertContainsDict({"code": 0, "paths": ["file.py"], "targets": [(True, 2.7)]},
                             parse_args(["-q", "-t=2.7", "file.py"]))
 
   def test_quiet(self):
@@ -50,19 +50,24 @@ class VerminArgumentsTests(VerminTest):
     self.assertContainsDict({"code": 1}, parse_args(["-q", "-v"]))
 
   def test_targets(self):
-    self.assertContainsDict({"code": 0, "targets": [2.8], "paths": []},
+    # The boolean value means match target version exactly or not (equal or smaller).
+    self.assertContainsDict({"code": 0, "targets": [(True, 2.8)], "paths": []},
                             parse_args(["-t=2.8"]))
-    self.assertContainsDict({"code": 0, "targets": [2.8, 3.0], "paths": []},
-                            parse_args(["-t=3", "-t=2.8"]))
+    self.assertContainsDict({"code": 0, "targets": [(False, 2.8)], "paths": []},
+                            parse_args(["-t=2.8-"]))
+    self.assertContainsDict({"code": 0, "targets": [(True, 2.8), (False, 3.0)], "paths": []},
+                            parse_args(["-t=3-", "-t=2.8"]))
+
+    # Too many targets (>2).
     self.assertContainsDict({"code": 1},
                             parse_args(["-t=3.1", "-t=2.8", "-t=3"]))
 
     # Invalid values.
-    self.assertContainsDict({"code": 1}, parse_args(["-t=a"]))
-    self.assertContainsDict({"code": 1}, parse_args(["-t=-1"]))
-    self.assertContainsDict({"code": 1}, parse_args(["-t=1.8"]))
-    self.assertContainsDict({"code": 1}, parse_args(["-t=4"]))
-    self.assertContainsDict({"code": 1}, parse_args(["-t=10"]))
+    self.assertContainsDict({"code": 1}, parse_args(["-t=a"]))    # NaN
+    self.assertContainsDict({"code": 1}, parse_args(["-t=-1"]))   # < 2
+    self.assertContainsDict({"code": 1}, parse_args(["-t=1.8"]))  # < 2
+    self.assertContainsDict({"code": 1}, parse_args(["-t=4"]))    # >= 4
+    self.assertContainsDict({"code": 1}, parse_args(["-t=2+"]))   # Only - allowed.
 
   def test_ignore_incomp(self):
     self.assertFalse(self.config.ignore_incomp())

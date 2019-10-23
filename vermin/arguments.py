@@ -28,7 +28,9 @@ class Arguments:
           "        -vvv   will also show line/col numbers.\n"
           "        -vvvv  will also show user-defined symbols being ignored.")
     print("  -t=V  Target version that files must abide by. Can be specified once or twice.\n"
-          "        If not met Vermin will exit with code 1.")
+          "        A '-' can be appended to match target version or smaller, like '-t=3.5-'.\n"
+          "        If not met Vermin will exit with code 1. Note that the amount of target\n"
+          "        versions must match the amount of minimum required versions detected.")
     print("  -p=N  Use N concurrent processes to analyze files (defaults to all cores = {})."
           .format(cpu_count()))
     print("  -i    Ignore incompatible versions and warnings. However, if no compatible versions\n"
@@ -45,6 +47,7 @@ class Arguments:
           "        not specified directly).")
     print("\n  --versions\n"
           "        In the end, print all unique versions required by the analysed code.")
+    # TODO: Argument for specifying files and folders to ignore from detection/parsing.
     print("\n  [--exclude <name>] ...\n"
           "        Exclude full names, like 'email.parser.FeedParser', from analysis. Useful to\n"
           "        ignore conditional logic that can trigger incompatible results. It's more fine\n"
@@ -85,6 +88,10 @@ class Arguments:
         path_pos += 1
       elif arg.startswith("-t="):
         value = arg.split("=")[1]
+        exact = True
+        if value.endswith("-"):
+          exact = False
+          value = value[:-1]
         try:
           target = float(value)
         except ValueError:
@@ -93,7 +100,7 @@ class Arguments:
         if target < 2.0 or target >= 4.0:
           print("Invalid target: {}".format(target))
           return {"code": 1}
-        targets.append(target)
+        targets.append((exact, target))
         path_pos += 1
       elif arg == "-i":
         config.set_ignore_incomp(True)
@@ -142,7 +149,9 @@ class Arguments:
     if len(targets) > 2:
       print("A maximum of two targets can be specified!")
       return {"code": 1}
-    targets.sort()
+
+    # Sort target versions, not boolean values.
+    targets.sort(key=lambda t: t[1])
 
     paths = self.__args[path_pos:]
     return {"code": 0,

@@ -79,8 +79,15 @@ def main():
   if args["versions"] and len(unique_versions) > 0:
     print("Version range:             {}".format(version_strings(unique_versions)))
 
-  if len(targets) > 0 and targets != reqs:
-    print("Target versions not met:   {}".format(version_strings(targets)))
-    sys.exit(1)
+  if len(targets) > 0:
+    if not (len(reqs) == len(targets) and
+            all(((exact and target == req) or (not exact and target >= req)) for
+                ((exact, target), req) in zip(targets, reqs))):
+      vers = ["{}{}".format(t, "-" if not e else "") for (e, t) in targets]
+      print("Target versions not met:   {}".format(version_strings(vers)))
+      if len(targets) < len(reqs):
+        print("Note: Number of specified targets ({}) doesn't match number of detected minimum "
+              "versions ({}).".format(len(targets), len(reqs)))
+      sys.exit(1)
 
   sys.exit(0)

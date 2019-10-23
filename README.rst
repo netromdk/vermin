@@ -87,7 +87,9 @@ Examples
           -vvv   will also show line/col numbers.
           -vvvv  will also show user-defined symbols being ignored.
     -t=V  Target version that files must abide by. Can be specified once or twice.
-          If not met Vermin will exit with code 1.
+          A '-' can be appended to match target version or smaller, like '-t=3.5-'.
+          If not met Vermin will exit with code 1. Note that the amount of target
+          versions must match the amount of minimum required versions detected.
     -p=N  Use N concurrent processes to analyze files (defaults to all cores = 8).
     -i    Ignore incompatible versions and warnings. However, if no compatible versions
           are found then incompatible versions will be shown in the end to not have an
