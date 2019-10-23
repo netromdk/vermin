@@ -53,6 +53,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__strftime_directives = []
     self.__codecs_error_handlers = []
     self.__codecs_encodings = []
+    self.__with_statement = False
 
     # Imported members of modules, like "exc_clear" of "sys".
     self.__import_mem_mod = {}
@@ -168,6 +169,9 @@ class SourceVisitor(ast.NodeVisitor):
   def modular_inverse_pow(self):
     return self.__mod_inverse_pow
 
+  def with_statement(self):
+    return self.__with_statement
+
   def minimum_versions(self):
     mins = [0, 0]
 
@@ -246,6 +250,9 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.modular_inverse_pow():
       mins = combine_versions(mins, (None, 3.8))
+
+    if self.with_statement():
+      mins = combine_versions(mins, (2.5, 3.0))
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
@@ -990,6 +997,11 @@ class SourceVisitor(ast.NodeVisitor):
   def visit_BoolOp(self, node):
     if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
       self.generic_visit(node)
+
+  def visit_With(self, node):
+    self.__with_statement = True
+    self.__vvprint("`with` requires 2.5+")
+    self.generic_visit(node)
 
   # Ignore unused nodes as a speed optimization.
 

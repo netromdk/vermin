@@ -263,3 +263,8 @@ class VerminLanguageTests(VerminTest):
       self.assertIn("bytes.hex", visitor.members())
       visitor = visit("bytes().hex()")
       self.assertIn("bytes.hex", visitor.members())
+
+  def test_with_statement(self):
+      visitor = visit("with func():\n  pass")
+      self.assertTrue(visitor.with_statement())
+      self.assertOnlyIn([2.5, 3.0], visitor.minimum_versions())
