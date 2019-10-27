@@ -66,7 +66,7 @@ Examples
 ::
 
   % ./vermin.py
-  Vermin 0.8.1
+  Vermin 0.8.2
   Usage: ./vermin.py [options] <python source files and folders..>
 
   Heuristics are employed when files don't have extensions 'py' or 'pyw':
