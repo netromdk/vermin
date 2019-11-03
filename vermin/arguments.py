@@ -1,8 +1,11 @@
 import sys
+import re
 from multiprocessing import cpu_count
 
 from .constants import VERSION
 from .config import Config
+
+TARGETS_SPLIT = re.compile("[\\.,]")
 
 class Arguments:
   def __init__(self, args):
@@ -92,15 +95,35 @@ class Arguments:
         if value.endswith("-"):
           exact = False
           value = value[:-1]
-        try:
-          target = float(value)
-        except ValueError:
+
+        # Parse target as a tuple separated by either commas or dots, which preserves support for
+        # old float-number inputs.
+        elms = TARGETS_SPLIT.split(value)
+        if len(elms) != 1 and len(elms) != 2:
           print("Invalid target: {}".format(value))
           return {"code": 1}
-        if target < 2.0 or target >= 4.0:
-          print("Invalid target: {}".format(target))
+
+        for i in range(len(elms)):
+          try:
+            n = int(elms[i])
+            if n < 0:
+              print("Invalid target: {}".format(value))
+              return {"code": 1}
+            elms[i] = n
+          except ValueError:
+            print("Invalid target: {}".format(value))
+            return {"code": 1}
+
+        # When only specifying major version, use zero as minor.
+        if len(elms) == 1:
+          elms.append(0)
+
+        elms = tuple(elms)
+        if not (elms >= (2, 0) and elms < (4, 0)):
+          print("Invalid target: {}".format(value))
           return {"code": 1}
-        targets.append((exact, target))
+
+        targets.append((exact, elms))
         path_pos += 1
       elif arg == "-i":
         config.set_ignore_incomp(True)
