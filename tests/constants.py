@@ -92,7 +92,8 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn(((2, 0), (3, 0)), detect("from sys import version_info"))
 
   def test_sentinel_of_multiprocessing_Process(self):
-    self.assertOnlyIn((3, 3), detect("from multiprocessing import Process\np = Process()\np.sentinel"))
+    self.assertOnlyIn((3, 3),
+                      detect("from multiprocessing import Process\np = Process()\np.sentinel"))
 
   def test_skipped_of_unittest_TestResult(self):
     self.assertOnlyIn(((2, 7), (3, 0)),
@@ -167,7 +168,8 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn((3, 5), detect("from __future__ import generator_stop"))
 
   def test_eof_of_bz2_BZ2Decompressor(self):
-    self.assertOnlyIn((3, 3), detect("from bz2 import BZ2Decompressor\nd = BZ2Decompressor()\nd.eof"))
+    self.assertOnlyIn((3, 3),
+                      detect("from bz2 import BZ2Decompressor\nd = BZ2Decompressor()\nd.eof"))
 
   def test_needs_input_of_bz2_BZ2Decompressor(self):
     self.assertOnlyIn((3, 5),
@@ -176,7 +178,8 @@ class VerminConstantMemberTests(VerminTest):
                              "d.needs_input"))
 
   def test_maxlen_of_collections_deque(self):
-    self.assertOnlyIn(((2, 7), (3, 1)), detect("from collections import deque\nd = deque()\nd.maxlen"))
+    self.assertOnlyIn(((2, 7), (3, 1)),
+                      detect("from collections import deque\nd = deque()\nd.maxlen"))
 
   def test_block_size_of_hmac_HMAC(self):
     self.assertOnlyIn((3, 4), detect("from hmac import HMAC\nd = HMAC()\nd.block_size"))
@@ -315,7 +318,8 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn(((2, 7), (3, 2)), detect("from ssl import OPENSSL_VERSION_NUMBER"))
 
   def test_ALERT_DESCRIPTION_HANDSHAKE_FAILURE_of_ssl(self):
-    self.assertOnlyIn(((2, 7), (3, 4)), detect("from ssl import ALERT_DESCRIPTION_HANDSHAKE_FAILURE"))
+    self.assertOnlyIn(((2, 7), (3, 4)),
+                      detect("from ssl import ALERT_DESCRIPTION_HANDSHAKE_FAILURE"))
 
   def test_ALERT_DESCRIPTION_INTERNAL_ERROR_of_ssl(self):
     self.assertOnlyIn(((2, 7), (3, 4)), detect("from ssl import ALERT_DESCRIPTION_INTERNAL_ERROR"))
@@ -361,7 +365,8 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn((3, 3), detect("from subprocess import Popen\nPopen.args"))
 
     # In this test "args" cannot be matched as "subprocess.Popen.args" constant (as above)!
-    self.assertOnlyIn(((2, 4), (3, 0)), detect("import subprocess\nargs=[]\nsubprocess.Popen(args)"))
+    self.assertOnlyIn(((2, 4), (3, 0)),
+                      detect("import subprocess\nargs=[]\nsubprocess.Popen(args)"))
 
   def test_ZIP_BZIP2_of_zipfile(self):
     self.assertOnlyIn((3, 3), detect("import zipfile\nzipfile.ZIP_BZIP2"))
@@ -493,7 +498,8 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn((3, 6), detect("from cmath import nanj"))
 
   def test_is_jump_target_of_dis_Instruction(self):
-    self.assertOnlyIn((3, 4), detect("from dis import Instruction\ni=Instruction()\ni.is_jump_target"))
+    self.assertOnlyIn((3, 4),
+                      detect("from dis import Instruction\ni=Instruction()\ni.is_jump_target"))
 
   def test_FAIL_FAST_of_doctest(self):
     self.assertOnlyIn((3, 4), detect("import doctest\ndoctest.FAIL_FAST"))

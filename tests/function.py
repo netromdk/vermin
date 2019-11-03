@@ -165,23 +165,28 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((3, 4), detect("from multiprocessing import get_context"))
 
   def test_assertIs_of_unittest_TestCase(self):
-    self.assertOnlyIn(((2, 7), (3, 1)), detect("from unittest import TestCase\nTestCase.assertIs()"))
+    self.assertOnlyIn(((2, 7), (3, 1)),
+                      detect("from unittest import TestCase\nTestCase.assertIs()"))
 
   def test_assertIsNot_of_unittest_TestCase(self):
-    self.assertOnlyIn(((2, 7), (3, 1)), detect("from unittest import TestCase\nTestCase.assertIsNot()"))
+    self.assertOnlyIn(((2, 7), (3, 1)),
+                      detect("from unittest import TestCase\nTestCase.assertIsNot()"))
 
   def test_assertIsNone_of_unittest_TestCase(self):
-    self.assertOnlyIn(((2, 7), (3, 1)), detect("from unittest import TestCase\nTestCase.assertIsNone()"))
+    self.assertOnlyIn(((2, 7), (3, 1)),
+                      detect("from unittest import TestCase\nTestCase.assertIsNone()"))
 
   def test_assertIsNotNone_of_unittest_TestCase(self):
     self.assertOnlyIn(((2, 7), (3, 1)),
                       detect("from unittest import TestCase\nTestCase.assertIsNotNone()"))
 
   def test_assertIn_of_unittest_TestCase(self):
-    self.assertOnlyIn(((2, 7), (3, 1)), detect("from unittest import TestCase\nTestCase.assertIn()"))
+    self.assertOnlyIn(((2, 7), (3, 1)),
+                      detect("from unittest import TestCase\nTestCase.assertIn()"))
 
   def test_assertNotIn_of_unittest_TestCase(self):
-    self.assertOnlyIn(((2, 7), (3, 1)), detect("from unittest import TestCase\nTestCase.assertNotIn()"))
+    self.assertOnlyIn(((2, 7), (3, 1)),
+                      detect("from unittest import TestCase\nTestCase.assertNotIn()"))
 
   def test_assertIsInstance_of_unittest_TestCase(self):
     self.assertOnlyIn(((2, 7), (3, 2)),
@@ -337,13 +342,16 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((3, 3), detect("from bz2 import BZ2File\nf = BZ2File()\nf.readinto()"))
 
   def test_count_of_collections_deque(self):
-    self.assertOnlyIn(((2, 7), (3, 2)), detect("from collections import deque\nd = deque()\nd.count()"))
+    self.assertOnlyIn(((2, 7), (3, 2)),
+                      detect("from collections import deque\nd = deque()\nd.count()"))
 
   def test_remove_of_collections_deque(self):
-    self.assertOnlyIn(((2, 5), (3, 0)), detect("from collections import deque\nd = deque()\nd.remove()"))
+    self.assertOnlyIn(((2, 5), (3, 0)),
+                      detect("from collections import deque\nd = deque()\nd.remove()"))
 
   def test_reverse_of_collections_deque(self):
-    self.assertOnlyIn(((2, 7), (3, 2)), detect("from collections import deque\nd = deque()\nd.reverse()"))
+    self.assertOnlyIn(((2, 7), (3, 2)),
+                      detect("from collections import deque\nd = deque()\nd.reverse()"))
 
   def test_copy_of_collections_deque(self):
     self.assertOnlyIn((3, 5), detect("from collections import deque\nd = deque()\nd.copy()"))
@@ -397,16 +405,19 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("from ctypes import _CData\n_CData.from_buffer()"))
 
   def test_from_buffer_copy_of_ctypes__CData(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from ctypes import _CData\n_CData.from_buffer_copy()"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      detect("from ctypes import _CData\n_CData.from_buffer_copy()"))
 
   def test_canonical_of_decimal_Decimal(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.canonical()"))
 
   def test_compare_signal_of_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.compare_signal()"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      detect("from decimal import Decimal\nDecimal.compare_signal()"))
 
   def test_compare_total_of_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.compare_total()"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      detect("from decimal import Decimal\nDecimal.compare_total()"))
 
   def test_compare_total_mag_of_decimal_Decimal(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
@@ -419,7 +430,8 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.copy_abs()"))
 
   def test_copy_negate_of_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.copy_negate()"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      detect("from decimal import Decimal\nDecimal.copy_negate()"))
 
   def test_copy_sign_of_decimal_Decimal(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.copy_sign()"))
@@ -434,13 +446,15 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.fma()"))
 
   def test_is_canonical_of_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.is_canonical()"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      detect("from decimal import Decimal\nDecimal.is_canonical()"))
 
   def test_is_finite_of_decimal_Decimal(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.is_finite()"))
 
   def test_is_infinite_of_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.is_infinite()"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      detect("from decimal import Decimal\nDecimal.is_infinite()"))
 
   def test_is_nan_of_decimal_Decimal(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.is_nan()"))
@@ -458,7 +472,8 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.is_snan()"))
 
   def test_is_subnormal_of_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.is_subnormal()"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      detect("from decimal import Decimal\nDecimal.is_subnormal()"))
 
   def test_is_zero_of_decimal_Decimal(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.is_zero()"))
@@ -473,16 +488,19 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.logb()"))
 
   def test_logical_and_of_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.logical_and()"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      detect("from decimal import Decimal\nDecimal.logical_and()"))
 
   def test_logical_invert_of_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.logical_invert()"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      detect("from decimal import Decimal\nDecimal.logical_invert()"))
 
   def test_logical_or_of_decimal_Decimal(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.logical_or()"))
 
   def test_logical_xor_of_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.logical_xor()"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      detect("from decimal import Decimal\nDecimal.logical_xor()"))
 
   def test_max_mag_decimal_Decimal(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.max_mag()"))
@@ -497,10 +515,12 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.next_plus()"))
 
   def test_next_toward_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.next_toward()"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      detect("from decimal import Decimal\nDecimal.next_toward()"))
 
   def test_number_class_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.number_class()"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      detect("from decimal import Decimal\nDecimal.number_class()"))
 
   def test_radix_decimal_Decimal(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.radix()"))
@@ -626,8 +646,8 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_apply_defaults_from_inspect_BoundArguments(self):
     self.assertOnlyIn((3, 6), detect("from inspect import BoundArguments\n"
-                                  "ba = BoundArguments()\n"
-                                  "ba.apply_defaults()"))
+                                     "ba = BoundArguments()\n"
+                                     "ba.apply_defaults()"))
 
   def test_getclosurevars_from_inspect(self):
     self.assertOnlyIn((3, 3), detect("import inspect\ninspect.getclosurevars()"))
@@ -924,14 +944,15 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_check_returncode_from_subprocess_CompletedProcess(self):
     self.assertOnlyIn((3, 5), detect("from subprocess import CompletedProcess\n"
-                                  "cp = CompletedProcess()\n"
-                                  "cp.check_returncode()"))
+                                     "cp = CompletedProcess()\n"
+                                     "cp.check_returncode()"))
 
   def test_extractall_from_tarfile_TarFile(self):
     self.assertOnlyIn(((2, 5), (3, 0)), detect("from tarfile import TarFile\nTarFile.extractall()"))
 
   def test_fromtarfile_from_tarfile_TarInfo(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from tarfile import TarInfo\nTarInfo.fromtarfile()"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      detect("from tarfile import TarInfo\nTarInfo.fromtarfile()"))
 
   def test_shorten_from_textwrap(self):
     self.assertOnlyIn((3, 4), detect("import textwrap\ntextwrap.shorten()"))

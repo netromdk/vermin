@@ -49,7 +49,8 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn((3, 4), detect("import multiprocessing\nmultiprocessing.Pool(context=None)"))
 
   def test_daemon_of_Process_from_multiprocessing(self):
-    self.assertOnlyIn((3, 3), detect("import multiprocessing\nmultiprocessing.Process(daemon=None)"))
+    self.assertOnlyIn((3, 3),
+                      detect("import multiprocessing\nmultiprocessing.Process(daemon=None)"))
 
   def test_compact_of_PrettyPrinter_from_pprint(self):
     self.assertOnlyIn((3, 4), detect("import pprint\npprint.PrettyPrinter(compact=True)"))
@@ -79,7 +80,8 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn((3, 6), detect("from datetime import datetime\ndatetime.replace(fold=1)"))
 
   def test_timespec_of_isoformat_from_datetime(self):
-    self.assertOnlyIn((3, 6), detect("from datetime import datetime\ndatetime.isoformat(timespec=1)"))
+    self.assertOnlyIn((3, 6),
+                      detect("from datetime import datetime\ndatetime.isoformat(timespec=1)"))
 
   def test_fold_of_replace_from_datetime_time(self):
     self.assertOnlyIn((3, 6), detect("from datetime import time\ntime.replace(fold=1)"))
@@ -105,7 +107,8 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import collections\ncollections.deque(maxlen=1)"))
 
   def test_rename_of_namedtuple_from_collections(self):
-    self.assertOnlyIn(((2, 7), (3, 1)), detect("import collections\ncollections.namedtuple(rename=True)"))
+    self.assertOnlyIn(((2, 7), (3, 1)),
+                      detect("import collections\ncollections.namedtuple(rename=True)"))
 
   def test_module_of_namedtuple_from_collections(self):
     self.assertOnlyIn((3, 6), detect("import collections\ncollections.namedtuple(module=None)"))
@@ -135,7 +138,8 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import ctypes\nctypes.WinDLL(use_errno=True)"))
 
   def test_use_last_error_of_CFUNCTYPE_from_ctypes(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("import ctypes\nctypes.CFUNCTYPE(use_last_error=True)"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      detect("import ctypes\nctypes.CFUNCTYPE(use_last_error=True)"))
 
   def test_use_errno_of_CFUNCTYPE_from_ctypes(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import ctypes\nctypes.CFUNCTYPE(use_errno=True)"))
@@ -144,23 +148,24 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import ctypes\nctypes.byref(offset=3)"))
 
   def test_autojunk_of_SequenceMatcher_from_difflib(self):
-    self.assertOnlyIn(((2, 7), (3, 2)), detect("import difflib\ndifflib.SequenceMatcher(autojunk=True)"))
+    self.assertOnlyIn(((2, 7), (3, 2)),
+                      detect("import difflib\ndifflib.SequenceMatcher(autojunk=True)"))
 
   def test_charset_of_make_file_from_difflib(self):
     self.assertOnlyIn((3, 5), detect("from difflib import HtmlDiff\n"
-                                  "HtmlDiff.make_file(charset=True)"))
+                                     "HtmlDiff.make_file(charset=True)"))
 
   def test_use_builtin_types_of_SimpleXMLRPCServer_from_xmlrpc_server(self):
     self.assertOnlyIn((3, 3), detect("from xmlrpc.server import SimpleXMLRPCServer\n"
-                                  "SimpleXMLRPCServer(use_builtin_types=True)"))
+                                     "SimpleXMLRPCServer(use_builtin_types=True)"))
 
   def test_use_builtin_types_of_CGIXMLRPCRequestHandler_from_xmlrpc_server(self):
     self.assertOnlyIn((3, 3), detect("from xmlrpc.server import CGIXMLRPCRequestHandler\n"
-                                  "CGIXMLRPCRequestHandler(use_builtin_types=True)"))
+                                     "CGIXMLRPCRequestHandler(use_builtin_types=True)"))
 
   def test_use_builtin_types_of_DocXMLRPCServer_from_xmlrpc_server(self):
     self.assertOnlyIn((3, 3), detect("from xmlrpc.server import DocXMLRPCServer\n"
-                                  "DocXMLRPCServer(use_builtin_types=True)"))
+                                     "DocXMLRPCServer(use_builtin_types=True)"))
 
   def test_typed_of_lru_cache_from_functools(self):
     self.assertOnlyIn((3, 3), detect("import functools\nfunctools.lru_cache(typed=3)"))
@@ -193,7 +198,8 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn(((2, 7), (3, 1)), detect("import json\njson.load(object_pairs_hook=None)"))
 
   def test_object_pairs_hook_of_JSONDecoder_from_json(self):
-    self.assertOnlyIn(((2, 7), (3, 1)), detect("import json\njson.JSONDecoder(object_pairs_hook=None)"))
+    self.assertOnlyIn(((2, 7), (3, 1)),
+                      detect("import json\njson.JSONDecoder(object_pairs_hook=None)"))
 
   def test_func_of_makeRecord_from_logging_Logger(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
@@ -306,7 +312,8 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn((3, 3), detect("from subprocess import Popen\nPopen.wait(timeout=None)"))
 
   def test_timeout_of_communicate_from_subprocess_Popen(self):
-    self.assertOnlyIn((3, 3), detect("from subprocess import Popen\nPopen.communicate(timeout=None)"))
+    self.assertOnlyIn((3, 3),
+                      detect("from subprocess import Popen\nPopen.communicate(timeout=None)"))
 
   def test_timeout_of_call_from_subprocess(self):
     self.assertOnlyIn((3, 3), detect("import subprocess\nsubprocess.call(timeout=None)"))
@@ -527,10 +534,12 @@ class VerminKwargsTests(VerminTest):
                              "MIMEApplication(policy=None)"))
 
   def test_policy_of_email_mime_audio_MIMEAudio(self):
-    self.assertOnlyIn((3, 6), detect("from email.mime.audio import MIMEAudio\nMIMEAudio(policy=None)"))
+    self.assertOnlyIn((3, 6),
+                      detect("from email.mime.audio import MIMEAudio\nMIMEAudio(policy=None)"))
 
   def test_policy_of_email_mime_image_MIMEImage(self):
-    self.assertOnlyIn((3, 6), detect("from email.mime.image import MIMEImage\nMIMEImage(policy=None)"))
+    self.assertOnlyIn((3, 6),
+                      detect("from email.mime.image import MIMEImage\nMIMEImage(policy=None)"))
 
   def test_policy_of_email_mime_message_MIMEMessage(self):
     self.assertOnlyIn((3, 6),
@@ -547,10 +556,12 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn((3, 3), detect("import email.utils\nemail.utils.formatdate(charset=None)"))
 
   def test_strict_of_email_message_from_string(self):
-    self.assertOnlyIn(((2, 2), (3, 0)), detect("import email\nemail.message_from_string(strict=None)"))
+    self.assertOnlyIn(((2, 2), (3, 0)),
+                      detect("import email\nemail.message_from_string(strict=None)"))
 
   def test_strict_of_email_message_from_file(self):
-    self.assertOnlyIn(((2, 2), (3, 0)), detect("import email\nemail.message_from_file(strict=None)"))
+    self.assertOnlyIn(((2, 2), (3, 0)),
+                      detect("import email\nemail.message_from_file(strict=None)"))
 
   def test_policy_of_email_parser_BytesFeedParser(self):
     self.assertOnlyIn((3, 3),
@@ -634,7 +645,8 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn((3, 2), detect("import compileall\ncompileall.compile_path(legacy='hello')"))
 
   def test_optimize_of_compileall_compile_path(self):
-    self.assertOnlyIn((3, 2), detect("import compileall\ncompileall.compile_path(optimize='hello')"))
+    self.assertOnlyIn((3, 2),
+                      detect("import compileall\ncompileall.compile_path(optimize='hello')"))
 
   def test_invalidation_mode_of_compileall_compile_path(self):
     self.assertOnlyIn((3, 7),

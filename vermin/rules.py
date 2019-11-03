@@ -1016,8 +1016,9 @@ KWARGS_REQS = {
   ("SimpleXMLRPCServer.SimpleXMLRPCServer", "allow_none"): ((2, 5), None),
   ("SimpleXMLRPCServer.SimpleXMLRPCServer", "bind_and_active"): ((2, 6), None),
   ("SimpleXMLRPCServer.SimpleXMLRPCServer", "encoding"): ((2, 5), None),
-  ("SimpleXMLRPCServer.SimpleXMLRPCServer.register_instance", "allow_dotted_names"):\
-    ((2, 3), (3, 0)),
+  ("SimpleXMLRPCServer.SimpleXMLRPCServer.register_instance",
+   "allow_dotted_names"): ((2, 3), (3, 0)),
+
   ("__import__", "level"): ((2, 5), (3, 0)),
   ("argparse.ArgumentParser", "allow_abbrev"): (None, (3, 5)),
   ("bdb.Bdb", "skip"): (None, (3, 1)),

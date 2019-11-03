@@ -209,13 +209,15 @@ class VerminClassMemberTests(VerminTest):
     self.assertOnlyIn((2, 4), detect("from xmlrpclib import MultiCall"))
 
   def test_MIMENonMultipart_of_email_mime_nonmultipart(self):
-    self.assertOnlyIn(((2, 2), (3, 0)), detect("from email.mime.nonmultipart import MIMENonMultipart"))
+    self.assertOnlyIn(((2, 2), (3, 0)),
+                      detect("from email.mime.nonmultipart import MIMENonMultipart"))
 
   def test_MIMEMultipart_of_email_mime_multipart(self):
     self.assertOnlyIn(((2, 2), (3, 0)), detect("from email.mime.multipart import MIMEMultipart"))
 
   def test_MIMEApplication_of_email_mime_application(self):
-    self.assertOnlyIn(((2, 5), (3, 0)), detect("from email.mime.application import MIMEApplication"))
+    self.assertOnlyIn(((2, 5), (3, 0)),
+                      detect("from email.mime.application import MIMEApplication"))
 
   def test_FeedParser_of_email_parser(self):
     self.assertOnlyIn(((2, 4), (3, 0)), detect("from email.parser import FeedParser"))

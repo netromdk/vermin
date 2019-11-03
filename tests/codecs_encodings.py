@@ -94,11 +94,13 @@ class VerminCodecsEncodingTests(VerminTest):
 
   def test_function_getincrementalencoder(self):
     self.assertOnlyIn((3, 5), detect("import codecs\ncodecs.getincrementalencoder('koi8_t')"))
-    self.assertOnlyIn((3, 5), detect("import codecs\ncodecs.getincrementalencoder(encoding='koi8_t')"))
+    self.assertOnlyIn((3, 5),
+                      detect("import codecs\ncodecs.getincrementalencoder(encoding='koi8_t')"))
 
   def test_function_getincrementaldecoder(self):
     self.assertOnlyIn((3, 5), detect("import codecs\ncodecs.getincrementaldecoder('koi8_t')"))
-    self.assertOnlyIn((3, 5), detect("import codecs\ncodecs.getincrementaldecoder(encoding='koi8_t')"))
+    self.assertOnlyIn((3, 5),
+                      detect("import codecs\ncodecs.getincrementaldecoder(encoding='koi8_t')"))
 
   def test_function_getreader(self):
     self.assertOnlyIn((3, 5), detect("import codecs\ncodecs.getreader('koi8_t')"))

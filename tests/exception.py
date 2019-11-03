@@ -26,17 +26,20 @@ class VerminExceptionMemberTests(VerminTest):
     self.assertOnlyIn((3, 2), detect("from zipfile import BadZipFile"))
 
   def test_NoBoundaryInMultipartDefect_of_email_errors(self):
-    self.assertOnlyIn(((2, 4), (3, 0)), detect("from email.errors import NoBoundaryInMultipartDefect"))
+    self.assertOnlyIn(((2, 4), (3, 0)),
+                      detect("from email.errors import NoBoundaryInMultipartDefect"))
 
   def test_StartBoundaryNotFoundDefect_of_email_errors(self):
-    self.assertOnlyIn(((2, 4), (3, 0)), detect("from email.errors import StartBoundaryNotFoundDefect"))
+    self.assertOnlyIn(((2, 4), (3, 0)),
+                      detect("from email.errors import StartBoundaryNotFoundDefect"))
 
   def test_FirstHeaderLineIsContinuationDefect_of_email_errors(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
                       detect("from email.errors import FirstHeaderLineIsContinuationDefect"))
 
   def test_MisplacedEnvelopeHeaderDefect_of_email_errors(self):
-    self.assertOnlyIn(((2, 4), (3, 0)), detect("from email.errors import MisplacedEnvelopeHeaderDefect"))
+    self.assertOnlyIn(((2, 4), (3, 0)),
+                      detect("from email.errors import MisplacedEnvelopeHeaderDefect"))
 
   def test_MalformedHeaderDefect_of_email_errors(self):
     self.assertOnlyIn(((2, 4), (3, 0)), detect("from email.errors import MalformedHeaderDefect"))
