@@ -16,8 +16,12 @@ class VerminTest(unittest.TestCase):
     size = 1
     multiple = isinstance(values, list) or isinstance(values, tuple)
     if multiple:
-      size = len(values)
-    self.assertEqual(len(data) - data.count(None) - data.count(0), size,
+      # Unless it's a tuple of ints, then it's a version and not a multiple.
+      if all(isinstance(x, int) for x in values):
+        multiple = False
+      else:
+        size = len(values)
+    self.assertEqual(len(data) - data.count(None) - data.count(0) - data.count((0, 0)), size,
                      msg="ONLY looking for '{}' in '{}'".format(values, data))
     if multiple:
       for value in values:
