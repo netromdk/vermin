@@ -133,21 +133,24 @@ class VerminGeneralTests(VerminTest):
   def test_combine_versions(self):
     with self.assertRaises(AssertionError):
       combine_versions([None], [None, None])
-    self.assertEqual([2.0, 3.1], combine_versions([2.0, 3.0], [2.0, 3.1]))
-    self.assertEqual([2.1, 3.0], combine_versions([2.1, 3.0], [2.0, 3.0]))
-    self.assertEqual([None, 3.0], combine_versions([2.0, 3.0], [None, 3.0]))
-    self.assertEqual([2.0, None], combine_versions([2.0, None], [2.0, 3.0]))
+    self.assertEqual([(2, 0), (3, 1)], combine_versions([(2, 0), (3, 0)], [(2, 0), (3, 1)]))
+    self.assertEqual([(2, 0), (3, 1)], combine_versions([2, (3, 0)], [(2, 0), 3.1]))
+    self.assertEqual([(2, 0), (3, 1)], combine_versions([(2, 0), 3], [2, 3.1]))
+    self.assertEqual([(2, 0), (3, 1)], combine_versions([2.0, 3.0], [2.0, 3.1]))
+    self.assertEqual([(2, 1), (3, 0)], combine_versions([2.1, 3.0], [2.0, 3.0]))
+    self.assertEqual([None, (3, 0)], combine_versions([2.0, 3.0], [None, 3.0]))
+    self.assertEqual([(2, 0), None], combine_versions([2.0, None], [2.0, 3.0]))
     self.assertEqual([None, None], combine_versions([2.0, 3.0], [None, None]))
     self.assertEqual([None, None], combine_versions([None, None], [2.0, 3.0]))
     with self.assertRaises(InvalidVersionException):
       combine_versions([2.0, None], [None, 3.0])
     with self.assertRaises(InvalidVersionException):
       combine_versions([None, 3.0], [2.0, None])
-    self.assertEqual([0, 3.0], combine_versions([0, 3.0], [0, 3.0]))
-    self.assertEqual([2.0, 3.0], combine_versions([0, 3.0], [2.0, 3.0]))
-    self.assertEqual([2.0, 3.0], combine_versions([2.0, 3.0], [0, 3.0]))
-    self.assertEqual([2.0, 3.0], combine_versions([2.0, 0], [2.0, 3.0]))
-    self.assertEqual([2.0, 3.0], combine_versions([2.0, 3.0], [2.0, 0]))
+    self.assertEqual([(0, 0), (3, 0)], combine_versions([0, 3.0], [0, 3.0]))
+    self.assertEqual([(2, 0), (3, 0)], combine_versions([0, 3.0], [2.0, 3.0]))
+    self.assertEqual([(2, 0), (3, 0)], combine_versions([2.0, 3.0], [0, 3.0]))
+    self.assertEqual([(2, 0), (3, 0)], combine_versions([2.0, 0], [2.0, 3.0]))
+    self.assertEqual([(2, 0), (3, 0)], combine_versions([2.0, 3.0], [2.0, 0]))
 
   def test_detect_min_version(self):
     self.assertEqual([2.6, 3.0], detect("import abc"))
