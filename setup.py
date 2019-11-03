@@ -21,7 +21,7 @@ setup(
   url="https://github.com/netromdk/vermin",
 
   author="Morten Kristensen",
-  author_email="msk@nullpointer.dk",
+  author_email="me@mortens.dev",
 
   license="MIT",
 
