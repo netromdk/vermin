@@ -2,7 +2,7 @@ from multiprocessing import Pool, cpu_count
 
 from .printing import nprint, vprint
 from .config import Config
-from .utility import combine_versions, InvalidVersionException
+from .utility import combine_versions, InvalidVersionException, version_strings
 from .parser import Parser
 from .source_visitor import SourceVisitor
 
@@ -62,20 +62,6 @@ def process_individual(args):
   return (path, mins, text)
 
 class Processor:
-  def __versions_string(self, vers):
-    res = []
-    for i in range(len(vers)):
-      ver = vers[i]
-      # When versions aren't known, show something instead of nothing. It might run with any
-      # version.
-      if ver == 0:
-        res.append("~{}".format(i + 2))
-      elif ver is None:
-        res.append("!{}".format(i + 2))
-      else:
-        res.append(str(ver))
-    return ", ".join(res)
-
   def process(self, paths, processes=cpu_count()):
     pool = Pool(processes=processes)
     mins = [(0, 0), (0, 0)]
@@ -112,7 +98,7 @@ class Processor:
         if not subtext.endswith("\n"):
           subtext += "\n"
 
-      vprint("{:<12} {}{}".format(self.__versions_string(min_versions), path, subtext))
+      vprint("{:<12} {}{}".format(version_strings(min_versions), path, subtext))
       try:
         mins = combine_versions(mins, min_versions)
       except InvalidVersionException:

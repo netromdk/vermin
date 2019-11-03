@@ -5,7 +5,7 @@ import sys
 from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, ARRAY_TYPECODE_REQS, \
   CODECS_ERROR_HANDLERS, CODECS_ERRORS_INDICES, CODECS_ENCODINGS, CODECS_ENCODINGS_INDICES
 from .config import Config
-from .utility import dotted_name, reverse_range, combine_versions
+from .utility import dotted_name, reverse_range, combine_versions, version_strings
 
 STRFTIME_DIRECTIVE_REGEX = re.compile(r"(%\w)")
 
@@ -258,47 +258,51 @@ class SourceVisitor(ast.NodeVisitor):
       if directive in STRFTIME_REQS:
         vers = STRFTIME_REQS[directive]
         self.__vvprint("strftime directive '{}' requires {}".
-                       format(directive, vers), directive)
+                       format(directive, version_strings(vers)), directive)
         mins = combine_versions(mins, vers)
 
     for typecode in self.array_typecodes():
       if typecode in ARRAY_TYPECODE_REQS:
         vers = ARRAY_TYPECODE_REQS[typecode]
-        self.__vvprint("array typecode '{}' requires {}".format(typecode, vers), typecode)
+        self.__vvprint("array typecode '{}' requires {}".
+                       format(typecode, version_strings(vers)), typecode)
         mins = combine_versions(mins, vers)
 
     for name in self.codecs_error_handlers():
       if name in CODECS_ERROR_HANDLERS:
         vers = CODECS_ERROR_HANDLERS[name]
-        self.__vvprint("codecs error handler name '{}' requires {}".format(name, vers), name)
+        self.__vvprint("codecs error handler name '{}' requires {}".
+                       format(name, version_strings(vers)), name)
         mins = combine_versions(mins, vers)
 
     for encoding in self.codecs_encodings():
       for encs in CODECS_ENCODINGS:
         if encoding.lower() in encs:
           vers = CODECS_ENCODINGS[encs]
-          self.__vvprint("codecs encoding '{}' requires {}".format(encoding, vers), encoding)
+          self.__vvprint("codecs encoding '{}' requires {}".
+                         format(encoding, version_strings(vers)), encoding)
           mins = combine_versions(mins, vers)
 
     mods = self.modules()
     for mod in mods:
       if mod in MOD_REQS:
         vers = MOD_REQS[mod]
-        self.__vvprint("'{}' requires {}".format(mod, vers), mod)
+        self.__vvprint("'{}' requires {}".format(mod, version_strings(vers)), mod)
         mins = combine_versions(mins, vers)
 
     mems = self.members()
     for mem in mems:
       if mem in MOD_MEM_REQS:
         vers = MOD_MEM_REQS[mem]
-        self.__vvprint("'{}' requires {}".format(mem, vers), mem)
+        self.__vvprint("'{}' requires {}".format(mem, version_strings(vers)), mem)
         mins = combine_versions(mins, vers)
 
     kwargs = self.kwargs()
     for fn_kw in kwargs:
       if fn_kw in KWARGS_REQS:
         vers = KWARGS_REQS[fn_kw]
-        self.__vvprint("'{}({})' requires {}".format(fn_kw[0], fn_kw[1], vers), fn_kw)
+        self.__vvprint("'{}({})' requires {}".format(fn_kw[0], fn_kw[1],
+                                                     version_strings(vers)), fn_kw)
         mins = combine_versions(mins, vers)
 
     return mins

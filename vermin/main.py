@@ -6,9 +6,7 @@ from .printing import nprint, vprint
 from .detection import detect_paths
 from .processor import Processor
 from .arguments import Arguments
-
-def version_strings(vers):
-  return ", ".join(str(v) for v in vers)
+from .utility import version_strings, dotted_name
 
 def main():
   config = Config.get()
@@ -83,7 +81,7 @@ def main():
     if not (len(reqs) == len(targets) and
             all(((exact and target == req) or (not exact and target >= req)) for
                 ((exact, target), req) in zip(targets, reqs))):
-      vers = ["{}{}".format(t, "-" if not e else "") for (e, t) in targets]
+      vers = ["{}{}".format(dotted_name(t), "-" if not e else "") for (e, t) in targets]
       print("Target versions not met:   {}".format(version_strings(vers)))
       if len(targets) < len(reqs):
         print("Note: Number of specified targets ({}) doesn't match number of detected minimum "

@@ -10,6 +10,8 @@ def dotted_name(names):
   # It will just return the value instead of "b.a.d" if input was "bad"!
   if isinstance(names, str):
     return names
+  elif isinstance(names, int):
+    return str(names)
 
   resolved = []
   for name in names:
@@ -48,3 +50,17 @@ def combine_versions(list1, list2):
     else:
       res.append(max(v1, v2))
   return res
+
+def version_strings(vers):
+  res = []
+  for i in range(len(vers)):
+    ver = vers[i]
+    # When versions aren't known, show something instead of nothing. It might run with any
+    # version.
+    if ver == 0 or ver == (0, 0):
+      res.append("~{}".format(i + 2))
+    elif ver is None:
+      res.append("!{}".format(i + 2))
+    else:
+      res.append(dotted_name(ver))
+  return ", ".join(res)
