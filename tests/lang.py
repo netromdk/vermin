@@ -4,7 +4,7 @@ class VerminLanguageTests(VerminTest):
   def test_printv2(self):
     # Before 3.4 it just said "invalid syntax" and didn't hint at missing parentheses.
     if current_version() >= 3.4:
-      self.assertOnlyIn(2.0, detect("print 'hello'"))
+      self.assertOnlyIn((2, 0), detect("print 'hello'"))
 
     source = "print 'hello'"
     parser = Parser(source)
@@ -12,14 +12,14 @@ class VerminLanguageTests(VerminTest):
     v = current_version()
     if v >= 3.4:
       self.assertEqual(node, None)
-      self.assertOnlyIn(2.0, mins)
+      self.assertOnlyIn((2, 0), mins)
     elif v >= 3.0 and v < 3.4:
       self.assertEqual(node, None)
-      self.assertEqual(mins, [0, 0])
+      self.assertEqual(mins, [(0, 0), (0, 0)])
     else:  # < 3.0
       visitor = visit(source)
       self.assertTrue(visitor.printv2())
-      self.assertEqual([2.0, 0], visitor.minimum_versions())
+      self.assertEqual([(2, 0), (0, 0)], visitor.minimum_versions())
 
   def test_printv3(self):
     """Allowed in both v2 and v3."""
@@ -30,27 +30,27 @@ class VerminLanguageTests(VerminTest):
     else:
       self.assertFalse(visitor.printv2())
       self.assertTrue(visitor.printv3())
-    self.assertIn(current_major_version(), visitor.minimum_versions())
+    self.assertIn((current_major_version(), 0), visitor.minimum_versions())
 
   def test_print_v2_v3_mixed(self):
     """When using both v2 and v3 style it must return v2 because v3 is allowed in v2."""
     # Before 3.4 it just said "invalid syntax" and didn't hint at missing parentheses.
     if current_version() >= 3.4:
-      self.assertOnlyIn(2.0, detect("print 'hello'\nprint('hello')"))
+      self.assertOnlyIn((2, 0), detect("print 'hello'\nprint('hello')"))
 
   def test_format(self):
     visitor = visit("'hello {}!'.format('world')")
     self.assertTrue(visitor.format27())
-    self.assertOnlyIn((2.7, 3.0), visitor.minimum_versions())
+    self.assertOnlyIn(((2, 7), (3, 0)), visitor.minimum_versions())
 
   def test_longv2(self):
     visitor = visit("v = long(42)")
     self.assertTrue(visitor.longv2())
-    self.assertOnlyIn(2.0, visitor.minimum_versions())
+    self.assertOnlyIn((2, 0), visitor.minimum_versions())
 
     visitor = visit("isinstance(42, long)")
     self.assertTrue(visitor.longv2())
-    self.assertOnlyIn(2.0, visitor.minimum_versions())
+    self.assertOnlyIn((2, 0), visitor.minimum_versions())
 
   def test_bytesv3(self):
     v = current_version()
@@ -59,40 +59,40 @@ class VerminLanguageTests(VerminTest):
     if v >= 2.0 and v < 3.0:
       visitor = visit("s = b'hello'")
       self.assertFalse(visitor.bytesv3())
-      self.assertEqual([0, 0], visitor.minimum_versions())
+      self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
 
     # py3: type(b'hello') = <type 'bytes'>
     elif v >= 3.0:
       visitor = visit("s = b'hello'")
       self.assertTrue(visitor.bytesv3())
-      self.assertEqual([None, 3.0], visitor.minimum_versions())
+      self.assertEqual([None, (3, 0)], visitor.minimum_versions())
       visitor = visit("s = B'hello'")
       self.assertTrue(visitor.bytesv3())
-      self.assertEqual([None, 3.0], visitor.minimum_versions())
+      self.assertEqual([None, (3, 0)], visitor.minimum_versions())
 
   def test_fstrings(self):
     if current_version() >= 3.6:
       visitor = visit("name = 'world'\nf'hello {name}'")
       self.assertTrue(visitor.fstrings())
-      self.assertOnlyIn(3.6, visitor.minimum_versions())
+      self.assertOnlyIn((3, 6), visitor.minimum_versions())
 
   def test_fstrings_self_doc(self):
     if current_version() >= 3.8:
       visitor = visit("name = 'world'\nf'hello {name=}'")
       self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn(3.8, visitor.minimum_versions())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
 
   def test_coroutines_async(self):
     if current_version() >= 3.5:
       visitor = visit("async def func():\n\tpass")
       self.assertTrue(visitor.coroutines())
-      self.assertOnlyIn(3.5, visitor.minimum_versions())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
   def test_coroutines_await(self):
     if current_version() >= 3.5:
       visitor = visit("async def func():\n\tawait something()")
       self.assertTrue(visitor.coroutines())
-      self.assertOnlyIn(3.5, visitor.minimum_versions())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
   def test_async_generator(self):
     if current_version() >= 3.6:
@@ -100,7 +100,7 @@ class VerminLanguageTests(VerminTest):
                       "  yield 42\n"
                       "  await something()")
       self.assertTrue(visitor.async_generator())
-      self.assertOnlyIn(3.6, visitor.minimum_versions())
+      self.assertOnlyIn((3, 6), visitor.minimum_versions())
 
       visitor = visit("async def func():\n"
                       "  yield 42\n"
@@ -118,19 +118,19 @@ class VerminLanguageTests(VerminTest):
 
   def test_async_comprehension(self):
     if current_version() >= 3.7:
-      self.assertOnlyIn(3.7, detect("[i async for i in aiter() if i % 2]"))
+      self.assertOnlyIn((3, 7), detect("[i async for i in aiter() if i % 2]"))
 
   def test_await_in_comprehension(self):
     if current_version() >= 3.7:
       visitor = visit("[await fun() for fun in funcs if await condition()]")
       self.assertTrue(visitor.await_in_comprehension())
-      self.assertOnlyIn(3.7, visitor.minimum_versions())
+      self.assertOnlyIn((3, 7), visitor.minimum_versions())
 
   def test_continue_in_finally(self):
     if current_version() >= 3.8:
       visitor = visit("try: pass\nfinally: continue")
       self.assertTrue(visitor.continue_in_finally())
-      self.assertOnlyIn(3.8, visitor.minimum_versions())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
 
       visitor = visit("for i in range(3):\n"
                       "  try:\n"
@@ -138,7 +138,7 @@ class VerminLanguageTests(VerminTest):
                       "  finally:\n"
                       "    continue")
       self.assertTrue(visitor.continue_in_finally())
-      self.assertOnlyIn(3.8, visitor.minimum_versions())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
 
       visitor = visit("for i in range(3):\n"
                       "  try:\n"
@@ -166,42 +166,42 @@ class VerminLanguageTests(VerminTest):
                       "      continue\n"  # Skip due to inline while-loop.
                       "    continue")  # Accept this one.
       self.assertTrue(visitor.continue_in_finally())
-      self.assertOnlyIn(3.8, visitor.minimum_versions())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
 
   def test_named_expressions(self):
     if current_version() >= 3.8:
       visitor = visit("a = 1\nif (b := a) == 1:\n\tprint(b)")
       self.assertTrue(visitor.named_expressions())
-      self.assertOnlyIn(3.8, visitor.minimum_versions())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
 
   def test_pos_only_args(self):
     if current_version() >= 3.8:
       visitor = visit("def foo(a, /, b): return a + b")
       self.assertTrue(visitor.pos_only_args())
-      self.assertOnlyIn(3.8, visitor.minimum_versions())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
 
   def test_yield_from(self):
     if current_version() >= 3.3:
       visitor = visit("def foo(x): yield from range(x)")
       self.assertTrue(visitor.yield_from())
-      self.assertOnlyIn(3.3, visitor.minimum_versions())
+      self.assertOnlyIn((3, 3), visitor.minimum_versions())
 
   def test_raise_cause(self):
     if current_version() >= 3.3:
       visitor = visit("raise Exception() from None")
       self.assertTrue(visitor.raise_cause())
-      self.assertOnlyIn(3.3, visitor.minimum_versions())
+      self.assertOnlyIn((3, 3), visitor.minimum_versions())
 
   def test_dict_comprehension(self):
     visitor = visit("{key: value for ld in lod for key, value in ld.items()}")
     self.assertTrue(visitor.dict_comprehension())
-    self.assertEqual([2.7, 3.0], visitor.minimum_versions())
+    self.assertEqual([(2, 7), (3, 0)], visitor.minimum_versions())
 
   def test_infix_matrix_multiplication(self):
     if current_version() >= 3.5:
       visitor = visit("M @ N")
       self.assertTrue(visitor.infix_matrix_multiplication())
-      self.assertOnlyIn(3.5, visitor.minimum_versions())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
   def test_str_from_type(self):
     visitor = visit("\"\".zfill(1)")
@@ -267,4 +267,4 @@ class VerminLanguageTests(VerminTest):
   def test_with_statement(self):
       visitor = visit("with func():\n  pass")
       self.assertTrue(visitor.with_statement())
-      self.assertOnlyIn([2.5, 3.0], visitor.minimum_versions())
+      self.assertOnlyIn([(2, 5), (3, 0)], visitor.minimum_versions())

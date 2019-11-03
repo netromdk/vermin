@@ -128,7 +128,7 @@ class VerminGeneralTests(VerminTest):
     paths = detect_paths([abspath("vermin")])
     processor = Processor()
     (mins, incomp, unique_versions) = processor.process(paths)
-    self.assertOnlyIn((2.7, 3.0), mins)
+    self.assertOnlyIn(((2, 7), (3, 0)), mins)
 
   def test_combine_versions(self):
     with self.assertRaises(AssertionError):
@@ -153,16 +153,16 @@ class VerminGeneralTests(VerminTest):
     self.assertEqual([(2, 0), (3, 0)], combine_versions([2.0, 3.0], [2.0, 0]))
 
   def test_detect_min_version(self):
-    self.assertEqual([2.6, 3.0], detect("import abc"))
+    self.assertEqual([(2, 6), (3, 0)], detect("import abc"))
 
     # (2.6, 3.0) vs. (2.7, 3.2) = (2.7, 3.2)
-    self.assertEqual([2.7, 3.2], detect("import abc, argparse"))
+    self.assertEqual([(2, 7), (3, 2)], detect("import abc, argparse"))
 
     # (2.6, 3.0) vs. (None, 3.4) = (None, 3.4)
-    self.assertEqual([None, 3.4], detect("import abc\nfrom abc import ABC"))
+    self.assertEqual([None, (3, 4)], detect("import abc\nfrom abc import ABC"))
 
     # (2.0, None) vs. (2.0, 3.0) = (2.0, None)
-    self.assertEqual([2.0, None], detect("import repr\nfrom sys import getdefaultencoding"))
+    self.assertEqual([(2, 0), None], detect("import repr\nfrom sys import getdefaultencoding"))
 
     # (2.0, None) vs. (None, 3.0) = both exclude the other major version -> exception!
     with self.assertRaises(InvalidVersionException):
@@ -181,7 +181,7 @@ class VerminGeneralTests(VerminTest):
     self.assertEqual(dotted_name("right"), "right")
 
   def test_assign_rvalue_attribute(self):
-    self.assertEqual([None, 3.3], detect("import bz2\nv = bz2.BZ2File\nv.writable"))
+    self.assertEqual([None, (3, 3)], detect("import bz2\nv = bz2.BZ2File\nv.writable"))
 
   def test_user_defined(self):
     visitor = visit("def hello(): pass\nhello2()\nclass foo(): pass")
@@ -231,7 +231,7 @@ class VerminGeneralTests(VerminTest):
     # The second argument can be negative to yield modular inverse calculation.
     visitor = visit("pow(1, -2, 3)")
     self.assertTrue(visitor.modular_inverse_pow())
-    self.assertOnlyIn(3.8, visitor.minimum_versions())
+    self.assertOnlyIn((3, 8), visitor.minimum_versions())
 
   def test_main_no_args(self):
     # Print usage and exit with code 1.
@@ -280,7 +280,7 @@ class VerminGeneralTests(VerminTest):
   def test_process_runtests_py(self):
     (path, mins, text) = process_individual((sys.argv[0], self.config))
     self.assertEqual(basename(path), "runtests.py")
-    self.assertEqual(mins, [2.7, 3.0])
+    self.assertEqual(mins, [(2, 7), (3, 0)])
     self.assertEmpty(text)
 
   def test_process_syntax_error(self):
@@ -289,7 +289,7 @@ class VerminGeneralTests(VerminTest):
     fp.write(b"(")  # SyntaxError: unexpected EOF while parsing
     fp.close()
     (path, mins, text) = process_individual((fp.name, self.config))
-    self.assertEqual(mins, [0, 0])
+    self.assertEqual(mins, [(0, 0), (0, 0)])
     self.assertEmpty(text)
     os.remove(fp.name)
 
