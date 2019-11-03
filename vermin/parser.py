@@ -49,8 +49,8 @@ class Parser:
       if err.msg.lower().find("missing parentheses in call to 'print'") != -1:
         vvprint("{}:{}:{}: info: `{}` requires 2.0".
                 format(err.filename, err.lineno, err.offset, text))
-        return (None, [2.0, None], set())
+        return (None, [(2, 0), None], set())
       else:
         vvprint("{}:{}:{}: error: {}: {}".
                 format(err.filename, err.lineno, err.offset, err.msg, text))
-    return (None, [0, 0], set())
+    return (None, [(0, 0), (0, 0)], set())

@@ -39,7 +39,7 @@ def process_individual(args):
 
     except Exception as ex:
       text = "{}: {}, {}".format(path, type(ex), ex)
-      mins = [0, 0]
+      mins = [(0, 0), (0, 0)]
 
   if node is None:
     return (path, mins, text)
@@ -78,7 +78,7 @@ class Processor:
 
   def process(self, paths, processes=cpu_count()):
     pool = Pool(processes=processes)
-    mins = [0, 0]
+    mins = [(0, 0), (0, 0)]
     incomp = False
     config = Config.get()
 
@@ -99,7 +99,7 @@ class Processor:
         continue
 
       for ver in min_versions:
-        if ver is not None and ver > 0:
+        if ver is not None and ver > (0, 0):
           unique_versions.add(ver)
 
       # Indent subtext.

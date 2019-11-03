@@ -173,7 +173,7 @@ class SourceVisitor(ast.NodeVisitor):
     return self.__with_statement
 
   def minimum_versions(self):
-    mins = [0, 0]
+    mins = [(0, 0), (0, 0)]
 
     if self.printv2():
       # Must be like this, not `combine_versions(2.0, None)`, since in py2 all print statements call
@@ -181,78 +181,78 @@ class SourceVisitor(ast.NodeVisitor):
       # `Call(func=Name(id="print"..)..)`. Otherwise it will say not compatible with 3 when run on
       # py3. The reason for now using `combine_versions(2.0, 3.0)` is that in py2 we cannot
       # distinguish `print x` from `print(x)` - the first fails in py3 but not the second form.
-      mins[0] = 2.0
+      mins[0] = (2, 0)
 
     if self.printv3():
       # print() is used so often that we only want to show it once, and with no line.
       self.__vvprint("print(expr) requires 2+ or 3+", line=-1)
-      mins = combine_versions(mins, (2.0, 3.0))
+      mins = combine_versions(mins, ((2, 0), (3, 0)))
 
     if self.format27():
-      mins = combine_versions(mins, (2.7, 3.0))
+      mins = combine_versions(mins, ((2, 7), (3, 0)))
 
     if self.longv2():
-      mins = combine_versions(mins, (2.0, None))
+      mins = combine_versions(mins, ((2, 0), None))
 
     if self.bytesv3():
-      mins = combine_versions(mins, (None, 3.0))
+      mins = combine_versions(mins, (None, (3, 0)))
 
     if self.fstrings():
-      mins = combine_versions(mins, (None, 3.6))
+      mins = combine_versions(mins, (None, (3, 6)))
 
     if self.fstrings_self_doc():
-      mins = combine_versions(mins, (None, 3.8))
+      mins = combine_versions(mins, (None, (3, 8)))
 
     if self.bool_const():
-      mins = combine_versions(mins, (2.2, 3.0))
+      mins = combine_versions(mins, ((2, 2), (3, 0)))
 
     if self.annotations():
-      mins = combine_versions(mins, (None, 3.0))
+      mins = combine_versions(mins, (None, (3, 0)))
 
     if self.var_annotations():
-      mins = combine_versions(mins, (None, 3.6))
+      mins = combine_versions(mins, (None, (3, 6)))
 
     if self.coroutines():
-      mins = combine_versions(mins, (None, 3.5))
+      mins = combine_versions(mins, (None, (3, 5)))
 
     if self.async_generator():
-      mins = combine_versions(mins, (None, 3.6))
+      mins = combine_versions(mins, (None, (3, 6)))
 
     # NOTE: While async comprehensions and await in comprehensions should be in 3.6, they were first
     # put into 3.7 for some reason!
 
     if self.async_comprehension():
-      mins = combine_versions(mins, (None, 3.7))
+      mins = combine_versions(mins, (None, (3, 7)))
 
     if self.await_in_comprehension():
-      mins = combine_versions(mins, (None, 3.7))
+      mins = combine_versions(mins, (None, (3, 7)))
 
     if self.named_expressions():
-      mins = combine_versions(mins, (None, 3.8))
+      mins = combine_versions(mins, (None, (3, 8)))
 
     if self.pos_only_args():
-      mins = combine_versions(mins, (None, 3.8))
+      mins = combine_versions(mins, (None, (3, 8)))
 
     if self.yield_from():
-      mins = combine_versions(mins, (None, 3.3))
+      mins = combine_versions(mins, (None, (3, 3)))
 
     if self.raise_cause():
-      mins = combine_versions(mins, (None, 3.3))
+      mins = combine_versions(mins, (None, (3, 3)))
 
     if self.dict_comprehension():
-      mins = combine_versions(mins, (2.7, 3.0))
+      mins = combine_versions(mins, ((2, 7), (3, 0)))
 
     if self.infix_matrix_multiplication():
-      mins = combine_versions(mins, (None, 3.5))
+      mins = combine_versions(mins, (None, (3, 5)))
 
     if self.continue_in_finally():
-      mins = combine_versions(mins, (None, 3.8))
+      mins = combine_versions(mins, (None, (3, 8)))
 
     if self.modular_inverse_pow():
-      mins = combine_versions(mins, (None, 3.8))
+      mins = combine_versions(mins, (None, (3, 8)))
 
     if self.with_statement():
-      mins = combine_versions(mins, (2.5, 3.0))
+      mins = combine_versions(mins, ((2, 5), (3, 0)))
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
