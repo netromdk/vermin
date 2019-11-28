@@ -97,12 +97,12 @@ class VerminGeneralTests(VerminTest):
              touch(tmp_fld, "test2.py")]
 
     paths = detect_paths([tmp_fld], hidden=False)
-    self.assertEqual([files[1], files[3]], paths)
+    self.assertItemsEqual([files[1], files[3]], paths)
 
     paths2 = detect_paths([tmp_fld], hidden=True)
     paths2.sort()
     files.sort()
-    self.assertEqual(files, paths2)
+    self.assertItemsEqual(files, paths2)
 
     rmtree(tmp_fld)
 
