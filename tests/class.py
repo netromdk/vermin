@@ -23,16 +23,16 @@ class VerminClassMemberTests(VerminTest):
     self.assertOnlyIn((3, 6), detect("from typing import Collection"))
 
   def test_Deque_of_typing(self):
-    self.assertOnlyIn((3, 6), detect("from typing import Deque"))
+    self.assertOnlyIn(((2, 7), (3, 6)), detect("from typing import Deque"))
 
   def test_ContextManager_of_typing(self):
-    self.assertOnlyIn((3, 6), detect("from typing import ContextManager"))
+    self.assertOnlyIn(((2, 7), (3, 6)), detect("from typing import ContextManager"))
 
   def test_AsyncContextManager_of_typing(self):
     self.assertOnlyIn((3, 6), detect("from typing import AsyncContextManager"))
 
   def test_Counter_of_typing(self):
-    self.assertOnlyIn((3, 6), detect("from typing import Counter"))
+    self.assertOnlyIn(((2, 7), (3, 6)), detect("from typing import Counter"))
 
   def test_ChainMap_of_typing(self):
     self.assertOnlyIn((3, 6), detect("from typing import ChainMap"))
@@ -41,19 +41,19 @@ class VerminClassMemberTests(VerminTest):
     self.assertOnlyIn((3, 6), detect("from typing import AsyncGenerator"))
 
   def test_Text_of_typing(self):
-    self.assertOnlyIn((3, 6), detect("from typing import Text"))
+    self.assertOnlyIn(((2, 7), (3, 6)), detect("from typing import Text"))
 
   def test_ClassVar_of_typing(self):
-    self.assertOnlyIn((3, 5), detect("from typing import ClassVar"))
+    self.assertOnlyIn(((2, 7), (3, 5)), detect("from typing import ClassVar"))
 
   def test_Protocol_of_typing(self):
-    self.assertOnlyIn((3, 8), detect("from typing import Protocol"))
+    self.assertOnlyIn(((2, 7), (3, 8)), detect("from typing import Protocol"))
 
   def test_Type_of_typing(self):
-    self.assertOnlyIn((3, 5), detect("from typing import Type"))
+    self.assertOnlyIn(((2, 7), (3, 5)), detect("from typing import Type"))
 
   def test_SupportsIndex_of_typing(self):
-    self.assertOnlyIn((3, 8), detect("from typing import SupportsIndex"))
+    self.assertOnlyIn(((2, 7), (3, 8)), detect("from typing import SupportsIndex"))
 
   def test_Awaitable_of_typing(self):
     self.assertOnlyIn((3, 5), detect("from typing import Awaitable"))

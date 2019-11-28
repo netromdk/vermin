@@ -141,7 +141,7 @@ class VerminModuleTests(VerminTest):
     self.assertOnlyIn((3, 4), detect("import asyncio"))
 
   def test_typing(self):
-    self.assertOnlyIn((3, 5), detect("import typing"))
+    self.assertOnlyIn(((2, 7), (3, 5)), detect("import typing"))
 
   def test_tracemalloc(self):
     self.assertOnlyIn((3, 4), detect("import tracemalloc"))

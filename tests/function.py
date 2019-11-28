@@ -307,7 +307,7 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((3, 3), detect("from datetime import datetime\ndatetime.timestamp()"))
 
   def test_NewType_of_typing(self):
-    self.assertOnlyIn((3, 5), detect("import typing\ntyping.NewType()"))
+    self.assertOnlyIn(((2, 7), (3, 5)), detect("import typing\ntyping.NewType()"))
 
   def test_pbkdf2_hmac_of_hashlib(self):
     self.assertOnlyIn(((2, 7), (3, 4)), detect("import hashlib\nhashlib.pbkdf2_hmac()"))

@@ -114,7 +114,7 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn((3, 6), detect("from datetime import time\np = time()\np.fold"))
 
   def test_TYPE_CHECKING_of_typing(self):
-    self.assertOnlyIn((3, 5), detect("from typing import TYPE_CHECKING"))
+    self.assertOnlyIn(((2, 7), (3, 5)), detect("from typing import TYPE_CHECKING"))
 
   def test_algorithms_of_hashlib(self):
     self.assertOnlyIn((2, 7), detect("from hashlib import algorithms"))

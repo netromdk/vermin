@@ -5,7 +5,7 @@ class VerminDecoratorMemberTests(VerminTest):
     self.assertOnlyIn((3, 7), detect("from contextlib import asynccontextmanager"))
 
   def test_final_of_typing(self):
-    self.assertOnlyIn((3, 8), detect("from typing import final"))
+    self.assertOnlyIn(((2, 7), (3, 8)), detect("from typing import final"))
 
   def test_runtime_checkable_of_typing(self):
-    self.assertOnlyIn((3, 8), detect("from typing import runtime_checkable"))
+    self.assertOnlyIn(((2, 7), (3, 8)), detect("from typing import runtime_checkable"))
