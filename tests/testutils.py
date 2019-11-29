@@ -42,6 +42,18 @@ class VerminTest(unittest.TestCase):
     self.assertTrue(len(data) == 0,
                     msg="Input not empty! size={}, '{}'".format(len(data), data))
 
+  def assertEqualItems(self, expected, actual):
+    """Assert that two sequences contain the same elements, regardless of the ordering.
+`assertItemsEqual()` is a 2.7 unittest function. In 3.2 it's called `assertCountEqual()`. This
+override is made to work for all versions, also 3.0-3.1."""
+    v = current_version()
+    if v >= 3.2:
+      self.assertCountEqual(expected, actual)
+    if v >= 2.7 and v < 3.0:
+      self.assertItemsEqual(expected, actual)
+    else:
+      self.assertEqual(sorted(expected), sorted(actual))
+
 def visit(source):
   parser = Parser(source)
   (node, novermin) = parser.parse()
