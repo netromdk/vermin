@@ -1,3 +1,5 @@
+from .constants import BACKPORTS
+
 class Config:
   __instance = None
 
@@ -19,6 +21,7 @@ class Config:
     self.__ignore_incomp = False
     self.__lax_mode = False
     self.__exclusions = set()
+    self.__backports = set()
 
   def quiet(self):
     return self.__quiet
@@ -77,3 +80,12 @@ class Config:
 
   def is_excluded_codecs_encoding(self, name):
     return "ce={}".format(name) in self.__exclusions
+
+  def add_backport(self, name):
+    if name not in BACKPORTS:
+      return False
+    self.__backports.add(name)
+    return True
+
+  def backports(self):
+    return self.__backports

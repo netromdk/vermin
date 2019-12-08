@@ -2,7 +2,7 @@ import sys
 import re
 from multiprocessing import cpu_count
 
-from .constants import VERSION
+from .constants import VERSION, BACKPORTS
 from .config import Config
 
 TARGETS_SPLIT = re.compile("[\\.,]")
@@ -63,6 +63,11 @@ class Arguments:
     print("\n  [--exclude-file <file name>] ...\n"
           "        Exclude full names like --exclude but from a specified file instead. Each line\n"
           "        constitutes an exclusion with the same format as with --exclude.")
+    print("\n  [--backport <name>] ...\n"
+          "        Some features are sometimes backported into packages, in repositories such as\n"
+          "        PyPi, that are widely used but aren't in the standard language. If such a\n"
+          "        backport is specified as being used, the results will reflect that instead.\n\n"
+          "        Supported backports: {}".format(", ".join(BACKPORTS)))
     print("\nResults interpretation:")
     print("  ~2       No known reason it won't work with py2.")
     print("  !2       It is known that it won't work with py2.")
@@ -163,6 +168,15 @@ class Arguments:
           print("Exclusion requires a file name! Example: --exclude-file '~/exclusions.txt'")
           return {"code": 1}
         config.add_exclusion_file(self.__args[i + 1])
+        path_pos += 2
+      elif arg == "--backport":
+        if (i + 1) >= len(self.__args):
+          print("Requires a backport name! Example: --backport typing")
+          return {"code": 1}
+        name = self.__args[i + 1]
+        if not config.add_backport(name):
+          print("Unknown backport: {}".format(name))
+          return {"code": 1}
         path_pos += 2
 
     if config.quiet() and config.verbose() > 0:

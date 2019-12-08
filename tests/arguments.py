@@ -2,7 +2,7 @@ import os
 from multiprocessing import cpu_count
 from tempfile import NamedTemporaryFile
 
-from vermin import Arguments, Config
+from vermin import Arguments, Config, BACKPORTS
 
 from .testutils import VerminTest
 
@@ -144,3 +144,18 @@ class VerminArgumentsTests(VerminTest):
     self.assertContainsDict({"code": 0}, parse_args(["--exclude-file", fp.name]))
     os.remove(fp.name)
     self.assertEqual(["aaa", "bbb"], self.config.exclusions())  # Expect it sorted.
+
+  def test_backport(self):
+    # Needs <name> part.
+    self.assertContainsDict({"code": 1}, parse_args(["--backport"]))
+    self.assertEmpty(self.config.backports())
+
+    # Unknown module.
+    self.assertContainsDict({"code": 1}, parse_args(["--backport", "foobarbaz"]))
+    self.assertEmpty(self.config.backports())
+
+    # Known modules.
+    for mod in BACKPORTS:
+      self.config.reset()
+      self.assertContainsDict({"code": 0}, parse_args(["--backport", mod]))
+      self.assertEqualItems([mod], self.config.backports())

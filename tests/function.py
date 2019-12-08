@@ -1,6 +1,18 @@
+from vermin import Config
+
 from .testutils import VerminTest, detect
 
 class VerminFunctionMemberTests(VerminTest):
+  def __init__(self, methodName):
+    super(VerminFunctionMemberTests, self).__init__(methodName)
+    self.config = Config.get()
+
+  def setUp(self):
+    self.config.reset()
+
+  def tearDown(self):
+    self.config.reset()
+
   def test_exc_clear_of_sys(self):
     self.assertOnlyIn((2, 3), detect("from sys import exc_clear"))
 
@@ -308,6 +320,8 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_NewType_of_typing(self):
     self.assertOnlyIn((3, 5), detect("import typing\ntyping.NewType()"))
+    self.assertTrue(self.config.add_backport("typing"))
+    self.assertOnlyIn(((2, 7), (3, 5)), detect("import typing\ntyping.NewType()"))
 
   def test_pbkdf2_hmac_of_hashlib(self):
     self.assertOnlyIn(((2, 7), (3, 4)), detect("import hashlib\nhashlib.pbkdf2_hmac()"))

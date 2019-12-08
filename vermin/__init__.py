@@ -8,10 +8,12 @@ from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, ARRAY_TYP
 from .arguments import Arguments
 from .config import Config
 from .utility import reverse_range, dotted_name, combine_versions, InvalidVersionException
+from .constants import BACKPORTS
 
 __all__ = [
   "ARRAY_TYPECODE_REQS",
   "Arguments",
+  "BACKPORTS",
   "CODECS_ENCODINGS",
   "CODECS_ERROR_HANDLERS",
   "Config",
