@@ -40,7 +40,7 @@ def main():
 
   try:
     processor = Processor()
-    (mins, incomp, unique_versions) = processor.process(paths, processes)
+    (mins, incomp, unique_versions, backports) = processor.process(paths, processes)
   except KeyboardInterrupt:
     print("Aborting..")
     sys.exit(1)

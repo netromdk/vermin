@@ -126,8 +126,9 @@ class VerminGeneralTests(VerminTest):
   def test_detect_vermin_min_versions(self):
     paths = detect_paths([abspath("vermin")])
     processor = Processor()
-    (mins, incomp, unique_versions) = processor.process(paths)
+    (mins, incomp, unique_versions, backports) = processor.process(paths)
     self.assertOnlyIn(((2, 7), (3, 0)), mins)
+    self.assertEmpty(backports)
 
   def test_combine_versions(self):
     with self.assertRaises(AssertionError):
@@ -277,19 +278,21 @@ class VerminGeneralTests(VerminTest):
       process_individual(("nonexistent", self.config))
 
   def test_process_runtests_py(self):
-    (path, mins, text) = process_individual((sys.argv[0], self.config))
+    (path, mins, text, bps) = process_individual((sys.argv[0], self.config))
     self.assertEqual(basename(path), "runtests.py")
     self.assertEqual(mins, [(2, 7), (3, 0)])
     self.assertEmpty(text)
+    self.assertEmpty(bps)
 
   def test_process_syntax_error(self):
     # Syntax error triggers minimum versions [0, 0].
     fp = NamedTemporaryFile(suffix=".py", delete=False)
     fp.write(b"(")  # SyntaxError: unexpected EOF while parsing
     fp.close()
-    (path, mins, text) = process_individual((fp.name, self.config))
+    (path, mins, text, bps) = process_individual((fp.name, self.config))
     self.assertEqual(mins, [(0, 0), (0, 0)])
     self.assertEmpty(text)
+    self.assertEmpty(bps)
     os.remove(fp.name)
 
   def test_process_invalid_versions(self):
@@ -297,7 +300,17 @@ class VerminGeneralTests(VerminTest):
     fp.write(b"long(42)\n")  # long is a v2 feature: 2.0 !3
     fp.write(b"breakpoint()\n")  # breakpoint(): !2, 3.7
     fp.close()
-    (path, mins, text) = process_individual((fp.name, self.config))
+    (path, mins, text, bps) = process_individual((fp.name, self.config))
     self.assertEqual(mins, None)
     self.assertTrue(text.startswith("Versions could not be combined"))
+    self.assertEmpty(bps)
+    os.remove(fp.name)
+
+  def test_process_file_using_backport(self):
+    fp = NamedTemporaryFile(suffix=".py", delete=False)
+    fp.write(b"import typing\n")
+    fp.close()
+    (path, mins, text, bps) = process_individual((fp.name, self.config))
+    self.assertEmpty(text)
+    self.assertEqualItems(["typing"], bps)
     os.remove(fp.name)

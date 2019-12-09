@@ -5,6 +5,7 @@ from .config import Config
 from .utility import combine_versions, InvalidVersionException, version_strings
 from .parser import Parser
 from .source_visitor import SourceVisitor
+from .constants import BACKPORTS
 
 # NOTE: This function isn't in the Processor class because Python 2's multiprocessing.pool doesn't
 # like it being an instance method:
@@ -22,12 +23,13 @@ def process_individual(args):
   mins = None
   text = ""
   novermin = set()
+  bps = set()
   with open(path, mode="rb") as fp:
     try:
       parser = Parser(fp.read(), path)
       (node, mins, novermin) = parser.detect()
     except KeyboardInterrupt:
-      return (path, mins, text)
+      return (path, mins, text, bps)
 
     # When input isn't python code, ignore it.
     except ValueError:
@@ -42,7 +44,7 @@ def process_individual(args):
       mins = [(0, 0), (0, 0)]
 
   if node is None:
-    return (path, mins, text)
+    return (path, mins, text, bps)
 
   visitor = SourceVisitor(config)
   visitor.set_no_lines(novermin)
@@ -50,16 +52,19 @@ def process_individual(args):
   try:
     visitor.visit(node)
   except KeyboardInterrupt:
-    return (path, mins, text)
+    return (path, mins, text, bps)
 
   try:
     mins = visitor.minimum_versions()
     text = visitor.output_text()
+    for m in visitor.modules():
+      if m in BACKPORTS:
+        bps.add(m)
   except InvalidVersionException as ex:
     mins = None
     text = str(ex)
 
-  return (path, mins, text)
+  return (path, mins, text, bps)
 
 class Processor:
   def process(self, paths, processes=cpu_count()):
@@ -73,7 +78,8 @@ class Processor:
         nprint("File with incompatible versions: {}".format(path))
 
     unique_versions = set()
-    for (path, min_versions, text) in \
+    all_backports = set()
+    for (path, min_versions, text, bps) in \
           pool.imap(process_individual, ((path, config) for path in paths)):
       # Ignore paths that didn't contain python code.
       if path is None and min_versions is None and text is None:
@@ -83,6 +89,8 @@ class Processor:
         incomp = True
         print_incomp(path)
         continue
+
+      all_backports = all_backports | bps
 
       for ver in min_versions:
         if ver is not None and ver > (0, 0):
@@ -109,4 +117,4 @@ class Processor:
 
     unique_versions = list(unique_versions)
     unique_versions.sort()
-    return (mins, incomp, unique_versions)
+    return (mins, incomp, unique_versions, all_backports)
