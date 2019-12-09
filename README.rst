@@ -33,7 +33,9 @@ function, function and variable annotations, ``continue`` in ``finally`` block, 
 user-defined functions, classes, arguments, and variables with names that clash with library-defined
 symbols.
 
-The project is fairly well-tested with **1321** unit and integration tests.
+Backports of the standard library, like ``typing``, can be enabled for better results.
+
+The project is fairly well-tested with **1324** unit and integration tests.
 
 Usage
 =====
@@ -109,6 +111,10 @@ Examples
     --versions
           In the end, print all unique versions required by the analysed code.
 
+    --no-tips
+          Don't show any helpful tips at the end, like those relating to backports or
+          lax mode.
+
     [--exclude <name>] ...
           Exclude full names, like 'email.parser.FeedParser', from analysis. Useful to
           ignore conditional logic that can trigger incompatible results. It's more fine
@@ -123,6 +129,13 @@ Examples
     [--exclude-file <file name>] ...
           Exclude full names like --exclude but from a specified file instead. Each line
           constitutes an exclusion with the same format as with --exclude.
+
+    [--backport <name>] ...
+          Some features are sometimes backported into packages, in repositories such as
+          PyPi, that are widely used but aren't in the standard language. If such a
+          backport is specified as being used, the results will reflect that instead.
+
+          Supported backports: typing
 
   Results interpretation:
     ~2       No known reason it won't work with py2.
