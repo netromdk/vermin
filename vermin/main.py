@@ -21,6 +21,7 @@ def main():
 
   processes = args["processes"]
   targets = args["targets"]
+  no_tips = args["no-tips"]
 
   # Detect paths, remove duplicates, and sort for deterministic results.
   vprint("Detecting python files..")
@@ -60,11 +61,11 @@ def main():
   if len(reqs) == 0 and len(incomps) == 0:
     print("No known reason found that it will not work with 2+ and 3+.")
     print("Please report if it does not: https://github.com/netromdk/vermin/issues/")
-    if config.lax_mode():
+    if config.lax_mode() and not no_tips:
       print("Tip: Try without using lax mode for more thorough analysis.")
 
   unique_bps = backports - config.backports()
-  if len(unique_bps) > 0:
+  if len(unique_bps) > 0 and not no_tips:
     print("Tip: You're using potentially backported modules: {}".format(", ".join(unique_bps)))
     print("If so, try using the following for better results: {}\n".
           format("".join([" --backport {}".format(n) for n in unique_bps]).strip()))

@@ -32,7 +32,8 @@ class VerminArgumentsTests(VerminTest):
                             parse_args(["file.py", "file2.py", "folder/folder2"]))
 
   def test_mix_options_and_files(self):
-    self.assertContainsDict({"code": 0, "paths": ["file.py"], "targets": [(True, (2, 7))]},
+    self.assertContainsDict({"code": 0, "paths": ["file.py"], "targets": [(True, (2, 7))],
+                             "no-tips": False},
                             parse_args(["-q", "-t=2.7", "file.py"]))
 
   def test_quiet(self):
@@ -159,3 +160,6 @@ class VerminArgumentsTests(VerminTest):
       self.config.reset()
       self.assertContainsDict({"code": 0}, parse_args(["--backport", mod]))
       self.assertEqualItems([mod], self.config.backports())
+
+  def test_no_tips(self):
+    self.assertContainsDict({"no-tips": True}, parse_args(["--no-tips"]))

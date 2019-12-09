@@ -50,6 +50,9 @@ class Arguments:
           "        not specified directly).")
     print("\n  --versions\n"
           "        In the end, print all unique versions required by the analysed code.")
+    print("\n  --no-tips\n"
+          "        Don't show any helpful tips at the end, like those relating to backports or\n"
+          "        lax mode.")
     # TODO: Argument for specifying files and folders to ignore from detection/parsing.
     print("\n  [--exclude <name>] ...\n"
           "        Exclude full names, like 'email.parser.FeedParser', from analysis. Useful to\n"
@@ -84,6 +87,7 @@ class Arguments:
     targets = []
     hidden = False
     versions = False
+    no_tips = False
     for i in range(len(self.__args)):
       arg = self.__args[i].lower()
       if arg == "-h" or arg == "--help":
@@ -157,6 +161,9 @@ class Arguments:
       elif arg == "--versions":
         versions = True
         path_pos += 1
+      elif arg == "--no-tips":
+        no_tips = True
+        path_pos += 1
       elif arg == "--exclude":
         if (i + 1) >= len(self.__args):
           print("Exclusion requires a name! Example: --exclude email.parser.FeedParser")
@@ -196,4 +203,5 @@ class Arguments:
             "processes": processes,
             "targets": targets,
             "hidden": hidden,
-            "versions": versions}
+            "versions": versions,
+            "no-tips": no_tips}
