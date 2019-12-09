@@ -63,6 +63,12 @@ def main():
     if config.lax_mode():
       print("Tip: Try without using lax mode for more thorough analysis.")
 
+  unique_bps = backports - config.backports()
+  if len(unique_bps) > 0:
+    print("Tip: You're using potentially backported modules: {}".format(", ".join(unique_bps)))
+    print("If so, try using the following for better results: {}\n".
+          format("".join([" --backport {}".format(n) for n in unique_bps]).strip()))
+
   if len(reqs) > 0:
     print("Minimum required versions: {}".format(version_strings(reqs)))
 
