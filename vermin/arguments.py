@@ -2,8 +2,9 @@ import sys
 import re
 from multiprocessing import cpu_count
 
-from .constants import VERSION, BACKPORTS
+from .constants import VERSION
 from .config import Config
+from .backports import Backports
 
 TARGETS_SPLIT = re.compile("[\\.,]")
 
@@ -70,7 +71,7 @@ class Arguments:
           "        Some features are sometimes backported into packages, in repositories such as\n"
           "        PyPi, that are widely used but aren't in the standard language. If such a\n"
           "        backport is specified as being used, the results will reflect that instead.\n\n"
-          "        Supported backports: {}".format(", ".join(BACKPORTS)))
+          "        Supported backports:\n{}".format(Backports.str(10)))
     print("\nResults interpretation:")
     print("  ~2       No known reason it won't work with py2.")
     print("  !2       It is known that it won't work with py2.")

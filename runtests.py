@@ -31,3 +31,4 @@ if __name__ == '__main__':
   runsuite("codecs_encodings")
   runsuite("exclusions")
   runsuite("comment_exclusions")
+  runsuite("backports")

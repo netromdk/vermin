@@ -1,4 +1,4 @@
-from .constants import BACKPORTS
+from .backports import Backports
 
 class Config:
   __instance = None
@@ -82,7 +82,7 @@ class Config:
     return "ce={}".format(name) in self.__exclusions
 
   def add_backport(self, name):
-    if name not in BACKPORTS:
+    if not Backports.is_backport(name):
       return False
     self.__backports.add(name)
     return True

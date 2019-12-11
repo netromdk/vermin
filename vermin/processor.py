@@ -5,7 +5,7 @@ from .config import Config
 from .utility import combine_versions, InvalidVersionException, version_strings
 from .parser import Parser
 from .source_visitor import SourceVisitor
-from .constants import BACKPORTS
+from .backports import Backports
 
 # NOTE: This function isn't in the Processor class because Python 2's multiprocessing.pool doesn't
 # like it being an instance method:
@@ -58,7 +58,7 @@ def process_individual(args):
     mins = visitor.minimum_versions()
     text = visitor.output_text()
     for m in visitor.modules():
-      if m in BACKPORTS:
+      if Backports.is_backport(m):
         bps.add(m)
   except InvalidVersionException as ex:
     mins = None

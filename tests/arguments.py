@@ -2,7 +2,7 @@ import os
 from multiprocessing import cpu_count
 from tempfile import NamedTemporaryFile
 
-from vermin import Arguments, Config, BACKPORTS
+from vermin import Arguments, Config, Backports
 
 from .testutils import VerminTest
 
@@ -156,7 +156,7 @@ class VerminArgumentsTests(VerminTest):
     self.assertEmpty(self.config.backports())
 
     # Known modules.
-    for mod in BACKPORTS:
+    for mod in Backports.modules():
       self.config.reset()
       self.assertContainsDict({"code": 0}, parse_args(["--backport", mod]))
       self.assertEqualItems([mod], self.config.backports())

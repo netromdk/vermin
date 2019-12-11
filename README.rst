@@ -35,7 +35,7 @@ symbols.
 
 Backports of the standard library, like ``typing``, can be enabled for better results.
 
-The project is fairly well-tested with **1324** unit and integration tests.
+The project is fairly well-tested with **1327** unit and integration tests.
 
 Usage
 =====
@@ -135,7 +135,10 @@ Examples
           PyPi, that are widely used but aren't in the standard language. If such a
           backport is specified as being used, the results will reflect that instead.
 
-          Supported backports: configparser, faulthandler, typing
+          Supported backports:
+            configparser   - https://pypi.org/project/configparser/
+            faulthandler   - https://pypi.org/project/faulthandler/
+            typing         - https://pypi.org/project/typing/
 
   Results interpretation:
     ~2       No known reason it won't work with py2.

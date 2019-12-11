@@ -89,7 +89,7 @@ class VerminGeneralTests(VerminTest):
 
   def test_detect_paths(self):
     paths = detect_paths([abspath("vermin")])
-    self.assertEqual(12, len(paths))
+    self.assertEqual(13, len(paths))
 
   def test_detect_hidden_paths(self):
     tmp_fld = mkdtemp()
