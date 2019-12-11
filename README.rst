@@ -135,7 +135,7 @@ Examples
           PyPi, that are widely used but aren't in the standard language. If such a
           backport is specified as being used, the results will reflect that instead.
 
-          Supported backports: typing, faulthandler
+          Supported backports: configparser, faulthandler, typing
 
   Results interpretation:
     ~2       No known reason it won't work with py2.

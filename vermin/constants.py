@@ -1,6 +1,7 @@
 VERSION = "0.8.2"
 
 BACKPORTS = (
-  "typing",        # https://pypi.org/project/typing/
+  "configparser",  # https://pypi.org/project/configparser/
   "faulthandler",  # https://pypi.org/project/faulthandler/
+  "typing",        # https://pypi.org/project/typing/
 )

@@ -31,7 +31,7 @@ def MOD_REQS():
     "collections": ((2, 4), (3, 0)),
     "collections.abc": (None, (3, 3)),
     "concurrent.futures": (None, (3, 2)),
-    "configparser": (None, (3, 0)),
+    "configparser": (None if not bp("configparser") else (2, 6), (3, 0)),
     "contextlib": ((2, 5), (3, 0)),
     "contextvars": (None, (3, 7)),
     "cookielib": ((2, 4), None),
