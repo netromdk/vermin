@@ -61,7 +61,7 @@ def MOD_REQS():
     "email.policy": (None, (3, 3)),
     "ensurepip": ((2, 7), (3, 4)),
     "enum": (None, (3, 4)),
-    "faulthandler": (None, (3, 3)),
+    "faulthandler": (None, (3, 3)) if not bp("faulthandler") else ((2, 6), (3, 0)),
     "fractions": ((2, 6), (3, 0)),
     "functools": ((2, 5), (3, 0)),
     "future_builtins": ((2, 6), None),
