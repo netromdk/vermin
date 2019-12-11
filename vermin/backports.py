@@ -1,5 +1,6 @@
 BACKPORTS = (
   ("configparser", "https://pypi.org/project/configparser/"),
+  ("enum", "https://pypi.org/project/enum34/"),
   ("faulthandler", "https://pypi.org/project/faulthandler/"),
   ("typing", "https://pypi.org/project/typing/"),
 )
@@ -8,8 +9,9 @@ class Backports:
   @staticmethod
   def str(indent=0):
     res = []
+    longest = len(max({"typing", "configparser", "enum", "faulthandler"}, key=lambda x: len(x)))
     for (mod, link) in BACKPORTS:
-      res.append("{}{}\t - {}".format(" " * indent, mod, link))
+      res.append("{}{:{fill}} - {}".format(" " * indent, mod, link, fill=longest))
     return "\n".join(res)
 
   @staticmethod

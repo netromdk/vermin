@@ -406,6 +406,8 @@ class VerminModuleTests(VerminTest):
 
   def test_enum(self):
     self.assertOnlyIn((3, 4), detect("import enum"))
+    self.assertTrue(self.config.add_backport("enum"))
+    self.assertOnlyIn(((2, 4), (3, 3)), detect("import enum"))
 
   def test_selectors(self):
     self.assertOnlyIn((3, 4), detect("import selectors"))

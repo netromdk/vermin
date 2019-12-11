@@ -136,9 +136,10 @@ Examples
           backport is specified as being used, the results will reflect that instead.
 
           Supported backports:
-            configparser   - https://pypi.org/project/configparser/
-            faulthandler   - https://pypi.org/project/faulthandler/
-            typing         - https://pypi.org/project/typing/
+            configparser - https://pypi.org/project/configparser/
+            enum         - https://pypi.org/project/enum34/
+            faulthandler - https://pypi.org/project/faulthandler/
+            typing       - https://pypi.org/project/typing/
 
   Results interpretation:
     ~2       No known reason it won't work with py2.
