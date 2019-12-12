@@ -20,7 +20,7 @@ def MOD_REQS():
     "_markupbase": (None, (3, 0)),
     "_winreg": ((2, 0), None),
     "abc": ((2, 6), (3, 0)),
-    "argparse": ((2, 7), (3, 2)),
+    "argparse": ((2, 7), (3, 2)) if not bp("argparse") else ((2, 3), (3, 1)),
     "ast": ((2, 6), (3, 0)),
     "asyncio": (None, (3, 4)),
     "atexit": ((2, 0), (3, 0)),

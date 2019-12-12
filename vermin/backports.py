@@ -1,4 +1,5 @@
 BACKPORTS = (
+  ("argparse", "https://pypi.org/project/argparse/"),
   ("configparser", "https://pypi.org/project/configparser/"),
   ("enum", "https://pypi.org/project/enum34/"),
   ("faulthandler", "https://pypi.org/project/faulthandler/"),

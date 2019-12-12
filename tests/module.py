@@ -16,6 +16,8 @@ class VerminModuleTests(VerminTest):
   def test_argparse(self):
     self.assertOnlyIn(((2, 7), (3, 2)), detect("import argparse"))
     self.assertOnlyIn(((2, 7), (3, 2)), detect("from argparse import *"))
+    self.assertTrue(self.config.add_backport("argparse"))
+    self.assertOnlyIn(((2, 3), (3, 1)), detect("import argparse"))
 
   def test_abc(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import abc"))

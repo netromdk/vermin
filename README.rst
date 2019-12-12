@@ -136,6 +136,7 @@ Examples
           backport is specified as being used, the results will reflect that instead.
 
           Supported backports:
+            argparse     - https://pypi.org/project/argparse/
             configparser - https://pypi.org/project/configparser/
             enum         - https://pypi.org/project/enum34/
             faulthandler - https://pypi.org/project/faulthandler/
