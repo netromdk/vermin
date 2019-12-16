@@ -34,10 +34,10 @@ def process_individual(args):
     # When input isn't python code, ignore it.
     except ValueError:
       # source code string cannot contain null bytes
-      return (None, None, None)
+      return (None, None, None, set())
     except TypeError:
       # compile() expected string without null bytes
-      return (None, None, None)
+      return (None, None, None, set())
 
     except Exception as ex:
       text = "{}: {}, {}".format(path, type(ex), ex)
