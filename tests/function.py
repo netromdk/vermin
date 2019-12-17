@@ -1422,7 +1422,7 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((3, 7), detect("import contextlib\ncontextlib.nullcontext()"))
 
   def test_writeheader_of_csv_DictWriter(self):
-    self.assertOnlyIn((3, 2), detect("from csv import DictWriter\nDictWriter.writeheader()"))
+    self.assertOnlyIn(((2, 7), (3, 2)), detect("from csv import DictWriter\nDictWriter.writeheader()"))
 
   def test_update_lines_cols_of_curses(self):
     self.assertOnlyIn((3, 5), detect("import curses\ncurses.update_lines_cols()"))
