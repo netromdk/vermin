@@ -388,7 +388,7 @@ def MOD_MEM_REQS():
     "contextlib.suppress": (None, (3, 4)),
     "contextlib.suppress": (None, (3, 4)),
     "crypt.mksalt": (None, (3, 3)),
-    "csv.DictWriter.writeheader": (None, (3, 2)),
+    "csv.DictWriter.writeheader": ((2, 7), (3, 2)),
     "csv.field_size_limit": ((2, 5), (3, 0)),
     "ctypes._CData.from_buffer": ((2, 6), (3, 0)),
     "ctypes._CData.from_buffer_copy": ((2, 6), (3, 0)),
