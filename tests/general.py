@@ -278,21 +278,21 @@ class VerminGeneralTests(VerminTest):
       process_individual(("nonexistent", self.config))
 
   def test_process_runtests_py(self):
-    (path, mins, text, bps) = process_individual((sys.argv[0], self.config))
-    self.assertEqual(basename(path), "runtests.py")
-    self.assertEqual(mins, [(2, 7), (3, 0)])
-    self.assertEmpty(text)
-    self.assertEmpty(bps)
+    proc_res = process_individual((sys.argv[0], self.config))
+    self.assertEqual(basename(proc_res.path), "runtests.py")
+    self.assertEqual(proc_res.mins, [(2, 7), (3, 0)])
+    self.assertEmpty(proc_res.text)
+    self.assertEmpty(proc_res.bps)
 
   def test_process_syntax_error(self):
     # Syntax error triggers minimum versions [0, 0].
     fp = NamedTemporaryFile(suffix=".py", delete=False)
     fp.write(b"(")  # SyntaxError: unexpected EOF while parsing
     fp.close()
-    (path, mins, text, bps) = process_individual((fp.name, self.config))
-    self.assertEqual(mins, [(0, 0), (0, 0)])
-    self.assertEmpty(text)
-    self.assertEmpty(bps)
+    proc_res = process_individual((fp.name, self.config))
+    self.assertEqual(proc_res.mins, [(0, 0), (0, 0)])
+    self.assertEmpty(proc_res.text)
+    self.assertEmpty(proc_res.bps)
     os.remove(fp.name)
 
   def test_process_invalid_versions(self):
@@ -300,17 +300,17 @@ class VerminGeneralTests(VerminTest):
     fp.write(b"long(42)\n")  # long is a v2 feature: 2.0 !3
     fp.write(b"breakpoint()\n")  # breakpoint(): !2, 3.7
     fp.close()
-    (path, mins, text, bps) = process_individual((fp.name, self.config))
-    self.assertEqual(mins, None)
-    self.assertTrue(text.startswith("Versions could not be combined"))
-    self.assertEmpty(bps)
+    proc_res = process_individual((fp.name, self.config))
+    self.assertEqual(proc_res.mins, None)
+    self.assertTrue(proc_res.text.startswith("Versions could not be combined"))
+    self.assertEmpty(proc_res.bps)
     os.remove(fp.name)
 
   def test_process_file_using_backport(self):
     fp = NamedTemporaryFile(suffix=".py", delete=False)
     fp.write(b"import typing\n")
     fp.close()
-    (path, mins, text, bps) = process_individual((fp.name, self.config))
-    self.assertEmpty(text)
-    self.assertEqualItems(["typing"], bps)
+    proc_res = process_individual((fp.name, self.config))
+    self.assertEmpty(proc_res.text)
+    self.assertEqualItems(["typing"], proc_res.bps)
     os.remove(fp.name)
