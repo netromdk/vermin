@@ -1,6 +1,18 @@
+from vermin import Config
+
 from .testutils import VerminTest, detect
 
 class VerminClassMemberTests(VerminTest):
+  def __init__(self, methodName):
+    super(VerminClassMemberTests, self).__init__(methodName)
+    self.config = Config.get()
+
+  def setUp(self):
+    self.config.reset()
+
+  def tearDown(self):
+    self.config.reset()
+
   def test_ABC_of_abc(self):
     self.assertOnlyIn((3, 4), detect("from abc import ABC"))
 
@@ -24,15 +36,21 @@ class VerminClassMemberTests(VerminTest):
 
   def test_Deque_of_typing(self):
     self.assertOnlyIn((3, 6), detect("from typing import Deque"))
+    self.assertTrue(self.config.add_backport("typing"))
+    self.assertOnlyIn(((2, 7), (3, 6)), detect("from typing import Deque"))
 
   def test_ContextManager_of_typing(self):
     self.assertOnlyIn((3, 6), detect("from typing import ContextManager"))
+    self.assertTrue(self.config.add_backport("typing"))
+    self.assertOnlyIn(((2, 7), (3, 6)), detect("from typing import ContextManager"))
 
   def test_AsyncContextManager_of_typing(self):
     self.assertOnlyIn((3, 6), detect("from typing import AsyncContextManager"))
 
   def test_Counter_of_typing(self):
     self.assertOnlyIn((3, 6), detect("from typing import Counter"))
+    self.assertTrue(self.config.add_backport("typing"))
+    self.assertOnlyIn(((2, 7), (3, 6)), detect("from typing import Counter"))
 
   def test_ChainMap_of_typing(self):
     self.assertOnlyIn((3, 6), detect("from typing import ChainMap"))
@@ -42,15 +60,21 @@ class VerminClassMemberTests(VerminTest):
 
   def test_Text_of_typing(self):
     self.assertOnlyIn((3, 6), detect("from typing import Text"))
+    self.assertTrue(self.config.add_backport("typing"))
+    self.assertOnlyIn(((2, 7), (3, 6)), detect("from typing import Text"))
 
   def test_ClassVar_of_typing(self):
     self.assertOnlyIn((3, 5), detect("from typing import ClassVar"))
+    self.assertTrue(self.config.add_backport("typing"))
+    self.assertOnlyIn(((2, 7), (3, 5)), detect("from typing import ClassVar"))
 
   def test_Protocol_of_typing(self):
     self.assertOnlyIn((3, 8), detect("from typing import Protocol"))
 
   def test_Type_of_typing(self):
     self.assertOnlyIn((3, 5), detect("from typing import Type"))
+    self.assertTrue(self.config.add_backport("typing"))
+    self.assertOnlyIn(((2, 7), (3, 5)), detect("from typing import Type"))
 
   def test_SupportsIndex_of_typing(self):
     self.assertOnlyIn((3, 8), detect("from typing import SupportsIndex"))

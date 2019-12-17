@@ -1,9 +1,23 @@
+from vermin import Config
+
 from .testutils import VerminTest, detect
 
 class VerminModuleTests(VerminTest):
+  def __init__(self, methodName):
+    super(VerminModuleTests, self).__init__(methodName)
+    self.config = Config.get()
+
+  def setUp(self):
+    self.config.reset()
+
+  def tearDown(self):
+    self.config.reset()
+
   def test_argparse(self):
     self.assertOnlyIn(((2, 7), (3, 2)), detect("import argparse"))
     self.assertOnlyIn(((2, 7), (3, 2)), detect("from argparse import *"))
+    self.assertTrue(self.config.add_backport("argparse"))
+    self.assertOnlyIn(((2, 3), (3, 1)), detect("import argparse"))
 
   def test_abc(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import abc"))
@@ -25,6 +39,8 @@ class VerminModuleTests(VerminTest):
 
   def test_configparser(self):
     self.assertOnlyIn((3, 0), detect("import configparser"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import configparser"))
 
   def test_copy_reg(self):
     self.assertOnlyIn((2, 0), detect("import copy_reg"))
@@ -142,6 +158,8 @@ class VerminModuleTests(VerminTest):
 
   def test_typing(self):
     self.assertOnlyIn((3, 5), detect("import typing"))
+    self.assertTrue(self.config.add_backport("typing"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect("import typing"))
 
   def test_tracemalloc(self):
     self.assertOnlyIn((3, 4), detect("import tracemalloc"))
@@ -151,6 +169,8 @@ class VerminModuleTests(VerminTest):
 
   def test_faulthandler(self):
     self.assertOnlyIn((3, 3), detect("import faulthandler"))
+    self.assertTrue(self.config.add_backport("faulthandler"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import faulthandler"))
 
   def test_ipaddress(self):
     self.assertOnlyIn((3, 3), detect("import ipaddress"))
@@ -388,6 +408,8 @@ class VerminModuleTests(VerminTest):
 
   def test_enum(self):
     self.assertOnlyIn((3, 4), detect("import enum"))
+    self.assertTrue(self.config.add_backport("enum"))
+    self.assertOnlyIn(((2, 4), (3, 3)), detect("import enum"))
 
   def test_selectors(self):
     self.assertOnlyIn((3, 4), detect("import selectors"))

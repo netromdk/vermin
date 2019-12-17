@@ -79,6 +79,9 @@ class SourceVisitor(ast.NodeVisitor):
     # Lines that should be ignored if they have the comment "novermin" or "novm".
     self.__no_lines = set()
 
+    self.__mod_rules = MOD_REQS()
+    self.__mod_mem_reqs_rules = MOD_MEM_REQS()
+
   def modules(self):
     return self.__modules
 
@@ -285,15 +288,15 @@ class SourceVisitor(ast.NodeVisitor):
 
     mods = self.modules()
     for mod in mods:
-      if mod in MOD_REQS:
-        vers = MOD_REQS[mod]
+      if mod in self.__mod_rules:
+        vers = self.__mod_rules[mod]
         self.__vvprint("'{}' requires {}".format(mod, version_strings(vers)), mod)
         mins = combine_versions(mins, vers)
 
     mems = self.members()
     for mem in mems:
-      if mem in MOD_MEM_REQS:
-        vers = MOD_MEM_REQS[mem]
+      if mem in self.__mod_mem_reqs_rules:
+        vers = self.__mod_mem_reqs_rules[mem]
         self.__vvprint("'{}' requires {}".format(mem, version_strings(vers)), mem)
         mins = combine_versions(mins, vers)
 
@@ -382,7 +385,7 @@ class SourceVisitor(ast.NodeVisitor):
       self.__vvprint("Excluding member: {}".format(member))
       return
 
-    if member in MOD_MEM_REQS:
+    if member in self.__mod_mem_reqs_rules:
       self.__members.append(member)
       self.__add_line_col(member, line, col)
 

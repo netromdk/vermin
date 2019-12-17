@@ -1,6 +1,18 @@
+from vermin import Config
+
 from .testutils import VerminTest, detect
 
 class VerminConstantMemberTests(VerminTest):
+  def __init__(self, methodName):
+    super(VerminConstantMemberTests, self).__init__(methodName)
+    self.config = Config.get()
+
+  def setUp(self):
+    self.config.reset()
+
+  def tearDown(self):
+    self.config.reset()
+
   def test_flags_of_sys(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("from sys import flags"))
 
@@ -115,6 +127,8 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_TYPE_CHECKING_of_typing(self):
     self.assertOnlyIn((3, 5), detect("from typing import TYPE_CHECKING"))
+    self.assertTrue(self.config.add_backport("typing"))
+    self.assertOnlyIn(((2, 7), (3, 5)), detect("from typing import TYPE_CHECKING"))
 
   def test_algorithms_of_hashlib(self):
     self.assertOnlyIn((2, 7), detect("from hashlib import algorithms"))
