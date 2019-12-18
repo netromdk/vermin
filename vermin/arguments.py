@@ -57,7 +57,9 @@ class Arguments:
             "        conditionals that it is known does not affect the results.")
       print("  -d    Dump AST node visits.")
       print("\n  --help | -h\n"
-            "        Shows this information.")
+            "        Shows this information and exists.")
+      print("\n  --version\n"
+            "        Shows version number and exits.")
       print("\n  --hidden\n"
             "        Analyze 'hidden' files and folders starting with '.' (ignored by default\n"
             "        when not specified directly).")
@@ -100,6 +102,9 @@ class Arguments:
       arg = self.__args[i].lower()
       if arg == "-h" or arg == "--help":
         return {"code": 0, "usage": True, "full": True}
+      if arg == "--version":
+        print(VERSION)
+        exit(0)
       if arg == "-q":
         config.set_quiet(True)
         path_pos += 1
