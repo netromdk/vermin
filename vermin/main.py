@@ -13,7 +13,7 @@ def main():
 
   args = Arguments(sys.argv[1:]).parse()
   if "usage" in args:
-    Arguments.print_usage()
+    Arguments.print_usage(args["full"])
     sys.exit(args["code"])
 
   if args["code"] != 0:

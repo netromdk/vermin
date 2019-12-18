@@ -13,74 +13,81 @@ class Arguments:
     self.__args = args
 
   @staticmethod
-  def print_usage():
+  def print_usage(full=False):
     print("Vermin {}".format(VERSION))
     print("Usage: {} [options] <python source files and folders..>".format(sys.argv[0]))
+    print("\nConcurrently detect the minimum Python versions needed to run code.")
+
+    if not full:
+      print("\nFor full help and options, use `-h` or `--help`.")
+
     print("\nHeuristics are employed when files don't have extensions 'py' or 'pyw':")
     print("  - Magic lines with 'python' are accepted, like: #!/usr/bin/env python")
     print("  - 'pyc' are ignored")
     print("  - Files that cannot be opened for reading as text devices are ignored")
     print("\nHowever, files directly specified are always attempted parsing, even without\n"
           "accepted extensions or heuristics.")
-    print("\nOptions:")
-    print("  -q    Quiet mode. It only prints the final versions verdict.")
-    print("  -v..  Verbosity level 1 to 4. -v, -vv, -vvv, and -vvvv shows increasingly more\n"
-          "        information.\n"
-          "        -v     will show the individual versions required per file.\n"
-          "        -vv    will also show which modules, functions etc. that constitutes\n"
-          "               the requirements.\n"
-          "        -vvv   will also show line/col numbers.\n"
-          "        -vvvv  will also show user-defined symbols being ignored.")
-    print("  -t=V  Target version that files must abide by. Can be specified once or twice.\n"
-          "        A '-' can be appended to match target version or smaller, like '-t=3.5-'.\n"
-          "        If not met Vermin will exit with code 1. Note that the amount of target\n"
-          "        versions must match the amount of minimum required versions detected.")
-    print("  -p=N  Use N concurrent processes to analyze files (defaults to all cores = {})."
-          .format(cpu_count()))
-    print("  -i    Ignore incompatible versions and warnings. However, if no compatible versions\n"
-          "        are found then incompatible versions will be shown in the end to not have an\n"
-          "        absence of results.")
-    print("  -l    Lax mode: ignores conditionals (if, ternary, for, while, try, bool op) on AST\n"
-          "        traversal, which can be useful when minimum versions are detected in\n"
-          "        conditionals that it is known does not affect the results.")
-    print("  -d    Dump AST node visits.")
-    print("\n  --help | -h\n"
-          "        Shows this information.")
-    print("\n  --hidden\n"
-          "        Analyze 'hidden' files and folders starting with '.' (ignored by default when\n"
-          "        not specified directly).")
-    print("\n  --versions\n"
-          "        In the end, print all unique versions required by the analysed code.")
-    print("\n  --no-tips\n"
-          "        Don't show any helpful tips at the end, like those relating to backports or\n"
-          "        lax mode.")
-    # TODO: Argument for specifying files and folders to ignore from detection/parsing.
-    print("\n  [--exclude <name>] ...\n"
-          "        Exclude full names, like 'email.parser.FeedParser', from analysis. Useful to\n"
-          "        ignore conditional logic that can trigger incompatible results. It's more fine\n"
-          "        grained than lax mode.\n\n"
-          "        Examples:\n"
-          "          Exclude 'foo.bar.baz' module/member: --exclude 'foo.bar.baz'\n"
-          "          Exclude 'foo' kwarg:                 --exclude 'somemodule.func(foo)'\n"
-          "          Exclude 'bar' codecs error handler:  --exclude 'ceh=bar'\n"
-          "          Exclude 'baz' codecs encoding:       --exclude 'ce=baz'")
-    print("\n  [--exclude-file <file name>] ...\n"
-          "        Exclude full names like --exclude but from a specified file instead. Each line\n"
-          "        constitutes an exclusion with the same format as with --exclude.")
-    print("\n  [--backport <name>] ...\n"
-          "        Some features are sometimes backported into packages, in repositories such as\n"
-          "        PyPi, that are widely used but aren't in the standard language. If such a\n"
-          "        backport is specified as being used, the results will reflect that instead.\n\n"
-          "        Supported backports:\n{}".format(Backports.str(10)))
     print("\nResults interpretation:")
     print("  ~2       No known reason it won't work with py2.")
     print("  !2       It is known that it won't work with py2.")
     print("  2.5, !3  Works with 2.5+ but it is known it won't work with py3.")
     print("  ~2, 3.4  No known reason it won't work with py2, works with 3.4+")
 
+    if full:
+      print("\nOptions:")
+      print("  -q    Quiet mode. It only prints the final versions verdict.")
+      print("  -v..  Verbosity level 1 to 4. -v, -vv, -vvv, and -vvvv shows increasingly more\n"
+            "        information.\n"
+            "        -v     will show the individual versions required per file.\n"
+            "        -vv    will also show which modules, functions etc. that constitutes\n"
+            "               the requirements.\n"
+            "        -vvv   will also show line/col numbers.\n"
+            "        -vvvv  will also show user-defined symbols being ignored.")
+      print("  -t=V  Target version that files must abide by. Can be specified once or twice.\n"
+            "        A '-' can be appended to match target version or smaller, like '-t=3.5-'.\n"
+            "        If not met Vermin will exit with code 1. Note that the amount of target\n"
+            "        versions must match the amount of minimum required versions detected.")
+      print("  -p=N  Use N concurrent processes to analyze files (defaults to all cores = {})."
+            .format(cpu_count()))
+      print("  -i    Ignore incompatible versions and warnings. However, if no compatible\n"
+            "        versions are found then incompatible versions will be shown in the end to\n"
+            "        not have an absence of results.")
+      print("  -l    Lax mode: ignores conditionals (if, ternary, for, while, try, bool op) on\n"
+            "        AST traversal, which can be useful when minimum versions are detected in\n"
+            "        conditionals that it is known does not affect the results.")
+      print("  -d    Dump AST node visits.")
+      print("\n  --help | -h\n"
+            "        Shows this information.")
+      print("\n  --hidden\n"
+            "        Analyze 'hidden' files and folders starting with '.' (ignored by default\n"
+            "        when not specified directly).")
+      print("\n  --versions\n"
+            "        In the end, print all unique versions required by the analysed code.")
+      print("\n  --no-tips\n"
+            "        Don't show any helpful tips at the end, like those relating to backports or\n"
+            "        lax mode.")
+      print("\n  [--exclude <name>] ...\n"
+            "        Exclude full names, like 'email.parser.FeedParser', from analysis. Useful to\n"
+            "        ignore conditional logic that can trigger incompatible results. It's more\n"
+            "        fine grained than lax mode.\n\n"
+            "        Examples:\n"
+            "          Exclude 'foo.bar.baz' module/member: --exclude 'foo.bar.baz'\n"
+            "          Exclude 'foo' kwarg:                 --exclude 'somemodule.func(foo)'\n"
+            "          Exclude 'bar' codecs error handler:  --exclude 'ceh=bar'\n"
+            "          Exclude 'baz' codecs encoding:       --exclude 'ce=baz'")
+      print("\n  [--exclude-file <file name>] ...\n"
+            "        Exclude full names like --exclude but from a specified file instead. Each\n"
+            "        line constitutes an exclusion with the same format as with --exclude.")
+      print("\n  [--backport <name>] ...\n"
+            "        Some features are sometimes backported into packages, in repositories such\n"
+            "        as PyPi, that are widely used but aren't in the standard language. If such a\n"
+            "        backport is specified as being used, the results will reflect that instead."
+            "\n\n"
+            "        Supported backports:\n{}".format(Backports.str(10)))
+
   def parse(self):
     if len(self.__args) == 0:
-      return {"code": 1, "usage": True}
+      return {"code": 1, "usage": True, "full": False}
 
     config = Config.get()
     path_pos = 0
@@ -92,7 +99,7 @@ class Arguments:
     for i in range(len(self.__args)):
       arg = self.__args[i].lower()
       if arg == "-h" or arg == "--help":
-        return {"code": 0, "usage": True}
+        return {"code": 0, "usage": True, "full": True}
       if arg == "-q":
         config.set_quiet(True)
         path_pos += 1

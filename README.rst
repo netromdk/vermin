@@ -71,6 +71,10 @@ Examples
   Vermin 0.9.0
   Usage: ./vermin.py [options] <python source files and folders..>
 
+  Concurrently detect the minimum Python versions needed to run code.
+
+  For full help and options, use `-h` or `--help`.
+
   Heuristics are employed when files don't have extensions 'py' or 'pyw':
     - Magic lines with 'python' are accepted, like: #!/usr/bin/env python
     - 'pyc' are ignored
@@ -78,69 +82,6 @@ Examples
 
   However, files directly specified are always attempted parsing, even without
   accepted extensions or heuristics.
-
-  Options:
-    -q    Quiet mode. It only prints the final versions verdict.
-    -v..  Verbosity level 1 to 4. -v, -vv, -vvv, and -vvvv shows increasingly more
-          information.
-          -v     will show the individual versions required per file.
-          -vv    will also show which modules, functions etc. that constitutes
-                 the requirements.
-          -vvv   will also show line/col numbers.
-          -vvvv  will also show user-defined symbols being ignored.
-    -t=V  Target version that files must abide by. Can be specified once or twice.
-          A '-' can be appended to match target version or smaller, like '-t=3.5-'.
-          If not met Vermin will exit with code 1. Note that the amount of target
-          versions must match the amount of minimum required versions detected.
-    -p=N  Use N concurrent processes to analyze files (defaults to all cores = 8).
-    -i    Ignore incompatible versions and warnings. However, if no compatible versions
-          are found then incompatible versions will be shown in the end to not have an
-          absence of results.
-    -l    Lax mode: ignores conditionals (if, ternary, for, while, try, bool op) on AST
-          traversal, which can be useful when minimum versions are detected in
-          conditionals that it is known does not affect the results.
-    -d    Dump AST node visits.
-
-    --help | -h
-          Shows this information.
-
-    --hidden
-          Analyze 'hidden' files and folders starting with '.' (ignored by default when not
-          specified directly).
-
-    --versions
-          In the end, print all unique versions required by the analysed code.
-
-    --no-tips
-          Don't show any helpful tips at the end, like those relating to backports or
-          lax mode.
-
-    [--exclude <name>] ...
-          Exclude full names, like 'email.parser.FeedParser', from analysis. Useful to
-          ignore conditional logic that can trigger incompatible results. It's more fine
-          grained than lax mode.
-
-          Examples:
-            Exclude 'foo.bar.baz' module/member: --exclude 'foo.bar.baz'
-            Exclude 'foo' kwarg:                 --exclude 'somemodule.func(foo)'
-            Exclude 'bar' codecs error handler:  --exclude 'ceh=bar'
-            Exclude 'baz' codecs encoding:       --exclude 'ce=baz'
-
-    [--exclude-file <file name>] ...
-          Exclude full names like --exclude but from a specified file instead. Each line
-          constitutes an exclusion with the same format as with --exclude.
-
-    [--backport <name>] ...
-          Some features are sometimes backported into packages, in repositories such as
-          PyPi, that are widely used but aren't in the standard language. If such a
-          backport is specified as being used, the results will reflect that instead.
-
-          Supported backports:
-            argparse     - https://pypi.org/project/argparse/
-            configparser - https://pypi.org/project/configparser/
-            enum         - https://pypi.org/project/enum34/
-            faulthandler - https://pypi.org/project/faulthandler/
-            typing       - https://pypi.org/project/typing/
 
   Results interpretation:
     ~2       No known reason it won't work with py2.
