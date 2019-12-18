@@ -32,6 +32,8 @@ class Arguments:
     print("  !2       It is known that it won't work with py2.")
     print("  2.5, !3  Works with 2.5+ but it is known it won't work with py3.")
     print("  ~2, 3.4  No known reason it won't work with py2, works with 3.4+")
+    print("\nIncompatible versions notices mean that several files were detected incompatible\n"
+          "with py2 and py3 simultaneously. In such cases the results might be inconclusive.")
 
     if full:
       print("\nOptions:")
