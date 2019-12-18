@@ -67,28 +67,6 @@ Examples
 
 ::
 
-  % ./vermin.py
-  Vermin 0.9.0
-  Usage: ./vermin.py [options] <python source files and folders..>
-
-  Concurrently detect the minimum Python versions needed to run code.
-
-  For full help and options, use `-h` or `--help`.
-
-  Heuristics are employed when files don't have extensions 'py' or 'pyw':
-    - Magic lines with 'python' are accepted, like: #!/usr/bin/env python
-    - 'pyc' are ignored
-    - Files that cannot be opened for reading as text devices are ignored
-
-  However, files directly specified are always attempted parsing, even without
-  accepted extensions or heuristics.
-
-  Results interpretation:
-    ~2       No known reason it won't work with py2.
-    !2       It is known that it won't work with py2.
-    2.5, !3  Works with 2.5+ but it is known it won't work with py3.
-    ~2, 3.4  No known reason it won't work with py2, works with 3.4+
-
   % ./vermin.py -q vermin
   Minimum required versions: 2.7, 3.0
 
