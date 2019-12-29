@@ -65,10 +65,10 @@ class VerminLanguageTests(VerminTest):
     elif v >= 3.0:
       visitor = visit("s = b'hello'")
       self.assertTrue(visitor.bytesv3())
-      self.assertEqual([None, (3, 0)], visitor.minimum_versions())
+      self.assertEqual([(2, 6), (3, 0)], visitor.minimum_versions())
       visitor = visit("s = B'hello'")
       self.assertTrue(visitor.bytesv3())
-      self.assertEqual([None, (3, 0)], visitor.minimum_versions())
+      self.assertEqual([(2, 6), (3, 0)], visitor.minimum_versions())
 
   def test_fstrings(self):
     if current_version() >= 3.6:

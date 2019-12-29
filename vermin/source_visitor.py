@@ -198,7 +198,9 @@ class SourceVisitor(ast.NodeVisitor):
       mins = combine_versions(mins, ((2, 0), None))
 
     if self.bytesv3():
-      mins = combine_versions(mins, (None, (3, 0)))
+      # Since byte strings are a `str` synonym as of 2.6+, (2, 6) is returned instead of None.
+      # Ref: https://github.com/netromdk/vermin/issues/32
+      mins = combine_versions(mins, ((2, 6), (3, 0)))
 
     if self.fstrings():
       mins = combine_versions(mins, (None, (3, 6)))
@@ -805,7 +807,7 @@ class SourceVisitor(ast.NodeVisitor):
 
   def visit_Bytes(self, node):
     self.__bytesv3 = True
-    self.__vvprint("byte strings (b'..') require 3+")
+    self.__vvprint("byte strings (b'..') require 3+ (or 2.6+ as `str` synonym)")
 
   def visit_Constant(self, node):
     if hasattr(node, "value") and type(node.value) == bytes:
