@@ -37,6 +37,9 @@ Backports of the standard library, like ``typing``, can be enabled for better re
 
 The project is fairly well-tested with **1327** unit and integration tests.
 
+It is recommended to use the most recent Python version to run Vermin on projects since Python's own
+language parser is used to detect language features, like f-strings since Python 3.6 etc.
+
 Usage
 =====
 
