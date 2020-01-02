@@ -30,6 +30,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__annotations = False
     self.__var_annotations = False
     self.__final_annotations = False
+    self.__literal_annotations = False
     self.__coroutines = False
     self.__async_generator = False
     self.__async_comprehension = False
@@ -128,6 +129,9 @@ class SourceVisitor(ast.NodeVisitor):
   def final_annotations(self):
     return self.__final_annotations
 
+  def literal_annotations(self):
+    return self.__literal_annotations
+
   def coroutines(self):
     return self.__coroutines
 
@@ -222,6 +226,9 @@ class SourceVisitor(ast.NodeVisitor):
       mins = combine_versions(mins, (None, (3, 6)))
 
     if self.final_annotations():
+      mins = combine_versions(mins, (None, (3, 8)))
+
+    if self.literal_annotations():
       mins = combine_versions(mins, (None, (3, 8)))
 
     if self.coroutines():
@@ -856,6 +863,10 @@ class SourceVisitor(ast.NodeVisitor):
          (isinstance(ann, ast.Subscript) and ann.value.id == "Final"):
         self.__final_annotations = True
         self.__vvprint("final variable annotations require 3.8+")
+      elif (isinstance(ann, ast.Name) and ann.id == "Literal") or \
+         (isinstance(ann, ast.Subscript) and ann.value.id == "Literal"):
+        self.__literal_annotations = True
+        self.__vvprint("literal variable annotations require 3.8+")
 
   def __handle_FunctionDef(self, node):
     if self.__is_no_line(node.lineno):
@@ -876,6 +887,11 @@ class SourceVisitor(ast.NodeVisitor):
       if hasattr(arg, "annotation") and arg.annotation:
         self.__annotations = True
         self.__vvprint("annotations require 3+")
+        ann = arg.annotation
+        if (isinstance(ann, ast.Name) and ann.id == "Literal") or \
+           (isinstance(ann, ast.Subscript) and ann.value.id == "Literal"):
+          self.__literal_annotations = True
+          self.__vvprint("literal variable annotations require 3.8+")
         break
     return True
 
