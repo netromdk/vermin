@@ -12,3 +12,8 @@ class VerminModuleTests(VerminTest):
   def test_var_annotation(self):
     if current_version() >= 3.6:
       self.assertOnlyIn((3, 6), detect("a: int = 5"))
+
+  def test_Final_annotation(self):
+    if current_version() >= 3.6:
+      self.assertOnlyIn((3, 8), detect("a: Final = 5"))
+      self.assertOnlyIn((3, 8), detect("a: Final[int] = 5"))
