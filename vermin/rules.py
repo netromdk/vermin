@@ -1174,6 +1174,7 @@ KWARGS_REQS = {
   ("subprocess.check_output", "timeout"): (None, (3, 3)),
   ("subprocess.run", "encoding"): (None, (3, 6)),
   ("subprocess.run", "errors"): (None, (3, 6)),
+  ("subprocess.run", "text"): (None, (3, 7)),
   ("tarfile.TarFile.add", "exclude"): ((2, 6), (3, 0)),
   ("tarfile.TarFile.add", "filter"): ((2, 7), (3, 2)),
   ("tarfile.TarFile.extract", "numeric_owner"): (None, (3, 5)),

@@ -743,3 +743,6 @@ class VerminKwargsTests(VerminTest):
 
   def test_compressed_of_zipapp_create_archive(self):
     self.assertOnlyIn((3, 7), detect("import zipapp\nzipapp.create_archive(compressed=True)"))
+
+  def test_text_of_subprocess_run(self):
+    self.assertOnlyIn((3, 7), detect("import subprocess\nsubprocess.run(text=True)"))
