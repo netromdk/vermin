@@ -18,8 +18,8 @@ Concurrently detect the minimum Python versions needed to run code. Additionally
 vanilla Python, and it doesn't have any external dependencies, it works with v2.7+ and v3+.
 
 It functions by parsing Python code into an abstract syntax tree (AST), which it traverses and
-matches against internal dictionaries with **1207** rules, covering v2.0-2.7 and v3.0-3.8, divided
-into **132** modules, **853** classes/functions/constants members of modules, **193** kwargs of
+matches against internal dictionaries with **1288** rules, covering v2.0-2.7 and v3.0-3.8, divided
+into **132** modules, **922** classes/functions/constants members of modules, **205** kwargs of
 functions, **4** strftime directives, **2** array typecodes, **3** codecs error handler names, and
 **20** codecs encodings. Including looking for v2/v3 ``print expr`` and ``print(expr)``, ``long``,
 f-strings, self-documenting f-strings, coroutines (``async`` and ``await``), asynchronous generators
@@ -28,14 +28,14 @@ comprehensions, boolean constants, named expressions, positional-only parameters
 exception context cause (``raise .. from ..``), ``dict`` comprehensions, infix matrix
 multiplication, ``"..".format(..)``, imports (``import X``, ``from X import Y``, ``from X import
 *``), function calls wrt. name and kwargs, ``strftime`` + ``strptime`` directives used, and
-function, function and variable annotations, ``continue`` in ``finally`` block, modular inverse
-``pow()``, array typecodes, codecs error handler names and encodings. It tries to detect and ignore
-user-defined functions, classes, arguments, and variables with names that clash with library-defined
-symbols.
+function, function and variable annotations (also ``Final`` and ``Literal``), ``continue`` in
+``finally`` block, modular inverse ``pow()``, array typecodes, codecs error handler names and
+encodings. It tries to detect and ignore user-defined functions, classes, arguments, and variables
+with names that clash with library-defined symbols.
 
 Backports of the standard library, like ``typing``, can be enabled for better results.
 
-The project is fairly well-tested with **1327** unit and integration tests.
+The project is fairly well-tested with **1410** unit and integration tests.
 
 It is recommended to use the most recent Python version to run Vermin on projects since Python's own
 language parser is used to detect language features, like f-strings since Python 3.6 etc.
