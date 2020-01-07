@@ -170,5 +170,5 @@ Contributing
 
 Contributions are very welcome, especially adding and updating detection rules of modules,
 functions, classes etc. to cover as many Python versions as possible. For PRs, make sure to keep the
-code vanilla Python and run ``make test`` first. Note that code must be remain valid and working on
+code vanilla Python and run ``make test`` first. Note that code must remain valid and working on
 Python v2.7+ and v3+.
