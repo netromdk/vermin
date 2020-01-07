@@ -304,6 +304,9 @@ class VerminConstantMemberTests(VerminTest):
   def test_OP_NO_COMPRESSION_of_ssl(self):
     self.assertOnlyIn(((2, 7), (3, 3)), detect("from ssl import OP_NO_COMPRESSION"))
 
+  def test_OP_NO_TICKET_of_ssl(self):
+    self.assertOnlyIn((3, 6), detect("from ssl import OP_NO_TICKET"))
+
   def test_HAS_ALPN_of_ssl(self):
     self.assertOnlyIn(((2, 7), (3, 5)), detect("from ssl import HAS_ALPN"))
 
@@ -316,8 +319,20 @@ class VerminConstantMemberTests(VerminTest):
   def test_HAS_NPN_of_ssl(self):
     self.assertOnlyIn(((2, 7), (3, 3)), detect("from ssl import HAS_NPN"))
 
+  def test_HAS_TLSv1_of_ssl(self):
+    self.assertOnlyIn((3, 7), detect("from ssl import HAS_TLSv1"))
+
+  def test_HAS_TLSv1_1_of_ssl(self):
+    self.assertOnlyIn((3, 7), detect("from ssl import HAS_TLSv1_1"))
+
+  def test_HAS_TLSv1_2_of_ssl(self):
+    self.assertOnlyIn((3, 7), detect("from ssl import HAS_TLSv1_2"))
+
   def test_HAS_TLSv1_3_of_ssl(self):
-    self.assertOnlyIn(((2, 7), (3, 6)), detect("from ssl import HAS_TLSv1_3"))
+    self.assertOnlyIn(((2, 7), (3, 7)), detect("from ssl import HAS_TLSv1_3"))
+
+  def test_HAS_NEVER_CHECK_COMMON_NAME_of_ssl(self):
+    self.assertOnlyIn((3, 7), detect("from ssl import HAS_NEVER_CHECK_COMMON_NAME"))
 
   def test_CHANNEL_BINDING_TYPES_of_ssl(self):
     self.assertOnlyIn(((2, 7), (3, 3)), detect("from ssl import CHANNEL_BINDING_TYPES"))
@@ -365,6 +380,18 @@ class VerminConstantMemberTests(VerminTest):
   def test_hostname_checks_common_name_of_ssl_SSLContext(self):
     self.assertOnlyIn((3, 7),
                       detect("from ssl import SSLContext\nSSLContext.hostname_checks_common_name"))
+
+  def test_keylog_filename_of_ssl_SSLContext(self):
+    self.assertOnlyIn((3, 8), detect("from ssl import SSLContext\nSSLContext.keylog_filename"))
+
+  def test_num_tickets_of_ssl_SSLContext(self):
+    self.assertOnlyIn((3, 8), detect("from ssl import SSLContext\nSSLContext.num_tickets"))
+
+  def test_maximum_version_of_ssl_SSLContext(self):
+    self.assertOnlyIn((3, 7), detect("from ssl import SSLContext\nSSLContext.maximum_version"))
+
+  def test_minimum_version_of_ssl_SSLContext(self):
+    self.assertOnlyIn((3, 7), detect("from ssl import SSLContext\nSSLContext.minimum_version"))
 
   def test_DEVNULL_of_subprocess(self):
     self.assertOnlyIn((3, 3), detect("from subprocess import DEVNULL"))
@@ -661,3 +688,117 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_TIMEOUT_MAX_of_threading(self):
     self.assertOnlyIn((3, 2), detect("from threading import TIMEOUT_MAX"))
+
+  def test_pycache_prefix_of_sys(self):
+    self.assertOnlyIn((3, 8), detect("from sys import pycache_prefix"))
+
+  def test_POSIX_SPAWN_OPEN_of_os(self):
+    self.assertOnlyIn((3, 8), detect("from os import POSIX_SPAWN_OPEN"))
+
+  def test_POSIX_SPAWN_CLOSE_of_os(self):
+    self.assertOnlyIn((3, 8), detect("from os import POSIX_SPAWN_CLOSE"))
+
+  def test_POSIX_SPAWN_DUP2_of_os(self):
+    self.assertOnlyIn((3, 8), detect("from os import POSIX_SPAWN_DUP2"))
+
+  def test_OP_ENABLE_MIDDLEBOX_COMPAT_of_ssl(self):
+    self.assertOnlyIn((3, 8), detect("from ssl import OP_ENABLE_MIDDLEBOX_COMPAT"))
+
+  def test_S_IFDOOR_of_stat(self):
+    self.assertOnlyIn((3, 4), detect("from stat import S_IFDOOR"))
+
+  def test_S_IFPORT_of_stat(self):
+    self.assertOnlyIn((3, 4), detect("from stat import S_IFPORT"))
+
+  def test_S_IFWHT_of_stat(self):
+    self.assertOnlyIn((3, 4), detect("from stat import S_IFWHT"))
+
+  def test_FILE_ATTRIBUTE_ARCHIVE_of_stat(self):
+    self.assertOnlyIn((3, 5), detect("from stat import FILE_ATTRIBUTE_ARCHIVE"))
+
+  def test_FILE_ATTRIBUTE_COMPRESSED_of_stat(self):
+    self.assertOnlyIn((3, 5), detect("from stat import FILE_ATTRIBUTE_COMPRESSED"))
+
+  def test_FILE_ATTRIBUTE_DEVICE_of_stat(self):
+    self.assertOnlyIn((3, 5), detect("from stat import FILE_ATTRIBUTE_DEVICE"))
+
+  def test_FILE_ATTRIBUTE_DIRECTORY_of_stat(self):
+    self.assertOnlyIn((3, 5), detect("from stat import FILE_ATTRIBUTE_DIRECTORY"))
+
+  def test_FILE_ATTRIBUTE_ENCRYPTED_of_stat(self):
+    self.assertOnlyIn((3, 5), detect("from stat import FILE_ATTRIBUTE_ENCRYPTED"))
+
+  def test_FILE_ATTRIBUTE_HIDDEN_of_stat(self):
+    self.assertOnlyIn((3, 5), detect("from stat import FILE_ATTRIBUTE_HIDDEN"))
+
+  def test_FILE_ATTRIBUTE_INTEGRITY_STREAM_of_stat(self):
+    self.assertOnlyIn((3, 5), detect("from stat import FILE_ATTRIBUTE_INTEGRITY_STREAM"))
+
+  def test_FILE_ATTRIBUTE_NORMAL_of_stat(self):
+    self.assertOnlyIn((3, 5), detect("from stat import FILE_ATTRIBUTE_NORMAL"))
+
+  def test_FILE_ATTRIBUTE_NOT_CONTENT_INDEXED_of_stat(self):
+    self.assertOnlyIn((3, 5), detect("from stat import FILE_ATTRIBUTE_NOT_CONTENT_INDEXED"))
+
+  def test_FILE_ATTRIBUTE_NO_SCRUB_DATA_of_stat(self):
+    self.assertOnlyIn((3, 5), detect("from stat import FILE_ATTRIBUTE_NO_SCRUB_DATA"))
+
+  def test_FILE_ATTRIBUTE_OFFLINE_of_stat(self):
+    self.assertOnlyIn((3, 5), detect("from stat import FILE_ATTRIBUTE_OFFLINE"))
+
+  def test_FILE_ATTRIBUTE_READONLY_of_stat(self):
+    self.assertOnlyIn((3, 5), detect("from stat import FILE_ATTRIBUTE_READONLY"))
+
+  def test_FILE_ATTRIBUTE_REPARSE_POINT_of_stat(self):
+    self.assertOnlyIn((3, 5), detect("from stat import FILE_ATTRIBUTE_REPARSE_POINT"))
+
+  def test_FILE_ATTRIBUTE_SPARSE_FILE_of_stat(self):
+    self.assertOnlyIn((3, 5), detect("from stat import FILE_ATTRIBUTE_SPARSE_FILE"))
+
+  def test_FILE_ATTRIBUTE_SYSTEM_of_stat(self):
+    self.assertOnlyIn((3, 5), detect("from stat import FILE_ATTRIBUTE_SYSTEM"))
+
+  def test_FILE_ATTRIBUTE_TEMPORARY_of_stat(self):
+    self.assertOnlyIn((3, 5), detect("from stat import FILE_ATTRIBUTE_TEMPORARY"))
+
+  def test_FILE_ATTRIBUTE_VIRTUAL_of_stat(self):
+    self.assertOnlyIn((3, 5), detect("from stat import FILE_ATTRIBUTE_VIRTUAL"))
+
+  def test_IO_REPARSE_TAG_SYMLINK_of_stat(self):
+    self.assertOnlyIn((3, 8), detect("from stat import IO_REPARSE_TAG_SYMLINK"))
+
+  def test_IO_REPARSE_TAG_MOUNT_POINT_of_stat(self):
+    self.assertOnlyIn((3, 8), detect("from stat import IO_REPARSE_TAG_MOUNT_POINT"))
+
+  def test_IO_REPARSE_TAG_APPEXECLINK_of_stat(self):
+    self.assertOnlyIn((3, 8), detect("from stat import IO_REPARSE_TAG_APPEXECLINK"))
+
+  def test_ABOVE_NORMAL_PRIORITY_CLASS_of_subprocess(self):
+    self.assertOnlyIn((3, 7), detect("from subprocess import ABOVE_NORMAL_PRIORITY_CLASS"))
+
+  def test_BELOW_NORMAL_PRIORITY_CLASS_of_subprocess(self):
+    self.assertOnlyIn((3, 7), detect("from subprocess import BELOW_NORMAL_PRIORITY_CLASS"))
+
+  def test_HIGH_PRIORITY_CLASS_of_subprocess(self):
+    self.assertOnlyIn((3, 7), detect("from subprocess import HIGH_PRIORITY_CLASS"))
+
+  def test_IDLE_PRIORITY_CLASS_of_subprocess(self):
+    self.assertOnlyIn((3, 7), detect("from subprocess import IDLE_PRIORITY_CLASS"))
+
+  def test_NORMAL_PRIORITY_CLASS_of_subprocess(self):
+    self.assertOnlyIn((3, 7), detect("from subprocess import NORMAL_PRIORITY_CLASS"))
+
+  def test_REALTIME_PRIORITY_CLASS_of_subprocess(self):
+    self.assertOnlyIn((3, 7), detect("from subprocess import REALTIME_PRIORITY_CLASS"))
+
+  def test_CREATE_NO_WINDOW_of_subprocess(self):
+    self.assertOnlyIn((3, 7), detect("from subprocess import CREATE_NO_WINDOW"))
+
+  def test_DETACHED_PROCESS_of_subprocess(self):
+    self.assertOnlyIn((3, 7), detect("from subprocess import DETACHED_PROCESS"))
+
+  def test_CREATE_DEFAULT_ERROR_MODE_of_subprocess(self):
+    self.assertOnlyIn((3, 7), detect("from subprocess import CREATE_DEFAULT_ERROR_MODE"))
+
+  def test_CREATE_BREAKAWAY_FROM_JOB_of_subprocess(self):
+    self.assertOnlyIn((3, 7), detect("from subprocess import CREATE_BREAKAWAY_FROM_JOB"))

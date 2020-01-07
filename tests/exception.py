@@ -68,3 +68,6 @@ class VerminExceptionMemberTests(VerminTest):
 
   def test_BadGzipFile_of_gzip(self):
     self.assertOnlyIn((3, 8), detect("from gzip import BadGzipFile"))
+
+  def test_SMTPNotSupportedError_of_smtplib(self):
+    self.assertOnlyIn((3, 5), detect("from smtplib import SMTPNotSupportedError"))

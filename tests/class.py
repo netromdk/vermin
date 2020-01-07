@@ -202,6 +202,15 @@ class VerminClassMemberTests(VerminTest):
   def test_SSLObject_of_ssl(self):
     self.assertOnlyIn((3, 6), detect("from ssl import SSLObject"))
 
+  def test_AlertDescription_of_ssl(self):
+    self.assertOnlyIn((3, 6), detect("from ssl import AlertDescription"))
+
+  def test_SSLErrorNumber_of_ssl(self):
+    self.assertOnlyIn((3, 6), detect("from ssl import SSLErrorNumber"))
+
+  def test_TLSVersion_of_ssl(self):
+    self.assertOnlyIn((3, 7), detect("from ssl import TLSVersion"))
+
   def test_CompletedProcess_of_subprocess(self):
     self.assertOnlyIn((3, 5), detect("from subprocess import CompletedProcess"))
 
@@ -293,3 +302,18 @@ class VerminClassMemberTests(VerminTest):
 
   def test_NormalDist_of_statistics(self):
     self.assertOnlyIn((3, 8), detect("from statistics import NormalDist"))
+
+  def test_Final_of_typing(self):
+    self.assertOnlyIn((3, 8), detect("from typing import Final"))
+
+  def test_Literal_of_typing(self):
+    self.assertOnlyIn((3, 8), detect("from typing import Literal"))
+
+  def test_TypedDict_of_typing(self):
+    self.assertOnlyIn((3, 8), detect("from typing import TypedDict"))
+
+  def test_SMTP_SSL_of_smtplib(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("from smtplib import SMTP_SSL"))
+
+  def test_LMTP_of_smtplib(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("from smtplib import LMTP"))

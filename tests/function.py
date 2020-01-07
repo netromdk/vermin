@@ -1632,3 +1632,43 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_is_normalized_of_unicodedata(self):
     self.assertOnlyIn((3, 8), detect("from unicodedata import is_normalized"))
+
+  def test_addaudithook_of_sys(self):
+    self.assertOnlyIn((3, 8), detect("from sys import addaudithook"))
+
+  def test_audit_of_sys(self):
+    self.assertOnlyIn((3, 8), detect("from sys import audit"))
+
+  def test_copy_file_range_of_os(self):
+    self.assertOnlyIn((3, 8), detect("from os import copy_file_range"))
+
+  def test_posix_spawn_of_os(self):
+    self.assertOnlyIn((3, 8), detect("from os import posix_spawn"))
+
+  def test_posix_spawnp_of_os(self):
+    self.assertOnlyIn((3, 8), detect("from os import posix_spawnp"))
+
+  def test_register_at_fork_of_os(self):
+    self.assertOnlyIn((3, 7), detect("from os import register_at_fork"))
+
+  def test_S_ISDOOR_of_stat(self):
+    self.assertOnlyIn((3, 4), detect("from stat import S_ISDOOR"))
+
+  def test_S_ISPORT_of_stat(self):
+    self.assertOnlyIn((3, 4), detect("from stat import S_ISPORT"))
+
+  def test_S_ISWHT_of_stat(self):
+    self.assertOnlyIn((3, 4), detect("from stat import S_ISWHT"))
+
+  def test_filemode_of_stat(self):
+    self.assertOnlyIn((3, 3), detect("from stat import filemode"))
+
+  def test_ehlo_or_helo_if_needed_of_smtplib_SMTP(self):
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      detect("from smtplib import SMTP\nSMTP.ehlo_or_helo_if_needed"))
+
+  def test_auth_of_smtplib_SMTP(self):
+    self.assertOnlyIn((3, 5), detect("from smtplib import SMTP\nSMTP.auth"))
+
+  def test_send_message_of_smtplib_SMTP(self):
+    self.assertOnlyIn((3, 2), detect("from smtplib import SMTP\nSMTP.send_message"))

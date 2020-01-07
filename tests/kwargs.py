@@ -287,6 +287,15 @@ class VerminKwargsTests(VerminTest):
   def test_errors_of_run_from_subprocess(self):
     self.assertOnlyIn((3, 6), detect("import subprocess\nsubprocess.run(errors=None)"))
 
+  def test_encoding_of_check_output_from_subprocess(self):
+    self.assertOnlyIn((3, 6), detect("import subprocess\nsubprocess.check_output(encoding=None)"))
+
+  def test_errors_of_check_output_from_subprocess(self):
+    self.assertOnlyIn((3, 6), detect("import subprocess\nsubprocess.check_output(errors=None)"))
+
+  def test_text_of_check_output_from_subprocess(self):
+    self.assertOnlyIn((3, 7), detect("import subprocess\nsubprocess.check_output(text=None)"))
+
   def test_pass_fds_of_Popen_from_subprocess(self):
     self.assertOnlyIn((3, 2),
                       detect("from subprocess import Popen\n"
@@ -307,6 +316,9 @@ class VerminKwargsTests(VerminTest):
 
   def test_errors_of_Popen_from_subprocess(self):
     self.assertOnlyIn((3, 6), detect("import subprocess\nsubprocess.Popen(errors=None)"))
+
+  def test_text_of_Popen_from_subprocess(self):
+    self.assertOnlyIn((3, 7), detect("import subprocess\nsubprocess.Popen(text=None)"))
 
   def test_timeout_of_wait_from_subprocess_Popen(self):
     self.assertOnlyIn((3, 3), detect("from subprocess import Popen\nPopen.wait(timeout=None)"))
@@ -744,5 +756,27 @@ class VerminKwargsTests(VerminTest):
   def test_compressed_of_zipapp_create_archive(self):
     self.assertOnlyIn((3, 7), detect("import zipapp\nzipapp.create_archive(compressed=True)"))
 
+  def test_timeout_of_smtplib_SMTP(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import smtplib\nsmtplib.SMTP(timeout=1)"))
+
+  def test_source_address_of_smtplib_SMTP(self):
+    self.assertOnlyIn((3, 3), detect("import smtplib\nsmtplib.SMTP(source_address=1)"))
+
+  def test_source_address_of_smtplib_SMTP_SSL(self):
+    self.assertOnlyIn((3, 3), detect("import smtplib\nsmtplib.SMTP_SSL(source_address=1)"))
+
+  def test_context_of_smtplib_SMTP_SSL(self):
+    self.assertOnlyIn((3, 3), detect("import smtplib\nsmtplib.SMTP_SSL(context=1)"))
+
+  def test_context_of_smtplib_SMTP_starttls(self):
+    self.assertOnlyIn((3, 3), detect("import smtplib\nsmtplib.SMTP.starttls(context=1)"))
+
   def test_text_of_subprocess_run(self):
     self.assertOnlyIn((3, 7), detect("import subprocess\nsubprocess.run(text=True)"))
+
+  def test_capture_output_of_subprocess_run(self):
+    self.assertOnlyIn((3, 7), detect("import subprocess\nsubprocess.run(capture_output=1)"))
+
+  def test_lpAttributeList_of_subprocess_STARTUPINFO(self):
+    self.assertOnlyIn((3, 7),
+                      detect("import subprocess\nsubprocess.STARTUPINFO(lpAttributeList=1)"))
