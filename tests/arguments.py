@@ -163,3 +163,7 @@ class VerminArgumentsTests(VerminTest):
 
   def test_no_tips(self):
     self.assertContainsDict({"no-tips": True}, parse_args(["--no-tips"]))
+
+  def test_freq_file(self):
+    freq_file = "freq.json"
+    self.assertContainsDict({"freq-file": freq_file}, parse_args(["--freq-file", freq_file]))

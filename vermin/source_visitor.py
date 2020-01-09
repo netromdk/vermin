@@ -6,16 +6,23 @@ from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, ARRAY_TYP
   CODECS_ERROR_HANDLERS, CODECS_ERRORS_INDICES, CODECS_ENCODINGS, CODECS_ENCODINGS_INDICES
 from .config import Config
 from .utility import dotted_name, reverse_range, combine_versions, version_strings
+from .frequencies import Frequencies
 
 STRFTIME_DIRECTIVE_REGEX = re.compile(r"(%\w)")
 
 class SourceVisitor(ast.NodeVisitor):
-  def __init__(self, config=None):
+  def __init__(self, config=None, freq=None):
     super(SourceVisitor, self).__init__()
+
     if config is None:
       self.__config = Config.get()
     else:
       self.__config = config
+
+    if freq is None:
+      self.__freq = Frequencies()
+    else:
+      self.__freq = freq
 
     self.__modules = []
     self.__members = []
@@ -83,6 +90,9 @@ class SourceVisitor(ast.NodeVisitor):
 
     self.__mod_rules = MOD_REQS()
     self.__mod_mem_reqs_rules = MOD_MEM_REQS()
+
+  def freq(self):
+    return self.__freq
 
   def modules(self):
     return self.__modules
@@ -304,6 +314,7 @@ class SourceVisitor(ast.NodeVisitor):
 
     mods = self.modules()
     for mod in mods:
+      self.__freq.record_member(mod)
       if mod in self.__mod_rules:
         vers = self.__mod_rules[mod]
         self.__vvprint("'{}' requires {}".format(mod, version_strings(vers)), mod)
@@ -311,6 +322,7 @@ class SourceVisitor(ast.NodeVisitor):
 
     mems = self.members()
     for mem in mems:
+      self.__freq.record_member(mem)
       if mem in self.__mod_mem_reqs_rules:
         vers = self.__mod_mem_reqs_rules[mem]
         self.__vvprint("'{}' requires {}".format(mem, version_strings(vers)), mem)

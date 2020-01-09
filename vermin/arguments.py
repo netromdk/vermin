@@ -88,6 +88,10 @@ class Arguments:
             "        backport is specified as being used, the results will reflect that instead."
             "\n\n"
             "        Supported backports:\n{}".format(Backports.str(10)))
+      print("\n  --freq-file <file name>]\n"
+            "        Count the frequencies of all modules/members, kwargs, strftime directives,\n"
+            "        array type codes, codecs error handlers, and codec encodings. The results\n"
+            "        are saved as JSON in <file name>.")
 
   def parse(self):
     if len(self.__args) == 0:
@@ -100,6 +104,7 @@ class Arguments:
     hidden = False
     versions = False
     no_tips = False
+    freq_file = None
     for i in range(len(self.__args)):
       arg = self.__args[i].lower()
       if arg == "-h" or arg == "--help":
@@ -200,6 +205,12 @@ class Arguments:
           print("Unknown backport: {}".format(name))
           return {"code": 1}
         path_pos += 2
+      elif arg == "--freq-file":
+        if (i + 1) >= len(self.__args):
+          print("Frequency analysis requires a file name! Example: --freq-file '~/freqs.json'")
+          return {"code": 1}
+        freq_file = self.__args[i + 1]
+        path_pos += 2
 
     if config.quiet() and config.verbose() > 0:
       print("Cannot use quiet and verbose modes together!")
@@ -219,4 +230,5 @@ class Arguments:
             "targets": targets,
             "hidden": hidden,
             "versions": versions,
-            "no-tips": no_tips}
+            "no-tips": no_tips,
+            "freq-file": freq_file}

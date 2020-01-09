@@ -91,7 +91,7 @@ class VerminGeneralTests(VerminTest):
 
   def test_detect_paths(self):
     paths = detect_paths([abspath("vermin")])
-    self.assertEqual(13, len(paths))
+    self.assertEqual(14, len(paths))
 
   def test_detect_hidden_paths(self):
     tmp_fld = mkdtemp()
@@ -128,7 +128,7 @@ class VerminGeneralTests(VerminTest):
   def test_detect_vermin_min_versions(self):
     paths = detect_paths([abspath("vermin")])
     processor = Processor()
-    (mins, incomp, unique_versions, backports) = processor.process(paths)
+    (mins, incomp, unique_versions, backports, freq) = processor.process(paths)
     self.assertOnlyIn(((2, 7), (3, 0)), mins)
     self.assertEmpty(backports)
 
@@ -315,4 +315,16 @@ class VerminGeneralTests(VerminTest):
     proc_res = process_individual((fp.name, self.config))
     self.assertEmpty(proc_res.text)
     self.assertEqualItems(["typing"], proc_res.bps)
+    os.remove(fp.name)
+
+  def test_process_file_for_freq(self):
+    fp = NamedTemporaryFile(suffix=".py", delete=False)
+    fp.write(b"import sys, json\n")
+    fp.write(b"print(json.dumps({'args': sys.argv}))\n")
+    fp.close()
+    proc_res = process_individual((fp.name, self.config))
+    expected_data = {
+      "members": {"sys": 1, "json": 1, "json.dumps": 1, "sys.argv": 1}
+    }
+    self.assertEqual(expected_data, proc_res.freq.data())
     os.remove(fp.name)

@@ -6,6 +6,7 @@ from .utility import combine_versions, InvalidVersionException, version_strings
 from .parser import Parser
 from .source_visitor import SourceVisitor
 from .backports import Backports
+from .frequencies import Frequencies
 
 class ProcessResult:
   def __init__(self, path):
@@ -15,6 +16,7 @@ class ProcessResult:
     self.text = ""         # Output or exception text.
     self.novermin = set()  # novermin/novm lines.
     self.bps = set()       # Potential backport modules used.
+    self.freq = None       # Frequencies counted.
 
 # NOTE: This function isn't in the Processor class because Python 2's multiprocessing.pool doesn't
 # like it being an instance method:
@@ -66,6 +68,7 @@ def process_individual(args):
     for m in visitor.modules():
       if Backports.is_backport(m):
         res.bps.add(m)
+    res.freq = visitor.freq()
   except InvalidVersionException as ex:
     res.mins = None
     res.text = str(ex)
@@ -85,10 +88,14 @@ class Processor:
 
     unique_versions = set()
     all_backports = set()
+    freq = Frequencies()
     for proc_res in pool.imap(process_individual, ((path, config) for path in paths)):
       # Ignore paths that didn't contain python code.
       if proc_res is None:
         continue
+
+      if proc_res.freq is not None:
+        freq.unite(proc_res.freq)
 
       if proc_res.mins is None:
         incomp = True
@@ -122,4 +129,4 @@ class Processor:
 
     unique_versions = list(unique_versions)
     unique_versions.sort()
-    return (mins, incomp, unique_versions, all_backports)
+    return (mins, incomp, unique_versions, all_backports, freq)
