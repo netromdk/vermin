@@ -415,7 +415,7 @@ class SourceVisitor(ast.NodeVisitor):
       return
 
     fn_kw = (function, keyword)
-    if fn_kw in KWARGS_REQS and fn_kw not in self.__kwargs:
+    if fn_kw not in self.__kwargs:
       self.__kwargs.append(fn_kw)
       self.__add_line_col(fn_kw, line, col)
 
@@ -760,14 +760,6 @@ class SourceVisitor(ast.NodeVisitor):
         self.__function_name = dotted_name(self.__get_attribute_name(func))
         self.__check_codecs_function(self.__function_name, node)
 
-    # Visit arguments and keywords.
-    if hasattr(node, "args"):
-      for arg in node.args:
-        self.generic_visit(arg)
-    if hasattr(node, "keywords"):
-      for kw in node.keywords:
-        self.generic_visit(kw)
-
     self.generic_visit(node)
     self.__function_name = None
 
@@ -795,21 +787,21 @@ class SourceVisitor(ast.NodeVisitor):
 
   def visit_keyword(self, node):
     if self.__function_name is not None:
-      self.__add_kwargs(self.__function_name, node.arg, self.__line)
+      exp_name = self.__function_name.split(".")
 
+      # Check if function is imported from module.
       if self.__function_name in self.__import_mem_mod:
         mod = self.__import_mem_mod[self.__function_name]
         self.__add_kwargs(dotted_name([mod, self.__function_name]), node.arg, self.__line)
 
       # When having "ElementTree.tostringlist", for instance, and include mapping "{'ElementTree':
       # 'xml.etree'}" then try piecing them together to form a match.
-      exp_name = self.__function_name.split(".")
-      if exp_name[0] in self.__import_mem_mod:
+      elif exp_name[0] in self.__import_mem_mod:
         mod = self.__import_mem_mod[exp_name[0]]
         self.__add_kwargs(dotted_name([mod, self.__function_name]), node.arg, self.__line)
 
       # Lookup indirect names via variables.
-      if exp_name[0] in self.__name_res:
+      elif exp_name[0] in self.__name_res:
         res = self.__name_res[exp_name[0]]
         if res in self.__import_mem_mod:
           mod = self.__import_mem_mod[res]
@@ -818,6 +810,10 @@ class SourceVisitor(ast.NodeVisitor):
         # Try as FQN.
         else:
           self.__add_kwargs(dotted_name([res, exp_name[1:]]), node.arg, self.__line)
+
+      # Only add direct function if not found via module/class/member.
+      else:
+        self.__add_kwargs(self.__function_name, node.arg, self.__line)
 
   def visit_Bytes(self, node):
     self.__bytesv3 = True

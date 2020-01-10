@@ -62,6 +62,8 @@ class VerminGeneralTests(VerminTest):
   def test_member_kwargs(self):
     visitor = visit("from os import open\nfd = open(dir_fd = None)")
     self.assertOnlyIn([("os.open", "dir_fd")], visitor.kwargs())
+    visitor = visit("fd = open(dir_fd = None)")
+    self.assertOnlyIn([("open", "dir_fd")], visitor.kwargs())
 
   def test_probably_python_file(self):
     tmp_fld = mkdtemp()
