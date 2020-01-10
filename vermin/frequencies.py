@@ -28,29 +28,35 @@ class FreqEntry:
 class Frequencies:
   def __init__(self):
     self.__members = dict()
+    self.__kwargs = dict()
 
   def members(self):
     return self.__members
 
+  def kwargs(self):
+    return self.__kwargs
+
   def data(self):
     return {
-      "members": self.__entries_data(self.__members)
+      "members": self.__entries_data(self.__members),
+      "kwargs": self.__entries_data(self.__kwargs)
     }
 
   def unite(self, freq):
-    other_members = freq.members()
-    for mem in other_members:
-      entry = other_members[mem]
-      if mem in self.__members:
-        self.__members[mem].unite(entry)
-      else:
-        self.__members[mem] = entry
+    self.__unite_dict(self.__members, freq.members())
+    self.__unite_dict(self.__kwargs, freq.kwargs())
 
   def record_member(self, member):
     self.__inc(self.__members, member)
 
   def trigger_member(self, member):
     self.__trigger(self.__members, member)
+
+  def record_kwarg(self, kwarg):
+    self.__inc(self.__kwargs, self.__kwarg_str(kwarg))
+
+  def trigger_kwarg(self, kwarg):
+    self.__trigger(self.__kwargs, self.__kwarg_str(kwarg))
 
   def save(self, path):
     with open(path, mode="w+") as fp:
@@ -73,3 +79,14 @@ class Frequencies:
     for key in dictionary:
       res[key] = dictionary[key].data()
     return res
+
+  def __kwarg_str(self, kwarg):
+    return "{}({})".format(kwarg[0], kwarg[1])
+
+  def __unite_dict(self, ours, theirs):
+    for key in theirs:
+      entry = theirs[key]
+      if key in ours:
+        ours[key].unite(entry)
+      else:
+        ours[key] = entry

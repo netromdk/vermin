@@ -332,7 +332,9 @@ class SourceVisitor(ast.NodeVisitor):
 
     kwargs = self.kwargs()
     for fn_kw in kwargs:
+      self.__freq.record_kwarg(fn_kw)
       if fn_kw in KWARGS_REQS:
+        self.__freq.trigger_kwarg(fn_kw)
         vers = KWARGS_REQS[fn_kw]
         self.__vvprint("'{}({})' requires {}".format(fn_kw[0], fn_kw[1],
                                                      version_strings(vers)), fn_kw)

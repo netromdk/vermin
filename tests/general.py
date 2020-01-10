@@ -319,16 +319,23 @@ class VerminGeneralTests(VerminTest):
 
   def test_process_file_for_freq(self):
     fp = NamedTemporaryFile(suffix=".py", delete=False)
-    fp.write(b"import sys, json\n")
-    fp.write(b"print(json.dumps({'args': sys.argv}))\n")
+    fp.write(b"import sys, json, os\n")
+    fp.write(b"print(json.dumps({'args': sys.argv}, skipkeys=True))\n")
+    fp.write(b"os.open('.', dir_fd=None)\n")
     fp.close()
     proc_res = process_individual((fp.name, self.config))
     expected_data = {
       "members": {
-        "json": (1, True),  # Triggered by one of the known rules.
+        "json": (1, True),  # Triggered by known rules.
         "json.dumps": (1, False),
+        "os": (1, False),
+        "os.open": (1, False),
         "sys": (1, False),
         "sys.argv": (1, False)
+      },
+      "kwargs": {
+        "json.dumps(skipkeys)": (1, False),
+        'os.open(dir_fd)': (1, True)  # Triggered by known rule.
       }
     }
     self.assertEqual(expected_data, proc_res.freq.data())
