@@ -89,9 +89,9 @@ class Arguments:
             "\n\n"
             "        Supported backports:\n{}".format(Backports.str(10)))
       print("\n  --freq-file <file name>]\n"
-            "        Count the frequencies of all modules/members, kwargs, strftime directives,\n"
-            "        array type codes, codecs error handlers, and codec encodings. The results\n"
-            "        are saved as JSON in <file name>.")
+            "        Count the frequencies, on a per file basis, of all modules/members, kwargs,\n"
+            "        strftime directives, array type codes, codecs error handlers, and codec\n"
+            "        encodings. The results are saved as JSON in <file name>.")
 
   def parse(self):
     if len(self.__args) == 0:
