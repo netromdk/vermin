@@ -738,7 +738,8 @@ class SourceVisitor(ast.NodeVisitor):
              (func.id in self.__module_as_name and self.__module_as_name[func.id] == "array.array"):
           for arg in node.args:
             if isinstance(arg, ast.Str) and hasattr(arg, "s"):
-              self.__add_array_typecode(arg.s, node.lineno, node.col_offset + 6)  # "array" = 5 + 1
+              # "array" = 5 + 1 = 6
+              self.__add_array_typecode(arg.s, node.lineno, node.col_offset + 6)
         elif func.id == "pow" and len(node.args) == 3:
           # Check if the second of three arguments of pow() is negative.
           if self.__is_int(node.args[0]) and self.__is_neg_int(node.args[1]) and \
@@ -759,6 +760,11 @@ class SourceVisitor(ast.NodeVisitor):
       if isinstance(func, ast.Attribute):
         self.__function_name = dotted_name(self.__get_attribute_name(func))
         self.__check_codecs_function(self.__function_name, node)
+        if self.__function_name == "array.array":
+          for arg in node.args:
+            if isinstance(arg, ast.Str) and hasattr(arg, "s"):
+              # "array.array" = 5 + 1 + 5 + 1 = 12
+              self.__add_array_typecode(arg.s, node.lineno, node.col_offset + 12)
 
     self.generic_visit(node)
     self.__function_name = None
