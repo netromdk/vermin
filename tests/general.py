@@ -319,15 +319,19 @@ class VerminGeneralTests(VerminTest):
 
   def test_process_file_for_freq(self):
     fp = NamedTemporaryFile(suffix=".py", delete=False)
-    fp.write(b"import sys, json, os\n")
+    fp.write(b"import sys, json, os, array\n")
     fp.write(b"print(json.dumps({'args': sys.argv}, skipkeys=True))\n")
     fp.write(b"os.open('.', dir_fd=None)\n")
     fp.write(b"from datetime import datetime\n")
     fp.write(b"datetime.now().strftime('%G')\n")
+    fp.write(b"array.array('q')\n")
+    fp.write(b"array.array('i')\n")
     fp.close()
     proc_res = process_individual((fp.name, self.config))
     expected_data = {
       "members": {
+        "array": (1, False),
+        "array.array": (1, False),
         "datetime": (1, True),  # Triggered by known rule.
         "datetime.datetime": (1, False),
         "datetime.now": (1, False),
@@ -345,6 +349,10 @@ class VerminGeneralTests(VerminTest):
       },
       "strftime_dirs": {
         "%G": (1, True),
+      },
+      "array_typecodes": {
+        "i": (1, False),
+        "q": (1, True),
       }
     }
     self.assertEqual(expected_data, proc_res.freq.data())

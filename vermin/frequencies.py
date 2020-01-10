@@ -30,6 +30,7 @@ class Frequencies:
     self.__members = dict()
     self.__kwargs = dict()
     self.__strftime_dirs = dict()
+    self.__array_typecodes = dict()
 
   def members(self):
     return self.__members
@@ -40,17 +41,22 @@ class Frequencies:
   def strftime_directives(self):
     return self.__strftime_dirs
 
+  def array_typecodes(self):
+    return self.__array_typecodes
+
   def data(self):
     return {
       "members": self.__entries_data(self.__members),
       "kwargs": self.__entries_data(self.__kwargs),
-      "strftime_dirs": self.__entries_data(self.__strftime_dirs)
+      "strftime_dirs": self.__entries_data(self.__strftime_dirs),
+      "array_typecodes": self.__entries_data(self.__array_typecodes),
     }
 
   def unite(self, freq):
     self.__unite_dict(self.__members, freq.members())
     self.__unite_dict(self.__kwargs, freq.kwargs())
     self.__unite_dict(self.__strftime_dirs, freq.strftime_directives())
+    self.__unite_dict(self.__array_typecodes, freq.array_typecodes())
 
   def record_member(self, member):
     self.__inc(self.__members, member)
@@ -69,6 +75,12 @@ class Frequencies:
 
   def trigger_strftime_directive(self, directive):
     self.__trigger(self.__strftime_dirs, directive)
+
+  def record_array_typecode(self, typecode):
+    self.__inc(self.__array_typecodes, typecode)
+
+  def trigger_array_typecode(self, typecode):
+    self.__trigger(self.__array_typecodes, typecode)
 
   def save(self, path):
     with open(path, mode="w+") as fp:

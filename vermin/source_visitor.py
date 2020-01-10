@@ -293,7 +293,9 @@ class SourceVisitor(ast.NodeVisitor):
         mins = combine_versions(mins, vers)
 
     for typecode in self.array_typecodes():
+      self.__freq.record_array_typecode(typecode)
       if typecode in ARRAY_TYPECODE_REQS:
+        self.__freq.trigger_array_typecode(typecode)
         vers = ARRAY_TYPECODE_REQS[typecode]
         self.__vvprint("array typecode '{}' requires {}".
                        format(typecode, version_strings(vers)), typecode)
