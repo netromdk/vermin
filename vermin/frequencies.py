@@ -31,6 +31,7 @@ class Frequencies:
     self.__kwargs = dict()
     self.__strftime_dirs = dict()
     self.__array_typecodes = dict()
+    self.__codecs_error_handlers = dict()
 
   def members(self):
     return self.__members
@@ -44,12 +45,16 @@ class Frequencies:
   def array_typecodes(self):
     return self.__array_typecodes
 
+  def codecs_error_handlers(self):
+    return self.__codecs_error_handlers
+
   def data(self):
     return {
       "members": self.__entries_data(self.__members),
       "kwargs": self.__entries_data(self.__kwargs),
       "strftime_dirs": self.__entries_data(self.__strftime_dirs),
       "array_typecodes": self.__entries_data(self.__array_typecodes),
+      "codecs_error_handlers": self.__entries_data(self.__codecs_error_handlers),
     }
 
   def unite(self, freq):
@@ -57,6 +62,7 @@ class Frequencies:
     self.__unite_dict(self.__kwargs, freq.kwargs())
     self.__unite_dict(self.__strftime_dirs, freq.strftime_directives())
     self.__unite_dict(self.__array_typecodes, freq.array_typecodes())
+    self.__unite_dict(self.__codecs_error_handlers, freq.codecs_error_handlers())
 
   def record_member(self, member):
     self.__inc(self.__members, member)
@@ -81,6 +87,12 @@ class Frequencies:
 
   def trigger_array_typecode(self, typecode):
     self.__trigger(self.__array_typecodes, typecode)
+
+  def record_codecs_error_handler(self, handler):
+    self.__inc(self.__codecs_error_handlers, handler)
+
+  def trigger_codecs_error_handler(self, handler):
+    self.__trigger(self.__codecs_error_handlers, handler)
 
   def save(self, path):
     with open(path, mode="w+") as fp:

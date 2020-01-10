@@ -302,7 +302,9 @@ class SourceVisitor(ast.NodeVisitor):
         mins = combine_versions(mins, vers)
 
     for name in self.codecs_error_handlers():
+      self.__freq.record_codecs_error_handler(name)
       if name in CODECS_ERROR_HANDLERS:
+        self.__freq.trigger_codecs_error_handler(name)
         vers = CODECS_ERROR_HANDLERS[name]
         self.__vvprint("codecs error handler name '{}' requires {}".
                        format(name, version_strings(vers)), name)

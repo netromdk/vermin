@@ -326,12 +326,16 @@ class VerminGeneralTests(VerminTest):
     fp.write(b"datetime.now().strftime('%G')\n")
     fp.write(b"array.array('q')\n")
     fp.write(b"array.array('i')\n")
+    fp.write(b"from codecs import EncodedFile as EF\n")
+    fp.write(b"EF('blarg', 'utf-8', 'utf-8', errors='namereplace')\n")
     fp.close()
     proc_res = process_individual((fp.name, self.config))
     expected_data = {
       "members": {
         "array": (1, False),
         "array.array": (1, False),
+        "codecs": (1, False),
+        "codecs.EncodedFile": (1, False),
         "datetime": (1, True),  # Triggered by known rule.
         "datetime.datetime": (1, False),
         "datetime.now": (1, False),
@@ -345,7 +349,8 @@ class VerminGeneralTests(VerminTest):
       },
       "kwargs": {
         "json.dumps(skipkeys)": (1, False),
-        'os.open(dir_fd)': (1, True),
+        "os.open(dir_fd)": (1, True),
+        "EF(errors)": (1, False),
       },
       "strftime_dirs": {
         "%G": (1, True),
@@ -353,6 +358,9 @@ class VerminGeneralTests(VerminTest):
       "array_typecodes": {
         "i": (1, False),
         "q": (1, True),
+      },
+      "codecs_error_handlers": {
+        "namereplace": (1, True),
       }
     }
     self.assertEqual(expected_data, proc_res.freq.data())
