@@ -1,5 +1,4 @@
 import sys
-import json
 from os.path import abspath
 
 from .config import Config
@@ -52,9 +51,7 @@ def main():
     nprint("Note: Some files had incompatible versions so the results might not be correct!")
 
   if freq_file is not None:
-    with open(freq_file, mode="w+") as fp:
-      print("Writing frequencies to {}".format(abspath(freq_file)))
-      json.dump(freq.data(), fp, indent=2, sort_keys=True)
+    freq.save(freq_file)
 
   incomps = []
   reqs = []
