@@ -324,7 +324,12 @@ class VerminGeneralTests(VerminTest):
     fp.close()
     proc_res = process_individual((fp.name, self.config))
     expected_data = {
-      "members": {"sys": 1, "json": 1, "json.dumps": 1, "sys.argv": 1}
+      "members": {
+        "json": (1, True),  # Triggered by one of the known rules.
+        "json.dumps": (1, False),
+        "sys": (1, False),
+        "sys.argv": (1, False)
+      }
     }
     self.assertEqual(expected_data, proc_res.freq.data())
     os.remove(fp.name)

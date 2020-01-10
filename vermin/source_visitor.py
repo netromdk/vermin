@@ -316,6 +316,7 @@ class SourceVisitor(ast.NodeVisitor):
     for mod in mods:
       self.__freq.record_member(mod)
       if mod in self.__mod_rules:
+        self.__freq.trigger_member(mod)
         vers = self.__mod_rules[mod]
         self.__vvprint("'{}' requires {}".format(mod, version_strings(vers)), mod)
         mins = combine_versions(mins, vers)
@@ -324,6 +325,7 @@ class SourceVisitor(ast.NodeVisitor):
     for mem in mems:
       self.__freq.record_member(mem)
       if mem in self.__mod_mem_reqs_rules:
+        self.__freq.trigger_member(mem)
         vers = self.__mod_mem_reqs_rules[mem]
         self.__vvprint("'{}' requires {}".format(mem, version_strings(vers)), mem)
         mins = combine_versions(mins, vers)
