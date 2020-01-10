@@ -170,7 +170,7 @@ class SourceVisitor(ast.NodeVisitor):
     return self.__codecs_error_handlers
 
   def codecs_encodings(self):
-    return self.__codecs_encodings
+    return set(self.__codecs_encodings)
 
   def yield_from(self):
     return self.__yield_from
@@ -311,8 +311,10 @@ class SourceVisitor(ast.NodeVisitor):
         mins = combine_versions(mins, vers)
 
     for encoding in self.codecs_encodings():
+      self.__freq.record_codecs_encoding(encoding)
       for encs in CODECS_ENCODINGS:
         if encoding.lower() in encs:
+          self.__freq.trigger_codecs_encoding(encoding)
           vers = CODECS_ENCODINGS[encs]
           self.__vvprint("codecs encoding '{}' requires {}".
                          format(encoding, version_strings(vers)), encoding)

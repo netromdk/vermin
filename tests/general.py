@@ -328,6 +328,7 @@ class VerminGeneralTests(VerminTest):
     fp.write(b"array.array('i')\n")
     fp.write(b"from codecs import EncodedFile as EF\n")
     fp.write(b"EF('blarg', 'utf-8', 'utf-8', errors='namereplace')\n")
+    fp.write(b"EF('blarg', data_encoding='cp65001', file_encoding='koi8_t')\n")
     fp.close()
     proc_res = process_individual((fp.name, self.config))
     expected_data = {
@@ -348,9 +349,11 @@ class VerminGeneralTests(VerminTest):
         "sys.argv": (1, False),
       },
       "kwargs": {
+        "EF(data_encoding)": (1, False),
+        "EF(errors)": (1, False),
+        "EF(file_encoding)": (1, False),
         "json.dumps(skipkeys)": (1, False),
         "os.open(dir_fd)": (1, True),
-        "EF(errors)": (1, False),
       },
       "strftime_dirs": {
         "%G": (1, True),
@@ -361,6 +364,11 @@ class VerminGeneralTests(VerminTest):
       },
       "codecs_error_handlers": {
         "namereplace": (1, True),
+      },
+      "codecs_encodings": {
+        "cp65001": (1, True),
+        "koi8_t": (1, True),
+        "utf-8": (1, False),
       }
     }
     self.assertEqual(expected_data, proc_res.freq.data())
