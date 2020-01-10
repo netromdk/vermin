@@ -44,7 +44,7 @@ class Frequencies:
   def save(self, path):
     with open(path, mode="w+") as fp:
       print("Writing frequencies to {}".format(abspath(path)))
-      json.dump(self.data(), fp, indent=2, sort_keys=True)
+      json.dump(self.data(), fp, sort_keys=True)
 
   def __inc(self, dictionary, value):
     dictionary.setdefault(value, FreqEntry())
