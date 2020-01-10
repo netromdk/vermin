@@ -3,7 +3,8 @@ from os.path import abspath
 
 class FreqEntry:
   def __init__(self):
-    self.__count = 0
+    self.__count = 0          # Frequency count.
+    self.__triggered = False  # Whether triggered via rule.
 
   def count(self):
     return self.__count
@@ -11,11 +12,18 @@ class FreqEntry:
   def inc(self):
     self.__count += 1
 
+  def triggered(self):
+    return self.__triggered
+
+  def trigger(self):
+    self.__triggered = True
+
   def unite(self, entry):
     self.__count += entry.count()
+    self.__triggered |= entry.triggered()
 
   def data(self):
-    return (self.count(),)
+    return (self.count(), self.triggered())
 
 class Frequencies:
   def __init__(self):
@@ -41,14 +49,24 @@ class Frequencies:
   def record_member(self, member):
     self.__inc(self.__members, member)
 
+  def trigger_member(self, member):
+    self.__trigger(self.__members, member)
+
   def save(self, path):
     with open(path, mode="w+") as fp:
       print("Writing frequencies to {}".format(abspath(path)))
       json.dump(self.data(), fp, sort_keys=True)
 
+  def __prepare_entry(self, dictionary, key):
+    dictionary.setdefault(key, FreqEntry())
+
   def __inc(self, dictionary, value):
-    dictionary.setdefault(value, FreqEntry())
+    self.__prepare_entry(dictionary, value)
     dictionary[value].inc()
+
+  def __trigger(self, dictionary, value):
+    self.__prepare_entry(dictionary, value)
+    dictionary[value].trigger()
 
   def __entries_data(self, dictionary):
     res = {}
