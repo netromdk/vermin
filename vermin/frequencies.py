@@ -29,6 +29,7 @@ class Frequencies:
   def __init__(self):
     self.__members = dict()
     self.__kwargs = dict()
+    self.__strftime_dirs = dict()
 
   def members(self):
     return self.__members
@@ -36,15 +37,20 @@ class Frequencies:
   def kwargs(self):
     return self.__kwargs
 
+  def strftime_directives(self):
+    return self.__strftime_dirs
+
   def data(self):
     return {
       "members": self.__entries_data(self.__members),
-      "kwargs": self.__entries_data(self.__kwargs)
+      "kwargs": self.__entries_data(self.__kwargs),
+      "strftime_dirs": self.__entries_data(self.__strftime_dirs)
     }
 
   def unite(self, freq):
     self.__unite_dict(self.__members, freq.members())
     self.__unite_dict(self.__kwargs, freq.kwargs())
+    self.__unite_dict(self.__strftime_dirs, freq.strftime_directives())
 
   def record_member(self, member):
     self.__inc(self.__members, member)
@@ -57,6 +63,12 @@ class Frequencies:
 
   def trigger_kwarg(self, kwarg):
     self.__trigger(self.__kwargs, self.__kwarg_str(kwarg))
+
+  def record_strftime_directive(self, directive):
+    self.__inc(self.__strftime_dirs, directive)
+
+  def trigger_strftime_directive(self, directive):
+    self.__trigger(self.__strftime_dirs, directive)
 
   def save(self, path):
     with open(path, mode="w+") as fp:

@@ -322,20 +322,29 @@ class VerminGeneralTests(VerminTest):
     fp.write(b"import sys, json, os\n")
     fp.write(b"print(json.dumps({'args': sys.argv}, skipkeys=True))\n")
     fp.write(b"os.open('.', dir_fd=None)\n")
+    fp.write(b"from datetime import datetime\n")
+    fp.write(b"datetime.now().strftime('%G')\n")
     fp.close()
     proc_res = process_individual((fp.name, self.config))
     expected_data = {
       "members": {
-        "json": (1, True),  # Triggered by known rules.
+        "datetime": (1, True),  # Triggered by known rule.
+        "datetime.datetime": (1, False),
+        "datetime.now": (1, False),
+        "datetime.now.strftime": (1, False),
+        "json": (1, True),
         "json.dumps": (1, False),
         "os": (1, False),
         "os.open": (1, False),
         "sys": (1, False),
-        "sys.argv": (1, False)
+        "sys.argv": (1, False),
       },
       "kwargs": {
         "json.dumps(skipkeys)": (1, False),
-        'os.open(dir_fd)': (1, True)  # Triggered by known rule.
+        'os.open(dir_fd)': (1, True),
+      },
+      "strftime_dirs": {
+        "%G": (1, True),
       }
     }
     self.assertEqual(expected_data, proc_res.freq.data())

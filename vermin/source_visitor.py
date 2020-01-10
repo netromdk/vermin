@@ -284,7 +284,9 @@ class SourceVisitor(ast.NodeVisitor):
       mins = combine_versions(mins, ((2, 5), (3, 0)))
 
     for directive in self.strftime_directives():
+      self.__freq.record_strftime_directive(directive)
       if directive in STRFTIME_REQS:
+        self.__freq.trigger_strftime_directive(directive)
         vers = STRFTIME_REQS[directive]
         self.__vvprint("strftime directive '{}' requires {}".
                        format(directive, version_strings(vers)), directive)
