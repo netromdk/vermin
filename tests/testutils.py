@@ -10,6 +10,12 @@ def current_version():
   return current_major_version() + float(sys.version_info.minor) / 10.0
 
 class VerminTest(unittest.TestCase):
+  def __init__(self, methodName):
+    super(VerminTest, self).__init__(methodName)
+
+    # Allow test diffs of any size (instead of 640 char max).
+    self.maxDiff = None
+
   """General test case class for all Vermin tests."""
   def assertOnlyIn(self, values, data):
     """Assert only value(s) is in data but ignores None and 0 values."""
