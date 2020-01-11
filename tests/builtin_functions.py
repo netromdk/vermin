@@ -323,8 +323,5 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
   def test_setter_of_property(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("property.setter()"))
 
-  def test_setter_of_property(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("property.setter()"))
-
   def test_indices_of_slice(self):
     self.assertOnlyIn(((2, 3), (3, 0)), detect("slice.indices()"))
