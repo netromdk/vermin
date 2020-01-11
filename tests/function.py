@@ -19,9 +19,6 @@ class VerminFunctionMemberTests(VerminTest):
   def test_getcheckinterval_of_sys(self):
     self.assertOnlyIn(((2, 3), (3, 0)), detect("from sys import getcheckinterval"))
 
-  def test_getdefaultencoding_of_sys(self):
-    self.assertOnlyIn(((2, 0), (3, 0)), detect("from sys import getdefaultencoding"))
-
   def test_getdlopenflags_of_sys(self):
     self.assertOnlyIn(((2, 2), (3, 0)), detect("from sys import getdlopenflags"))
 
@@ -62,10 +59,10 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(((2, 3), (3, 0)), detect("from os import getpgid"))
 
   def test_getresgid_of_os(self):
-    self.assertOnlyIn(((2, 7), (3, 0)), detect("from os import getresgid"))
+    self.assertOnlyIn(((2, 7), (3, 2)), detect("from os import getresgid"))
 
   def test_getresuid_of_os(self):
-    self.assertOnlyIn(((2, 7), (3, 0)), detect("from os import getresuid"))
+    self.assertOnlyIn(((2, 7), (3, 2)), detect("from os import getresuid"))
 
   def test_getsid_of_os(self):
     self.assertOnlyIn(((2, 4), (3, 0)), detect("from os import getsid"))
@@ -233,11 +230,11 @@ class VerminFunctionMemberTests(VerminTest):
                       detect("from unittest import TestCase\nTestCase.assertRegexpMatches()"))
 
   def test_assertNotRegexpMatches_of_unittest_TestCase(self):
-    self.assertOnlyIn(((2, 7), (3, 1)),
+    self.assertOnlyIn(((2, 7), (3, 5)),
                       detect("from unittest import TestCase\nTestCase.assertNotRegexpMatches()"))
 
   def test_assertItemsEqual_of_unittest_TestCase(self):
-    self.assertOnlyIn(((2, 7), (3, 1)),
+    self.assertOnlyIn((2, 7),
                       detect("from unittest import TestCase\nTestCase.assertItemsEqual()"))
 
   def test_assertDictContainsSubset_of_unittest_TestCase(self):
@@ -265,10 +262,10 @@ class VerminFunctionMemberTests(VerminTest):
                       detect("from unittest import TestCase\nTestCase.assertTupleEqual()"))
 
   def test_assertRegex_of_unittest_TestCase(self):
-    self.assertOnlyIn((3, 1), detect("from unittest import TestCase\nTestCase.assertRegex()"))
+    self.assertOnlyIn((3, 2), detect("from unittest import TestCase\nTestCase.assertRegex()"))
 
   def test_assertNotRegex_of_unittest_TestCase(self):
-    self.assertOnlyIn((3, 1), detect("from unittest import TestCase\nTestCase.assertNotRegex()"))
+    self.assertOnlyIn((3, 2), detect("from unittest import TestCase\nTestCase.assertNotRegex()"))
 
   def test_assertSetEqual_of_unittest_TestCase(self):
     self.assertOnlyIn(((2, 7), (3, 1)),
@@ -277,14 +274,6 @@ class VerminFunctionMemberTests(VerminTest):
   def test_assertDictEqual_of_unittest_TestCase(self):
     self.assertOnlyIn(((2, 7), (3, 1)),
                       detect("from unittest import TestCase\nTestCase.assertDictEqual()"))
-
-  def test_longMessage_of_unittest_TestCase(self):
-    self.assertOnlyIn(((2, 7), (3, 1)),
-                      detect("from unittest import TestCase\nTestCase.longMessage()"))
-
-  def test_maxDiff_of_unittest_TestCase(self):
-    self.assertOnlyIn(((2, 7), (3, 2)),
-                      detect("from unittest import TestCase\nTestCase.maxDiff()"))
 
   def test_addCleanup_of_unittest_TestCase(self):
     self.assertOnlyIn(((2, 7), (3, 1)),
@@ -313,7 +302,7 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((3, 8), detect("from unittest import doModuleCleanups"))
 
   def test_total_seconds_of_datetime_timedelta(self):
-    self.assertOnlyIn((3, 2), detect("from datetime import timedelta\ntimedelta.total_seconds()"))
+    self.assertOnlyIn(((2, 7), (3, 2)), detect("from datetime import timedelta\ntimedelta.total_seconds()"))
 
   def test_timestamp_of_datetime_datetime(self):
     self.assertOnlyIn((3, 3), detect("from datetime import datetime\ndatetime.timestamp()"))
@@ -586,17 +575,8 @@ class VerminFunctionMemberTests(VerminTest):
   def test_cmp_to_key_from_functools(self):
     self.assertOnlyIn(((2, 7), (3, 2)), detect("import functools\nfunctools.cmp_to_key()"))
 
-  def test_total_ordering_from_functools(self):
-    self.assertOnlyIn(((2, 7), (3, 2)), detect("import functools\nfunctools.total_ordering()"))
-
   def test_reduce_from_functools(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import functools\nfunctools.reduce()"))
-
-  def test_lru_cache_from_functools(self):
-    self.assertOnlyIn((3, 2), detect("import functools\nfunctools.lru_cache()"))
-
-  def test_partial_method_from_functools(self):
-    self.assertOnlyIn((3, 4), detect("import functools\nfunctools.partial_method()"))
 
   def test_heappushpop_from_heapq(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import heapq\nheapq.heappushpop()"))
@@ -659,7 +639,7 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((3, 3), detect("import inspect\ninspect.signature()"))
 
   def test_apply_defaults_from_inspect_BoundArguments(self):
-    self.assertOnlyIn((3, 6), detect("from inspect import BoundArguments\n"
+    self.assertOnlyIn((3, 5), detect("from inspect import BoundArguments\n"
                                      "ba = BoundArguments()\n"
                                      "ba.apply_defaults()"))
 
@@ -676,7 +656,7 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((3, 2), detect("import inspect\ninspect.getgeneratorstate()"))
 
   def test_getgeneratorlocals_from_inspect(self):
-    self.assertOnlyIn((3, 2), detect("import inspect\ninspect.getgeneratorlocals()"))
+    self.assertOnlyIn((3, 3), detect("import inspect\ninspect.getgeneratorlocals()"))
 
   def test_getcoroutinestate_from_inspect(self):
     self.assertOnlyIn((3, 5), detect("import inspect\ninspect.getcoroutinestate()"))
@@ -728,7 +708,7 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(((2, 4), (3, 0)), detect("import itertools\nitertools.groupby()"))
 
   def test_izip_longest_from_itertools(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("import itertools\nitertools.izip_longest()"))
+    self.assertOnlyIn((2, 6), detect("import itertools\nitertools.izip_longest()"))
 
   def test_permutations_from_itertools(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import itertools\nitertools.permutations()"))
@@ -781,11 +761,11 @@ class VerminFunctionMemberTests(VerminTest):
   def test_join_from_shlex(self):
     self.assertOnlyIn((3, 8), detect("import shlex\nshlex.join()"))
 
-  def test_push_source_from_shlex(self):
-    self.assertOnlyIn(((2, 1), (3, 0)), detect("import shlex\nshlex.push_source()"))
+  def test_push_source_from_shlex_shlex(self):
+    self.assertOnlyIn(((2, 1), (3, 0)), detect("import shlex\nshlex.shlex().push_source()"))
 
-  def test_pop_source_from_shlex(self):
-    self.assertOnlyIn(((2, 1), (3, 0)), detect("import shlex\nshlex.pop_source()"))
+  def test_pop_source_from_shlex_shlex(self):
+    self.assertOnlyIn(((2, 1), (3, 0)), detect("import shlex\nshlex.shlex().pop_source()"))
 
   def test_quote_from_shlex(self):
     self.assertOnlyIn((3, 3), detect("import shlex\nshlex.quote()"))
@@ -859,24 +839,6 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_enum_crls_from_ssl(self):
     self.assertOnlyIn(((2, 7), (3, 4)), detect("import ssl\nssl.enum_crls()"))
-
-  def test_compression_from_ssl(self):
-    self.assertOnlyIn(((2, 7), (3, 3)), detect("import ssl\nssl.compression()"))
-
-  def test_shared_ciphers_from_ssl(self):
-    self.assertOnlyIn((3, 5), detect("import ssl\nssl.shared_ciphers()"))
-
-  def test_get_channel_binding_from_ssl(self):
-    self.assertOnlyIn(((2, 7), (3, 3)), detect("import ssl\nssl.get_channel_binding()"))
-
-  def test_selected_alpn_protocol_from_ssl(self):
-    self.assertOnlyIn(((2, 7), (3, 5)), detect("import ssl\nssl.selected_alpn_protocol()"))
-
-  def test_selected_npn_protocol_from_ssl(self):
-    self.assertOnlyIn(((2, 7), (3, 3)), detect("import ssl\nssl.selected_npn_protocol()"))
-
-  def test_version_from_ssl(self):
-    self.assertOnlyIn(((2, 7), (3, 5)), detect("import ssl\nssl.version()"))
 
   def test_set_alpn_protocols_from_ssl_SSLContext(self):
     self.assertOnlyIn(((2, 7), (3, 5)),
@@ -956,11 +918,6 @@ class VerminFunctionMemberTests(VerminTest):
   def test_run_from_subprocess(self):
     self.assertOnlyIn((3, 5), detect("import subprocess\nsubprocess.run()"))
 
-  def test_check_returncode_from_subprocess_CompletedProcess(self):
-    self.assertOnlyIn((3, 5), detect("from subprocess import CompletedProcess\n"
-                                     "cp = CompletedProcess()\n"
-                                     "cp.check_returncode()"))
-
   def test_extractall_from_tarfile_TarFile(self):
     self.assertOnlyIn(((2, 5), (3, 0)), detect("from tarfile import TarFile\nTarFile.extractall()"))
 
@@ -981,10 +938,10 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import timeit\ntimeit.repeat()"))
 
   def test_warnpy3k_from_warnings(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("import warnings\nwarnings.warnpy3k()"))
+    self.assertOnlyIn((2, 6), detect("import warnings\nwarnings.warnpy3k()"))
 
   def test_iterkeyrefs_from_weakref_WeakKeyDictionary(self):
-    self.assertOnlyIn(((2, 5), (3, 0)),
+    self.assertOnlyIn((2, 5),
                       detect("from weakref import WeakKeyDictionary\n"
                              "wkd = WeakKeyDictionary()\n"
                              "wkd.iterkeyrefs()"))
@@ -996,7 +953,7 @@ class VerminFunctionMemberTests(VerminTest):
                              "wkd.keyrefs()"))
 
   def test_itervaluerefs_from_weakref_WeakValueDictionary(self):
-    self.assertOnlyIn(((2, 5), (3, 0)),
+    self.assertOnlyIn((2, 5),
                       detect("from weakref import WeakValueDictionary\n"
                              "wkd = WeakValueDictionary()\n"
                              "wkd.itervaluerefs()"))
@@ -1386,14 +1343,8 @@ class VerminFunctionMemberTests(VerminTest):
   def test_decodebytes_of_base64(self):
     self.assertOnlyIn((3, 1), detect("import base64\nbase64.decodebytes()"))
 
-  def test_decodestring_of_base64(self):
-    self.assertOnlyIn(((2, 4), (3, 0)), detect("import base64\nbase64.decodestring()"))
-
   def test_encodebytes_of_base64(self):
     self.assertOnlyIn((3, 1), detect("import base64\nbase64.encodebytes()"))
-
-  def test_encodestring_of_base64(self):
-    self.assertOnlyIn(((2, 4), (3, 0)), detect("import base64\nbase64.encodestring()"))
 
   def test_bpformat_of_bdb_Breakpoint(self):
     self.assertOnlyIn((3, 2), detect("from bdb import Breakpoint\nbp=Breakpoint()\nbp.bpformat()"))
@@ -1534,8 +1485,9 @@ class VerminFunctionMemberTests(VerminTest):
   def test_fromshare_of_socket(self):
     self.assertOnlyIn((3, 3), detect("from socket import fromshare"))
 
-  def test_share_of_socket(self):
-    self.assertOnlyIn((3, 3), detect("from socket import share"))
+  def test_share_of_socket_socket(self):
+    self.assertOnlyIn((3, 3), detect("from socket import socket\n"
+                                     "socket().share"))
 
   def test_close_of_socket(self):
     self.assertOnlyIn((3, 7), detect("from socket import close"))
@@ -1558,32 +1510,41 @@ class VerminFunctionMemberTests(VerminTest):
   def test_if_indextoname_of_socket(self):
     self.assertOnlyIn((3, 3), detect("from socket import if_indextoname"))
 
-  def test_detach_of_socket(self):
-    self.assertOnlyIn((3, 2), detect("from socket import detach"))
+  def test_detach_of_socket_socket(self):
+    self.assertOnlyIn((3, 2), detect("from socket import socket\n"
+                                     "socket().detach"))
 
-  def test_get_inheritable_of_socket(self):
-    self.assertOnlyIn((3, 4), detect("from socket import get_inheritable"))
+  def test_get_inheritable_of_socket_socket(self):
+    self.assertOnlyIn((3, 4), detect("from socket import socket\n"
+                                     "socket().get_inheritable"))
 
-  def test_set_inheritable_of_socket(self):
-    self.assertOnlyIn((3, 4), detect("from socket import set_inheritable"))
+  def test_set_inheritable_of_socket_socket(self):
+    self.assertOnlyIn((3, 4), detect("from socket import socket\n"
+                                     "socket().set_inheritable"))
 
-  def test_getblocking_of_socket(self):
-    self.assertOnlyIn((3, 7), detect("from socket import getblocking"))
+  def test_getblocking_of_socket_socket(self):
+    self.assertOnlyIn((3, 7), detect("from socket import socket\n"
+                                     "socket().getblocking"))
 
-  def test_recvmsg_of_socket(self):
-    self.assertOnlyIn((3, 3), detect("from socket import recvmsg"))
+  def test_recvmsg_of_socket_socket(self):
+    self.assertOnlyIn((3, 3), detect("from socket import socket\n"
+                                     "socket().recvmsg"))
 
-  def test_recvmsg_into_of_socket(self):
-    self.assertOnlyIn((3, 3), detect("from socket import recvmsg_into"))
+  def test_recvmsg_into_of_socket_socket(self):
+    self.assertOnlyIn((3, 3), detect("from socket import socket\n"
+                                     "socket().recvmsg_into"))
 
-  def test_sendmsg_of_socket(self):
-    self.assertOnlyIn((3, 3), detect("from socket import sendmsg"))
+  def test_sendmsg_of_socket_socket(self):
+    self.assertOnlyIn((3, 3), detect("from socket import socket\n"
+                                     "socket().sendmsg"))
 
-  def test_sendmsg_afalg_of_socket(self):
-    self.assertOnlyIn((3, 6), detect("from socket import sendmsg_afalg"))
+  def test_sendmsg_afalg_of_socket_socket(self):
+    self.assertOnlyIn((3, 6), detect("from socket import socket\n"
+                                     "socket().sendmsg_afalg"))
 
-  def test_sendfile_of_socket(self):
-    self.assertOnlyIn((3, 5), detect("from socket import sendfile"))
+  def test_sendfile_of_socket_socket(self):
+    self.assertOnlyIn((3, 5), detect("from socket import socket\n"
+                                     "socket().sendfile"))
 
   def test_fmean_of_statistics(self):
     self.assertOnlyIn((3, 8), detect("from statistics import fmean"))
@@ -1672,3 +1633,1954 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_send_message_of_smtplib_SMTP(self):
     self.assertOnlyIn((3, 2), detect("from smtplib import SMTP\nSMTP.send_message"))
+
+  def test_dictConfig_from_logging_config(self):
+    self.assertOnlyIn(((2, 7), (3, 2)), detect("import logging.config\nlogging.config.dictConfig()"))
+
+  def test_captured_stdout_from_test_support(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import test.support\ntest.support.captured_stdout()"))
+
+  def test_catch_threading_exception_from_test_support(self):
+    self.assertOnlyIn((3, 8), detect("import test.support\ntest.support.catch_threading_exception()"))
+
+  def test_catch_unraisable_exception_from_test_support(self):
+    self.assertOnlyIn((3, 8), detect("import test.support\ntest.support.catch_unraisable_exception()"))
+
+  def test_check__all___from_test_support(self):
+    self.assertOnlyIn((3, 6), detect("import test.support\ntest.support.check__all__()"))
+
+  def test_check_py3k_warnings_from_test_support(self):
+    self.assertOnlyIn((2, 7), detect("import test.support\ntest.support.check_py3k_warnings()"))
+
+  def test_check_syntax_warning_from_test_support(self):
+    self.assertOnlyIn((3, 8), detect("import test.support\ntest.support.check_syntax_warning()"))
+
+  def test_check_warnings_from_test_support(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import test.support\ntest.support.check_warnings()"))
+
+  def test_detect_api_mismatch_from_test_support(self):
+    self.assertOnlyIn((3, 5), detect("import test.support\ntest.support.detect_api_mismatch()"))
+
+  def test_import_fresh_module_from_test_support(self):
+    self.assertOnlyIn(((2, 7), (3, 1)), detect("import test.support\ntest.support.import_fresh_module()"))
+
+  def test_import_module_from_test_support(self):
+    self.assertOnlyIn(((2, 7), (3, 1)), detect("import test.support\ntest.support.import_module()"))
+
+  def test_seal_from_unittest_mock(self):
+    self.assertOnlyIn((3, 7), detect("import unittest.mock\nunittest.mock.seal()"))
+
+  def test_quoteattr_from_xml_sax_saxutils(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import xml.sax.saxutils\nxml.sax.saxutils.quoteattr()"))
+
+  def test_unescape_from_xml_sax_saxutils(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import xml.sax.saxutils\nxml.sax.saxutils.unescape()"))
+
+  def test_set_from_ConfigParser_SafeConfigParser(self):
+    self.assertOnlyIn((2, 4),
+                      detect("from ConfigParser import SafeConfigParser\n"
+                             "SafeConfigParser().set()"))
+
+  def test_GetArgv_from_EasyDialogs(self):
+    self.assertOnlyIn((2, 0), detect("import EasyDialogs\nEasyDialogs.GetArgv()"))
+
+  def test_join_from_Queue_Queue(self):
+    self.assertOnlyIn((2, 5),
+                      detect("from Queue import Queue\n"
+                             "Queue().join()"))
+
+  def test_task_done_from_Queue_Queue(self):
+    self.assertOnlyIn((2, 5),
+                      detect("from Queue import Queue\n"
+                             "Queue().task_done()"))
+
+  def test_do_GET_from_SimpleHTTPServer_SimpleHTTPRequestHandler(self):
+    self.assertOnlyIn((2, 5),
+                      detect("from SimpleHTTPServer import SimpleHTTPRequestHandler\n"
+                             "SimpleHTTPRequestHandler().do_GET()"))
+
+  def test_server_close_from_SocketServer_BaseServer(self):
+    self.assertOnlyIn((2, 6),
+                      detect("from SocketServer import BaseServer\n"
+                             "BaseServer().server_close()"))
+
+  def test_shutdown_from_SocketServer_BaseServer(self):
+    self.assertOnlyIn((2, 6),
+                      detect("from SocketServer import BaseServer\n"
+                             "BaseServer().shutdown()"))
+
+  def test_get_native_id_from__thread(self):
+    self.assertOnlyIn((3, 8), detect("import _thread\n_thread.get_native_id()"))
+
+  def test_CreateKeyEx_from__winreg(self):
+    self.assertOnlyIn((2, 7), detect("import _winreg\n_winreg.CreateKeyEx()"))
+
+  def test_DeleteKeyEx_from__winreg(self):
+    self.assertOnlyIn((2, 7), detect("import _winreg\n_winreg.DeleteKeyEx()"))
+
+  def test_ExpandEnvironmentStrings_from__winreg(self):
+    self.assertOnlyIn((2, 6), detect("import _winreg\n_winreg.ExpandEnvironmentStrings()"))
+
+  def test_get_cache_token_from_abc(self):
+    self.assertOnlyIn((3, 4), detect("import abc\nabc.get_cache_token()"))
+
+  def test_frombytes_from_array_array(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from array import array\n"
+                             "array().frombytes()"))
+
+  def test_tobytes_from_array_array(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from array import array\n"
+                             "array().tobytes()"))
+
+  def test_get_source_segment_from_ast(self):
+    self.assertOnlyIn((3, 8), detect("import ast\nast.get_source_segment()"))
+
+  def test_is_active_from_asyncio_AbstractChildWatcher(self):
+    self.assertOnlyIn((3, 8),
+                      detect("from asyncio import AbstractChildWatcher\n"
+                             "AbstractChildWatcher().is_active()"))
+
+  def test_get_loop_from_asyncio_Future(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from asyncio import Future\n"
+                             "Future().get_loop()"))
+
+  def test_cancelled_from_asyncio_Handle(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from asyncio import Handle\n"
+                             "Handle().cancelled()"))
+
+  def test_is_reading_from_asyncio_ReadTransport(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from asyncio import ReadTransport\n"
+                             "ReadTransport().is_reading()"))
+
+  def test_get_loop_from_asyncio_Server(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from asyncio import Server\n"
+                             "Server().get_loop()"))
+
+  def test_is_serving_from_asyncio_Server(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from asyncio import Server\n"
+                             "Server().is_serving()"))
+
+  def test_serve_forever_from_asyncio_Server(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from asyncio import Server\n"
+                             "Server().serve_forever()"))
+
+  def test_start_serving_from_asyncio_Server(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from asyncio import Server\n"
+                             "Server().start_serving()"))
+
+  def test_readuntil_from_asyncio_StreamReader(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from asyncio import StreamReader\n"
+                             "StreamReader().readuntil()"))
+
+  def test_is_closing_from_asyncio_StreamWriter(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from asyncio import StreamWriter\n"
+                             "StreamWriter().is_closing()"))
+
+  def test_wait_closed_from_asyncio_StreamWriter(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from asyncio import StreamWriter\n"
+                             "StreamWriter().wait_closed()"))
+
+  def test_get_coro_from_asyncio_Task(self):
+    self.assertOnlyIn((3, 8),
+                      detect("from asyncio import Task\n"
+                             "Task().get_coro()"))
+
+  def test_get_name_from_asyncio_Task(self):
+    self.assertOnlyIn((3, 8),
+                      detect("from asyncio import Task\n"
+                             "Task().get_name()"))
+
+  def test_set_name_from_asyncio_Task(self):
+    self.assertOnlyIn((3, 8),
+                      detect("from asyncio import Task\n"
+                             "Task().set_name()"))
+
+  def test_when_from_asyncio_TimerHandle(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from asyncio import TimerHandle\n"
+                             "TimerHandle().when()"))
+
+  def test_get_write_buffer_limits_from_asyncio_WriteTransport(self):
+    self.assertOnlyIn((3, 4),
+                      detect("from asyncio import WriteTransport\n"
+                             "WriteTransport().get_write_buffer_limits()"))
+
+  def test_get_running_loop_from_asyncio(self):
+    self.assertOnlyIn((3, 7), detect("import asyncio\nasyncio.get_running_loop()"))
+
+  def test_isfuture_from_asyncio(self):
+    self.assertOnlyIn((3, 5), detect("import asyncio\nasyncio.isfuture()"))
+
+  def test_connect_accepted_socket_from_asyncio_loop(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from asyncio import loop\n"
+                             "loop().connect_accepted_socket()"))
+
+  def test_create_future_from_asyncio_loop(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from asyncio import loop\n"
+                             "loop().create_future()"))
+
+  def test_get_exception_handler_from_asyncio_loop(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from asyncio import loop\n"
+                             "loop().get_exception_handler()"))
+
+  def test_sendfile_from_asyncio_loop(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from asyncio import loop\n"
+                             "loop().sendfile()"))
+
+  def test_shutdown_asyncgens_from_asyncio_loop(self):
+    self.assertOnlyIn((3, 6),
+                      detect("from asyncio import loop\n"
+                             "loop().shutdown_asyncgens()"))
+
+  def test_sock_recv_into_from_asyncio_loop(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from asyncio import loop\n"
+                             "loop().sock_recv_into()"))
+
+  def test_sock_sendfile_from_asyncio_loop(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from asyncio import loop\n"
+                             "loop().sock_sendfile()"))
+
+  def test_start_tls_from_asyncio_loop(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from asyncio import loop\n"
+                             "loop().start_tls()"))
+
+  def test_b85decode_from_base64(self):
+    self.assertOnlyIn((3, 4), detect("import base64\nbase64.b85decode()"))
+
+  def test_b85encode_from_base64(self):
+    self.assertOnlyIn((3, 4), detect("import base64\nbase64.b85encode()"))
+
+  def test_getfirst_from_cgi_FieldStorage(self):
+    self.assertOnlyIn(((2, 2), (3, 0)),
+                      detect("from cgi import FieldStorage\n"
+                             "FieldStorage().getfirst()"))
+
+  def test_getlist_from_cgi_FieldStorage(self):
+    self.assertOnlyIn(((2, 2), (3, 0)),
+                      detect("from cgi import FieldStorage\n"
+                             "FieldStorage().getlist()"))
+
+  def test_isinf_from_cmath(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import cmath\ncmath.isinf()"))
+
+  def test_isnan_from_cmath(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import cmath\ncmath.isnan()"))
+
+  def test_phase_from_cmath(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import cmath\ncmath.phase()"))
+
+  def test_polar_from_cmath(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import cmath\ncmath.polar()"))
+
+  def test_rect_from_cmath(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import cmath\ncmath.rect()"))
+
+  def test_decode_from_codecs(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("import codecs\ncodecs.decode()"))
+
+  def test_encode_from_codecs(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("import codecs\ncodecs.encode()"))
+
+  def test_getincrementaldecoder_from_codecs(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import codecs\ncodecs.getincrementaldecoder()"))
+
+  def test_getincrementalencoder_from_codecs(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import codecs\ncodecs.getincrementalencoder()"))
+
+  def test_iterdecode_from_codecs(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import codecs\ncodecs.iterdecode()"))
+
+  def test_iterencode_from_codecs(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import codecs\ncodecs.iterencode()"))
+
+  def test_namereplace_errors_from_codecs(self):
+    self.assertOnlyIn((3, 5), detect("import codecs\ncodecs.namereplace_errors()"))
+
+  def test___getnewargs___from_collections_UserString(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from collections import UserString\n"
+                             "UserString().__getnewargs__()"))
+
+  def test___rmod___from_collections_UserString(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from collections import UserString\n"
+                             "UserString().__rmod__()"))
+
+  def test_casefold_from_collections_UserString(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from collections import UserString\n"
+                             "UserString().casefold()"))
+
+  def test_format_map_from_collections_UserString(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from collections import UserString\n"
+                             "UserString().format_map()"))
+
+  def test_isprintable_from_collections_UserString(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from collections import UserString\n"
+                             "UserString().isprintable()"))
+
+  def test_maketrans_from_collections_UserString(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from collections import UserString\n"
+                             "UserString().maketrans()"))
+
+  def test_clear_from_collections_abc_MutableSequence(self):
+    self.assertOnlyIn((3, 3),
+                      detect("from collections.abc import MutableSequence\n"
+                             "MutableSequence().clear()"))
+
+  def test_copy_from_collections_abc_MutableSequence(self):
+    self.assertOnlyIn((3, 3),
+                      detect("from collections.abc import MutableSequence\n"
+                             "MutableSequence().copy()"))
+
+  def test_read_dict_from_configparser_ConfigParser(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from configparser import ConfigParser\n"
+                             "ConfigParser().read_dict()"))
+
+  def test_read_file_from_configparser_ConfigParser(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from configparser import ConfigParser\n"
+                             "ConfigParser().read_file()"))
+
+  def test_read_string_from_configparser_ConfigParser(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from configparser import ConfigParser\n"
+                             "ConfigParser().read_string()"))
+
+  def test_get_wch_from_curses_window(self):
+    self.assertOnlyIn((3, 3),
+                      detect("from curses import window\n"
+                             "window().get_wch()"))
+
+  def test_strptime_from_datetime_datetime(self):
+    self.assertOnlyIn(((2, 5), (3, 0)),
+                      detect("from datetime import datetime\n"
+                             "datetime().strptime()"))
+
+  def test_DocFileSuite_from_doctest(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("import doctest\ndoctest.DocFileSuite()"))
+
+  def test_DocTestSuite_from_doctest(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import doctest\ndoctest.DocTestSuite()"))
+
+  def test_debug_from_doctest(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import doctest\ndoctest.debug()"))
+
+  def test_debug_src_from_doctest(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("import doctest\ndoctest.debug_src()"))
+
+  def test_register_optionflag_from_doctest(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("import doctest\ndoctest.register_optionflag()"))
+
+  def test_script_from_examples_from_doctest(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("import doctest\ndoctest.script_from_examples()"))
+
+  def test_set_unittest_reportflags_from_doctest(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("import doctest\ndoctest.set_unittest_reportflags()"))
+
+  def test_testfile_from_doctest(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("import doctest\ndoctest.testfile()"))
+
+  def test_testsource_from_doctest(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import doctest\ndoctest.testsource()"))
+
+  def test_clone_from_email_generator_Generator(self):
+    self.assertOnlyIn(((2, 2), (3, 0)),
+                      detect("from email.generator import Generator\n"
+                             "Generator().clone()"))
+
+  def test_flatten_from_email_generator_Generator(self):
+    self.assertOnlyIn(((2, 2), (3, 0)),
+                      detect("from email.generator import Generator\n"
+                             "Generator().flatten()"))
+
+  def test_get_content_disposition_from_email_message_EmailMessage(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from email.message import EmailMessage\n"
+                             "EmailMessage().get_content_disposition()"))
+
+  def test___bytes___from_email_message_Message(self):
+    self.assertOnlyIn((3, 4),
+                      detect("from email.message import Message\n"
+                             "Message().__bytes__()"))
+
+  def test_as_bytes_from_email_message_Message(self):
+    self.assertOnlyIn((3, 4),
+                      detect("from email.message import Message\n"
+                             "Message().as_bytes()"))
+
+  def test_del_param_from_email_message_Message(self):
+    self.assertOnlyIn(((2, 2), (3, 0)),
+                      detect("from email.message import Message\n"
+                             "Message().del_param()"))
+
+  def test_get_charset_from_email_message_Message(self):
+    self.assertOnlyIn(((2, 2), (3, 0)),
+                      detect("from email.message import Message\n"
+                             "Message().get_charset()"))
+
+  def test_get_content_charset_from_email_message_Message(self):
+    self.assertOnlyIn(((2, 2), (3, 0)),
+                      detect("from email.message import Message\n"
+                             "Message().get_content_charset()"))
+
+  def test_get_content_disposition_from_email_message_Message(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from email.message import Message\n"
+                             "Message().get_content_disposition()"))
+
+  def test_get_content_maintype_from_email_message_Message(self):
+    self.assertOnlyIn(((2, 2), (3, 0)),
+                      detect("from email.message import Message\n"
+                             "Message().get_content_maintype()"))
+
+  def test_get_content_subtype_from_email_message_Message(self):
+    self.assertOnlyIn(((2, 2), (3, 0)),
+                      detect("from email.message import Message\n"
+                             "Message().get_content_subtype()"))
+
+  def test_get_content_type_from_email_message_Message(self):
+    self.assertOnlyIn(((2, 2), (3, 0)),
+                      detect("from email.message import Message\n"
+                             "Message().get_content_type()"))
+
+  def test_get_default_type_from_email_message_Message(self):
+    self.assertOnlyIn(((2, 2), (3, 0)),
+                      detect("from email.message import Message\n"
+                             "Message().get_default_type()"))
+
+  def test_replace_header_from_email_message_Message(self):
+    self.assertOnlyIn(((2, 2), (3, 0)),
+                      detect("from email.message import Message\n"
+                             "Message().replace_header()"))
+
+  def test_set_charset_from_email_message_Message(self):
+    self.assertOnlyIn(((2, 2), (3, 0)),
+                      detect("from email.message import Message\n"
+                             "Message().set_charset()"))
+
+  def test_set_default_type_from_email_message_Message(self):
+    self.assertOnlyIn(((2, 2), (3, 0)),
+                      detect("from email.message import Message\n"
+                             "Message().set_default_type()"))
+
+  def test_set_param_from_email_message_Message(self):
+    self.assertOnlyIn(((2, 2), (3, 0)),
+                      detect("from email.message import Message\n"
+                             "Message().set_param()"))
+
+  def test_set_type_from_email_message_Message(self):
+    self.assertOnlyIn(((2, 2), (3, 0)),
+                      detect("from email.message import Message\n"
+                             "Message().set_type()"))
+
+  def test_message_from_binary_file_from_email(self):
+    self.assertOnlyIn((3, 2), detect("import email\nemail.message_from_binary_file()"))
+
+  def test_message_from_bytes_from_email(self):
+    self.assertOnlyIn((3, 2), detect("import email\nemail.message_from_bytes()"))
+
+  def test_clear_cache_from_filecmp(self):
+    self.assertOnlyIn((3, 4), detect("import filecmp\nfilecmp.clear_cache()"))
+
+  def test_fileno_from_fileinput(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import fileinput\nfileinput.fileno()"))
+
+  def test_hook_compressed_from_fileinput(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import fileinput\nfileinput.hook_compressed()"))
+
+  def test_hook_encoded_from_fileinput(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import fileinput\nfileinput.hook_encoded()"))
+
+  def test_filter_from_fnmatch(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import fnmatch\nfnmatch.filter()"))
+
+  def test_mlsd_from_ftplib_FTP(self):
+    self.assertOnlyIn((3, 3),
+                      detect("from ftplib import FTP\n"
+                             "FTP().mlsd()"))
+
+  def test_ccc_from_ftplib_FTP_TLS(self):
+    self.assertOnlyIn((3, 3),
+                      detect("from ftplib import FTP_TLS\n"
+                             "FTP_TLS().ccc()"))
+
+  def test_freeze_from_gc(self):
+    self.assertOnlyIn((3, 7), detect("import gc\ngc.freeze()"))
+
+  def test_get_count_from_gc(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import gc\ngc.get_count()"))
+
+  def test_get_freeze_count_from_gc(self):
+    self.assertOnlyIn((3, 7), detect("import gc\ngc.get_freeze_count()"))
+
+  def test_get_objects_from_gc(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import gc\ngc.get_objects()"))
+
+  def test_get_referents_from_gc(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import gc\ngc.get_referents()"))
+
+  def test_get_referrers_from_gc(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import gc\ngc.get_referrers()"))
+
+  def test_get_stats_from_gc(self):
+    self.assertOnlyIn((3, 4), detect("import gc\ngc.get_stats()"))
+
+  def test_is_tracked_from_gc(self):
+    self.assertOnlyIn(((2, 7), (3, 1)), detect("import gc\ngc.is_tracked()"))
+
+  def test_unfreeze_from_gc(self):
+    self.assertOnlyIn((3, 7), detect("import gc\ngc.unfreeze()"))
+
+  def test_gnu_getopt_from_getopt(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import getopt\ngetopt.gnu_getopt()"))
+
+  def test_lgettext_from_gettext_GNUTranslations(self):
+    self.assertOnlyIn(((2, 4), (3, 0)),
+                      detect("from gettext import GNUTranslations\n"
+                             "GNUTranslations().lgettext()"))
+
+  def test_lngettext_from_gettext_GNUTranslations(self):
+    self.assertOnlyIn(((2, 4), (3, 0)),
+                      detect("from gettext import GNUTranslations\n"
+                             "GNUTranslations().lngettext()"))
+
+  def test_ngettext_from_gettext_GNUTranslations(self):
+    self.assertOnlyIn(((2, 3), (3, 0)),
+                      detect("from gettext import GNUTranslations\n"
+                             "GNUTranslations().ngettext()"))
+
+  def test_npgettext_from_gettext_GNUTranslations(self):
+    self.assertOnlyIn((3, 8),
+                      detect("from gettext import GNUTranslations\n"
+                             "GNUTranslations().npgettext()"))
+
+  def test_pgettext_from_gettext_GNUTranslations(self):
+    self.assertOnlyIn((3, 8),
+                      detect("from gettext import GNUTranslations\n"
+                             "GNUTranslations().pgettext()"))
+
+  def test_ungettext_from_gettext_GNUTranslations(self):
+    self.assertOnlyIn((2, 3),
+                      detect("from gettext import GNUTranslations\n"
+                             "GNUTranslations().ungettext()"))
+
+  def test_lgettext_from_gettext_NullTranslations(self):
+    self.assertOnlyIn(((2, 4), (3, 0)),
+                      detect("from gettext import NullTranslations\n"
+                             "NullTranslations().lgettext()"))
+
+  def test_lngettext_from_gettext_NullTranslations(self):
+    self.assertOnlyIn(((2, 4), (3, 0)),
+                      detect("from gettext import NullTranslations\n"
+                             "NullTranslations().lngettext()"))
+
+  def test_ngettext_from_gettext_NullTranslations(self):
+    self.assertOnlyIn(((2, 3), (3, 0)),
+                      detect("from gettext import NullTranslations\n"
+                             "NullTranslations().ngettext()"))
+
+  def test_npgettext_from_gettext_NullTranslations(self):
+    self.assertOnlyIn((3, 8),
+                      detect("from gettext import NullTranslations\n"
+                             "NullTranslations().npgettext()"))
+
+  def test_output_charset_from_gettext_NullTranslations(self):
+    self.assertOnlyIn(((2, 4), (3, 0)),
+                      detect("from gettext import NullTranslations\n"
+                             "NullTranslations().output_charset()"))
+
+  def test_pgettext_from_gettext_NullTranslations(self):
+    self.assertOnlyIn((3, 8),
+                      detect("from gettext import NullTranslations\n"
+                             "NullTranslations().pgettext()"))
+
+  def test_set_output_charset_from_gettext_NullTranslations(self):
+    self.assertOnlyIn(((2, 4), (3, 0)),
+                      detect("from gettext import NullTranslations\n"
+                             "NullTranslations().set_output_charset()"))
+
+  def test_ungettext_from_gettext_NullTranslations(self):
+    self.assertOnlyIn((2, 3),
+                      detect("from gettext import NullTranslations\n"
+                             "NullTranslations().ungettext()"))
+
+  def test_bind_textdomain_codeset_from_gettext(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("import gettext\ngettext.bind_textdomain_codeset()"))
+
+  def test_dngettext_from_gettext(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import gettext\ngettext.dngettext()"))
+
+  def test_ldgettext_from_gettext(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("import gettext\ngettext.ldgettext()"))
+
+  def test_ldngettext_from_gettext(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("import gettext\ngettext.ldngettext()"))
+
+  def test_lgettext_from_gettext(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("import gettext\ngettext.lgettext()"))
+
+  def test_lngettext_from_gettext(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("import gettext\ngettext.lngettext()"))
+
+  def test_ngettext_from_gettext(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import gettext\ngettext.ngettext()"))
+
+  def test_escape_from_glob(self):
+    self.assertOnlyIn((3, 4), detect("import glob\nglob.escape()"))
+
+  def test_iglob_from_glob(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import glob\nglob.iglob()"))
+
+  def test_blake2b_from_hashlib(self):
+    self.assertOnlyIn((3, 6), detect("import hashlib\nhashlib.blake2b()"))
+
+  def test_blake2s_from_hashlib(self):
+    self.assertOnlyIn((3, 6), detect("import hashlib\nhashlib.blake2s()"))
+
+  def test_sha3_224_from_hashlib(self):
+    self.assertOnlyIn((3, 6), detect("import hashlib\nhashlib.sha3_224()"))
+
+  def test_sha3_256_from_hashlib(self):
+    self.assertOnlyIn((3, 6), detect("import hashlib\nhashlib.sha3_256()"))
+
+  def test_sha3_384_from_hashlib(self):
+    self.assertOnlyIn((3, 6), detect("import hashlib\nhashlib.sha3_384()"))
+
+  def test_sha3_512_from_hashlib(self):
+    self.assertOnlyIn((3, 6), detect("import hashlib\nhashlib.sha3_512()"))
+
+  def test_shake_128_from_hashlib(self):
+    self.assertOnlyIn((3, 6), detect("import hashlib\nhashlib.shake_128()"))
+
+  def test_shake_256_from_hashlib(self):
+    self.assertOnlyIn((3, 6), detect("import hashlib\nhashlib.shake_256()"))
+
+  def test_escape_from_html(self):
+    self.assertOnlyIn((3, 2), detect("import html\nhtml.escape()"))
+
+  def test_unescape_from_html(self):
+    self.assertOnlyIn((3, 4), detect("import html\nhtml.unescape()"))
+
+  def test_set_debuglevel_from_http_client_HTTPConnection(self):
+    self.assertOnlyIn((3, 1),
+                      detect("from http.client import HTTPConnection\n"
+                             "HTTPConnection().set_debuglevel()"))
+
+  def test_set_tunnel_from_http_client_HTTPConnection(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from http.client import HTTPConnection\n"
+                             "HTTPConnection().set_tunnel()"))
+
+  def test_readinto_from_http_client_HTTPResponse(self):
+    self.assertOnlyIn((3, 3),
+                      detect("from http.client import HTTPResponse\n"
+                             "HTTPResponse().readinto()"))
+
+  def test_flush_headers_from_http_server_BaseHTTPRequestHandler(self):
+    self.assertOnlyIn((3, 3),
+                      detect("from http.server import BaseHTTPRequestHandler\n"
+                             "BaseHTTPRequestHandler().flush_headers()"))
+
+  def test_handle_expect_100_from_http_server_BaseHTTPRequestHandler(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from http.server import BaseHTTPRequestHandler\n"
+                             "BaseHTTPRequestHandler().handle_expect_100()"))
+
+  def test_send_response_only_from_http_server_BaseHTTPRequestHandler(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from http.server import BaseHTTPRequestHandler\n"
+                             "BaseHTTPRequestHandler().send_response_only()"))
+
+  def test_set_tunnel_from_httplib_HTTPConnection(self):
+    self.assertOnlyIn((2, 7),
+                      detect("from httplib import HTTPConnection\n"
+                             "HTTPConnection().set_tunnel()"))
+
+  def test_getheaders_from_httplib_HTTPResponse(self):
+    self.assertOnlyIn((2, 4),
+                      detect("from httplib import HTTPResponse\n"
+                             "HTTPResponse().getheaders()"))
+
+  def test_deleteacl_from_imaplib_IMAP4(self):
+    self.assertOnlyIn(((2, 4), (3, 0)),
+                      detect("from imaplib import IMAP4\n"
+                             "IMAP4().deleteacl()"))
+
+  def test_enable_from_imaplib_IMAP4(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from imaplib import IMAP4\n"
+                             "IMAP4().enable()"))
+
+  def test_getannotation_from_imaplib_IMAP4(self):
+    self.assertOnlyIn(((2, 5), (3, 0)),
+                      detect("from imaplib import IMAP4\n"
+                             "IMAP4().getannotation()"))
+
+  def test_getquota_from_imaplib_IMAP4(self):
+    self.assertOnlyIn(((2, 3), (3, 0)),
+                      detect("from imaplib import IMAP4\n"
+                             "IMAP4().getquota()"))
+
+  def test_getquotaroot_from_imaplib_IMAP4(self):
+    self.assertOnlyIn(((2, 3), (3, 0)),
+                      detect("from imaplib import IMAP4\n"
+                             "IMAP4().getquotaroot()"))
+
+  def test_login_cram_md5_from_imaplib_IMAP4(self):
+    self.assertOnlyIn(((2, 3), (3, 0)),
+                      detect("from imaplib import IMAP4\n"
+                             "IMAP4().login_cram_md5()"))
+
+  def test_myrights_from_imaplib_IMAP4(self):
+    self.assertOnlyIn(((2, 4), (3, 0)),
+                      detect("from imaplib import IMAP4\n"
+                             "IMAP4().myrights()"))
+
+  def test_namespace_from_imaplib_IMAP4(self):
+    self.assertOnlyIn(((2, 3), (3, 0)),
+                      detect("from imaplib import IMAP4\n"
+                             "IMAP4().namespace()"))
+
+  def test_proxyauth_from_imaplib_IMAP4(self):
+    self.assertOnlyIn(((2, 3), (3, 0)),
+                      detect("from imaplib import IMAP4\n"
+                             "IMAP4().proxyauth()"))
+
+  def test_setannotation_from_imaplib_IMAP4(self):
+    self.assertOnlyIn(((2, 5), (3, 0)),
+                      detect("from imaplib import IMAP4\n"
+                             "IMAP4().setannotation()"))
+
+  def test_setquota_from_imaplib_IMAP4(self):
+    self.assertOnlyIn(((2, 3), (3, 0)),
+                      detect("from imaplib import IMAP4\n"
+                             "IMAP4().setquota()"))
+
+  def test_starttls_from_imaplib_IMAP4(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from imaplib import IMAP4\n"
+                             "IMAP4().starttls()"))
+
+  def test_thread_from_imaplib_IMAP4(self):
+    self.assertOnlyIn(((2, 4), (3, 0)),
+                      detect("from imaplib import IMAP4\n"
+                             "IMAP4().thread()"))
+
+  def test_acquire_lock_from_imp(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import imp\nimp.acquire_lock()"))
+
+  def test_cache_from_source_from_imp(self):
+    self.assertOnlyIn((3, 2), detect("import imp\nimp.cache_from_source()"))
+
+  def test_get_tag_from_imp(self):
+    self.assertOnlyIn((3, 2), detect("import imp\nimp.get_tag()"))
+
+  def test_release_lock_from_imp(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import imp\nimp.release_lock()"))
+
+  def test_source_from_cache_from_imp(self):
+    self.assertOnlyIn((3, 2), detect("import imp\nimp.source_from_cache()"))
+
+  def test_exec_module_from_importlib_abc_InspectLoader(self):
+    self.assertOnlyIn((3, 4),
+                      detect("from importlib.abc import InspectLoader\n"
+                             "InspectLoader().exec_module()"))
+
+  def test_source_to_code_from_importlib_abc_InspectLoader(self):
+    self.assertOnlyIn((3, 4),
+                      detect("from importlib.abc import InspectLoader\n"
+                             "InspectLoader().source_to_code()"))
+
+  def test_create_module_from_importlib_abc_Loader(self):
+    self.assertOnlyIn((3, 4),
+                      detect("from importlib.abc import Loader\n"
+                             "Loader().create_module()"))
+
+  def test_exec_module_from_importlib_abc_Loader(self):
+    self.assertOnlyIn((3, 4),
+                      detect("from importlib.abc import Loader\n"
+                             "Loader().exec_module()"))
+
+  def test_module_repr_from_importlib_abc_Loader(self):
+    self.assertOnlyIn((3, 3),
+                      detect("from importlib.abc import Loader\n"
+                             "Loader().module_repr()"))
+
+  def test_find_spec_from_importlib_abc_MetaPathFinder(self):
+    self.assertOnlyIn((3, 4),
+                      detect("from importlib.abc import MetaPathFinder\n"
+                             "MetaPathFinder().find_spec()"))
+
+  def test_find_spec_from_importlib_abc_PathEntryFinder(self):
+    self.assertOnlyIn((3, 4),
+                      detect("from importlib.abc import PathEntryFinder\n"
+                             "PathEntryFinder().find_spec()"))
+
+  def test_exec_module_from_importlib_abc_SourceLoader(self):
+    self.assertOnlyIn((3, 4),
+                      detect("from importlib.abc import SourceLoader\n"
+                             "SourceLoader().exec_module()"))
+
+  def test_path_stats_from_importlib_abc_SourceLoader(self):
+    self.assertOnlyIn((3, 3),
+                      detect("from importlib.abc import SourceLoader\n"
+                             "SourceLoader().path_stats()"))
+
+  def test_find_loader_from_importlib(self):
+    self.assertOnlyIn((3, 3), detect("import importlib\nimportlib.find_loader()"))
+
+  def test_invalidate_caches_from_importlib(self):
+    self.assertOnlyIn((3, 3), detect("import importlib\nimportlib.invalidate_caches()"))
+
+  def test_create_module_from_importlib_machinery_BuiltinImporter(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from importlib.machinery import BuiltinImporter\n"
+                             "BuiltinImporter().create_module()"))
+
+  def test_exec_module_from_importlib_machinery_BuiltinImporter(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from importlib.machinery import BuiltinImporter\n"
+                             "BuiltinImporter().exec_module()"))
+
+  def test_reload_from_importlib(self):
+    self.assertOnlyIn((3, 4), detect("import importlib\nimportlib.reload()"))
+
+  def test_from_callable_from_inspect_Signature(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from inspect import Signature\n"
+                             "Signature().from_callable()"))
+
+  def test_reconfigure_from_io_TextIOWrapper(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from io import TextIOWrapper\n"
+                             "TextIOWrapper().reconfigure()"))
+
+  def test_open_code_from_io(self):
+    self.assertOnlyIn((3, 8), detect("import io\nio.open_code()"))
+
+  def test_subnet_of_from_ipaddress_IPv4Network(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from ipaddress import IPv4Network\n"
+                             "IPv4Network().subnet_of()"))
+
+  def test_supernet_of_from_ipaddress_IPv4Network(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from ipaddress import IPv4Network\n"
+                             "IPv4Network().supernet_of()"))
+
+  def test_lazycache_from_linecache(self):
+    self.assertOnlyIn((3, 5), detect("import linecache\nlinecache.lazycache()"))
+
+  def test_currency_from_locale(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import locale\nlocale.currency()"))
+
+  def test_delocalize_from_locale(self):
+    self.assertOnlyIn((3, 5), detect("import locale\nlocale.delocalize()"))
+
+  def test_format_string_from_locale(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import locale\nlocale.format_string()"))
+
+  def test_getpreferredencoding_from_locale(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import locale\nlocale.getpreferredencoding()"))
+
+  def test_getEffectiveLevel_from_logging_LoggerAdapter(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from logging import LoggerAdapter\n"
+                             "LoggerAdapter().getEffectiveLevel()"))
+
+  def test_hasHandlers_from_logging_LoggerAdapter(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from logging import LoggerAdapter\n"
+                             "LoggerAdapter().hasHandlers()"))
+
+  def test_isEnabledFor_from_logging_LoggerAdapter(self):
+    self.assertOnlyIn(((2, 7), (3, 2)),
+                      detect("from logging import LoggerAdapter\n"
+                             "LoggerAdapter().isEnabledFor()"))
+
+  def test_setLevel_from_logging_LoggerAdapter(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from logging import LoggerAdapter\n"
+                             "LoggerAdapter().setLevel()"))
+
+  def test_setStream_from_logging_StreamHandler(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from logging import StreamHandler\n"
+                             "StreamHandler().setStream()"))
+
+  def test_rotate_from_logging_handlers_BaseRotatingHandler(self):
+    self.assertOnlyIn((3, 3),
+                      detect("from logging.handlers import BaseRotatingHandler\n"
+                             "BaseRotatingHandler().rotate()"))
+
+  def test_rotation_filename_from_logging_handlers_BaseRotatingHandler(self):
+    self.assertOnlyIn((3, 3),
+                      detect("from logging.handlers import BaseRotatingHandler\n"
+                             "BaseRotatingHandler().rotation_filename()"))
+
+  def test_enqueue_sentinel_from_logging_handlers_QueueListener(self):
+    self.assertOnlyIn((3, 3),
+                      detect("from logging.handlers import QueueListener\n"
+                             "QueueListener().enqueue_sentinel()"))
+
+  def test_reopenIfNeeded_from_logging_handlers_WatchedFileHandler(self):
+    self.assertOnlyIn((3, 6),
+                      detect("from logging.handlers import WatchedFileHandler\n"
+                             "WatchedFileHandler().reopenIfNeeded()"))
+
+  def test_get_bytes_from_mailbox_Mailbox(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from mailbox import Mailbox\n"
+                             "Mailbox().get_bytes()"))
+
+  def test_factorial_from_math(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import math\nmath.factorial()"))
+
+  def test_read_windows_registry_from_mimetypes_MimeTypes(self):
+    self.assertOnlyIn(((2, 7), (3, 2)),
+                      detect("from mimetypes import MimeTypes\n"
+                             "MimeTypes().read_windows_registry()"))
+
+  def test_Close_from_msilib_Database(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from msilib import Database\n"
+                             "Database().Close()"))
+
+  def test_getwch_from_msvcrt(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import msvcrt\nmsvcrt.getwch()"))
+
+  def test_getwche_from_msvcrt(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import msvcrt\nmsvcrt.getwche()"))
+
+  def test_putwch_from_msvcrt(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import msvcrt\nmsvcrt.putwch()"))
+
+  def test_ungetwch_from_msvcrt(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import msvcrt\nmsvcrt.ungetwch()"))
+
+  def test_wait_for_from_multiprocessing_Condition(self):
+    self.assertOnlyIn((3, 3),
+                      detect("from multiprocessing import Condition\n"
+                             "Condition().wait_for()"))
+
+  def test_close_from_multiprocessing_Process(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from multiprocessing import Process\n"
+                             "Process().close()"))
+
+  def test_kill_from_multiprocessing_Process(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from multiprocessing import Process\n"
+                             "Process().kill()"))
+
+  def test_Barrier_from_multiprocessing_managers_SyncManager(self):
+    self.assertOnlyIn((3, 3),
+                      detect("from multiprocessing.managers import SyncManager\n"
+                             "SyncManager().Barrier()"))
+
+  def test_wait_for_from_multiprocessing_managers_SyncManager_Condition(self):
+    self.assertOnlyIn((3, 3),
+                      detect("from multiprocessing.managers.SyncManager import Condition\n"
+                             "Condition().wait_for()"))
+
+  def test_parent_process_from_multiprocessing(self):
+    self.assertOnlyIn((3, 8), detect("import multiprocessing\nmultiprocessing.parent_process()"))
+
+  def test_get_default_domain_from_nis(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import nis\nnis.get_default_domain()"))
+
+  def test_description_from_nntplib_NNTP(self):
+    self.assertOnlyIn(((2, 4), (3, 0)),
+                      detect("from nntplib import NNTP\n"
+                             "NNTP().description()"))
+
+  def test_descriptions_from_nntplib_NNTP(self):
+    self.assertOnlyIn(((2, 4), (3, 0)),
+                      detect("from nntplib import NNTP\n"
+                             "NNTP().descriptions()"))
+
+  def test_getcapabilities_from_nntplib_NNTP(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from nntplib import NNTP\n"
+                             "NNTP().getcapabilities()"))
+
+  def test_login_from_nntplib_NNTP(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from nntplib import NNTP\n"
+                             "NNTP().login()"))
+
+  def test_over_from_nntplib_NNTP(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from nntplib import NNTP\n"
+                             "NNTP().over()"))
+
+  def test_starttls_from_nntplib_NNTP(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from nntplib import NNTP\n"
+                             "NNTP().starttls()"))
+
+  def test_attrgetter_from_operator(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("import operator\noperator.attrgetter()"))
+
+  def test_floordiv_from_operator(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import operator\noperator.floordiv()"))
+
+  def test_iadd_from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.iadd()"))
+
+  def test_iand_from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.iand()"))
+
+  def test_iconcat_from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.iconcat()"))
+
+  def test_idiv_from_operator(self):
+    self.assertOnlyIn((2, 5), detect("import operator\noperator.idiv()"))
+
+  def test_ifloordiv_from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.ifloordiv()"))
+
+  def test_ilshift_from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.ilshift()"))
+
+  def test_imatmul_from_operator(self):
+    self.assertOnlyIn((3, 5), detect("import operator\noperator.imatmul()"))
+
+  def test_imod_from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.imod()"))
+
+  def test_imul_from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.imul()"))
+
+  def test_index_from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.index()"))
+
+  def test_ior_from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.ior()"))
+
+  def test_ipow_from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.ipow()"))
+
+  def test_irepeat_from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.irepeat()"))
+
+  def test_irshift_from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.irshift()"))
+
+  def test_is__from_operator(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import operator\noperator.is_()"))
+
+  def test_isub_from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.isub()"))
+
+  def test_itemgetter_from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.itemgetter()"))
+
+  def test_itruediv_from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.itruediv()"))
+
+  def test_ixor_from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.ixor()"))
+
+  def test_length_hint_from_operator(self):
+    self.assertOnlyIn((3, 4), detect("import operator\noperator.length_hint()"))
+
+  def test_lt_from_operator(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import operator\noperator.lt()"))
+
+  def test_matmul_from_operator(self):
+    self.assertOnlyIn((3, 5), detect("import operator\noperator.matmul()"))
+
+  def test_methodcaller_from_operator(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import operator\noperator.methodcaller()"))
+
+  def test_pow_from_operator(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import operator\noperator.pow()"))
+
+  def test_truediv_from_operator(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import operator\noperator.truediv()"))
+
+  def test_WCOREDUMP_from_os(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import os\nos.WCOREDUMP()"))
+
+  def test_WIFCONTINUED_from_os(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import os\nos.WIFCONTINUED()"))
+
+  def test_chflags_from_os(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import os\nos.chflags()"))
+
+  def test_chroot_from_os(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import os\nos.chroot()"))
+
+  def test_closerange_from_os(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import os\nos.closerange()"))
+
+  def test_cpu_count_from_os(self):
+    self.assertOnlyIn((3, 4), detect("import os\nos.cpu_count()"))
+
+  def test_fchdir_from_os(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import os\nos.fchdir()"))
+
+  def test_fchmod_from_os(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import os\nos.fchmod()"))
+
+  def test_fchown_from_os(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import os\nos.fchown()"))
+
+  def test_fwalk_from_os(self):
+    self.assertOnlyIn((3, 3), detect("import os\nos.fwalk()"))
+
+  def test_getcwdu_from_os(self):
+    self.assertOnlyIn((2, 3), detect("import os\nos.getcwdu()"))
+
+  def test_getloadavg_from_os(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import os\nos.getloadavg()"))
+
+  def test_getrandom_from_os(self):
+    self.assertOnlyIn((3, 6), detect("import os\nos.getrandom()"))
+
+  def test_lchflags_from_os(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import os\nos.lchflags()"))
+
+  def test_lchmod_from_os(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import os\nos.lchmod()"))
+
+  def test_lchown_from_os(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import os\nos.lchown()"))
+
+  def test_major_from_os(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import os\nos.major()"))
+
+  def test_makedev_from_os(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import os\nos.makedev()"))
+
+  def test_minor_from_os(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import os\nos.minor()"))
+
+  def test_mknod_from_os(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import os\nos.mknod()"))
+
+  def test_popen2_from_os(self):
+    self.assertOnlyIn((2, 0), detect("import os\nos.popen2()"))
+
+  def test_popen3_from_os(self):
+    self.assertOnlyIn((2, 0), detect("import os\nos.popen3()"))
+
+  def test_popen4_from_os(self):
+    self.assertOnlyIn((2, 0), detect("import os\nos.popen4()"))
+
+  def test_preadv_from_os(self):
+    self.assertOnlyIn((3, 7), detect("import os\nos.preadv()"))
+
+  def test_pwritev_from_os(self):
+    self.assertOnlyIn((3, 7), detect("import os\nos.pwritev()"))
+
+  def test_replace_from_os(self):
+    self.assertOnlyIn((3, 3), detect("import os\nos.replace()"))
+
+  def test_scandir_from_os(self):
+    self.assertOnlyIn((3, 5), detect("import os\nos.scandir()"))
+
+  def test_close_from_os_scandir(self):
+    self.assertOnlyIn((3, 6),
+                      detect("from os import scandir\n"
+                             "scandir().close()"))
+
+  def test_sched_get_priority_max_from_os(self):
+    self.assertOnlyIn((3, 3), detect("import os\nos.sched_get_priority_max()"))
+
+  def test_sched_get_priority_min_from_os(self):
+    self.assertOnlyIn((3, 3), detect("import os\nos.sched_get_priority_min()"))
+
+  def test_sched_getaffinity_from_os(self):
+    self.assertOnlyIn((3, 3), detect("import os\nos.sched_getaffinity()"))
+
+  def test_sched_getparam_from_os(self):
+    self.assertOnlyIn((3, 3), detect("import os\nos.sched_getparam()"))
+
+  def test_sched_getscheduler_from_os(self):
+    self.assertOnlyIn((3, 3), detect("import os\nos.sched_getscheduler()"))
+
+  def test_sched_rr_get_interval_from_os(self):
+    self.assertOnlyIn((3, 3), detect("import os\nos.sched_rr_get_interval()"))
+
+  def test_sched_setaffinity_from_os(self):
+    self.assertOnlyIn((3, 3), detect("import os\nos.sched_setaffinity()"))
+
+  def test_sched_setparam_from_os(self):
+    self.assertOnlyIn((3, 3), detect("import os\nos.sched_setparam()"))
+
+  def test_sched_setscheduler_from_os(self):
+    self.assertOnlyIn((3, 3), detect("import os\nos.sched_setscheduler()"))
+
+  def test_sched_yield_from_os(self):
+    self.assertOnlyIn((3, 3), detect("import os\nos.sched_yield()"))
+
+  def test_sync_from_os(self):
+    self.assertOnlyIn((3, 3), detect("import os\nos.sync()"))
+
+  def test_truncate_from_os(self):
+    self.assertOnlyIn((3, 3), detect("import os\nos.truncate()"))
+
+  def test_urandom_from_os(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("import os\nos.urandom()"))
+
+  def test_wait3_from_os(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import os\nos.wait3()"))
+
+  def test_wait4_from_os(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import os\nos.wait4()"))
+
+  def test_waitid_from_os(self):
+    self.assertOnlyIn((3, 3), detect("import os\nos.waitid()"))
+
+  def test_walk_from_os(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import os\nos.walk()"))
+
+  def test_win32_edition_from_platform(self):
+    self.assertOnlyIn((3, 8), detect("import platform\nplatform.win32_edition()"))
+
+  def test_win32_is_iot_from_platform(self):
+    self.assertOnlyIn((3, 8), detect("import platform\nplatform.win32_is_iot()"))
+
+  def test_capa_from_poplib_POP3(self):
+    self.assertOnlyIn((3, 4),
+                      detect("from poplib import POP3\n"
+                             "POP3().capa()"))
+
+  def test_stls_from_poplib_POP3(self):
+    self.assertOnlyIn((3, 4),
+                      detect("from poplib import POP3\n"
+                             "POP3().stls()"))
+
+  def test_utf8_from_poplib_POP3(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from poplib import POP3\n"
+                             "POP3().utf8()"))
+
+  def test_format_from_pprint_PrettyPrinter(self):
+    self.assertOnlyIn(((2, 3), (3, 0)),
+                      detect("from pprint import PrettyPrinter\n"
+                             "PrettyPrinter().format()"))
+
+  def test_pp_from_pprint(self):
+    self.assertOnlyIn((3, 8), detect("import pprint\npprint.pp()"))
+
+  def test_choices_from_random(self):
+    self.assertOnlyIn((3, 6), detect("import random\nrandom.choices()"))
+
+  def test_getrandbits_from_random(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("import random\nrandom.getrandbits()"))
+
+  def test_getstate_from_random(self):
+    self.assertOnlyIn(((2, 1), (3, 0)), detect("import random\nrandom.getstate()"))
+
+  def test_jumpahead_from_random(self):
+    self.assertOnlyIn((2, 1), detect("import random\nrandom.jumpahead()"))
+
+  def test_sample_from_random(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import random\nrandom.sample()"))
+
+  def test_setstate_from_random(self):
+    self.assertOnlyIn(((2, 1), (3, 0)), detect("import random\nrandom.setstate()"))
+
+  def test_triangular_from_random(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import random\nrandom.triangular()"))
+
+  def test_fullmatch_from_re_Pattern(self):
+    self.assertOnlyIn((3, 4),
+                      detect("from re import Pattern\n"
+                             "Pattern().fullmatch()"))
+
+  def test_finditer_from_re(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import re\nre.finditer()"))
+
+  def test_fullmatch_from_re(self):
+    self.assertOnlyIn((3, 4), detect("import re\nre.fullmatch()"))
+
+  def test_append_history_file_from_readline(self):
+    self.assertOnlyIn((3, 5), detect("import readline\nreadline.append_history_file()"))
+
+  def test_clear_history_from_readline(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("import readline\nreadline.clear_history()"))
+
+  def test_get_completer_from_readline(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import readline\nreadline.get_completer()"))
+
+  def test_get_completion_type_from_readline(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import readline\nreadline.get_completion_type()"))
+
+  def test_get_current_history_length_from_readline(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import readline\nreadline.get_current_history_length()"))
+
+  def test_get_history_item_from_readline(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import readline\nreadline.get_history_item()"))
+
+  def test_remove_history_item_from_readline(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("import readline\nreadline.remove_history_item()"))
+
+  def test_replace_history_item_from_readline(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("import readline\nreadline.replace_history_item()"))
+
+  def test_set_auto_history_from_readline(self):
+    self.assertOnlyIn((3, 6), detect("import readline\nreadline.set_auto_history()"))
+
+  def test_set_completion_display_matches_hook_from_readline(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import readline\nreadline.set_completion_display_matches_hook()"))
+
+  def test_set_pre_input_hook_from_readline(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import readline\nreadline.set_pre_input_hook()"))
+
+  def test_set_startup_hook_from_readline(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import readline\nreadline.set_startup_hook()"))
+
+  def test_prlimit_from_resource(self):
+    self.assertOnlyIn((3, 4), detect("import resource\nresource.prlimit()"))
+
+  def test_devpoll_from_select(self):
+    self.assertOnlyIn((3, 3), detect("import select\nselect.devpoll()"))
+
+  def test_close_from_select_devpoll(self):
+    self.assertOnlyIn((3, 4),
+                      detect("from select import devpoll\n"
+                             "devpoll().close()"))
+
+  def test_fileno_from_select_devpoll(self):
+    self.assertOnlyIn((3, 4),
+                      detect("from select import devpoll\n"
+                             "devpoll().fileno()"))
+
+  def test_epoll_from_select(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import select\nselect.epoll()"))
+
+  def test_kevent_from_select(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import select\nselect.kevent()"))
+
+  def test_kqueue_from_select(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import select\nselect.kqueue()"))
+
+  def test_modify_from_select_poll(self):
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      detect("from select import poll\n"
+                             "poll().modify()"))
+
+  def test_convert_charref_from_sgmllib_SGMLParser(self):
+    self.assertOnlyIn((2, 5),
+                      detect("from sgmllib import SGMLParser\n"
+                             "SGMLParser().convert_charref()"))
+
+  def test_convert_codepoint_from_sgmllib_SGMLParser(self):
+    self.assertOnlyIn((2, 5),
+                      detect("from sgmllib import SGMLParser\n"
+                             "SGMLParser().convert_codepoint()"))
+
+  def test_convert_entityref_from_sgmllib_SGMLParser(self):
+    self.assertOnlyIn((2, 5),
+                      detect("from sgmllib import SGMLParser\n"
+                             "SGMLParser().convert_entityref()"))
+
+  def test_chown_from_shutil(self):
+    self.assertOnlyIn((3, 3), detect("import shutil\nshutil.chown()"))
+
+  def test_disk_usage_from_shutil(self):
+    self.assertOnlyIn((3, 3), detect("import shutil\nshutil.disk_usage()"))
+
+  def test_get_archive_formats_from_shutil(self):
+    self.assertOnlyIn(((2, 7), (3, 2)), detect("import shutil\nshutil.get_archive_formats()"))
+
+  def test_get_terminal_size_from_shutil(self):
+    self.assertOnlyIn((3, 3), detect("import shutil\nshutil.get_terminal_size()"))
+
+  def test_get_unpack_formats_from_shutil(self):
+    self.assertOnlyIn((3, 2), detect("import shutil\nshutil.get_unpack_formats()"))
+
+  def test_ignore_patterns_from_shutil(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import shutil\nshutil.ignore_patterns()"))
+
+  def test_make_archive_from_shutil(self):
+    self.assertOnlyIn(((2, 7), (3, 2)), detect("import shutil\nshutil.make_archive()"))
+
+  def test_move_from_shutil(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import shutil\nshutil.move()"))
+
+  def test_register_archive_format_from_shutil(self):
+    self.assertOnlyIn(((2, 7), (3, 2)), detect("import shutil\nshutil.register_archive_format()"))
+
+  def test_register_unpack_format_from_shutil(self):
+    self.assertOnlyIn((3, 2), detect("import shutil\nshutil.register_unpack_format()"))
+
+  def test_unpack_archive_from_shutil(self):
+    self.assertOnlyIn((3, 2), detect("import shutil\nshutil.unpack_archive()"))
+
+  def test_unregister_archive_format_from_shutil(self):
+    self.assertOnlyIn(((2, 7), (3, 2)), detect("import shutil\nshutil.unregister_archive_format()"))
+
+  def test_unregister_unpack_format_from_shutil(self):
+    self.assertOnlyIn((3, 2), detect("import shutil\nshutil.unregister_unpack_format()"))
+
+  def test_which_from_shutil(self):
+    self.assertOnlyIn((3, 3), detect("import shutil\nshutil.which()"))
+
+  def test_getitimer_from_signal(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import signal\nsignal.getitimer()"))
+
+  def test_pthread_kill_from_signal(self):
+    self.assertOnlyIn((3, 3), detect("import signal\nsignal.pthread_kill()"))
+
+  def test_pthread_sigmask_from_signal(self):
+    self.assertOnlyIn((3, 3), detect("import signal\nsignal.pthread_sigmask()"))
+
+  def test_raise_signal_from_signal(self):
+    self.assertOnlyIn((3, 8), detect("import signal\nsignal.raise_signal()"))
+
+  def test_set_wakeup_fd_from_signal(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import signal\nsignal.set_wakeup_fd()"))
+
+  def test_setitimer_from_signal(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import signal\nsignal.setitimer()"))
+
+  def test_siginterrupt_from_signal(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import signal\nsignal.siginterrupt()"))
+
+  def test_sigpending_from_signal(self):
+    self.assertOnlyIn((3, 3), detect("import signal\nsignal.sigpending()"))
+
+  def test_sigtimedwait_from_signal(self):
+    self.assertOnlyIn((3, 3), detect("import signal\nsignal.sigtimedwait()"))
+
+  def test_sigwait_from_signal(self):
+    self.assertOnlyIn((3, 3), detect("import signal\nsignal.sigwait()"))
+
+  def test_sigwaitinfo_from_signal(self):
+    self.assertOnlyIn((3, 3), detect("import signal\nsignal.sigwaitinfo()"))
+
+  def test_strsignal_from_signal(self):
+    self.assertOnlyIn((3, 8), detect("import signal\nsignal.strsignal()"))
+
+  def test_valid_signals_from_signal(self):
+    self.assertOnlyIn((3, 8), detect("import signal\nsignal.valid_signals()"))
+
+  def test_getsitepackages_from_site(self):
+    self.assertOnlyIn(((2, 7), (3, 2)), detect("import site\nsite.getsitepackages()"))
+
+  def test_getuserbase_from_site(self):
+    self.assertOnlyIn(((2, 7), (3, 2)), detect("import site\nsite.getuserbase()"))
+
+  def test_getusersitepackages_from_site(self):
+    self.assertOnlyIn(((2, 7), (3, 2)), detect("import site\nsite.getusersitepackages()"))
+
+  def test_starttls_from_smtplib_SMTP(self):
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      detect("from smtplib import SMTP\n"
+                             "SMTP().starttls()"))
+
+  def test_create_connection_from_socket(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import socket\nsocket.create_connection()"))
+
+  def test_getaddrinfo_from_socket(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import socket\nsocket.getaddrinfo()"))
+
+  def test_getdefaulttimeout_from_socket(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import socket\nsocket.getdefaulttimeout()"))
+
+  def test_getnameinfo_from_socket(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import socket\nsocket.getnameinfo()"))
+
+  def test_inet_ntop_from_socket(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import socket\nsocket.inet_ntop()"))
+
+  def test_inet_pton_from_socket(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import socket\nsocket.inet_pton()"))
+
+  def test_setdefaulttimeout_from_socket(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import socket\nsocket.setdefaulttimeout()"))
+
+  def test_gettimeout_from_socket_socket(self):
+    self.assertOnlyIn(((2, 3), (3, 0)),
+                      detect("from socket import socket\n"
+                             "socket().gettimeout()"))
+
+  def test_ioctl_from_socket_socket(self):
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      detect("from socket import socket\n"
+                             "socket().ioctl()"))
+
+  def test_recv_into_from_socket_socket(self):
+    self.assertOnlyIn(((2, 5), (3, 0)),
+                      detect("from socket import socket\n"
+                             "socket().recv_into()"))
+
+  def test_recvfrom_into_from_socket_socket(self):
+    self.assertOnlyIn(((2, 5), (3, 0)),
+                      detect("from socket import socket\n"
+                             "socket().recvfrom_into()"))
+
+  def test_settimeout_from_socket_socket(self):
+    self.assertOnlyIn(((2, 3), (3, 0)),
+                      detect("from socket import socket\n"
+                             "socket().settimeout()"))
+
+  def test_socketpair_from_socket(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("import socket\nsocket.socketpair()"))
+
+  def test_service_actions_from_socketserver_BaseServer(self):
+    self.assertOnlyIn((3, 3),
+                      detect("from socketserver import BaseServer\n"
+                             "BaseServer().service_actions()"))
+
+  def test_backup_from_sqlite3_Connection(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from sqlite3 import Connection\n"
+                             "Connection().backup()"))
+
+  def test_compression_from_ssl_SSLSocket(self):
+    self.assertOnlyIn(((2, 7), (3, 3)),
+                      detect("from ssl import SSLSocket\n"
+                             "SSLSocket().compression()"))
+
+  def test_get_channel_binding_from_ssl_SSLSocket(self):
+    self.assertOnlyIn(((2, 7), (3, 3)),
+                      detect("from ssl import SSLSocket\n"
+                             "SSLSocket().get_channel_binding()"))
+
+  def test_selected_alpn_protocol_from_ssl_SSLSocket(self):
+    self.assertOnlyIn(((2, 7), (3, 5)),
+                      detect("from ssl import SSLSocket\n"
+                             "SSLSocket().selected_alpn_protocol()"))
+
+  def test_selected_npn_protocol_from_ssl_SSLSocket(self):
+    self.assertOnlyIn(((2, 7), (3, 3)),
+                      detect("from ssl import SSLSocket\n"
+                             "SSLSocket().selected_npn_protocol()"))
+
+  def test_sendfile_from_ssl_SSLSocket(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from ssl import SSLSocket\n"
+                             "SSLSocket().sendfile()"))
+
+  def test_shared_ciphers_from_ssl_SSLSocket(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from ssl import SSLSocket\n"
+                             "SSLSocket().shared_ciphers()"))
+
+  def test_version_from_ssl_SSLSocket(self):
+    self.assertOnlyIn(((2, 7), (3, 5)),
+                      detect("from ssl import SSLSocket\n"
+                             "SSLSocket().version()"))
+
+  def test_rsplit_from_string(self):
+    self.assertOnlyIn((2, 4), detect("import string\nstring.rsplit()"))
+
+  def test_iter_unpack_from_struct_Struct(self):
+    self.assertOnlyIn((3, 4),
+                      detect("from struct import Struct\n"
+                             "Struct().iter_unpack()"))
+
+  def test_iter_unpack_from_struct(self):
+    self.assertOnlyIn((3, 4), detect("import struct\nstruct.iter_unpack()"))
+
+  def test_pack_into_from_struct(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import struct\nstruct.pack_into()"))
+
+  def test_unpack_from_from_struct(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import struct\nstruct.unpack_from()"))
+
+  def test__clear_type_cache_from_sys(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import sys\nsys._clear_type_cache()"))
+
+  def test__current_frames_from_sys(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import sys\nsys._current_frames()"))
+
+  def test__debugmallocstats_from_sys(self):
+    self.assertOnlyIn((3, 3), detect("import sys\nsys._debugmallocstats()"))
+
+  def test__enablelegacywindowsfsencoding_from_sys(self):
+    self.assertOnlyIn((3, 6), detect("import sys\nsys._enablelegacywindowsfsencoding()"))
+
+  def test_breakpointhook_from_sys(self):
+    self.assertOnlyIn((3, 7), detect("import sys\nsys.breakpointhook()"))
+
+  def test_get_asyncgen_hooks_from_sys(self):
+    self.assertOnlyIn((3, 6), detect("import sys\nsys.get_asyncgen_hooks()"))
+
+  def test_get_coroutine_origin_tracking_depth_from_sys(self):
+    self.assertOnlyIn((3, 7), detect("import sys\nsys.get_coroutine_origin_tracking_depth()"))
+
+  def test_getallocatedblocks_from_sys(self):
+    self.assertOnlyIn((3, 4), detect("import sys\nsys.getallocatedblocks()"))
+
+  def test_getandroidapilevel_from_sys(self):
+    self.assertOnlyIn((3, 7), detect("import sys\nsys.getandroidapilevel()"))
+
+  def test_getfilesystemencodeerrors_from_sys(self):
+    self.assertOnlyIn((3, 6), detect("import sys\nsys.getfilesystemencodeerrors()"))
+
+  def test_getswitchinterval_from_sys(self):
+    self.assertOnlyIn((3, 2), detect("import sys\nsys.getswitchinterval()"))
+
+  def test_is_finalizing_from_sys(self):
+    self.assertOnlyIn((3, 5), detect("import sys\nsys.is_finalizing()"))
+
+  def test_set_coroutine_origin_tracking_depth_from_sys(self):
+    self.assertOnlyIn((3, 7), detect("import sys\nsys.set_coroutine_origin_tracking_depth()"))
+
+  def test_setdefaultencoding_from_sys(self):
+    self.assertOnlyIn((2, 0), detect("import sys\nsys.setdefaultencoding()"))
+
+  def test_setdlopenflags_from_sys(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import sys\nsys.setdlopenflags()"))
+
+  def test_setswitchinterval_from_sys(self):
+    self.assertOnlyIn((3, 2), detect("import sys\nsys.setswitchinterval()"))
+
+  def test_settscdump_from_sys(self):
+    self.assertOnlyIn((2, 4), detect("import sys\nsys.settscdump()"))
+
+  def test_read_sb_data_from_telnetlib_Telnet(self):
+    self.assertOnlyIn(((2, 3), (3, 0)),
+                      detect("from telnetlib import Telnet\n"
+                             "Telnet().read_sb_data()"))
+
+  def test_NamedTemporaryFile_from_tempfile(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import tempfile\ntempfile.NamedTemporaryFile()"))
+
+  def test_SpooledTemporaryFile_from_tempfile(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import tempfile\ntempfile.SpooledTemporaryFile()"))
+
+  def test_TemporaryDirectory_from_tempfile(self):
+    self.assertOnlyIn((3, 2), detect("import tempfile\ntempfile.TemporaryDirectory()"))
+
+  def test_gettempdir_from_tempfile(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import tempfile\ntempfile.gettempdir()"))
+
+  def test_gettempdirb_from_tempfile(self):
+    self.assertOnlyIn((3, 5), detect("import tempfile\ntempfile.gettempdirb()"))
+
+  def test_gettempprefixb_from_tempfile(self):
+    self.assertOnlyIn((3, 5), detect("import tempfile\ntempfile.gettempprefixb()"))
+
+  def test_mkdtemp_from_tempfile(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import tempfile\ntempfile.mkdtemp()"))
+
+  def test_mkstemp_from_tempfile(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import tempfile\ntempfile.mkstemp()"))
+
+  def test_interrupt_main_from_thread(self):
+    self.assertOnlyIn((2, 3), detect("import thread\nthread.interrupt_main()"))
+
+  def test_stack_size_from_thread(self):
+    self.assertOnlyIn((2, 5), detect("import thread\nthread.stack_size()"))
+
+  def test_notify_all_from_threading_Condition(self):
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      detect("from threading import Condition\n"
+                             "Condition().notify_all()"))
+
+  def test_wait_for_from_threading_Condition(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from threading import Condition\n"
+                             "Condition().wait_for()"))
+
+  def test_is_set_from_threading_Event(self):
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                    detect("from threading import Event\n"
+                           "Event().is_set()"))
+
+  def test_is_alive_from_threading_Thread(self):
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      detect("from threading import Thread\n"
+                             "Thread().is_alive()"))
+
+  def test_active_count_from_threading(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import threading\nthreading.active_count()"))
+
+  def test_current_thread_from_threading(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import threading\nthreading.current_thread()"))
+
+  def test_setprofile_from_threading(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import threading\nthreading.setprofile()"))
+
+  def test_settrace_from_threading(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import threading\nthreading.settrace()"))
+
+  def test_stack_size_from_threading(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import threading\nthreading.stack_size()"))
+
+  def test_tzset_from_time(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import time\ntime.tzset()"))
+
+  def test_autorange_from_timeit_Timer(self):
+    self.assertOnlyIn((3, 6),
+                      detect("from timeit import Timer\n"
+                             "Timer().autorange()"))
+
+  def test_clear_frames_from_traceback(self):
+    self.assertOnlyIn((3, 4), detect("import traceback\ntraceback.clear_frames()"))
+
+  def test_format_exc_from_traceback(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("import traceback\ntraceback.format_exc()"))
+
+  def test_walk_stack_from_traceback(self):
+    self.assertOnlyIn((3, 5), detect("import traceback\ntraceback.walk_stack()"))
+
+  def test_walk_tb_from_traceback(self):
+    self.assertOnlyIn((3, 5), detect("import traceback\ntraceback.walk_tb()"))
+
+  def test_replace_from_types_CodeType(self):
+    self.assertOnlyIn((3, 8),
+                      detect("from types import CodeType\n"
+                             "CodeType().replace()"))
+
+  def test_DynamicClassAttribute_from_types(self):
+    self.assertOnlyIn((3, 4), detect("import types\ntypes.DynamicClassAttribute()"))
+
+  def test_clear_from_types_FrameType(self):
+    self.assertOnlyIn((3, 4),
+                      detect("from types import FrameType\n"
+                             "FrameType().clear()"))
+
+  def test_coroutine_from_types(self):
+    self.assertOnlyIn((3, 5), detect("import types\ntypes.coroutine()"))
+
+  def test_new_class_from_types(self):
+    self.assertOnlyIn((3, 3), detect("import types\ntypes.new_class()"))
+
+  def test_prepare_class_from_types(self):
+    self.assertOnlyIn((3, 3), detect("import types\ntypes.prepare_class()"))
+
+  def test_resolve_bases_from_types(self):
+    self.assertOnlyIn((3, 7), detect("import types\ntypes.resolve_bases()"))
+
+  def test_east_asian_width_from_unicodedata(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("import unicodedata\nunicodedata.east_asian_width()"))
+
+  def test_normalize_from_unicodedata(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import unicodedata\nunicodedata.normalize()"))
+
+  def test_addClassCleanup_from_unittest_TestCase(self):
+    self.assertOnlyIn((3, 8),
+                      detect("from unittest import TestCase\n"
+                             "TestCase().addClassCleanup()"))
+
+  def test_assertCountEqual_from_unittest_TestCase(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from unittest import TestCase\n"
+                             "TestCase().assertCountEqual()"))
+
+  def test_assertLogs_from_unittest_TestCase(self):
+    self.assertOnlyIn((3, 4),
+                      detect("from unittest import TestCase\n"
+                             "TestCase().assertLogs()"))
+
+  def test_assertRaisesRegex_from_unittest_TestCase(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from unittest import TestCase\n"
+                             "TestCase().assertRaisesRegex()"))
+
+  def test_assertWarns_from_unittest_TestCase(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from unittest import TestCase\n"
+                             "TestCase().assertWarns()"))
+
+  def test_assertWarnsRegex_from_unittest_TestCase(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from unittest import TestCase\n"
+                             "TestCase().assertWarnsRegex()"))
+
+  def test_doClassCleanups_from_unittest_TestCase(self):
+    self.assertOnlyIn((3, 8),
+                      detect("from unittest import TestCase\n"
+                             "TestCase().doClassCleanups()"))
+
+  def test_setUpClass_from_unittest_TestCase(self):
+    self.assertOnlyIn(((2, 7), (3, 2)),
+                      detect("from unittest import TestCase\n"
+                             "TestCase().setUpClass()"))
+
+  def test_skipTest_from_unittest_TestCase(self):
+    self.assertOnlyIn(((2, 7), (3, 1)),
+                      detect("from unittest import TestCase\n"
+                             "TestCase().skipTest()"))
+
+  def test_subTest_from_unittest_TestCase(self):
+    self.assertOnlyIn((3, 4),
+                      detect("from unittest import TestCase\n"
+                             "TestCase().subTest()"))
+
+  def test_tearDownClass_from_unittest_TestCase(self):
+    self.assertOnlyIn(((2, 7), (3, 2)),
+                      detect("from unittest import TestCase\n"
+                             "TestCase().tearDownClass()"))
+
+  def test_addSubTest_from_unittest_TestResult(self):
+    self.assertOnlyIn((3, 4),
+                      detect("from unittest import TestResult\n"
+                             "TestResult().addSubTest()"))
+
+  def test_installHandler_from_unittest(self):
+    self.assertOnlyIn(((2, 7), (3, 2)), detect("import unittest\nunittest.installHandler()"))
+
+  def test_assert_called_from_unittest_mock_Mock(self):
+    self.assertOnlyIn((3, 6),
+                      detect("from unittest.mock import Mock\n"
+                             "Mock().assert_called()"))
+
+  def test_assert_called_once_from_unittest_mock_Mock(self):
+    self.assertOnlyIn((3, 6),
+                      detect("from unittest.mock import Mock\n"
+                             "Mock().assert_called_once()"))
+
+  def test_assert_not_called_from_unittest_mock_Mock(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from unittest.mock import Mock\n"
+                             "Mock().assert_not_called()"))
+
+  def test_registerResult_from_unittest(self):
+    self.assertOnlyIn(((2, 7), (3, 2)), detect("import unittest\nunittest.registerResult()"))
+
+  def test_removeHandler_from_unittest(self):
+    self.assertOnlyIn(((2, 7), (3, 2)), detect("import unittest\nunittest.removeHandler()"))
+
+  def test_removeResult_from_unittest(self):
+    self.assertOnlyIn(((2, 7), (3, 2)), detect("import unittest\nunittest.removeResult()"))
+
+  def test_remove_header_from_urllib_request_Request(self):
+    self.assertOnlyIn((3, 4),
+                      detect("from urllib.request import Request\n"
+                             "Request().remove_header()"))
+
+  def test_crawl_delay_from_urllib_robotparser_RobotFileParser(self):
+    self.assertOnlyIn((3, 6),
+                      detect("from urllib.robotparser import RobotFileParser\n"
+                             "RobotFileParser().crawl_delay()"))
+
+  def test_request_rate_from_urllib_robotparser_RobotFileParser(self):
+    self.assertOnlyIn((3, 6),
+                      detect("from urllib.robotparser import RobotFileParser\n"
+                             "RobotFileParser().request_rate()"))
+
+  def test_site_maps_from_urllib_robotparser_RobotFileParser(self):
+    self.assertOnlyIn((3, 8),
+                      detect("from urllib.robotparser import RobotFileParser\n"
+                             "RobotFileParser().site_maps()"))
+
+  def test_getcode_from_urllib_urlopen(self):
+    self.assertOnlyIn((2, 6),
+                      detect("from urllib import urlopen\n"
+                             "urlopen().getcode()"))
+
+  def test_add_unredirected_header_from_urllib2_Request(self):
+    self.assertOnlyIn((2, 4),
+                      detect("from urllib2 import Request\n"
+                             "Request().add_unredirected_header()"))
+
+  def test_has_header_from_urllib2_Request(self):
+    self.assertOnlyIn((2, 4),
+                      detect("from urllib2 import Request\n"
+                             "Request().has_header()"))
+
+  def test_geturl_from_urlparse_ParseResult(self):
+    self.assertOnlyIn((2, 5),
+                      detect("from urlparse import ParseResult\n"
+                             "ParseResult().geturl()"))
+
+  def test_parse_qs_from_urlparse(self):
+    self.assertOnlyIn((2, 6), detect("import urlparse\nurlparse.parse_qs()"))
+
+  def test_parse_qsl_from_urlparse(self):
+    self.assertOnlyIn((2, 6), detect("import urlparse\nurlparse.parse_qsl()"))
+
+  def test_urlsplit_from_urlparse(self):
+    self.assertOnlyIn((2, 2), detect("import urlparse\nurlparse.urlsplit()"))
+
+  def test_urlunsplit_from_urlparse(self):
+    self.assertOnlyIn((2, 2), detect("import urlparse\nurlparse.urlunsplit()"))
+
+  def test_create_from_venv(self):
+    self.assertOnlyIn((3, 3), detect("import venv\nvenv.create()"))
+
+  def test_open_new_tab_from_webbrowser_controller(self):
+    self.assertOnlyIn(((2, 5), (3, 0)),
+                      detect("from webbrowser import controller\n"
+                             "controller().open_new_tab()"))
+
+  def test_open_new_tab_from_webbrowser(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import webbrowser\nwebbrowser.open_new_tab()"))
+
+  def test_CreateKeyEx_from_winreg(self):
+    self.assertOnlyIn((3, 2), detect("import winreg\nwinreg.CreateKeyEx()"))
+
+  def test_DeleteKeyEx_from_winreg(self):
+    self.assertOnlyIn((3, 2), detect("import winreg\nwinreg.DeleteKeyEx()"))
+
+  def test_MessageBeep_from_winsound(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import winsound\nwinsound.MessageBeep()"))
+
+  def test_normalize_from_xml_dom_Node(self):
+    self.assertOnlyIn(((2, 1), (3, 0)),
+                      detect("from xml.dom import Node\n"
+                             "Node().normalize()"))
+
+  def test_toprettyxml_from_xml_dom_minidom_Node(self):
+    self.assertOnlyIn(((2, 1), (3, 0)),
+                      detect("from xml.dom.minidom import Node\n"
+                             "Node().toprettyxml()"))
+
+  def test_pi_from_xml_etree_ElementTree_TreeBuilder(self):
+    self.assertOnlyIn((3, 8),
+                      detect("from xml.etree.ElementTree import TreeBuilder\n"
+                             "TreeBuilder().pi()"))
+
+  def test_EntityDeclHandler_from_xml_parsers_expat_XMLParserType(self):
+    self.assertOnlyIn(((2, 1), (3, 0)),
+                      detect("from xml.parsers.expat import XMLParserType\n"
+                             "XMLParserType().EntityDeclHandler()"))
+
+  def test_GetInputContext_from_xml_parsers_expat_XMLParserType(self):
+    self.assertOnlyIn(((2, 1), (3, 0)),
+                      detect("from xml.parsers.expat import XMLParserType\n"
+                             "XMLParserType().GetInputContext()"))
+
+  def test_UseForeignDTD_from_xml_parsers_expat_XMLParserType(self):
+    self.assertOnlyIn(((2, 3), (3, 0)),
+                      detect("from xml.parsers.expat import XMLParserType\n"
+                             "XMLParserType().UseForeignDTD()"))
+
+  def test_XmlDeclHandler_from_xml_parsers_expat_XMLParserType(self):
+    self.assertOnlyIn(((2, 1), (3, 0)),
+                      detect("from xml.parsers.expat import XMLParserType\n"
+                             "XMLParserType().XmlDeclHandler()"))
+
+  def test_copy_from_zlib_Compress(self):
+    self.assertOnlyIn(((2, 5), (3, 0)),
+                      detect("from zlib import Compress\n"
+                             "Compress().copy()"))
+
+  def test_copy_from_zlib_Decompress(self):
+    self.assertOnlyIn(((2, 5), (3, 0)),
+                      detect("from zlib import Decompress\n"
+                             "Decompress().copy()"))

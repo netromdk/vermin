@@ -280,7 +280,7 @@ class VerminGeneralTests(VerminTest):
   def test_process_runtests_py(self):
     proc_res = process_individual((sys.argv[0], self.config))
     self.assertEqual(basename(proc_res.path), "runtests.py")
-    self.assertEqual(proc_res.mins, [(2, 7), (3, 0)])
+    self.assertEqual(proc_res.mins, [(2, 7), (3, 1)])
     self.assertEmpty(proc_res.text)
     self.assertEmpty(proc_res.bps)
 

@@ -8,10 +8,13 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
     self.assertOnlyIn(((2, 5), (3, 0)), detect("any()"))
 
   def test_basestring(self):
-    self.assertOnlyIn(((2, 3), (3, 0)), detect("basestring()"))
+    self.assertOnlyIn((2, 3), detect("basestring()"))
 
   def test_bin(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("bin()"))
+
+  def test_callable(self):
+    self.assertOnlyIn(((2, 0), (3, 2)), detect("callable()"))
 
   def test_classmethod(self):
     self.assertOnlyIn(((2, 2), (3, 0)), detect("classmethod()"))
@@ -20,7 +23,7 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
     self.assertOnlyIn(((2, 3), (3, 0)), detect("enumerate()"))
 
   def test_file(self):
-    self.assertOnlyIn(((2, 2), (3, 0)), detect("file()"))
+    self.assertOnlyIn((2, 0), detect("file()"))
 
   def test_format(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("format()"))
@@ -33,6 +36,9 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
 
   def test_next(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("next()"))
+
+  def test_property(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("property()"))
 
   def test_sorted(self):
     self.assertOnlyIn(((2, 4), (3, 0)), detect("sorted()"))
@@ -47,13 +53,10 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
     self.assertOnlyIn(((2, 2), (3, 0)), detect("super()"))
 
   def test_unichr(self):
-    self.assertOnlyIn(((2, 0), (3, 0)), detect("unichr()"))
+    self.assertOnlyIn((2, 0), detect("unichr()"))
 
   def test_unicode(self):
-    self.assertOnlyIn(((2, 0), (3, 0)), detect("unicode()"))
-
-  def test_zip(self):
-    self.assertOnlyIn(((2, 0), (3, 0)), detect("zip()"))
+    self.assertOnlyIn((2, 0), detect("unicode()"))
 
   def test_breakpoint(self):
     self.assertOnlyIn((3, 7), detect("breakpoint()"))
@@ -234,6 +237,10 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
     self.assertOnlyIn(((2, 2), (3, 0)), detect("s=str()\ns.zfill(2)"))
     self.assertOnlyIn(((2, 2), (3, 0)), detect("str().zfill(2)"))
 
+  def test_as_integer_ratio_of_int(self):
+    self.assertOnlyIn((3, 8), detect("(42).as_integer_ratio()"))
+    self.assertOnlyIn((3, 8), detect("n=42\nn.as_integer_ratio()"))
+
   def test_bit_length_of_int(self):
     self.assertOnlyIn(((2, 7), (3, 1)), detect("(42).bit_length()"))
     self.assertOnlyIn(((2, 7), (3, 1)), detect("n=42\nn.bit_length()"))
@@ -254,6 +261,12 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("(42.0).as_integer_ratio()"))
     self.assertOnlyIn(((2, 6), (3, 0)), detect("n=42.0\nn.as_integer_ratio()"))
 
+  def test_next_of_file(self):
+    self.assertOnlyIn((2, 3), detect("file('name').next()"))
+
+  def test_xreadlines_of_file(self):
+    self.assertOnlyIn((2, 1), detect("file('name').xreadlines()"))
+
   def test_is_integer_of_float(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("(42.0).is_integer()"))
     self.assertOnlyIn(((2, 6), (3, 0)), detect("n=42.0\nn.is_integer()"))
@@ -271,9 +284,23 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
       self.assertOnlyIn((3, 5), detect("b'\x10'.hex()"))
       self.assertOnlyIn((3, 5), detect("b=b'\x10'\nb.hex()"))
 
+  def test_isascii_of_bytes(self):
+    self.assertOnlyIn((3, 7), detect("b'\x10'.isascii()"))
+    self.assertOnlyIn((3, 7), detect("b=b'\x10'\nb.isascii()"))
+
+  def test_maketrans_of_bytes(self):
+    self.assertOnlyIn((3, 1), detect("bytes.maketrans(b'a', b'b')"))
+
   def test_hex_of_bytearray(self):
     self.assertOnlyIn((3, 5), detect("bytearray(b'\x10').hex()"))
     self.assertOnlyIn((3, 5), detect("b=bytearray(b'\x10')\nb.hex()"))
+
+  def test_isascii_of_bytearray(self):
+    self.assertOnlyIn((3, 7), detect("bytearray(b'\x10').isascii()"))
+    self.assertOnlyIn((3, 7), detect("b=bytearray(b'\x10')\nb.isascii()"))
+
+  def test_maketrans_of_bytearray(self):
+    self.assertOnlyIn((3, 1), detect("bytearray.maketrans(b'a', b'b')"))
 
   def test_hex_of_memoryview(self):
     self.assertOnlyIn((3, 5), detect("memoryview(b'1').hex()"))
@@ -283,3 +310,21 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
 
   def test_cast_of_memoryview(self):
     self.assertOnlyIn((3, 3), detect("memoryview(b'1').cast()"))
+
+  def test_toreadonly_of_memoryview(self):
+    self.assertOnlyIn((3, 8), detect("memoryview(b'1').toreadonly()"))
+
+  def test_deleter_of_property(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("property.deleter()"))
+
+  def test_getter_of_property(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("property.getter()"))
+
+  def test_setter_of_property(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("property.setter()"))
+
+  def test_setter_of_property(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("property.setter()"))
+
+  def test_indices_of_slice(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("slice.indices()"))
