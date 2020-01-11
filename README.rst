@@ -29,9 +29,9 @@ exception context cause (``raise .. from ..``), ``dict`` comprehensions, infix m
 multiplication, ``"..".format(..)``, imports (``import X``, ``from X import Y``, ``from X import
 *``), function calls wrt. name and kwargs, ``strftime`` + ``strptime`` directives used, and
 function, function and variable annotations (also ``Final`` and ``Literal``), ``continue`` in
-``finally`` block, modular inverse ``pow()``, array typecodes, codecs error handler names and
-encodings. It tries to detect and ignore user-defined functions, classes, arguments, and variables
-with names that clash with library-defined symbols.
+``finally`` block, modular inverse ``pow()``, array typecodes, codecs error handler names,
+encodings, and generalized unpacking. It tries to detect and ignore user-defined functions, classes,
+arguments, and variables with names that clash with library-defined symbols.
 
 Backports of the standard library, like ``typing``, can be enabled for better results.
 

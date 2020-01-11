@@ -268,3 +268,34 @@ class VerminLanguageTests(VerminTest):
       visitor = visit("with func():\n  pass")
       self.assertTrue(visitor.with_statement())
       self.assertOnlyIn([(2, 5), (3, 0)], visitor.minimum_versions())
+
+  def test_generalized_unpacking(self):
+    if current_version() >= 3.0:
+      visitor = visit("(*range(4), 4)")  # tuple
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("[*range(4), 4]")  # list
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+    if current_version() >= 3.5:
+      visitor = visit("{*range(4), 4}")  # set
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("{'x': 1, **{'y': 2}}")  # dict
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("function(*arguments, argument)")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("function(**kw_arguments, **more_arguments)")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("function(**{'x': 42}, arg=84)")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())

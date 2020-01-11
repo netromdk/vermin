@@ -56,6 +56,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__codecs_error_handlers = []
     self.__codecs_encodings = []
     self.__with_statement = False
+    self.__generalized_unpacking = False
 
     # Imported members of modules, like "exc_clear" of "sys".
     self.__import_mem_mod = {}
@@ -183,6 +184,9 @@ class SourceVisitor(ast.NodeVisitor):
   def with_statement(self):
     return self.__with_statement
 
+  def generalized_unpacking(self):
+    return self.__generalized_unpacking
+
   def minimum_versions(self):
     mins = [(0, 0), (0, 0)]
 
@@ -272,6 +276,9 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.with_statement():
       mins = combine_versions(mins, ((2, 5), (3, 0)))
+
+    if self.generalized_unpacking():
+      mins = combine_versions(mins, (None, (3, 5)))
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
@@ -715,6 +722,18 @@ class SourceVisitor(ast.NodeVisitor):
     self.__printv2 = True
     self.generic_visit(node)
 
+  def __check_generalized_unpacking(self, elts):
+    # If any elements occur after a Starred element then generalized unpacking is used.
+    if hasattr(ast, "Starred"):
+      starred = False
+      for elt in elts:
+        if isinstance(elt, ast.Starred):
+          starred = True
+        elif starred:
+          self.__generalized_unpacking = True
+          self.__vvprint("generalized unpacking requires 3.5+")
+          break
+
   def visit_Call(self, node):
     if self.__is_no_line(node.lineno):
       return
@@ -766,6 +785,7 @@ class SourceVisitor(ast.NodeVisitor):
               # "array.array" = 5 + 1 + 5 + 1 = 12
               self.__add_array_typecode(arg.s, node.lineno, node.col_offset + 12)
 
+    self.__check_generalized_unpacking(node.args)
     self.generic_visit(node)
     self.__function_name = None
 
@@ -793,6 +813,13 @@ class SourceVisitor(ast.NodeVisitor):
 
   def visit_keyword(self, node):
     if self.__function_name is not None:
+      # If any function keyword argument is None and value is not None then generalized unpacking is
+      # used.
+      if node.arg is None and node.value is not None:
+        self.__generalized_unpacking = True
+        self.__vvprint("generalized unpacking requires 3.5+")
+
+      # kwarg related.
       exp_name = self.__function_name.split(".")
 
       # Check if function is imported from module.
@@ -993,6 +1020,36 @@ class SourceVisitor(ast.NodeVisitor):
         self.__continue_in_finally = True
         self.__vvprint("continue in finally block requires 3.8+", line=node.lineno)
 
+  def visit_With(self, node):
+    self.__with_statement = True
+    self.__vvprint("`with` requires 2.5+")
+    self.generic_visit(node)
+
+  def visit_Dict(self, node):
+    # If any key is None and corresponding value is not None then generalized unpacking is used.
+    keys = len(node.keys)
+    values = len(node.values)
+    if keys > 0 and keys == values:
+      for i in range(keys):
+        if node.keys[i] is None and node.values[i] is not None:
+          self.__generalized_unpacking = True
+          self.__vvprint("generalized unpacking requires 3.5+")
+          break
+
+    self.generic_visit(node)
+
+  def visit_Tuple(self, node):
+    self.__check_generalized_unpacking(node.elts)
+    self.generic_visit(node)
+
+  def visit_List(self, node):
+    self.__check_generalized_unpacking(node.elts)
+    self.generic_visit(node)
+
+  def visit_Set(self, node):
+    self.__check_generalized_unpacking(node.elts)
+    self.generic_visit(node)
+
   # Lax mode and comment-excluded lines skip conditional blocks if enabled.
 
   def visit_If(self, node):
@@ -1037,11 +1094,6 @@ class SourceVisitor(ast.NodeVisitor):
   def visit_BoolOp(self, node):
     if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
       self.generic_visit(node)
-
-  def visit_With(self, node):
-    self.__with_statement = True
-    self.__vvprint("`with` requires 2.5+")
-    self.generic_visit(node)
 
   # Ignore unused nodes as a speed optimization.
 
