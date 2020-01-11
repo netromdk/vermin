@@ -1,5 +1,6 @@
 from .testutils import VerminTest, detect, current_major_version
 
+
 class VerminKwargsTests(VerminTest):
   def test_name_of_ImportError(self):
     self.assertOnlyIn((3, 3), detect("ImportError(name=None)"))
@@ -654,11 +655,11 @@ class VerminKwargsTests(VerminTest):
 
   def test_exit_ok_of_path_mkdir(self):
     self.assertOnlyIn(
-      (3, 5), detect("from pathlib import Path\np=Path('foo')\np.mkdir(exist_ok=True)"))
+        (3, 5), detect("from pathlib import Path\np=Path('foo')\np.mkdir(exist_ok=True)"))
 
   def test_strict_of_path_resolve(self):
     self.assertOnlyIn(
-      (3, 6), detect("from pathlib import Path\np=Path('foo')\np.resolve(strict=True)"))
+        (3, 6), detect("from pathlib import Path\np=Path('foo')\np.resolve(strict=True)"))
 
   def test_optimization_of_importlib_util_cache_from_source(self):
     self.assertOnlyIn((3, 5),
@@ -827,1468 +828,1468 @@ class VerminKwargsTests(VerminTest):
 
   def test_allow_no_value_of_ConfigParser_from_ConfigParser(self):
     self.assertOnlyIn((2, 6),
-                                 detect("from ConfigParser import ConfigParser\n"
-                                        "ConfigParser(allow_no_value=None)"))
+                      detect("from ConfigParser import ConfigParser\n"
+                             "ConfigParser(allow_no_value=None)"))
 
   def test_dict_type_of_ConfigParser_from_ConfigParser(self):
     self.assertOnlyIn((2, 6),
-                                 detect("from ConfigParser import ConfigParser\n"
-                                        "ConfigParser(dict_type=None)"))
+                      detect("from ConfigParser import ConfigParser\n"
+                             "ConfigParser(dict_type=None)"))
 
   def test_allow_no_value_of_RawConfigParser_from_ConfigParser(self):
     self.assertOnlyIn((2, 6),
-                                 detect("from ConfigParser import RawConfigParser\n"
-                                        "RawConfigParser(allow_no_value=None)"))
+                      detect("from ConfigParser import RawConfigParser\n"
+                             "RawConfigParser(allow_no_value=None)"))
 
   def test_dict_type_of_RawConfigParser_from_ConfigParser(self):
     self.assertOnlyIn((2, 6),
-                                 detect("from ConfigParser import RawConfigParser\n"
-                                        "RawConfigParser(dict_type=None)"))
+                      detect("from ConfigParser import RawConfigParser\n"
+                             "RawConfigParser(dict_type=None)"))
 
   def test_allow_no_value_of_SafeConfigParser_from_ConfigParser(self):
     self.assertOnlyIn((2, 6),
-                                 detect("from ConfigParser import SafeConfigParser\n"
-                                        "SafeConfigParser(allow_no_value=None)"))
+                      detect("from ConfigParser import SafeConfigParser\n"
+                             "SafeConfigParser(allow_no_value=None)"))
 
   def test_dict_type_of_SafeConfigParser_from_ConfigParser(self):
     self.assertOnlyIn((2, 6),
-                                 detect("from ConfigParser import SafeConfigParser\n"
-                                        "SafeConfigParser(dict_type=None)"))
+                      detect("from ConfigParser import SafeConfigParser\n"
+                             "SafeConfigParser(dict_type=None)"))
 
   def test_useTk_of_Tk_from_Tkinter(self):
     self.assertOnlyIn((2, 4),
-                                 detect("from Tkinter import Tk\n"
-                                        "Tk(useTk=None)"))
+                      detect("from Tkinter import Tk\n"
+                             "Tk(useTk=None)"))
 
   def test_encodings_of_FileType_from_argparse(self):
     self.assertOnlyIn((3, 4),
-                                 detect("from argparse import FileType\n"
-                                        "FileType(encodings=None)"))
+                      detect("from argparse import FileType\n"
+                             "FileType(encodings=None)"))
 
   def test_errors_of_FileType_from_argparse(self):
     self.assertOnlyIn((3, 4),
-                                 detect("from argparse import FileType\n"
-                                        "FileType(errors=None)"))
+                      detect("from argparse import FileType\n"
+                             "FileType(errors=None)"))
 
   def test_feature_version_of_parse_from_ast(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from ast import parse\n"
-                                        "parse(feature_version=None)"))
+                      detect("from ast import parse\n"
+                             "parse(feature_version=None)"))
 
   def test_type_comments_of_parse_from_ast(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from ast import parse\n"
-                                        "parse(type_comments=None)"))
+                      detect("from ast import parse\n"
+                             "parse(type_comments=None)"))
 
   def test_name_of_Task_from_asyncio(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from asyncio import Task\n"
-                                        "Task(name=None)"))
+                      detect("from asyncio import Task\n"
+                             "Task(name=None)"))
 
   def test_name_of_create_task_from_asyncio(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from asyncio import create_task\n"
-                                        "create_task(name=None)"))
+                      detect("from asyncio import create_task\n"
+                             "create_task(name=None)"))
 
   def test_ssl_handshake_timeout_of_open_connection_from_asyncio(self):
     self.assertOnlyIn((3, 7),
-                                 detect("from asyncio import open_connection\n"
-                                        "open_connection(ssl_handshake_timeout=None)"))
+                      detect("from asyncio import open_connection\n"
+                             "open_connection(ssl_handshake_timeout=None)"))
 
   def test_ssl_handshake_timeout_of_open_unix_connection_from_asyncio(self):
     self.assertOnlyIn((3, 7),
-                                 detect("from asyncio import open_unix_connection\n"
-                                        "open_unix_connection(ssl_handshake_timeout=None)"))
+                      detect("from asyncio import open_unix_connection\n"
+                             "open_unix_connection(ssl_handshake_timeout=None)"))
 
   def test_ssl_handshake_timeout_of_start_server_from_asyncio(self):
     self.assertOnlyIn((3, 7),
-                                 detect("from asyncio import start_server\n"
-                                        "start_server(ssl_handshake_timeout=None)"))
+                      detect("from asyncio import start_server\n"
+                             "start_server(ssl_handshake_timeout=None)"))
 
   def test_start_serving_of_start_server_from_asyncio(self):
     self.assertOnlyIn((3, 7),
-                                 detect("from asyncio import start_server\n"
-                                        "start_server(start_serving=None)"))
+                      detect("from asyncio import start_server\n"
+                             "start_server(start_serving=None)"))
 
   def test_ssl_handshake_timeout_of_start_unix_server_from_asyncio(self):
     self.assertOnlyIn((3, 7),
-                                 detect("from asyncio import start_unix_server\n"
-                                        "start_unix_server(ssl_handshake_timeout=None)"))
+                      detect("from asyncio import start_unix_server\n"
+                             "start_unix_server(ssl_handshake_timeout=None)"))
 
   def test_start_serving_of_start_unix_server_from_asyncio(self):
     self.assertOnlyIn((3, 7),
-                                 detect("from asyncio import start_unix_server\n"
-                                        "start_unix_server(start_serving=None)"))
+                      detect("from asyncio import start_unix_server\n"
+                             "start_unix_server(start_serving=None)"))
 
   def test_bytes_per_sep_of_b2a_hex_from_binascii(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from binascii import b2a_hex\n"
-                                        "b2a_hex(bytes_per_sep=None)"))
+                      detect("from binascii import b2a_hex\n"
+                             "b2a_hex(bytes_per_sep=None)"))
 
   def test_sep_of_b2a_hex_from_binascii(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from binascii import b2a_hex\n"
-                                        "b2a_hex(sep=None)"))
+                      detect("from binascii import b2a_hex\n"
+                             "b2a_hex(sep=None)"))
 
   def test_bytes_per_sep_of_hexlify_from_binascii(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from binascii import hexlify\n"
-                                        "hexlify(bytes_per_sep=None)"))
+                      detect("from binascii import hexlify\n"
+                             "hexlify(bytes_per_sep=None)"))
 
   def test_sep_of_hexlify_from_binascii(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from binascii import hexlify\n"
-                                        "hexlify(sep=None)"))
+                      detect("from binascii import hexlify\n"
+                             "hexlify(sep=None)"))
 
   def test_base_of_log_from_cmath(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from cmath import log\n"
-                                        "log(base=None)"))
+                      detect("from cmath import log\n"
+                             "log(base=None)"))
 
   def test_stdin_of_Cmd_from_cmd(self):
     self.assertOnlyIn(((2, 3), (3, 0)),
-                                 detect("from cmd import Cmd\n"
-                                        "Cmd(stdin=None)"))
+                      detect("from cmd import Cmd\n"
+                             "Cmd(stdin=None)"))
 
   def test_stdout_of_Cmd_from_cmd(self):
     self.assertOnlyIn(((2, 3), (3, 0)),
-                                 detect("from cmd import Cmd\n"
-                                        "Cmd(stdout=None)"))
+                      detect("from cmd import Cmd\n"
+                             "Cmd(stdout=None)"))
 
   def test_allow_no_value_of_ConfigParser_from_configparser(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from configparser import ConfigParser\n"
-                                        "ConfigParser(allow_no_value=None)"))
+                      detect("from configparser import ConfigParser\n"
+                             "ConfigParser(allow_no_value=None)"))
 
   def test_comment_prefixes_of_ConfigParser_from_configparser(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from configparser import ConfigParser\n"
-                                        "ConfigParser(comment_prefixes=None)"))
+                      detect("from configparser import ConfigParser\n"
+                             "ConfigParser(comment_prefixes=None)"))
 
   def test_converters_of_ConfigParser_from_configparser(self):
     self.assertOnlyIn((3, 5),
-                                 detect("from configparser import ConfigParser\n"
-                                        "ConfigParser(converters=None)"))
+                      detect("from configparser import ConfigParser\n"
+                             "ConfigParser(converters=None)"))
 
   def test_default_section_of_ConfigParser_from_configparser(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from configparser import ConfigParser\n"
-                                        "ConfigParser(default_section=None)"))
+                      detect("from configparser import ConfigParser\n"
+                             "ConfigParser(default_section=None)"))
 
   def test_delimiters_of_ConfigParser_from_configparser(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from configparser import ConfigParser\n"
-                                        "ConfigParser(delimiters=None)"))
+                      detect("from configparser import ConfigParser\n"
+                             "ConfigParser(delimiters=None)"))
 
   def test_empty_lines_in_values_of_ConfigParser_from_configparser(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from configparser import ConfigParser\n"
-                                        "ConfigParser(empty_lines_in_values=None)"))
+                      detect("from configparser import ConfigParser\n"
+                             "ConfigParser(empty_lines_in_values=None)"))
 
   def test_interpolation_of_ConfigParser_from_configparser(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from configparser import ConfigParser\n"
-                                        "ConfigParser(interpolation=None)"))
+                      detect("from configparser import ConfigParser\n"
+                             "ConfigParser(interpolation=None)"))
 
   def test_strict_of_ConfigParser_from_configparser(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from configparser import ConfigParser\n"
-                                        "ConfigParser(strict=None)"))
+                      detect("from configparser import ConfigParser\n"
+                             "ConfigParser(strict=None)"))
 
   def test_lineno_of_DuplicateSectionError_from_configparser(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from configparser import DuplicateSectionError\n"
-                                        "DuplicateSectionError(lineno=None)"))
+                      detect("from configparser import DuplicateSectionError\n"
+                             "DuplicateSectionError(lineno=None)"))
 
   def test_source_of_DuplicateSectionError_from_configparser(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from configparser import DuplicateSectionError\n"
-                                        "DuplicateSectionError(source=None)"))
+                      detect("from configparser import DuplicateSectionError\n"
+                             "DuplicateSectionError(source=None)"))
 
   def test_source_of_ParsingError_from_configparser(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from configparser import ParsingError\n"
-                                        "ParsingError(source=None)"))
+                      detect("from configparser import ParsingError\n"
+                             "ParsingError(source=None)"))
 
   def test_winmode_of_CDLL_from_ctypes(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from ctypes import CDLL\n"
-                                        "CDLL(winmode=None)"))
+                      detect("from ctypes import CDLL\n"
+                             "CDLL(winmode=None)"))
 
   def test_winmode_of_OleDLL_from_ctypes(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from ctypes import OleDLL\n"
-                                        "OleDLL(winmode=None)"))
+                      detect("from ctypes import OleDLL\n"
+                             "OleDLL(winmode=None)"))
 
   def test_winmode_of_WinDLL_from_ctypes(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from ctypes import WinDLL\n"
-                                        "WinDLL(winmode=None)"))
+                      detect("from ctypes import WinDLL\n"
+                             "WinDLL(winmode=None)"))
 
   def test_jump_of_stack_effect_from_dis(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from dis import stack_effect\n"
-                                        "stack_effect(jump=None)"))
+                      detect("from dis import stack_effect\n"
+                             "stack_effect(jump=None)"))
 
   def test_encoding_of_DocFileSuite_from_doctest(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
-                                 detect("from doctest import DocFileSuite\n"
-                                        "DocFileSuite(encoding=None)"))
+                      detect("from doctest import DocFileSuite\n"
+                             "DocFileSuite(encoding=None)"))
 
   def test_extraglobs_of_DocTestSuite_from_doctest(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from doctest import DocTestSuite\n"
-                                        "DocTestSuite(extraglobs=None)"))
+                      detect("from doctest import DocTestSuite\n"
+                             "DocTestSuite(extraglobs=None)"))
 
   def test_globs_of_DocTestSuite_from_doctest(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from doctest import DocTestSuite\n"
-                                        "DocTestSuite(globs=None)"))
+                      detect("from doctest import DocTestSuite\n"
+                             "DocTestSuite(globs=None)"))
 
   def test_optionflags_of_DocTestSuite_from_doctest(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from doctest import DocTestSuite\n"
-                                        "DocTestSuite(optionflags=None)"))
+                      detect("from doctest import DocTestSuite\n"
+                             "DocTestSuite(optionflags=None)"))
 
   def test_setUp_of_DocTestSuite_from_doctest(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from doctest import DocTestSuite\n"
-                                        "DocTestSuite(setUp=None)"))
+                      detect("from doctest import DocTestSuite\n"
+                             "DocTestSuite(setUp=None)"))
 
   def test_tearDown_of_DocTestSuite_from_doctest(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from doctest import DocTestSuite\n"
-                                        "DocTestSuite(tearDown=None)"))
+                      detect("from doctest import DocTestSuite\n"
+                             "DocTestSuite(tearDown=None)"))
 
   def test_test_finder_of_DocTestSuite_from_doctest(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from doctest import DocTestSuite\n"
-                                        "DocTestSuite(test_finder=None)"))
+                      detect("from doctest import DocTestSuite\n"
+                             "DocTestSuite(test_finder=None)"))
 
   def test_pm_of_debug_from_doctest(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from doctest import debug\n"
-                                        "debug(pm=None)"))
+                      detect("from doctest import debug\n"
+                             "debug(pm=None)"))
 
   def test_encoding_of_testfile_from_doctest(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
-                                 detect("from doctest import testfile\n"
-                                        "testfile(encoding=None)"))
+                      detect("from doctest import testfile\n"
+                             "testfile(encoding=None)"))
 
   def test_exclude_empty_of_testmod_from_doctest(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from doctest import testmod\n"
-                                        "testmod(exclude_empty=None)"))
+                      detect("from doctest import testmod\n"
+                             "testmod(exclude_empty=None)"))
 
   def test_extraglobs_of_testmod_from_doctest(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from doctest import testmod\n"
-                                        "testmod(extraglobs=None)"))
+                      detect("from doctest import testmod\n"
+                             "testmod(extraglobs=None)"))
 
   def test_optionflags_of_testmod_from_doctest(self):
     self.assertOnlyIn(((2, 3), (3, 0)),
-                                 detect("from doctest import testmod\n"
-                                        "testmod(optionflags=None)"))
+                      detect("from doctest import testmod\n"
+                             "testmod(optionflags=None)"))
 
   def test_raise_on_error_of_testmod_from_doctest(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from doctest import testmod\n"
-                                        "testmod(raise_on_error=None)"))
+                      detect("from doctest import testmod\n"
+                             "testmod(raise_on_error=None)"))
 
   def test_policy_of_message_from_binary_file_from_email(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from email import message_from_binary_file\n"
-                                        "message_from_binary_file(policy=None)"))
+                      detect("from email import message_from_binary_file\n"
+                             "message_from_binary_file(policy=None)"))
 
   def test_policy_of_message_from_bytes_from_email(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from email import message_from_bytes\n"
-                                        "message_from_bytes(policy=None)"))
+                      detect("from email import message_from_bytes\n"
+                             "message_from_bytes(policy=None)"))
 
   def test_policy_of_message_from_file_from_email(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from email import message_from_file\n"
-                                        "message_from_file(policy=None)"))
+                      detect("from email import message_from_file\n"
+                             "message_from_file(policy=None)"))
 
   def test_policy_of_message_from_string_from_email(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from email import message_from_string\n"
-                                        "message_from_string(policy=None)"))
+                      detect("from email import message_from_string\n"
+                             "message_from_string(policy=None)"))
 
   def test_start_of_Enum_from_enum(self):
     self.assertOnlyIn((3, 5),
-                                 detect("from enum import Enum\n"
-                                        "Enum(start=None)"))
+                      detect("from enum import Enum\n"
+                             "Enum(start=None)"))
 
   def test_mode_of_FileInput_from_fileinput(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
-                                 detect("from fileinput import FileInput\n"
-                                        "FileInput(mode=None)"))
+                      detect("from fileinput import FileInput\n"
+                             "FileInput(mode=None)"))
 
   def test_openhook_of_FileInput_from_fileinput(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
-                                 detect("from fileinput import FileInput\n"
-                                        "FileInput(openhook=None)"))
+                      detect("from fileinput import FileInput\n"
+                             "FileInput(openhook=None)"))
 
   def test_errors_of_hook_encoded_from_fileinput(self):
     self.assertOnlyIn((3, 6),
-                                 detect("from fileinput import hook_encoded\n"
-                                        "hook_encoded(errors=None)"))
+                      detect("from fileinput import hook_encoded\n"
+                             "hook_encoded(errors=None)"))
 
   def test_mode_of_input_from_fileinput(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
-                                 detect("from fileinput import input\n"
-                                        "input(mode=None)"))
+                      detect("from fileinput import input\n"
+                             "input(mode=None)"))
 
   def test_openhook_of_input_from_fileinput(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
-                                 detect("from fileinput import input\n"
-                                        "input(openhook=None)"))
+                      detect("from fileinput import input\n"
+                             "input(openhook=None)"))
 
   def test_source_address_of_FTP_from_ftplib(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from ftplib import FTP\n"
-                                        "FTP(source_address=None)"))
+                      detect("from ftplib import FTP\n"
+                             "FTP(source_address=None)"))
 
   def test_timeout_of_FTP_from_ftplib(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
-                                 detect("from ftplib import FTP\n"
-                                        "FTP(timeout=None)"))
+                      detect("from ftplib import FTP\n"
+                             "FTP(timeout=None)"))
 
   def test_context_of_FTP_TLS_from_ftplib(self):
     self.assertOnlyIn(((2, 7), (3, 2)),
-                                 detect("from ftplib import FTP_TLS\n"
-                                        "FTP_TLS(context=None)"))
+                      detect("from ftplib import FTP_TLS\n"
+                             "FTP_TLS(context=None)"))
 
   def test_source_address_of_FTP_TLS_from_ftplib(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from ftplib import FTP_TLS\n"
-                                        "FTP_TLS(source_address=None)"))
+                      detect("from ftplib import FTP_TLS\n"
+                             "FTP_TLS(source_address=None)"))
 
   def test_user_function_of_lru_cache_from_functools(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from functools import lru_cache\n"
-                                        "lru_cache(user_function=None)"))
+                      detect("from functools import lru_cache\n"
+                             "lru_cache(user_function=None)"))
 
   def test_generation_of_collect_from_gc(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
-                                 detect("from gc import collect\n"
-                                        "collect(generation=None)"))
+                      detect("from gc import collect\n"
+                             "collect(generation=None)"))
 
   def test_generation_of_get_objects_from_gc(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from gc import get_objects\n"
-                                        "get_objects(generation=None)"))
+                      detect("from gc import get_objects\n"
+                             "get_objects(generation=None)"))
 
   def test_stream_of_getpass_from_getpass(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
-                                 detect("from getpass import getpass\n"
-                                        "getpass(stream=None)"))
+                      detect("from getpass import getpass\n"
+                             "getpass(stream=None)"))
 
   def test_codeset_of_install_from_gettext(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from gettext import install\n"
-                                        "install(codeset=None)"))
+                      detect("from gettext import install\n"
+                             "install(codeset=None)"))
 
   def test_names_of_install_from_gettext(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
-                                 detect("from gettext import install\n"
-                                        "install(names=None)"))
+                      detect("from gettext import install\n"
+                             "install(names=None)"))
 
   def test_codeset_of_translation_from_gettext(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from gettext import translation\n"
-                                        "translation(codeset=None)"))
+                      detect("from gettext import translation\n"
+                             "translation(codeset=None)"))
 
   def test_recursive_of_glob_from_glob(self):
     self.assertOnlyIn((3, 5),
-                                 detect("from glob import glob\n"
-                                        "glob(recursive=None)"))
+                      detect("from glob import glob\n"
+                             "glob(recursive=None)"))
 
   def test_mtime_of_GzipFile_from_gzip(self):
     self.assertOnlyIn(((2, 7), (3, 1)),
-                                 detect("from gzip import GzipFile\n"
-                                        "GzipFile(mtime=None)"))
+                      detect("from gzip import GzipFile\n"
+                             "GzipFile(mtime=None)"))
 
   def test_source_address_of_HTTPConnection_from_httplib(self):
     self.assertOnlyIn((2, 7),
-                                 detect("from httplib import HTTPConnection\n"
-                                        "HTTPConnection(source_address=None)"))
+                      detect("from httplib import HTTPConnection\n"
+                             "HTTPConnection(source_address=None)"))
 
   def test_timeout_of_HTTPConnection_from_httplib(self):
     self.assertOnlyIn((2, 6),
-                                 detect("from httplib import HTTPConnection\n"
-                                        "HTTPConnection(timeout=None)"))
+                      detect("from httplib import HTTPConnection\n"
+                             "HTTPConnection(timeout=None)"))
 
   def test_context_of_HTTPSConnection_from_httplib(self):
     self.assertOnlyIn((2, 7),
-                                 detect("from httplib import HTTPSConnection\n"
-                                        "HTTPSConnection(context=None)"))
+                      detect("from httplib import HTTPSConnection\n"
+                             "HTTPSConnection(context=None)"))
 
   def test_source_address_of_HTTPSConnection_from_httplib(self):
     self.assertOnlyIn((2, 7),
-                                 detect("from httplib import HTTPSConnection\n"
-                                        "HTTPSConnection(source_address=None)"))
+                      detect("from httplib import HTTPSConnection\n"
+                             "HTTPSConnection(source_address=None)"))
 
   def test_timeout_of_HTTPSConnection_from_httplib(self):
     self.assertOnlyIn((2, 6),
-                                 detect("from httplib import HTTPSConnection\n"
-                                        "HTTPSConnection(timeout=None)"))
+                      detect("from httplib import HTTPSConnection\n"
+                             "HTTPSConnection(timeout=None)"))
 
   def test_ssl_context_of_IMAP4_SSL_from_imaplib(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from imaplib import IMAP4_SSL\n"
-                                        "IMAP4_SSL(ssl_context=None)"))
+                      detect("from imaplib import IMAP4_SSL\n"
+                             "IMAP4_SSL(ssl_context=None)"))
 
   def test_opener_of_FileIO_from_io(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from io import FileIO\n"
-                                        "FileIO(opener=None)"))
+                      detect("from io import FileIO\n"
+                             "FileIO(opener=None)"))
 
   def test_initial_of_accumulate_from_itertools(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from itertools import accumulate\n"
-                                        "accumulate(initial=None)"))
+                      detect("from itertools import accumulate\n"
+                             "accumulate(initial=None)"))
 
   def test_module_globals_of_getline_from_linecache(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
-                                 detect("from linecache import getline\n"
-                                        "getline(module_globals=None)"))
+                      detect("from linecache import getline\n"
+                             "getline(module_globals=None)"))
 
   def test_monetary_of_format_from_locale(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
-                                 detect("import locale\n"
-                                        "locale.format(monetary=None)"))
+                      detect("import locale\n"
+                             "locale.format(monetary=None)"))
 
   def test_monetary_of_format_string_from_locale(self):
     self.assertOnlyIn((3, 7),
-                                 detect("from locale import format_string\n"
-                                        "format_string(monetary=None)"))
+                      detect("from locale import format_string\n"
+                             "format_string(monetary=None)"))
 
   def test_delay_of_FileHandler_from_logging(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
-                                 detect("from logging import FileHandler\n"
-                                        "FileHandler(delay=None)"))
+                      detect("from logging import FileHandler\n"
+                             "FileHandler(delay=None)"))
 
   def test_validate_of_Formatter_from_logging(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from logging import Formatter\n"
-                                        "Formatter(validate=None)"))
+                      detect("from logging import Formatter\n"
+                             "Formatter(validate=None)"))
 
   def test_datefmt_of_basicConfig_from_logging(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from logging import basicConfig\n"
-                                        "basicConfig(datefmt=None)"))
+                      detect("from logging import basicConfig\n"
+                             "basicConfig(datefmt=None)"))
 
   def test_filemode_of_basicConfig_from_logging(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from logging import basicConfig\n"
-                                        "basicConfig(filemode=None)"))
+                      detect("from logging import basicConfig\n"
+                             "basicConfig(filemode=None)"))
 
   def test_filename_of_basicConfig_from_logging(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from logging import basicConfig\n"
-                                        "basicConfig(filename=None)"))
+                      detect("from logging import basicConfig\n"
+                             "basicConfig(filename=None)"))
 
   def test_force_of_basicConfig_from_logging(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from logging import basicConfig\n"
-                                        "basicConfig(force=None)"))
+                      detect("from logging import basicConfig\n"
+                             "basicConfig(force=None)"))
 
   def test_format_of_basicConfig_from_logging(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from logging import basicConfig\n"
-                                        "basicConfig(format=None)"))
+                      detect("from logging import basicConfig\n"
+                             "basicConfig(format=None)"))
 
   def test_handlers_of_basicConfig_from_logging(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from logging import basicConfig\n"
-                                        "basicConfig(handlers=None)"))
+                      detect("from logging import basicConfig\n"
+                             "basicConfig(handlers=None)"))
 
   def test_level_of_basicConfig_from_logging(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from logging import basicConfig\n"
-                                        "basicConfig(level=None)"))
+                      detect("from logging import basicConfig\n"
+                             "basicConfig(level=None)"))
 
   def test_stream_of_basicConfig_from_logging(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from logging import basicConfig\n"
-                                        "basicConfig(stream=None)"))
+                      detect("from logging import basicConfig\n"
+                             "basicConfig(stream=None)"))
 
   def test_style_of_basicConfig_from_logging(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from logging import basicConfig\n"
-                                        "basicConfig(style=None)"))
+                      detect("from logging import basicConfig\n"
+                             "basicConfig(style=None)"))
 
   def test_extra_of_critical_from_logging(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
-                                 detect("from logging import critical\n"
-                                        "critical(extra=None)"))
+                      detect("from logging import critical\n"
+                             "critical(extra=None)"))
 
   def test_stack_info_of_critical_from_logging(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from logging import critical\n"
-                                        "critical(stack_info=None)"))
+                      detect("from logging import critical\n"
+                             "critical(stack_info=None)"))
 
   def test_stacklevel_of_critical_from_logging(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from logging import critical\n"
-                                        "critical(stacklevel=None)"))
+                      detect("from logging import critical\n"
+                             "critical(stacklevel=None)"))
 
   def test_stacklevel_of_debug_from_logging(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from logging import debug\n"
-                                        "debug(stacklevel=None)"))
+                      detect("from logging import debug\n"
+                             "debug(stacklevel=None)"))
 
   def test_extra_of_error_from_logging(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
-                                 detect("from logging import error\n"
-                                        "error(extra=None)"))
+                      detect("from logging import error\n"
+                             "error(extra=None)"))
 
   def test_stack_info_of_error_from_logging(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from logging import error\n"
-                                        "error(stack_info=None)"))
+                      detect("from logging import error\n"
+                             "error(stack_info=None)"))
 
   def test_stacklevel_of_error_from_logging(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from logging import error\n"
-                                        "error(stacklevel=None)"))
+                      detect("from logging import error\n"
+                             "error(stacklevel=None)"))
 
   def test_extra_of_exception_from_logging(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
-                                 detect("from logging import exception\n"
-                                        "exception(extra=None)"))
+                      detect("from logging import exception\n"
+                             "exception(extra=None)"))
 
   def test_stack_info_of_exception_from_logging(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from logging import exception\n"
-                                        "exception(stack_info=None)"))
+                      detect("from logging import exception\n"
+                             "exception(stack_info=None)"))
 
   def test_stacklevel_of_exception_from_logging(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from logging import exception\n"
-                                        "exception(stacklevel=None)"))
+                      detect("from logging import exception\n"
+                             "exception(stacklevel=None)"))
 
   def test_extra_of_info_from_logging(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
-                                 detect("from logging import info\n"
-                                        "info(extra=None)"))
+                      detect("from logging import info\n"
+                             "info(extra=None)"))
 
   def test_stack_info_of_info_from_logging(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from logging import info\n"
-                                        "info(stack_info=None)"))
+                      detect("from logging import info\n"
+                             "info(stack_info=None)"))
 
   def test_stacklevel_of_info_from_logging(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from logging import info\n"
-                                        "info(stacklevel=None)"))
+                      detect("from logging import info\n"
+                             "info(stacklevel=None)"))
 
   def test_extra_of_log_from_logging(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
-                                 detect("from logging import log\n"
-                                        "log(extra=None)"))
+                      detect("from logging import log\n"
+                             "log(extra=None)"))
 
   def test_stack_info_of_log_from_logging(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from logging import log\n"
-                                        "log(stack_info=None)"))
+                      detect("from logging import log\n"
+                             "log(stack_info=None)"))
 
   def test_stacklevel_of_log_from_logging(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from logging import log\n"
-                                        "log(stacklevel=None)"))
+                      detect("from logging import log\n"
+                             "log(stacklevel=None)"))
 
   def test_stack_info_of_warn_from_logging(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from logging import warn\n"
-                                        "warn(stack_info=None)"))
+                      detect("from logging import warn\n"
+                             "warn(stack_info=None)"))
 
   def test_stacklevel_of_warn_from_logging(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from logging import warn\n"
-                                        "warn(stacklevel=None)"))
+                      detect("from logging import warn\n"
+                             "warn(stacklevel=None)"))
 
   def test_extra_of_warning_from_logging(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
-                                 detect("from logging import warning\n"
-                                        "warning(extra=None)"))
+                      detect("from logging import warning\n"
+                             "warning(extra=None)"))
 
   def test_stack_info_of_warning_from_logging(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from logging import warning\n"
-                                        "warning(stack_info=None)"))
+                      detect("from logging import warning\n"
+                             "warning(stack_info=None)"))
 
   def test_stacklevel_of_warning_from_logging(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from logging import warning\n"
-                                        "warning(stacklevel=None)"))
+                      detect("from logging import warning\n"
+                             "warning(stacklevel=None)"))
 
   def test_version_of_dump_from_marshal(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from marshal import dump\n"
-                                        "dump(version=None)"))
+                      detect("from marshal import dump\n"
+                             "dump(version=None)"))
 
   def test_version_of_dumps_from_marshal(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from marshal import dumps\n"
-                                        "dumps(version=None)"))
+                      detect("from marshal import dumps\n"
+                             "dumps(version=None)"))
 
   def test_domain_of_cat_from_nis(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
-                                 detect("from nis import cat\n"
-                                        "cat(domain=None)"))
+                      detect("from nis import cat\n"
+                             "cat(domain=None)"))
 
   def test_domain_of_maps_from_nis(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
-                                 detect("from nis import maps\n"
-                                        "maps(domain=None)"))
+                      detect("from nis import maps\n"
+                             "maps(domain=None)"))
 
   def test_domain_of_match_from_nis(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
-                                 detect("from nis import match\n"
-                                        "match(domain=None)"))
+                      detect("from nis import match\n"
+                             "match(domain=None)"))
 
   def test_usenetrc_of_NNTP_from_nntplib(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from nntplib import NNTP\n"
-                                        "NNTP(usenetrc=None)"))
+                      detect("from nntplib import NNTP\n"
+                             "NNTP(usenetrc=None)"))
 
   def test_dir_fd_of_lstat_from_os(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from os import lstat\n"
-                                        "lstat(dir_fd=None)"))
+                      detect("from os import lstat\n"
+                             "lstat(dir_fd=None)"))
 
   def test_exist_ok_of_makedirs_from_os(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from os import makedirs\n"
-                                        "makedirs(exist_ok=None)"))
+                      detect("from os import makedirs\n"
+                             "makedirs(exist_ok=None)"))
 
   def test_dir_fd_of_mkdir_from_os(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from os import mkdir\n"
-                                        "mkdir(dir_fd=None)"))
+                      detect("from os import mkdir\n"
+                             "mkdir(dir_fd=None)"))
 
   def test_dir_fd_of_mkfifo_from_os(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from os import mkfifo\n"
-                                        "mkfifo(dir_fd=None)"))
+                      detect("from os import mkfifo\n"
+                             "mkfifo(dir_fd=None)"))
 
   def test_dir_fd_of_mknod_from_os(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from os import mknod\n"
-                                        "mknod(dir_fd=None)"))
+                      detect("from os import mknod\n"
+                             "mknod(dir_fd=None)"))
 
   def test_dir_fd_of_readlink_from_os(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from os import readlink\n"
-                                        "readlink(dir_fd=None)"))
+                      detect("from os import readlink\n"
+                             "readlink(dir_fd=None)"))
 
   def test_dir_fd_of_remove_from_os(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from os import remove\n"
-                                        "remove(dir_fd=None)"))
+                      detect("from os import remove\n"
+                             "remove(dir_fd=None)"))
 
   def test_dst_dir_fd_of_rename_from_os(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from os import rename\n"
-                                        "rename(dst_dir_fd=None)"))
+                      detect("from os import rename\n"
+                             "rename(dst_dir_fd=None)"))
 
   def test_src_dir_fd_of_rename_from_os(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from os import rename\n"
-                                        "rename(src_dir_fd=None)"))
+                      detect("from os import rename\n"
+                             "rename(src_dir_fd=None)"))
 
   def test_dir_fd_of_rmdir_from_os(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from os import rmdir\n"
-                                        "rmdir(dir_fd=None)"))
+                      detect("from os import rmdir\n"
+                             "rmdir(dir_fd=None)"))
 
   def test_operation_of_startfile_from_os(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
-                                 detect("from os import startfile\n"
-                                        "startfile(operation=None)"))
+                      detect("from os import startfile\n"
+                             "startfile(operation=None)"))
 
   def test_dir_fd_of_stat_from_os(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from os import stat\n"
-                                        "stat(dir_fd=None)"))
+                      detect("from os import stat\n"
+                             "stat(dir_fd=None)"))
 
   def test_follow_symlinks_of_stat_from_os(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from os import stat\n"
-                                        "stat(follow_symlinks=None)"))
+                      detect("from os import stat\n"
+                             "stat(follow_symlinks=None)"))
 
   def test_dir_fd_of_symlink_from_os(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from os import symlink\n"
-                                        "symlink(dir_fd=None)"))
+                      detect("from os import symlink\n"
+                             "symlink(dir_fd=None)"))
 
   def test_dir_fd_of_unlink_from_os(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from os import unlink\n"
-                                        "unlink(dir_fd=None)"))
+                      detect("from os import unlink\n"
+                             "unlink(dir_fd=None)"))
 
   def test_dir_fd_of_utime_from_os(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from os import utime\n"
-                                        "utime(dir_fd=None)"))
+                      detect("from os import utime\n"
+                             "utime(dir_fd=None)"))
 
   def test_follow_symlinks_of_utime_from_os(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from os import utime\n"
-                                        "utime(follow_symlinks=None)"))
+                      detect("from os import utime\n"
+                             "utime(follow_symlinks=None)"))
 
   def test_ns_of_utime_from_os(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from os import utime\n"
-                                        "utime(ns=None)"))
+                      detect("from os import utime\n"
+                             "utime(ns=None)"))
 
   def test_followlinks_of_walk_from_os(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
-                                 detect("from os import walk\n"
-                                        "walk(followlinks=None)"))
+                      detect("from os import walk\n"
+                             "walk(followlinks=None)"))
 
   def test_nosigint_of_Pdb_from_pdb(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from pdb import Pdb\n"
-                                        "Pdb(nosigint=None)"))
+                      detect("from pdb import Pdb\n"
+                             "Pdb(nosigint=None)"))
 
   def test_readrc_of_Pdb_from_pdb(self):
     self.assertOnlyIn((3, 6),
-                                 detect("from pdb import Pdb\n"
-                                        "Pdb(readrc=None)"))
+                      detect("from pdb import Pdb\n"
+                             "Pdb(readrc=None)"))
 
   def test_skip_of_Pdb_from_pdb(self):
     self.assertOnlyIn(((2, 7), (3, 1)),
-                                 detect("from pdb import Pdb\n"
-                                        "Pdb(skip=None)"))
+                      detect("from pdb import Pdb\n"
+                             "Pdb(skip=None)"))
 
   def test_header_of_set_trace_from_pdb(self):
     self.assertOnlyIn((3, 7),
-                                 detect("from pdb import set_trace\n"
-                                        "set_trace(header=None)"))
+                      detect("from pdb import set_trace\n"
+                             "set_trace(header=None)"))
 
   def test_buffer_callback_of_Pickler_from_pickle(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from pickle import Pickler\n"
-                                        "Pickler(buffer_callback=None)"))
+                      detect("from pickle import Pickler\n"
+                             "Pickler(buffer_callback=None)"))
 
   def test_protocol_of_Pickler_from_pickle(self):
     self.assertOnlyIn(((2, 3), (3, 0)),
-                                 detect("from pickle import Pickler\n"
-                                        "Pickler(protocol=None)"))
+                      detect("from pickle import Pickler\n"
+                             "Pickler(protocol=None)"))
 
   def test_buffers_of_Unpickler_from_pickle(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from pickle import Unpickler\n"
-                                        "Unpickler(buffers=None)"))
+                      detect("from pickle import Unpickler\n"
+                             "Unpickler(buffers=None)"))
 
   def test_buffer_callback_of_dump_from_pickle(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from pickle import dump\n"
-                                        "dump(buffer_callback=None)"))
+                      detect("from pickle import dump\n"
+                             "dump(buffer_callback=None)"))
 
   def test_protocol_of_dump_from_pickle(self):
     self.assertOnlyIn(((2, 3), (3, 0)),
-                                 detect("from pickle import dump\n"
-                                        "dump(protocol=None)"))
+                      detect("from pickle import dump\n"
+                             "dump(protocol=None)"))
 
   def test_buffer_callback_of_dumps_from_pickle(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from pickle import dumps\n"
-                                        "dumps(buffer_callback=None)"))
+                      detect("from pickle import dumps\n"
+                             "dumps(buffer_callback=None)"))
 
   def test_protocol_of_dumps_from_pickle(self):
     self.assertOnlyIn(((2, 3), (3, 0)),
-                                 detect("from pickle import dumps\n"
-                                        "dumps(protocol=None)"))
+                      detect("from pickle import dumps\n"
+                             "dumps(protocol=None)"))
 
   def test_buffers_of_load_from_pickle(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from pickle import load\n"
-                                        "load(buffers=None)"))
+                      detect("from pickle import load\n"
+                             "load(buffers=None)"))
 
   def test_buffers_of_loads_from_pickle(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from pickle import loads\n"
-                                        "loads(buffers=None)"))
+                      detect("from pickle import loads\n"
+                             "loads(buffers=None)"))
 
   def test_timeout_of_POP3_from_poplib(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
-                                 detect("from poplib import POP3\n"
-                                        "POP3(timeout=None)"))
+                      detect("from poplib import POP3\n"
+                             "POP3(timeout=None)"))
 
   def test_context_of_POP3_SSL_from_poplib(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from poplib import POP3_SSL\n"
-                                        "POP3_SSL(context=None)"))
+                      detect("from poplib import POP3_SSL\n"
+                             "POP3_SSL(context=None)"))
 
   def test_sort_dicts_of_PrettyPrinter_from_pprint(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from pprint import PrettyPrinter\n"
-                                        "PrettyPrinter(sort_dicts=None)"))
+                      detect("from pprint import PrettyPrinter\n"
+                             "PrettyPrinter(sort_dicts=None)"))
 
   def test_depth_of_pformat_from_pprint(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from pprint import pformat\n"
-                                        "pformat(depth=None)"))
+                      detect("from pprint import pformat\n"
+                             "pformat(depth=None)"))
 
   def test_indent_of_pformat_from_pprint(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from pprint import pformat\n"
-                                        "pformat(indent=None)"))
+                      detect("from pprint import pformat\n"
+                             "pformat(indent=None)"))
 
   def test_sort_dicts_of_pformat_from_pprint(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from pprint import pformat\n"
-                                        "pformat(sort_dicts=None)"))
+                      detect("from pprint import pformat\n"
+                             "pformat(sort_dicts=None)"))
 
   def test_width_of_pformat_from_pprint(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from pprint import pformat\n"
-                                        "pformat(width=None)"))
+                      detect("from pprint import pformat\n"
+                             "pformat(width=None)"))
 
   def test_depth_of_pprint_from_pprint(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from pprint import pprint\n"
-                                        "pprint(depth=None)"))
+                      detect("from pprint import pprint\n"
+                             "pprint(depth=None)"))
 
   def test_indent_of_pprint_from_pprint(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from pprint import pprint\n"
-                                        "pprint(indent=None)"))
+                      detect("from pprint import pprint\n"
+                             "pprint(indent=None)"))
 
   def test_sort_dicts_of_pprint_from_pprint(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from pprint import pprint\n"
-                                        "pprint(sort_dicts=None)"))
+                      detect("from pprint import pprint\n"
+                             "pprint(sort_dicts=None)"))
 
   def test_width_of_pprint_from_pprint(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from pprint import pprint\n"
-                                        "pprint(width=None)"))
+                      detect("from pprint import pprint\n"
+                             "pprint(width=None)"))
 
   def test_invalidation_mode_of_compile_from_py_compile(self):
     self.assertOnlyIn((3, 7),
-                                 detect("from py_compile import compile\n"
-                                        "compile(invalidation_mode=None)"))
+                      detect("from py_compile import compile\n"
+                             "compile(invalidation_mode=None)"))
 
   def test_optimize_of_compile_from_py_compile(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from py_compile import compile\n"
-                                        "compile(optimize=None)"))
+                      detect("from py_compile import compile\n"
+                             "compile(optimize=None)"))
 
   def test_quiet_of_compile_from_py_compile(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from py_compile import compile\n"
-                                        "compile(quiet=None)"))
+                      detect("from py_compile import compile\n"
+                             "compile(quiet=None)"))
 
   def test_flags_of_findall_from_re(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from re import findall\n"
-                                        "findall(flags=None)"))
+                      detect("from re import findall\n"
+                             "findall(flags=None)"))
 
   def test_flags_of_finditer_from_re(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
-                                 detect("from re import finditer\n"
-                                        "finditer(flags=None)"))
+                      detect("from re import finditer\n"
+                             "finditer(flags=None)"))
 
   def test_flags_of_split_from_re(self):
     self.assertOnlyIn(((2, 7), (3, 1)),
-                                 detect("from re import split\n"
-                                        "split(flags=None)"))
+                      detect("from re import split\n"
+                             "split(flags=None)"))
 
   def test_flags_of_sub_from_re(self):
     self.assertOnlyIn(((2, 7), (3, 1)),
-                                 detect("from re import sub\n"
-                                        "sub(flags=None)"))
+                      detect("from re import sub\n"
+                             "sub(flags=None)"))
 
   def test_flags_of_subn_from_re(self):
     self.assertOnlyIn(((2, 7), (3, 1)),
-                                 detect("from re import subn\n"
-                                        "subn(flags=None)"))
+                      detect("from re import subn\n"
+                             "subn(flags=None)"))
 
   def test_flags_of_epoll_from_select(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from select import epoll\n"
-                                        "epoll(flags=None)"))
+                      detect("from select import epoll\n"
+                             "epoll(flags=None)"))
 
   def test_keyencoding_of_Shelf_from_shelve(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from shelve import Shelf\n"
-                                        "Shelf(keyencoding=None)"))
+                      detect("from shelve import Shelf\n"
+                             "Shelf(keyencoding=None)"))
 
   def test_protocol_of_Shelf_from_shelve(self):
     self.assertOnlyIn(((2, 3), (3, 0)),
-                                 detect("from shelve import Shelf\n"
-                                        "Shelf(protocol=None)"))
+                      detect("from shelve import Shelf\n"
+                             "Shelf(protocol=None)"))
 
   def test_protocol_of_open_from_shelve(self):
     self.assertOnlyIn(((2, 3), (3, 0)),
-                                 detect("from shelve import open\n"
-                                        "open(protocol=None)"))
+                      detect("from shelve import open\n"
+                             "open(protocol=None)"))
 
   def test_follow_symlinks_of_copy_from_shutil(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from shutil import copy\n"
-                                        "copy(follow_symlinks=None)"))
+                      detect("from shutil import copy\n"
+                             "copy(follow_symlinks=None)"))
 
   def test_follow_symlinks_of_copy2_from_shutil(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from shutil import copy2\n"
-                                        "copy2(follow_symlinks=None)"))
+                      detect("from shutil import copy2\n"
+                             "copy2(follow_symlinks=None)"))
 
   def test_follow_symlinks_of_copyfile_from_shutil(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from shutil import copyfile\n"
-                                        "copyfile(follow_symlinks=None)"))
+                      detect("from shutil import copyfile\n"
+                             "copyfile(follow_symlinks=None)"))
 
   def test_follow_symlinks_of_copymode_from_shutil(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from shutil import copymode\n"
-                                        "copymode(follow_symlinks=None)"))
+                      detect("from shutil import copymode\n"
+                             "copymode(follow_symlinks=None)"))
 
   def test_follow_symlinks_of_copystat_from_shutil(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from shutil import copystat\n"
-                                        "copystat(follow_symlinks=None)"))
+                      detect("from shutil import copystat\n"
+                             "copystat(follow_symlinks=None)"))
 
   def test_copy_function_of_copytree_from_shutil(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from shutil import copytree\n"
-                                        "copytree(copy_function=None)"))
+                      detect("from shutil import copytree\n"
+                             "copytree(copy_function=None)"))
 
   def test_dirs_exist_ok_of_copytree_from_shutil(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from shutil import copytree\n"
-                                        "copytree(dirs_exist_ok=None)"))
+                      detect("from shutil import copytree\n"
+                             "copytree(dirs_exist_ok=None)"))
 
   def test_ignore_of_copytree_from_shutil(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
-                                 detect("from shutil import copytree\n"
-                                        "copytree(ignore=None)"))
+                      detect("from shutil import copytree\n"
+                             "copytree(ignore=None)"))
 
   def test_ignore_dangling_symlinks_of_copytree_from_shutil(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from shutil import copytree\n"
-                                        "copytree(ignore_dangling_symlinks=None)"))
+                      detect("from shutil import copytree\n"
+                             "copytree(ignore_dangling_symlinks=None)"))
 
   def test_copy_function_of_move_from_shutil(self):
     self.assertOnlyIn((3, 5),
-                                 detect("from shutil import move\n"
-                                        "move(copy_function=None)"))
+                      detect("from shutil import move\n"
+                             "move(copy_function=None)"))
 
   def test_warn_on_full_buffer_of_set_wakeup_fd_from_signal(self):
     self.assertOnlyIn((3, 7),
-                                 detect("from signal import set_wakeup_fd\n"
-                                        "set_wakeup_fd(warn_on_full_buffer=None)"))
+                      detect("from signal import set_wakeup_fd\n"
+                             "set_wakeup_fd(warn_on_full_buffer=None)"))
 
   def test_decode_data_of_SMTPChannel_from_smtpd(self):
     self.assertOnlyIn((3, 5),
-                                 detect("from smtpd import SMTPChannel\n"
-                                        "SMTPChannel(decode_data=None)"))
+                      detect("from smtpd import SMTPChannel\n"
+                             "SMTPChannel(decode_data=None)"))
 
   def test_enable_SMTPUTF8_of_SMTPChannel_from_smtpd(self):
     self.assertOnlyIn((3, 5),
-                                 detect("from smtpd import SMTPChannel\n"
-                                        "SMTPChannel(enable_SMTPUTF8=None)"))
+                      detect("from smtpd import SMTPChannel\n"
+                             "SMTPChannel(enable_SMTPUTF8=None)"))
 
   def test_decode_data_of_SMTPServer_from_smtpd(self):
     self.assertOnlyIn((3, 5),
-                                 detect("from smtpd import SMTPServer\n"
-                                        "SMTPServer(decode_data=None)"))
+                      detect("from smtpd import SMTPServer\n"
+                             "SMTPServer(decode_data=None)"))
 
   def test_enable_SMTPUTF8_of_SMTPServer_from_smtpd(self):
     self.assertOnlyIn((3, 5),
-                                 detect("from smtpd import SMTPServer\n"
-                                        "SMTPServer(enable_SMTPUTF8=None)"))
+                      detect("from smtpd import SMTPServer\n"
+                             "SMTPServer(enable_SMTPUTF8=None)"))
 
   def test_map_of_SMTPServer_from_smtpd(self):
     self.assertOnlyIn((3, 4),
-                                 detect("from smtpd import SMTPServer\n"
-                                        "SMTPServer(map=None)"))
+                      detect("from smtpd import SMTPServer\n"
+                             "SMTPServer(map=None)"))
 
   def test_source_address_of_create_connection_from_socket(self):
     self.assertOnlyIn(((2, 7), (3, 2)),
-                                 detect("from socket import create_connection\n"
-                                        "create_connection(source_address=None)"))
+                      detect("from socket import create_connection\n"
+                             "create_connection(source_address=None)"))
 
   def test_optlen_of_setsockopt_from_socket(self):
     self.assertOnlyIn((3, 6),
-                                 detect("from socket import setsockopt\n"
-                                        "setsockopt(optlen=None)"))
+                      detect("from socket import setsockopt\n"
+                             "setsockopt(optlen=None)"))
 
   def test_uri_of_connect_from_sqlite3(self):
     self.assertOnlyIn((3, 4),
-                                 detect("from sqlite3 import connect\n"
-                                        "connect(uri=None)"))
+                      detect("from sqlite3 import connect\n"
+                             "connect(uri=None)"))
 
   def test_chars_of_lstrip_from_string(self):
     self.assertOnlyIn((2, 3),
-                                 detect("from string import lstrip\n"
-                                        "lstrip(chars=None)"))
+                      detect("from string import lstrip\n"
+                             "lstrip(chars=None)"))
 
   def test_chars_of_rstrip_from_string(self):
     self.assertOnlyIn((2, 3),
-                                 detect("from string import rstrip\n"
-                                        "rstrip(chars=None)"))
+                      detect("from string import rstrip\n"
+                             "rstrip(chars=None)"))
 
   def test_chars_of_strip_from_string(self):
     self.assertOnlyIn((2, 3),
-                                 detect("from string import strip\n"
-                                        "strip(chars=None)"))
+                      detect("from string import strip\n"
+                             "strip(chars=None)"))
 
   def test_encoding_of_TarFile_from_tarfile(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
-                                 detect("from tarfile import TarFile\n"
-                                        "TarFile(encoding=None)"))
+                      detect("from tarfile import TarFile\n"
+                             "TarFile(encoding=None)"))
 
   def test_errors_of_TarFile_from_tarfile(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
-                                 detect("from tarfile import TarFile\n"
-                                        "TarFile(errors=None)"))
+                      detect("from tarfile import TarFile\n"
+                             "TarFile(errors=None)"))
 
   def test_format_of_TarFile_from_tarfile(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
-                                 detect("from tarfile import TarFile\n"
-                                        "TarFile(format=None)"))
+                      detect("from tarfile import TarFile\n"
+                             "TarFile(format=None)"))
 
   def test_pax_headers_of_TarFile_from_tarfile(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
-                                 detect("from tarfile import TarFile\n"
-                                        "TarFile(pax_headers=None)"))
+                      detect("from tarfile import TarFile\n"
+                             "TarFile(pax_headers=None)"))
 
   def test_tarinfo_of_TarFile_from_tarfile(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
-                                 detect("from tarfile import TarFile\n"
-                                        "TarFile(tarinfo=None)"))
+                      detect("from tarfile import TarFile\n"
+                             "TarFile(tarinfo=None)"))
 
   def test_timeout_of_Telnet_from_telnetlib(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
-                                 detect("from telnetlib import Telnet\n"
-                                        "Telnet(timeout=None)"))
+                      detect("from telnetlib import Telnet\n"
+                             "Telnet(timeout=None)"))
 
   def test_delete_of_NamedTemporaryFile_from_tempfile(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
-                                 detect("from tempfile import NamedTemporaryFile\n"
-                                        "NamedTemporaryFile(delete=None)"))
+                      detect("from tempfile import NamedTemporaryFile\n"
+                             "NamedTemporaryFile(delete=None)"))
 
   def test_errors_of_NamedTemporaryFile_from_tempfile(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from tempfile import NamedTemporaryFile\n"
-                                        "NamedTemporaryFile(errors=None)"))
+                      detect("from tempfile import NamedTemporaryFile\n"
+                             "NamedTemporaryFile(errors=None)"))
 
   def test_errors_of_SpooledTemporaryFile_from_tempfile(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from tempfile import SpooledTemporaryFile\n"
-                                        "SpooledTemporaryFile(errors=None)"))
+                      detect("from tempfile import SpooledTemporaryFile\n"
+                             "SpooledTemporaryFile(errors=None)"))
 
   def test_errors_of_TemporaryFile_from_tempfile(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from tempfile import TemporaryFile\n"
-                                        "TemporaryFile(errors=None)"))
+                      detect("from tempfile import TemporaryFile\n"
+                             "TemporaryFile(errors=None)"))
 
   def test_daemon_of_Thread_from_threading(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from threading import Thread\n"
-                                        "Thread(daemon=None)"))
+                      detect("from threading import Thread\n"
+                             "Thread(daemon=None)"))
 
   def test_globals_of_Timer_from_timeit(self):
     self.assertOnlyIn((3, 5),
-                                 detect("from timeit import Timer\n"
-                                        "Timer(globals=None)"))
+                      detect("from timeit import Timer\n"
+                             "Timer(globals=None)"))
 
   def test_globals_of_repeat_from_timeit(self):
     self.assertOnlyIn((3, 5),
-                                 detect("from timeit import repeat\n"
-                                        "repeat(globals=None)"))
+                      detect("from timeit import repeat\n"
+                             "repeat(globals=None)"))
 
   def test_globals_of_timeit_from_timeit(self):
     self.assertOnlyIn((3, 5),
-                                 detect("from timeit import timeit\n"
-                                        "timeit(globals=None)"))
+                      detect("from timeit import timeit\n"
+                             "timeit(globals=None)"))
 
   def test_tb_locals_of_TextTestRunner_from_unittest(self):
     self.assertOnlyIn((3, 5),
-                                 detect("from unittest import TextTestRunner\n"
-                                        "TextTestRunner(tb_locals=None)"))
+                      detect("from unittest import TextTestRunner\n"
+                             "TextTestRunner(tb_locals=None)"))
 
   def test_warnings_of_TextTestRunner_from_unittest(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from unittest import TextTestRunner\n"
-                                        "TextTestRunner(warnings=None)"))
+                      detect("from unittest import TextTestRunner\n"
+                             "TextTestRunner(warnings=None)"))
 
   def test_buffer_of_main_from_unittest(self):
     self.assertOnlyIn(((2, 7), (3, 2)),
-                                 detect("from unittest import main\n"
-                                        "main(buffer=None)"))
+                      detect("from unittest import main\n"
+                             "main(buffer=None)"))
 
   def test_catchbreak_of_main_from_unittest(self):
     self.assertOnlyIn(((2, 7), (3, 2)),
-                                 detect("from unittest import main\n"
-                                        "main(catchbreak=None)"))
+                      detect("from unittest import main\n"
+                             "main(catchbreak=None)"))
 
   def test_exit_of_main_from_unittest(self):
     self.assertOnlyIn(((2, 7), (3, 1)),
-                                 detect("from unittest import main\n"
-                                        "main(exit=None)"))
+                      detect("from unittest import main\n"
+                             "main(exit=None)"))
 
   def test_failfast_of_main_from_unittest(self):
     self.assertOnlyIn(((2, 7), (3, 2)),
-                                 detect("from unittest import main\n"
-                                        "main(failfast=None)"))
+                      detect("from unittest import main\n"
+                             "main(failfast=None)"))
 
   def test_verbosity_of_main_from_unittest(self):
     self.assertOnlyIn(((2, 7), (3, 2)),
-                                 detect("from unittest import main\n"
-                                        "main(verbosity=None)"))
+                      detect("from unittest import main\n"
+                             "main(verbosity=None)"))
 
   def test_warnings_of_main_from_unittest(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from unittest import main\n"
-                                        "main(warnings=None)"))
+                      detect("from unittest import main\n"
+                             "main(warnings=None)"))
 
   def test_context_of_URLopener_from_urllib(self):
     self.assertOnlyIn((2, 7),
-                                 detect("from urllib import URLopener\n"
-                                        "URLopener(context=None)"))
+                      detect("from urllib import URLopener\n"
+                             "URLopener(context=None)"))
 
   def test_context_of_urlopen_from_urllib(self):
     self.assertOnlyIn((2, 7),
-                                 detect("from urllib import urlopen\n"
-                                        "urlopen(context=None)"))
+                      detect("from urllib import urlopen\n"
+                             "urlopen(context=None)"))
 
   def test_proxies_of_urlopen_from_urllib(self):
     self.assertOnlyIn((2, 3),
-                                 detect("from urllib import urlopen\n"
-                                        "urlopen(proxies=None)"))
+                      detect("from urllib import urlopen\n"
+                             "urlopen(proxies=None)"))
 
   def test_context_of_urlretrieve_from_urllib(self):
     self.assertOnlyIn((2, 7),
-                                 detect("from urllib import urlretrieve\n"
-                                        "urlretrieve(context=None)"))
+                      detect("from urllib import urlretrieve\n"
+                             "urlretrieve(context=None)"))
 
   def test_context_of_HTTPSHandler_from_urllib2(self):
     self.assertOnlyIn((2, 7),
-                                 detect("from urllib2 import HTTPSHandler\n"
-                                        "HTTPSHandler(context=None)"))
+                      detect("from urllib2 import HTTPSHandler\n"
+                             "HTTPSHandler(context=None)"))
 
   def test_cadefault_of_urlopen_from_urllib2(self):
     self.assertOnlyIn((2, 7),
-                                 detect("from urllib2 import urlopen\n"
-                                        "urlopen(cadefault=None)"))
+                      detect("from urllib2 import urlopen\n"
+                             "urlopen(cadefault=None)"))
 
   def test_cafile_of_urlopen_from_urllib2(self):
     self.assertOnlyIn((2, 7),
-                                 detect("from urllib2 import urlopen\n"
-                                        "urlopen(cafile=None)"))
+                      detect("from urllib2 import urlopen\n"
+                             "urlopen(cafile=None)"))
 
   def test_capth_of_urlopen_from_urllib2(self):
     self.assertOnlyIn((2, 7),
-                                 detect("from urllib2 import urlopen\n"
-                                        "urlopen(capth=None)"))
+                      detect("from urllib2 import urlopen\n"
+                             "urlopen(capth=None)"))
 
   def test_context_of_urlopen_from_urllib2(self):
     self.assertOnlyIn((2, 7),
-                                 detect("from urllib2 import urlopen\n"
-                                        "urlopen(context=None)"))
+                      detect("from urllib2 import urlopen\n"
+                             "urlopen(context=None)"))
 
   def test_timeout_of_urlopen_from_urllib2(self):
     self.assertOnlyIn((2, 6),
-                                 detect("from urllib2 import urlopen\n"
-                                        "urlopen(timeout=None)"))
+                      detect("from urllib2 import urlopen\n"
+                             "urlopen(timeout=None)"))
 
   def test_max_num_fields_of_parse_qs_from_urlparse(self):
     self.assertOnlyIn((2, 7),
-                                 detect("from urlparse import parse_qs\n"
-                                        "parse_qs(max_num_fields=None)"))
+                      detect("from urlparse import parse_qs\n"
+                             "parse_qs(max_num_fields=None)"))
 
   def test_max_num_fields_of_parse_qsl_from_urlparse(self):
     self.assertOnlyIn((2, 7),
-                                 detect("from urlparse import parse_qsl\n"
-                                        "parse_qsl(max_num_fields=None)"))
+                      detect("from urlparse import parse_qsl\n"
+                             "parse_qsl(max_num_fields=None)"))
 
   def test_backtick_of_encode_from_uu(self):
     self.assertOnlyIn((3, 7),
-                                 detect("from uu import encode\n"
-                                        "encode(backtick=None)"))
+                      detect("from uu import encode\n"
+                             "encode(backtick=None)"))
 
   def test_prompt_of_create_from_venv(self):
     self.assertOnlyIn((3, 6),
-                                 detect("from venv import create\n"
-                                        "create(prompt=None)"))
+                      detect("from venv import create\n"
+                             "create(prompt=None)"))
 
   def test_line_of_showwarning_from_warnings(self):
     self.assertOnlyIn(((2, 7), (3, 0)),
-                                 detect("from warnings import showwarning\n"
-                                        "showwarning(line=None)"))
+                      detect("from warnings import showwarning\n"
+                             "showwarning(line=None)"))
 
   def test_preferred_of_register_from_webbrowser(self):
     self.assertOnlyIn((3, 7),
-                                 detect("from webbrowser import register\n"
-                                        "register(preferred=None)"))
+                      detect("from webbrowser import register\n"
+                             "register(preferred=None)"))
 
   def test_compresslevel_of_ZipFile_from_zipfile(self):
     self.assertOnlyIn((3, 7),
-                                 detect("from zipfile import ZipFile\n"
-                                        "ZipFile(compresslevel=None)"))
+                      detect("from zipfile import ZipFile\n"
+                             "ZipFile(compresslevel=None)"))
 
   def test_strict_timestamps_of_ZipFile_from_zipfile(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from zipfile import ZipFile\n"
-                                        "ZipFile(strict_timestamps=None)"))
+                      detect("from zipfile import ZipFile\n"
+                             "ZipFile(strict_timestamps=None)"))
 
   def test_level_of_compress_from_zlib(self):
     self.assertOnlyIn((3, 6),
-                                 detect("from zlib import compress\n"
-                                        "compress(level=None)"))
+                      detect("from zlib import compress\n"
+                             "compress(level=None)"))
 
   def test_zdict_of_compressobj_from_zlib(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from zlib import compressobj\n"
-                                        "compressobj(zdict=None)"))
+                      detect("from zlib import compressobj\n"
+                             "compressobj(zdict=None)"))
 
   def test_bufsize_of_decompress_from_zlib(self):
     self.assertOnlyIn((3, 6),
-                                 detect("from zlib import decompress\n"
-                                        "decompress(bufsize=None)"))
+                      detect("from zlib import decompress\n"
+                             "decompress(bufsize=None)"))
 
   def test_wbits_of_decompress_from_zlib(self):
     self.assertOnlyIn((3, 6),
-                                 detect("from zlib import decompress\n"
-                                        "decompress(wbits=None)"))
+                      detect("from zlib import decompress\n"
+                             "decompress(wbits=None)"))
 
   def test_zdict_of_decompressobj_from_zlib(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from zlib import decompressobj\n"
-                                        "decompressobj(zdict=None)"))
+                      detect("from zlib import decompressobj\n"
+                             "decompressobj(zdict=None)"))
 
   def test_policy_of_Message_from_email_message(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from email.message import Message\n"
-                                        "Message(policy=None)"))
+                      detect("from email.message import Message\n"
+                             "Message(policy=None)"))
 
   def test_policy_of_BytesParser_from_email_parser(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from email.parser import BytesParser\n"
-                                        "BytesParser(policy=None)"))
+                      detect("from email.parser import BytesParser\n"
+                             "BytesParser(policy=None)"))
 
   def test_policy_of_Parser_from_email_parser(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from email.parser import Parser\n"
-                                        "Parser(policy=None)"))
+                      detect("from email.parser import Parser\n"
+                             "Parser(policy=None)"))
 
   def test_mangle_from__of_Policy_from_email_policy(self):
     self.assertOnlyIn((3, 5),
-                                 detect("from email.policy import Policy\n"
-                                        "Policy(mangle_from_=None)"))
+                      detect("from email.policy import Policy\n"
+                             "Policy(mangle_from_=None)"))
 
   def test_convert_charrefs_of_HTMLParser_from_html_parser(self):
     self.assertOnlyIn((3, 4),
-                                 detect("from html.parser import HTMLParser\n"
-                                        "HTMLParser(convert_charrefs=None)"))
+                      detect("from html.parser import HTMLParser\n"
+                             "HTMLParser(convert_charrefs=None)"))
 
   def test_blocksize_of_HTTPConnection_from_http_client(self):
     self.assertOnlyIn((3, 7),
-                                 detect("from http.client import HTTPConnection\n"
-                                        "HTTPConnection(blocksize=None)"))
+                      detect("from http.client import HTTPConnection\n"
+                             "HTTPConnection(blocksize=None)"))
 
   def test_source_address_of_HTTPConnection_from_http_client(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from http.client import HTTPConnection\n"
-                                        "HTTPConnection(source_address=None)"))
+                      detect("from http.client import HTTPConnection\n"
+                             "HTTPConnection(source_address=None)"))
 
   def test_check_hostname_of_HTTPSConnection_from_http_client(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from http.client import HTTPSConnection\n"
-                                        "HTTPSConnection(check_hostname=None)"))
+                      detect("from http.client import HTTPSConnection\n"
+                             "HTTPSConnection(check_hostname=None)"))
 
   def test_context_of_HTTPSConnection_from_http_client(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from http.client import HTTPSConnection\n"
-                                        "HTTPSConnection(context=None)"))
+                      detect("from http.client import HTTPSConnection\n"
+                             "HTTPSConnection(context=None)"))
 
   def test_source_address_of_HTTPSConnection_from_http_client(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from http.client import HTTPSConnection\n"
-                                        "HTTPSConnection(source_address=None)"))
+                      detect("from http.client import HTTPSConnection\n"
+                             "HTTPSConnection(source_address=None)"))
 
   def test_disable_existing_loggers_of_fileConfig_from_logging_config(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
-                                 detect("from logging.config import fileConfig\n"
-                                        "fileConfig(disable_existing_loggers=None)"))
+                      detect("from logging.config import fileConfig\n"
+                             "fileConfig(disable_existing_loggers=None)"))
 
   def test_verify_of_listen_from_logging_config(self):
     self.assertOnlyIn((3, 4),
-                                 detect("from logging.config import listen\n"
-                                        "listen(verify=None)"))
+                      detect("from logging.config import listen\n"
+                             "listen(verify=None)"))
 
   def test_context_of_HTTPHandler_from_logging_handlers(self):
     self.assertOnlyIn((3, 5),
-                                 detect("from logging.handlers import HTTPHandler\n"
-                                        "HTTPHandler(context=None)"))
+                      detect("from logging.handlers import HTTPHandler\n"
+                             "HTTPHandler(context=None)"))
 
   def test_flushOnClose_of_MemoryHandler_from_logging_handlers(self):
     self.assertOnlyIn((3, 6),
-                                 detect("from logging.handlers import MemoryHandler\n"
-                                        "MemoryHandler(flushOnClose=None)"))
+                      detect("from logging.handlers import MemoryHandler\n"
+                             "MemoryHandler(flushOnClose=None)"))
 
   def test_respect_handler_level_of_QueueListener_from_logging_handlers(self):
     self.assertOnlyIn((3, 5),
-                                 detect("from logging.handlers import QueueListener\n"
-                                        "QueueListener(respect_handler_level=None)"))
+                      detect("from logging.handlers import QueueListener\n"
+                             "QueueListener(respect_handler_level=None)"))
 
   def test_delay_of_RotatingFileHandler_from_logging_handlers(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
-                                 detect("from logging.handlers import RotatingFileHandler\n"
-                                        "RotatingFileHandler(delay=None)"))
+                      detect("from logging.handlers import RotatingFileHandler\n"
+                             "RotatingFileHandler(delay=None)"))
 
   def test_credentials_of_SMTPHandler_from_logging_handlers(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
-                                 detect("from logging.handlers import SMTPHandler\n"
-                                        "SMTPHandler(credentials=None)"))
+                      detect("from logging.handlers import SMTPHandler\n"
+                             "SMTPHandler(credentials=None)"))
 
   def test_secure_of_SMTPHandler_from_logging_handlers(self):
     self.assertOnlyIn(((2, 7), (3, 0)),
-                                 detect("from logging.handlers import SMTPHandler\n"
-                                        "SMTPHandler(secure=None)"))
+                      detect("from logging.handlers import SMTPHandler\n"
+                             "SMTPHandler(secure=None)"))
 
   def test_timeout_of_SMTPHandler_from_logging_handlers(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from logging.handlers import SMTPHandler\n"
-                                        "SMTPHandler(timeout=None)"))
+                      detect("from logging.handlers import SMTPHandler\n"
+                             "SMTPHandler(timeout=None)"))
 
   def test_socktype_of_SysLogHandler_from_logging_handlers(self):
     self.assertOnlyIn(((2, 7), (3, 2)),
-                                 detect("from logging.handlers import SysLogHandler\n"
-                                        "SysLogHandler(socktype=None)"))
+                      detect("from logging.handlers import SysLogHandler\n"
+                             "SysLogHandler(socktype=None)"))
 
   def test_atTime_of_TimedRotatingFileHandler_from_logging_handlers(self):
     self.assertOnlyIn((3, 4),
-                                 detect("from logging.handlers import TimedRotatingFileHandler\n"
-                                        "TimedRotatingFileHandler(atTime=None)"))
+                      detect("from logging.handlers import TimedRotatingFileHandler\n"
+                             "TimedRotatingFileHandler(atTime=None)"))
 
   def test_delay_of_TimedRotatingFileHandler_from_logging_handlers(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
-                                 detect("from logging.handlers import TimedRotatingFileHandler\n"
-                                        "TimedRotatingFileHandler(delay=None)"))
+                      detect("from logging.handlers import TimedRotatingFileHandler\n"
+                             "TimedRotatingFileHandler(delay=None)"))
 
   def test_utc_of_TimedRotatingFileHandler_from_logging_handlers(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
-                                 detect("from logging.handlers import TimedRotatingFileHandler\n"
-                                        "TimedRotatingFileHandler(utc=None)"))
+                      detect("from logging.handlers import TimedRotatingFileHandler\n"
+                             "TimedRotatingFileHandler(utc=None)"))
 
   def test_context_of_Pool_from_multiprocessing_pool(self):
     self.assertOnlyIn((3, 4),
-                                 detect("from multiprocessing.pool import Pool\n"
-                                        "Pool(context=None)"))
+                      detect("from multiprocessing.pool import Pool\n"
+                             "Pool(context=None)"))
 
   def test_maxtasksperchild_of_Pool_from_multiprocessing_pool(self):
     self.assertOnlyIn(((2, 7), (3, 2)),
-                                 detect("from multiprocessing.pool import Pool\n"
-                                        "Pool(maxtasksperchild=None)"))
+                      detect("from multiprocessing.pool import Pool\n"
+                             "Pool(maxtasksperchild=None)"))
 
   def test_quiet_of_check_warnings_from_test_support(self):
     self.assertOnlyIn(((2, 7), (3, 2)),
-                                 detect("from test.support import check_warnings\n"
-                                        "check_warnings(quiet=None)"))
+                      detect("from test.support import check_warnings\n"
+                             "check_warnings(quiet=None)"))
 
   def test_encoding_of_parse_qs_from_urllib_parse(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from urllib.parse import parse_qs\n"
-                                        "parse_qs(encoding=None)"))
+                      detect("from urllib.parse import parse_qs\n"
+                             "parse_qs(encoding=None)"))
 
   def test_errors_of_parse_qs_from_urllib_parse(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from urllib.parse import parse_qs\n"
-                                        "parse_qs(errors=None)"))
+                      detect("from urllib.parse import parse_qs\n"
+                             "parse_qs(errors=None)"))
 
   def test_max_num_fields_of_parse_qs_from_urllib_parse(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from urllib.parse import parse_qs\n"
-                                        "parse_qs(max_num_fields=None)"))
+                      detect("from urllib.parse import parse_qs\n"
+                             "parse_qs(max_num_fields=None)"))
 
   def test_encoding_of_parse_qsl_from_urllib_parse(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from urllib.parse import parse_qsl\n"
-                                        "parse_qsl(encoding=None)"))
+                      detect("from urllib.parse import parse_qsl\n"
+                             "parse_qsl(encoding=None)"))
 
   def test_errors_of_parse_qsl_from_urllib_parse(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from urllib.parse import parse_qsl\n"
-                                        "parse_qsl(errors=None)"))
+                      detect("from urllib.parse import parse_qsl\n"
+                             "parse_qsl(errors=None)"))
 
   def test_max_num_fields_of_parse_qsl_from_urllib_parse(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from urllib.parse import parse_qsl\n"
-                                        "parse_qsl(max_num_fields=None)"))
+                      detect("from urllib.parse import parse_qsl\n"
+                             "parse_qsl(max_num_fields=None)"))
 
   def test_quote_via_of_urlencode_from_urllib_parse(self):
     self.assertOnlyIn((3, 5),
-                                 detect("from urllib.parse import urlencode\n"
-                                        "urlencode(quote_via=None)"))
+                      detect("from urllib.parse import urlencode\n"
+                             "urlencode(quote_via=None)"))
 
   def test_check_hostname_of_HTTPSHandler_from_urllib_request(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from urllib.request import HTTPSHandler\n"
-                                        "HTTPSHandler(check_hostname=None)"))
+                      detect("from urllib.request import HTTPSHandler\n"
+                             "HTTPSHandler(check_hostname=None)"))
 
   def test_context_of_HTTPSHandler_from_urllib_request(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from urllib.request import HTTPSHandler\n"
-                                        "HTTPSHandler(context=None)"))
+                      detect("from urllib.request import HTTPSHandler\n"
+                             "HTTPSHandler(context=None)"))
 
   def test_method_of_Request_from_urllib_request(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from urllib.request import Request\n"
-                                        "Request(method=None)"))
+                      detect("from urllib.request import Request\n"
+                             "Request(method=None)"))
 
   def test_cadefault_of_urlopen_from_urllib_request(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from urllib.request import urlopen\n"
-                                        "urlopen(cadefault=None)"))
+                      detect("from urllib.request import urlopen\n"
+                             "urlopen(cadefault=None)"))
 
   def test_cafile_of_urlopen_from_urllib_request(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from urllib.request import urlopen\n"
-                                        "urlopen(cafile=None)"))
+                      detect("from urllib.request import urlopen\n"
+                             "urlopen(cafile=None)"))
 
   def test_capath_of_urlopen_from_urllib_request(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from urllib.request import urlopen\n"
-                                        "urlopen(capath=None)"))
+                      detect("from urllib.request import urlopen\n"
+                             "urlopen(capath=None)"))
 
   def test_context_of_urlopen_from_urllib_request(self):
     self.assertOnlyIn((3, 4),
-                                 detect("from urllib.request import urlopen\n"
-                                        "urlopen(context=None)"))
+                      detect("from urllib.request import urlopen\n"
+                             "urlopen(context=None)"))
 
   def test_context_of_ServerProxy_from_xmlrpc_client(self):
     self.assertOnlyIn((3, 4),
-                                 detect("from xmlrpc.client import ServerProxy\n"
-                                        "ServerProxy(context=None)"))
+                      detect("from xmlrpc.client import ServerProxy\n"
+                             "ServerProxy(context=None)"))
 
   def test_headers_of_ServerProxy_from_xmlrpc_client(self):
     self.assertOnlyIn((3, 8),
-                                 detect("from xmlrpc.client import ServerProxy\n"
-                                        "ServerProxy(headers=None)"))
+                      detect("from xmlrpc.client import ServerProxy\n"
+                             "ServerProxy(headers=None)"))
 
   def test_use_builtin_types_of_ServerProxy_from_xmlrpc_client(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from xmlrpc.client import ServerProxy\n"
-                                        "ServerProxy(use_builtin_types=None)"))
+                      detect("from xmlrpc.client import ServerProxy\n"
+                             "ServerProxy(use_builtin_types=None)"))
 
   def test_use_builtin_types_of_loads_from_xmlrpc_client(self):
     self.assertOnlyIn((3, 3),
-                                 detect("from xmlrpc.client import loads\n"
-                                        "loads(use_builtin_types=None)"))
+                      detect("from xmlrpc.client import loads\n"
+                             "loads(use_builtin_types=None)"))
 
   def test_short_empty_elements_of_XMLGenerator_from_xml_sax_saxutils(self):
     self.assertOnlyIn((3, 2),
-                                 detect("from xml.sax.saxutils import XMLGenerator\n"
-                                        "XMLGenerator(short_empty_elements=None)"))
+                      detect("from xml.sax.saxutils import XMLGenerator\n"
+                             "XMLGenerator(short_empty_elements=None)"))
 
   def test_timestamp_of_date_time_string_from_BaseHTTPServer_BaseHTTPRequestHandler(self):
     self.assertOnlyIn((2, 5),

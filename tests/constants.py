@@ -2,6 +2,7 @@ from vermin import Config
 
 from .testutils import VerminTest, detect
 
+
 class VerminConstantMemberTests(VerminTest):
   def __init__(self, methodName):
     super(VerminConstantMemberTests, self).__init__(methodName)
@@ -47,7 +48,8 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("from sys import flags"))
 
   def test_supports_unicode_filenames_of_os_path(self):
-    self.assertOnlyIn(((2, 3), (3, 0)), detect("from os.path import supports_unicode_filenames"))
+    self.assertOnlyIn(((2, 3), (3, 0)), detect(
+        "from os.path import supports_unicode_filenames"))
 
   def test_supports_bytes_environ_of_os(self):
     self.assertOnlyIn((3, 2), detect("from os import supports_bytes_environ"))
@@ -366,7 +368,8 @@ class VerminConstantMemberTests(VerminTest):
                       detect("from ssl import ALERT_DESCRIPTION_HANDSHAKE_FAILURE"))
 
   def test_ALERT_DESCRIPTION_INTERNAL_ERROR_of_ssl(self):
-    self.assertOnlyIn(((2, 7), (3, 4)), detect("from ssl import ALERT_DESCRIPTION_INTERNAL_ERROR"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect(
+        "from ssl import ALERT_DESCRIPTION_INTERNAL_ERROR"))
 
   def test_context_of_ssl_SSLSocket(self):
     self.assertOnlyIn(((2, 7), (3, 2)), detect("from ssl import SSLSocket\nSSLSocket.context"))
@@ -390,7 +393,8 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn((3, 4), detect("from ssl import SSLContext\nSSLContext.verify_flags"))
 
   def test_post_handshake_auth_of_ssl_SSLContext(self):
-    self.assertOnlyIn((3, 8), detect("from ssl import SSLContext\nSSLContext.post_handshake_auth"))
+    self.assertOnlyIn((3, 8), detect(
+        "from ssl import SSLContext\nSSLContext.post_handshake_auth"))
 
   def test_hostname_checks_common_name_of_ssl_SSLContext(self):
     self.assertOnlyIn((3, 7),
@@ -412,10 +416,12 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn((3, 3), detect("from subprocess import DEVNULL"))
 
   def test_pax_headers_of_tarfile_TarFile(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from tarfile import TarFile\nTarFile.pax_headers"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "from tarfile import TarFile\nTarFile.pax_headers"))
 
   def test_pax_headers_of_tarfile_TarInfo(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from tarfile import TarInfo\nTarInfo.pax_headers"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "from tarfile import TarInfo\nTarInfo.pax_headers"))
 
   def test_args_of_subprocess_Popen(self):
     self.assertOnlyIn((3, 3), detect("from subprocess import Popen\nPopen.args"))
@@ -461,7 +467,8 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn((3, 7), detect("from contextvars import ContextVar\nContextVar.name"))
 
   def test_SOURCE_SUFFIXES_of_importlib_machinery(self):
-    self.assertOnlyIn((3, 3), detect("from importlib import machinery\nmachinery.SOURCE_SUFFIXES"))
+    self.assertOnlyIn((3, 3), detect(
+        "from importlib import machinery\nmachinery.SOURCE_SUFFIXES"))
 
   def test_DEBUG_BYTECODE_SUFFIXES_of_importlib_machinery(self):
     self.assertOnlyIn((3, 3),
@@ -2136,10 +2143,12 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_BAD_CERTIFICATE"))
 
   def test_ALERT_DESCRIPTION_BAD_CERTIFICATE_HASH_VALUE_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_BAD_CERTIFICATE_HASH_VALUE"))
+    self.assertOnlyIn((3, 4), detect(
+        "from ssl import ALERT_DESCRIPTION_BAD_CERTIFICATE_HASH_VALUE"))
 
   def test_ALERT_DESCRIPTION_BAD_CERTIFICATE_STATUS_RESPONSE_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_BAD_CERTIFICATE_STATUS_RESPONSE"))
+    self.assertOnlyIn((3, 4), detect(
+        "from ssl import ALERT_DESCRIPTION_BAD_CERTIFICATE_STATUS_RESPONSE"))
 
   def test_ALERT_DESCRIPTION_BAD_RECORD_MAC_of_ssl(self):
     self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_BAD_RECORD_MAC"))
@@ -2154,7 +2163,8 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_CERTIFICATE_UNKNOWN"))
 
   def test_ALERT_DESCRIPTION_CERTIFICATE_UNOBTAINABLE_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_CERTIFICATE_UNOBTAINABLE"))
+    self.assertOnlyIn((3, 4), detect(
+        "from ssl import ALERT_DESCRIPTION_CERTIFICATE_UNOBTAINABLE"))
 
   def test_ALERT_DESCRIPTION_CLOSE_NOTIFY_of_ssl(self):
     self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_CLOSE_NOTIFY"))
@@ -2196,7 +2206,8 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_UNRECOGNIZED_NAME"))
 
   def test_ALERT_DESCRIPTION_UNSUPPORTED_CERTIFICATE_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_UNSUPPORTED_CERTIFICATE"))
+    self.assertOnlyIn((3, 4), detect(
+        "from ssl import ALERT_DESCRIPTION_UNSUPPORTED_CERTIFICATE"))
 
   def test_ALERT_DESCRIPTION_UNSUPPORTED_EXTENSION_of_ssl(self):
     self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_UNSUPPORTED_EXTENSION"))
@@ -2846,7 +2857,8 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn(((2, 1), (3, 0)), detect("from xml.dom import NO_DATA_ALLOWED_ERR"))
 
   def test_NO_MODIFICATION_ALLOWED_ERR_of_xml_dom(self):
-    self.assertOnlyIn(((2, 1), (3, 0)), detect("from xml.dom import NO_MODIFICATION_ALLOWED_ERR"))
+    self.assertOnlyIn(((2, 1), (3, 0)), detect(
+        "from xml.dom import NO_MODIFICATION_ALLOWED_ERR"))
 
   def test_SYNTAX_ERR_of_xml_dom(self):
     self.assertOnlyIn(((2, 1), (3, 0)), detect("from xml.dom import SYNTAX_ERR"))

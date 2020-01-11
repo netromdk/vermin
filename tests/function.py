@@ -2,6 +2,7 @@ from vermin import Config
 
 from .testutils import VerminTest, detect
 
+
 class VerminFunctionMemberTests(VerminTest):
   def __init__(self, methodName):
     super(VerminFunctionMemberTests, self).__init__(methodName)
@@ -152,14 +153,16 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((3, 4), detect("from os import set_handle_inheritable"))
 
   def test_starmap_of_multiprocessing_Pool(self):
-    self.assertOnlyIn((3, 3), detect("from multiprocessing import Pool\np = Pool()\np.starmap()"))
+    self.assertOnlyIn((3, 3), detect(
+        "from multiprocessing import Pool\np = Pool()\np.starmap()"))
 
   def test_starmap_async_of_multiprocessing_Pool(self):
     self.assertOnlyIn((3, 3),
                       detect("from multiprocessing import Pool\np = Pool()\np.starmap_async()"))
 
   def test_wait_of_multiprocessing_connection(self):
-    self.assertOnlyIn((3, 3), detect("from multiprocessing import connection\nconnection.wait()"))
+    self.assertOnlyIn((3, 3), detect(
+        "from multiprocessing import connection\nconnection.wait()"))
 
   def test_get_all_start_methods_of_multiprocessing(self):
     self.assertOnlyIn((3, 4), detect("from multiprocessing import get_all_start_methods"))
@@ -265,7 +268,8 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((3, 2), detect("from unittest import TestCase\nTestCase.assertRegex()"))
 
   def test_assertNotRegex_of_unittest_TestCase(self):
-    self.assertOnlyIn((3, 2), detect("from unittest import TestCase\nTestCase.assertNotRegex()"))
+    self.assertOnlyIn((3, 2), detect(
+        "from unittest import TestCase\nTestCase.assertNotRegex()"))
 
   def test_assertSetEqual_of_unittest_TestCase(self):
     self.assertOnlyIn(((2, 7), (3, 1)),
@@ -302,7 +306,8 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((3, 8), detect("from unittest import doModuleCleanups"))
 
   def test_total_seconds_of_datetime_timedelta(self):
-    self.assertOnlyIn(((2, 7), (3, 2)), detect("from datetime import timedelta\ntimedelta.total_seconds()"))
+    self.assertOnlyIn(((2, 7), (3, 2)), detect(
+        "from datetime import timedelta\ntimedelta.total_seconds()"))
 
   def test_timestamp_of_datetime_datetime(self):
     self.assertOnlyIn((3, 3), detect("from datetime import datetime\ndatetime.timestamp()"))
@@ -405,14 +410,16 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import ctypes\nctypes.set_last_error()"))
 
   def test_from_buffer_of_ctypes__CData(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from ctypes import _CData\n_CData.from_buffer()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "from ctypes import _CData\n_CData.from_buffer()"))
 
   def test_from_buffer_copy_of_ctypes__CData(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
                       detect("from ctypes import _CData\n_CData.from_buffer_copy()"))
 
   def test_canonical_of_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.canonical()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "from decimal import Decimal\nDecimal.canonical()"))
 
   def test_compare_signal_of_decimal_Decimal(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
@@ -427,23 +434,27 @@ class VerminFunctionMemberTests(VerminTest):
                       detect("from decimal import Decimal\nDecimal.compare_total_mag()"))
 
   def test_conjugate_of_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.conjugate()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "from decimal import Decimal\nDecimal.conjugate()"))
 
   def test_copy_abs_of_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.copy_abs()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "from decimal import Decimal\nDecimal.copy_abs()"))
 
   def test_copy_negate_of_decimal_Decimal(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
                       detect("from decimal import Decimal\nDecimal.copy_negate()"))
 
   def test_copy_sign_of_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.copy_sign()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "from decimal import Decimal\nDecimal.copy_sign()"))
 
   def test_exp_of_decimal_Decimal(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.exp()"))
 
   def test_from_float_of_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 7), (3, 1)), detect("from decimal import Decimal\nDecimal.from_float()"))
+    self.assertOnlyIn(((2, 7), (3, 1)), detect(
+        "from decimal import Decimal\nDecimal.from_float()"))
 
   def test_fma_of_decimal_Decimal(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.fma()"))
@@ -453,7 +464,8 @@ class VerminFunctionMemberTests(VerminTest):
                       detect("from decimal import Decimal\nDecimal.is_canonical()"))
 
   def test_is_finite_of_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.is_finite()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "from decimal import Decimal\nDecimal.is_finite()"))
 
   def test_is_infinite_of_decimal_Decimal(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
@@ -463,23 +475,28 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.is_nan()"))
 
   def test_is_normal_of_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.is_normal()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "from decimal import Decimal\nDecimal.is_normal()"))
 
   def test_is_qnan_of_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.is_qnan()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "from decimal import Decimal\nDecimal.is_qnan()"))
 
   def test_is_signed_of_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.is_signed()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "from decimal import Decimal\nDecimal.is_signed()"))
 
   def test_is_snan_of_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.is_snan()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "from decimal import Decimal\nDecimal.is_snan()"))
 
   def test_is_subnormal_of_decimal_Decimal(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
                       detect("from decimal import Decimal\nDecimal.is_subnormal()"))
 
   def test_is_zero_of_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.is_zero()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "from decimal import Decimal\nDecimal.is_zero()"))
 
   def test_ln_of_decimal_Decimal(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.ln()"))
@@ -499,23 +516,28 @@ class VerminFunctionMemberTests(VerminTest):
                       detect("from decimal import Decimal\nDecimal.logical_invert()"))
 
   def test_logical_or_of_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.logical_or()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "from decimal import Decimal\nDecimal.logical_or()"))
 
   def test_logical_xor_of_decimal_Decimal(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
                       detect("from decimal import Decimal\nDecimal.logical_xor()"))
 
   def test_max_mag_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.max_mag()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "from decimal import Decimal\nDecimal.max_mag()"))
 
   def test_min_mag_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.min_mag()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "from decimal import Decimal\nDecimal.min_mag()"))
 
   def test_next_minus_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.next_minus()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "from decimal import Decimal\nDecimal.next_minus()"))
 
   def test_next_plus_decimal_Decimal(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from decimal import Decimal\nDecimal.next_plus()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "from decimal import Decimal\nDecimal.next_plus()"))
 
   def test_next_toward_decimal_Decimal(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
@@ -744,13 +766,15 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import platform\nplatform.python_branch()"))
 
   def test_python_implementation_from_platform(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("import platform\nplatform.python_implementation()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "import platform\nplatform.python_implementation()"))
 
   def test_python_revision_from_platform(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import platform\nplatform.python_revision()"))
 
   def test_linux_distribution_from_platform(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("import platform\nplatform.linux_distribution()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "import platform\nplatform.linux_distribution()"))
 
   def test_run_path_from_runpy(self):
     self.assertOnlyIn(((2, 7), (3, 2)), detect("import runpy\nrunpy.run_path()"))
@@ -907,10 +931,12 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(((2, 7), (3, 1)), detect("import subprocess\nsubprocess.check_output()"))
 
   def test_send_signal_from_subprocess_Popen(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from subprocess import Popen\nPopen.send_signal()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "from subprocess import Popen\nPopen.send_signal()"))
 
   def test_terminate_from_subprocess_Popen(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("from subprocess import Popen\nPopen.terminate()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "from subprocess import Popen\nPopen.terminate()"))
 
   def test_kill_from_subprocess_Popen(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("from subprocess import Popen\nPopen.kill()"))
@@ -919,7 +945,8 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((3, 5), detect("import subprocess\nsubprocess.run()"))
 
   def test_extractall_from_tarfile_TarFile(self):
-    self.assertOnlyIn(((2, 5), (3, 0)), detect("from tarfile import TarFile\nTarFile.extractall()"))
+    self.assertOnlyIn(((2, 5), (3, 0)), detect(
+        "from tarfile import TarFile\nTarFile.extractall()"))
 
   def test_fromtarfile_from_tarfile_TarInfo(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
@@ -965,7 +992,8 @@ class VerminFunctionMemberTests(VerminTest):
                              "wkd.valuerefs()"))
 
   def test_read_environ_from_wsgiref_handlers(self):
-    self.assertOnlyIn((3, 2), detect("import wsgiref.handlers\nwsgiref.handlers.read_environ()"))
+    self.assertOnlyIn((3, 2), detect(
+        "import wsgiref.handlers\nwsgiref.handlers.read_environ()"))
 
   def test_fromstringlist_from_xml_etree_ElementTree(self):
     self.assertOnlyIn(((2, 7), (3, 2)),
@@ -1196,7 +1224,8 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((3, 5), detect("from pathlib import Path\np=Path('foo')\np.samefile()"))
 
   def test_write_bytes_from_path(self):
-    self.assertOnlyIn((3, 5), detect("from pathlib import Path\np=Path('foo')\np.write_bytes()"))
+    self.assertOnlyIn((3, 5), detect(
+        "from pathlib import Path\np=Path('foo')\np.write_bytes()"))
 
   def test_write_text_from_path(self):
     self.assertOnlyIn((3, 5), detect("from pathlib import Path\np=Path('foo')\np.write_text()"))
@@ -1253,7 +1282,8 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((3, 4), detect("from importlib import util\nutil.spec_from_loader"))
 
   def test_spec_from_file_location_of_importlib_util(self):
-    self.assertOnlyIn((3, 4), detect("from importlib import util\nutil.spec_from_file_location"))
+    self.assertOnlyIn((3, 4), detect(
+        "from importlib import util\nutil.spec_from_file_location"))
 
   def test_source_hash_of_importlib_util(self):
     self.assertOnlyIn((3, 7), detect("from importlib import util\nutil.source_hash"))
@@ -1347,7 +1377,8 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((3, 1), detect("import base64\nbase64.encodebytes()"))
 
   def test_bpformat_of_bdb_Breakpoint(self):
-    self.assertOnlyIn((3, 2), detect("from bdb import Breakpoint\nbp=Breakpoint()\nbp.bpformat()"))
+    self.assertOnlyIn((3, 2), detect(
+        "from bdb import Breakpoint\nbp=Breakpoint()\nbp.bpformat()"))
 
   def test_get_bpbynumber_of_bdb_Bdb(self):
     self.assertOnlyIn((3, 2), detect("from bdb import Bdb\nbp=Bdb()\nbp.get_bpbynumber()"))
@@ -1395,7 +1426,8 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((3, 8), detect("from datetime import date\ndate.fromisocalendar()"))
 
   def test_fromisocalendar_of_datetime_datetime(self):
-    self.assertOnlyIn((3, 8), detect("from datetime import datetime\ndatetime.fromisocalendar()"))
+    self.assertOnlyIn((3, 8), detect(
+        "from datetime import datetime\ndatetime.fromisocalendar()"))
 
   def test_code_info_of_dis(self):
     self.assertOnlyIn((3, 2), detect("import dis\ndis.code_info()"))
@@ -1635,16 +1667,20 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((3, 2), detect("from smtplib import SMTP\nSMTP.send_message"))
 
   def test_dictConfig_from_logging_config(self):
-    self.assertOnlyIn(((2, 7), (3, 2)), detect("import logging.config\nlogging.config.dictConfig()"))
+    self.assertOnlyIn(((2, 7), (3, 2)), detect(
+        "import logging.config\nlogging.config.dictConfig()"))
 
   def test_captured_stdout_from_test_support(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("import test.support\ntest.support.captured_stdout()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "import test.support\ntest.support.captured_stdout()"))
 
   def test_catch_threading_exception_from_test_support(self):
-    self.assertOnlyIn((3, 8), detect("import test.support\ntest.support.catch_threading_exception()"))
+    self.assertOnlyIn((3, 8), detect(
+        "import test.support\ntest.support.catch_threading_exception()"))
 
   def test_catch_unraisable_exception_from_test_support(self):
-    self.assertOnlyIn((3, 8), detect("import test.support\ntest.support.catch_unraisable_exception()"))
+    self.assertOnlyIn((3, 8), detect(
+        "import test.support\ntest.support.catch_unraisable_exception()"))
 
   def test_check__all___from_test_support(self):
     self.assertOnlyIn((3, 6), detect("import test.support\ntest.support.check__all__()"))
@@ -1653,28 +1689,34 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((2, 7), detect("import test.support\ntest.support.check_py3k_warnings()"))
 
   def test_check_syntax_warning_from_test_support(self):
-    self.assertOnlyIn((3, 8), detect("import test.support\ntest.support.check_syntax_warning()"))
+    self.assertOnlyIn((3, 8), detect(
+        "import test.support\ntest.support.check_syntax_warning()"))
 
   def test_check_warnings_from_test_support(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("import test.support\ntest.support.check_warnings()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "import test.support\ntest.support.check_warnings()"))
 
   def test_detect_api_mismatch_from_test_support(self):
     self.assertOnlyIn((3, 5), detect("import test.support\ntest.support.detect_api_mismatch()"))
 
   def test_import_fresh_module_from_test_support(self):
-    self.assertOnlyIn(((2, 7), (3, 1)), detect("import test.support\ntest.support.import_fresh_module()"))
+    self.assertOnlyIn(((2, 7), (3, 1)), detect(
+        "import test.support\ntest.support.import_fresh_module()"))
 
   def test_import_module_from_test_support(self):
-    self.assertOnlyIn(((2, 7), (3, 1)), detect("import test.support\ntest.support.import_module()"))
+    self.assertOnlyIn(((2, 7), (3, 1)), detect(
+        "import test.support\ntest.support.import_module()"))
 
   def test_seal_from_unittest_mock(self):
     self.assertOnlyIn((3, 7), detect("import unittest.mock\nunittest.mock.seal()"))
 
   def test_quoteattr_from_xml_sax_saxutils(self):
-    self.assertOnlyIn(((2, 2), (3, 0)), detect("import xml.sax.saxutils\nxml.sax.saxutils.quoteattr()"))
+    self.assertOnlyIn(((2, 2), (3, 0)), detect(
+        "import xml.sax.saxutils\nxml.sax.saxutils.quoteattr()"))
 
   def test_unescape_from_xml_sax_saxutils(self):
-    self.assertOnlyIn(((2, 3), (3, 0)), detect("import xml.sax.saxutils\nxml.sax.saxutils.unescape()"))
+    self.assertOnlyIn(((2, 3), (3, 0)), detect(
+        "import xml.sax.saxutils\nxml.sax.saxutils.unescape()"))
 
   def test_set_from_ConfigParser_SafeConfigParser(self):
     self.assertOnlyIn((2, 4),
@@ -1996,10 +2038,12 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(((2, 4), (3, 0)), detect("import doctest\ndoctest.register_optionflag()"))
 
   def test_script_from_examples_from_doctest(self):
-    self.assertOnlyIn(((2, 4), (3, 0)), detect("import doctest\ndoctest.script_from_examples()"))
+    self.assertOnlyIn(((2, 4), (3, 0)), detect(
+        "import doctest\ndoctest.script_from_examples()"))
 
   def test_set_unittest_reportflags_from_doctest(self):
-    self.assertOnlyIn(((2, 4), (3, 0)), detect("import doctest\ndoctest.set_unittest_reportflags()"))
+    self.assertOnlyIn(((2, 4), (3, 0)), detect(
+        "import doctest\ndoctest.set_unittest_reportflags()"))
 
   def test_testfile_from_doctest(self):
     self.assertOnlyIn(((2, 4), (3, 0)), detect("import doctest\ndoctest.testfile()"))
@@ -2229,7 +2273,8 @@ class VerminFunctionMemberTests(VerminTest):
                              "NullTranslations().ungettext()"))
 
   def test_bind_textdomain_codeset_from_gettext(self):
-    self.assertOnlyIn(((2, 4), (3, 0)), detect("import gettext\ngettext.bind_textdomain_codeset()"))
+    self.assertOnlyIn(((2, 4), (3, 0)), detect(
+        "import gettext\ngettext.bind_textdomain_codeset()"))
 
   def test_dngettext_from_gettext(self):
     self.assertOnlyIn(((2, 3), (3, 0)), detect("import gettext\ngettext.dngettext()"))
@@ -2608,7 +2653,8 @@ class VerminFunctionMemberTests(VerminTest):
                              "Condition().wait_for()"))
 
   def test_parent_process_from_multiprocessing(self):
-    self.assertOnlyIn((3, 8), detect("import multiprocessing\nmultiprocessing.parent_process()"))
+    self.assertOnlyIn((3, 8), detect(
+        "import multiprocessing\nmultiprocessing.parent_process()"))
 
   def test_get_default_domain_from_nis(self):
     self.assertOnlyIn(((2, 5), (3, 0)), detect("import nis\nnis.get_default_domain()"))
@@ -2932,28 +2978,34 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(((2, 3), (3, 0)), detect("import readline\nreadline.get_completer()"))
 
   def test_get_completion_type_from_readline(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("import readline\nreadline.get_completion_type()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "import readline\nreadline.get_completion_type()"))
 
   def test_get_current_history_length_from_readline(self):
-    self.assertOnlyIn(((2, 3), (3, 0)), detect("import readline\nreadline.get_current_history_length()"))
+    self.assertOnlyIn(((2, 3), (3, 0)), detect(
+        "import readline\nreadline.get_current_history_length()"))
 
   def test_get_history_item_from_readline(self):
     self.assertOnlyIn(((2, 3), (3, 0)), detect("import readline\nreadline.get_history_item()"))
 
   def test_remove_history_item_from_readline(self):
-    self.assertOnlyIn(((2, 4), (3, 0)), detect("import readline\nreadline.remove_history_item()"))
+    self.assertOnlyIn(((2, 4), (3, 0)), detect(
+        "import readline\nreadline.remove_history_item()"))
 
   def test_replace_history_item_from_readline(self):
-    self.assertOnlyIn(((2, 4), (3, 0)), detect("import readline\nreadline.replace_history_item()"))
+    self.assertOnlyIn(((2, 4), (3, 0)), detect(
+        "import readline\nreadline.replace_history_item()"))
 
   def test_set_auto_history_from_readline(self):
     self.assertOnlyIn((3, 6), detect("import readline\nreadline.set_auto_history()"))
 
   def test_set_completion_display_matches_hook_from_readline(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("import readline\nreadline.set_completion_display_matches_hook()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "import readline\nreadline.set_completion_display_matches_hook()"))
 
   def test_set_pre_input_hook_from_readline(self):
-    self.assertOnlyIn(((2, 3), (3, 0)), detect("import readline\nreadline.set_pre_input_hook()"))
+    self.assertOnlyIn(((2, 3), (3, 0)), detect(
+        "import readline\nreadline.set_pre_input_hook()"))
 
   def test_set_startup_hook_from_readline(self):
     self.assertOnlyIn(((2, 3), (3, 0)), detect("import readline\nreadline.set_startup_hook()"))
@@ -3028,7 +3080,8 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(((2, 3), (3, 0)), detect("import shutil\nshutil.move()"))
 
   def test_register_archive_format_from_shutil(self):
-    self.assertOnlyIn(((2, 7), (3, 2)), detect("import shutil\nshutil.register_archive_format()"))
+    self.assertOnlyIn(((2, 7), (3, 2)), detect(
+        "import shutil\nshutil.register_archive_format()"))
 
   def test_register_unpack_format_from_shutil(self):
     self.assertOnlyIn((3, 2), detect("import shutil\nshutil.register_unpack_format()"))
@@ -3037,7 +3090,8 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((3, 2), detect("import shutil\nshutil.unpack_archive()"))
 
   def test_unregister_archive_format_from_shutil(self):
-    self.assertOnlyIn(((2, 7), (3, 2)), detect("import shutil\nshutil.unregister_archive_format()"))
+    self.assertOnlyIn(((2, 7), (3, 2)), detect(
+        "import shutil\nshutil.unregister_archive_format()"))
 
   def test_unregister_unpack_format_from_shutil(self):
     self.assertOnlyIn((3, 2), detect("import shutil\nshutil.unregister_unpack_format()"))
@@ -3266,10 +3320,12 @@ class VerminFunctionMemberTests(VerminTest):
                              "Telnet().read_sb_data()"))
 
   def test_NamedTemporaryFile_from_tempfile(self):
-    self.assertOnlyIn(((2, 3), (3, 0)), detect("import tempfile\ntempfile.NamedTemporaryFile()"))
+    self.assertOnlyIn(((2, 3), (3, 0)), detect(
+        "import tempfile\ntempfile.NamedTemporaryFile()"))
 
   def test_SpooledTemporaryFile_from_tempfile(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("import tempfile\ntempfile.SpooledTemporaryFile()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect(
+        "import tempfile\ntempfile.SpooledTemporaryFile()"))
 
   def test_TemporaryDirectory_from_tempfile(self):
     self.assertOnlyIn((3, 2), detect("import tempfile\ntempfile.TemporaryDirectory()"))
@@ -3307,8 +3363,8 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_is_set_from_threading_Event(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
-                    detect("from threading import Event\n"
-                           "Event().is_set()"))
+                      detect("from threading import Event\n"
+                             "Event().is_set()"))
 
   def test_is_alive_from_threading_Thread(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
@@ -3376,7 +3432,8 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((3, 7), detect("import types\ntypes.resolve_bases()"))
 
   def test_east_asian_width_from_unicodedata(self):
-    self.assertOnlyIn(((2, 4), (3, 0)), detect("import unicodedata\nunicodedata.east_asian_width()"))
+    self.assertOnlyIn(((2, 4), (3, 0)), detect(
+        "import unicodedata\nunicodedata.east_asian_width()"))
 
   def test_normalize_from_unicodedata(self):
     self.assertOnlyIn(((2, 3), (3, 0)), detect("import unicodedata\nunicodedata.normalize()"))
