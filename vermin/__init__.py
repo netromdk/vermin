@@ -3,8 +3,8 @@ from .detection import detect_paths, probably_python_file
 from .source_visitor import SourceVisitor
 from .parser import Parser
 from .processor import Processor, process_individual
-from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, ARRAY_TYPECODE_REQS,\
-  CODECS_ERROR_HANDLERS, CODECS_ENCODINGS
+from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, BYTES_REQS,\
+  ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS, CODECS_ENCODINGS
 from .arguments import Arguments
 from .config import Config
 from .utility import reverse_range, dotted_name, combine_versions, InvalidVersionException
@@ -13,6 +13,7 @@ from .backports import Backports
 __all__ = [
   "ARRAY_TYPECODE_REQS",
   "Arguments",
+  "BYTES_REQS",
   "Backports",
   "CODECS_ENCODINGS",
   "CODECS_ERROR_HANDLERS",
