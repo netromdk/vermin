@@ -40,6 +40,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__seen_await = 0
     self.__await_in_comprehension = False
     self.__named_exprs = False
+    self.__kw_only_args = False
     self.__pos_only_args = False
     self.__yield_from = False
     self.__raise_cause = False
@@ -149,6 +150,9 @@ class SourceVisitor(ast.NodeVisitor):
 
   def await_in_comprehension(self):
     return self.__await_in_comprehension
+
+  def kw_only_args(self):
+    return self.__kw_only_args
 
   def pos_only_args(self):
     return self.__pos_only_args
@@ -266,6 +270,9 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.named_expressions():
       mins = combine_versions(mins, (None, (3, 8)))
+
+    if self.kw_only_args():
+      mins = combine_versions(mins, (None, (3, 0)))
 
     if self.pos_only_args():
       mins = combine_versions(mins, (None, (3, 8)))
@@ -1032,6 +1039,9 @@ class SourceVisitor(ast.NodeVisitor):
     self.generic_visit(node)
 
   def visit_arguments(self, node):
+    if hasattr(node, "kwonlyargs") and len(node.kwonlyargs) > 0:
+      self.__kw_only_args = True
+      self.__vvprint("keyword-only parameters require 3+")
     if hasattr(node, "posonlyargs") and len(node.posonlyargs) > 0:
       self.__pos_only_args = True
       self.__vvprint("positional-only parameters require 3.8+")
