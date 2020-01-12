@@ -174,6 +174,12 @@ class VerminLanguageTests(VerminTest):
       self.assertTrue(visitor.named_expressions())
       self.assertOnlyIn((3, 8), visitor.minimum_versions())
 
+  def test_kw_only_args(self):
+    if current_version() >= 3.0:
+      visitor = visit("def foo(a, *, b): return a + b")
+      self.assertTrue(visitor.kw_only_args())
+      self.assertOnlyIn((3, 0), visitor.minimum_versions())
+
   def test_pos_only_args(self):
     if current_version() >= 3.8:
       visitor = visit("def foo(a, /, b): return a + b")
