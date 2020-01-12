@@ -7,7 +7,7 @@ from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, ARRAY_TYP
 from .config import Config
 from .utility import dotted_name, reverse_range, combine_versions, version_strings
 
-STRFTIME_DIRECTIVE_REGEX = re.compile(r"(%\w)")
+STRFTIME_DIRECTIVE_REGEX = re.compile(r"%(?:[-\.\d#\s\+])*(\w)")
 
 class SourceVisitor(ast.NodeVisitor):
   def __init__(self, config=None):

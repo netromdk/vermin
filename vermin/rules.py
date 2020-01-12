@@ -2930,10 +2930,11 @@ KWARGS_REQS = {
 
 # datetime+time strftime/strptime requirements: directive -> requirements
 STRFTIME_REQS = {
-  "%G": (None, (3, 6)),
-  "%V": (None, (3, 6)),
-  "%f": ((2, 6), (3, 0)),
-  "%u": (None, (3, 6)),
+  "G": (None, (3, 6)),
+  "V": (None, (3, 6)),
+  "f": ((2, 6), (3, 0)),
+  "u": (None, (3, 6)),
+}
 }
 
 # array.array typecode requirements: typecode -> requirements
