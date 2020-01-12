@@ -3299,6 +3299,9 @@ class VerminFunctionMemberTests(VerminTest):
   def test_is_finalizing_from_sys(self):
     self.assertOnlyIn((3, 5), detect("import sys\nsys.is_finalizing()"))
 
+  def test_set_asyncgen_hooks_from_sys(self):
+    self.assertOnlyIn((3, 6), detect("import sys\nsys.set_asyncgen_hooks()"))
+
   def test_set_coroutine_origin_tracking_depth_from_sys(self):
     self.assertOnlyIn((3, 7), detect("import sys\nsys.set_coroutine_origin_tracking_depth()"))
 

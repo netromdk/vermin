@@ -31,6 +31,9 @@ class VerminClassMemberTests(VerminTest):
   def test_ABC_of_abc(self):
     self.assertOnlyIn((3, 4), detect("from abc import ABC"))
 
+  def test_BufferedProtocol_of_asyncio(self):
+    self.assertOnlyIn((3, 7), detect("from asyncio import BufferedProtocol"))
+
   def test_MultiLoopChildWatcher_of_asyncio(self):
     self.assertOnlyIn((3, 8), detect("from asyncio import MultiLoopChildWatcher"))
 

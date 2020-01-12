@@ -248,10 +248,10 @@ class VerminModuleTests(VerminTest):
     self.assertOnlyIn((3, 3), detect("import email.policy"))
 
   def test_email_contentmanager(self):
-    self.assertOnlyIn((3, 6), detect("import email.contentmanager"))
+    self.assertOnlyIn((3, 4), detect("import email.contentmanager"))
 
   def test_email_headerregistry(self):
-    self.assertOnlyIn((3, 6), detect("import email.headerregistry"))
+    self.assertOnlyIn((3, 3), detect("import email.headerregistry"))
 
   def test_encodings_idna(self):
     self.assertOnlyIn(((2, 3), (3, 0)), detect("import encodings.idna"))
