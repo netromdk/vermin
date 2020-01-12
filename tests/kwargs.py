@@ -210,11 +210,11 @@ class VerminKwargsTests(VerminTest):
                              "x = Sequence()\n"
                              "x.index(stop=None)"))
 
-def test_start_of_index_from_collections_abc_Sequence(self):
-  self.assertOnlyIn((3, 5),
-                    detect("from collections.abc import Sequence\n"
-                           "x = Sequence()\n"
-                           "x.index(start=None)"))
+  def test_start_of_index_from_collections_abc_Sequence(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from collections.abc import Sequence\n"
+                             "x = Sequence()\n"
+                             "x.index(start=None)"))
 
   def test_use_last_error_of_CDLL_from_ctypes(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import ctypes\nctypes.CDLL(use_last_error=True)"))
