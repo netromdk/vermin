@@ -1,6 +1,5 @@
 from .testutils import VerminTest, detect, current_major_version
 
-
 class VerminKwargsTests(VerminTest):
   def test_name_of_ImportError(self):
     self.assertOnlyIn((3, 3), detect("ImportError(name=None)"))
@@ -11,6 +10,12 @@ class VerminKwargsTests(VerminTest):
   def test_filename2_of_OSError(self):
     self.assertOnlyIn((3, 4), detect("OSError(filename2=None)"))
 
+  def test_encoding_of_bytearray_decode(self):
+    self.assertOnlyIn((3, 2), detect("bytearray.decode(encoding=None)"))
+
+  def test_errors_of_bytearray_decode(self):
+    self.assertOnlyIn((3, 2), detect("bytearray.decode(errors=None)"))
+
   def test_bytes_per_sep_of_bytearray_hex(self):
     self.assertOnlyIn((3, 8), detect("bytearray.hex(bytes_per_sep=None)"))
 
@@ -19,6 +24,12 @@ class VerminKwargsTests(VerminTest):
 
   def test_delete_of_bytearray_translate(self):
     self.assertOnlyIn((3, 6), detect("bytearray.translate(delete=None)"))
+
+  def test_encoding_of_bytes_decode(self):
+    self.assertOnlyIn((3, 2), detect("bytes.decode(encoding=None)"))
+
+  def test_errors_of_bytes_decode(self):
+    self.assertOnlyIn((3, 2), detect("bytes.decode(errors=None)"))
 
   def test_bytes_per_sep_of_bytes_hex(self):
     self.assertOnlyIn((3, 8), detect("bytes.hex(bytes_per_sep=None)"))
@@ -168,6 +179,42 @@ class VerminKwargsTests(VerminTest):
 
   def test_m_of_ChainMap_new_child_from_collections(self):
     self.assertOnlyIn((3, 4), detect("import collections\ncollections.ChainMap.new_child(m=None)"))
+
+  def test_stop_of_index_from_collections_abc_ByteString(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from collections.abc import ByteString\n"
+                             "x = ByteString()\n"
+                             "x.index(stop=None)"))
+
+  def test_start_of_index_from_collections_abc_ByteString(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from collections.abc import ByteString\n"
+                             "x = ByteString()\n"
+                             "x.index(start=None)"))
+
+  def test_stop_of_index_from_collections_abc_MutableSequence(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from collections.abc import MutableSequence\n"
+                             "x = MutableSequence()\n"
+                             "x.index(stop=None)"))
+
+  def test_start_of_index_from_collections_abc_MutableSequence(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from collections.abc import MutableSequence\n"
+                             "x = MutableSequence()\n"
+                             "x.index(start=None)"))
+
+  def test_stop_of_index_from_collections_abc_Sequence(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from collections.abc import Sequence\n"
+                             "x = Sequence()\n"
+                             "x.index(stop=None)"))
+
+  def test_start_of_index_from_collections_abc_Sequence(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from collections.abc import Sequence\n"
+                             "x = Sequence()\n"
+                             "x.index(start=None)"))
 
   def test_use_last_error_of_CDLL_from_ctypes(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import ctypes\nctypes.CDLL(use_last_error=True)"))
@@ -2030,6 +2077,46 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn((3, 7),
                       detect("from webbrowser import register\n"
                              "register(preferred=None)"))
+
+  def test_key_of_OpenKey_from_winreg(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from winreg import OpenKey\n"
+                             "OpenKey(key=None)"))
+
+  def test_sub_key_of_OpenKey_from_winreg(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from winreg import OpenKey\n"
+                             "OpenKey(sub_key=None)"))
+
+  def test_reserved_of_OpenKey_from_winreg(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from winreg import OpenKey\n"
+                             "OpenKey(reserved=None)"))
+
+  def test_access_of_OpenKey_from_winreg(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from winreg import OpenKey\n"
+                             "OpenKey(access=None)"))
+
+  def test_key_of_OpenKeyEx_from_winreg(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from winreg import OpenKeyEx\n"
+                             "OpenKeyEx(key=None)"))
+
+  def test_sub_key_of_OpenKeyEx_from_winreg(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from winreg import OpenKeyEx\n"
+                             "OpenKeyEx(sub_key=None)"))
+
+  def test_reserved_of_OpenKeyEx_from_winreg(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from winreg import OpenKeyEx\n"
+                             "OpenKeyEx(reserved=None)"))
+
+  def test_access_of_OpenKeyEx_from_winreg(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from winreg import OpenKeyEx\n"
+                             "OpenKeyEx(access=None)"))
 
   def test_compresslevel_of_ZipFile_from_zipfile(self):
     self.assertOnlyIn((3, 7),
