@@ -2,7 +2,6 @@ from vermin import Config
 
 from .testutils import VerminTest, detect
 
-
 class VerminConstantMemberTests(VerminTest):
   def __init__(self, methodName):
     super(VerminConstantMemberTests, self).__init__(methodName)

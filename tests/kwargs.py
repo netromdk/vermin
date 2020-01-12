@@ -1,6 +1,5 @@
 from .testutils import VerminTest, detect, current_major_version
 
-
 class VerminKwargsTests(VerminTest):
   def test_name_of_ImportError(self):
     self.assertOnlyIn((3, 3), detect("ImportError(name=None)"))
