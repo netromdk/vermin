@@ -432,6 +432,11 @@ def MOD_MEM_REQS():
     "zipfile.BadZipFile": (None, (3, 2)),
 
     # Builtin functions
+    # Notes:
+    #  file() is kept at 2.0 instead of 2.2, where the function was introduced, because file objects
+    #  have existed since 2.0 and we don't do type deduction. Therefore analysis on file objects
+    #  wouldn't be detected, like `open(..).xreadlines()`, but using `file(..).xreadlines()` would
+    #  trigger rule "file.xreadlines" 2.1. So if file() was kept at 2.2 it would introduce conflict.
     "all": ((2, 5), (3, 0)),
     "any": ((2, 5), (3, 0)),
     "basestring": ((2, 3), None),
@@ -455,7 +460,7 @@ def MOD_MEM_REQS():
     "dict.viewkeys": ((2, 7), None),
     "dict.viewvalues": ((2, 7), None),
     "enumerate": ((2, 3), (3, 0)),
-    "file": ((2, 0), None),
+    "file": ((2, 0), None),  # Kept at 2.0 on purpose (see note above).
     "file.next": ((2, 3), None),
     "file.xreadlines": ((2, 1), None),
     "float.as_integer_ratio": ((2, 6), (3, 0)),
