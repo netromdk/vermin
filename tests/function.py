@@ -2688,11 +2688,104 @@ class VerminFunctionMemberTests(VerminTest):
                       detect("from nntplib import NNTP\n"
                              "NNTP().starttls()"))
 
+  def test___eq___from_operator(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import operator\noperator.__eq__()"))
+
+  def test___floordiv___from_operator(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import operator\noperator.__floordiv__()"))
+
+  def test___ge___from_operator(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import operator\noperator.__ge__()"))
+
+  def test___gt___from_operator(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import operator\noperator.__gt__()"))
+
+  def test___iadd___from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.__iadd__()"))
+
+  def test___iand___from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.__iand__()"))
+
+  def test___iconcat___from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.__iconcat__()"))
+
+  def test___idiv___from_operator(self):
+    self.assertOnlyIn((2, 5), detect("import operator\noperator.__idiv__()"))
+
+  def test___ifloordiv___from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.__ifloordiv__()"))
+
+  def test___ilshift___from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.__ilshift__()"))
+
+  def test___imatmul___from_operator(self):
+    self.assertOnlyIn((3, 5), detect("import operator\noperator.__imatmul__()"))
+
+  def test___imod___from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.__imod__()"))
+
+  def test___imul___from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.__imul__()"))
+
+  def test___index___from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.__index__()"))
+
+  def test___ior___from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.__ior__()"))
+
+  def test___ipow___from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.__ipow__()"))
+
+  def test___irepeat___from_operator(self):
+    self.assertOnlyIn((2, 5), detect("import operator\noperator.__irepeat__()"))
+
+  def test___irshift___from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.__irshift__()"))
+
+  def test___isub___from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.__isub__()"))
+
+  def test___itruediv___from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.__itruediv__()"))
+
+  def test___ixor___from_operator(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.__ixor__()"))
+
+  def test___le___from_operator(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import operator\noperator.__le__()"))
+
+  def test___lt___from_operator(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import operator\noperator.__lt__()"))
+
+  def test___matmul___from_operator(self):
+    self.assertOnlyIn((3, 5), detect("import operator\noperator.__matmul__()"))
+
+  def test___ne___from_operator(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import operator\noperator.__ne__()"))
+
+  def test___pow___from_operator(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import operator\noperator.__pow__()"))
+
+  def test___repeat___from_operator(self):
+    self.assertOnlyIn((2, 0), detect("import operator\noperator.__repeat__()"))
+
+  def test___truediv___from_operator(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import operator\noperator.__truediv__()"))
+
   def test_attrgetter_from_operator(self):
     self.assertOnlyIn(((2, 4), (3, 0)), detect("import operator\noperator.attrgetter()"))
 
+  def test_eq_from_operator(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import operator\noperator.eq()"))
+
   def test_floordiv_from_operator(self):
     self.assertOnlyIn(((2, 2), (3, 0)), detect("import operator\noperator.floordiv()"))
+
+  def test_ge_from_operator(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import operator\noperator.ge()"))
+
+  def test_gt_from_operator(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import operator\noperator.gt()"))
 
   def test_iadd_from_operator(self):
     self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.iadd()"))
@@ -2731,7 +2824,7 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.ipow()"))
 
   def test_irepeat_from_operator(self):
-    self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.irepeat()"))
+    self.assertOnlyIn((2, 5), detect("import operator\noperator.irepeat()"))
 
   def test_irshift_from_operator(self):
     self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.irshift()"))
@@ -2751,6 +2844,9 @@ class VerminFunctionMemberTests(VerminTest):
   def test_ixor_from_operator(self):
     self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.ixor()"))
 
+  def test_le_from_operator(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import operator\noperator.le()"))
+
   def test_length_hint_from_operator(self):
     self.assertOnlyIn((3, 4), detect("import operator\noperator.length_hint()"))
 
@@ -2763,8 +2859,14 @@ class VerminFunctionMemberTests(VerminTest):
   def test_methodcaller_from_operator(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import operator\noperator.methodcaller()"))
 
+  def test_ne_from_operator(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), detect("import operator\noperator.ne()"))
+
   def test_pow_from_operator(self):
     self.assertOnlyIn(((2, 3), (3, 0)), detect("import operator\noperator.pow()"))
+
+  def test_repeat_from_operator(self):
+    self.assertOnlyIn((2, 0), detect("import operator\noperator.repeat()"))
 
   def test_truediv_from_operator(self):
     self.assertOnlyIn(((2, 2), (3, 0)), detect("import operator\noperator.truediv()"))

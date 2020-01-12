@@ -362,14 +362,6 @@ class VerminConstantMemberTests(VerminTest):
   def test_OPENSSL_VERSION_NUMBER_of_ssl(self):
     self.assertOnlyIn(((2, 7), (3, 2)), detect("from ssl import OPENSSL_VERSION_NUMBER"))
 
-  def test_ALERT_DESCRIPTION_HANDSHAKE_FAILURE_of_ssl(self):
-    self.assertOnlyIn(((2, 7), (3, 4)),
-                      detect("from ssl import ALERT_DESCRIPTION_HANDSHAKE_FAILURE"))
-
-  def test_ALERT_DESCRIPTION_INTERNAL_ERROR_of_ssl(self):
-    self.assertOnlyIn(((2, 7), (3, 4)), detect(
-        "from ssl import ALERT_DESCRIPTION_INTERNAL_ERROR"))
-
   def test_context_of_ssl_SSLSocket(self):
     self.assertOnlyIn(((2, 7), (3, 2)), detect("from ssl import SSLSocket\nSSLSocket.context"))
 
@@ -1541,11 +1533,6 @@ class VerminConstantMemberTests(VerminTest):
                       detect("from repr import Repr\n"
                              "Repr().maxset"))
 
-  def test_set_from_repr_Repr(self):
-    self.assertOnlyIn((2, 4),
-                      detect("from repr import Repr\n"
-                             "Repr().set"))
-
   def test_RLIMIT_MSGQUEUE_of_resource(self):
     self.assertOnlyIn((3, 4), detect("from resource import RLIMIT_MSGQUEUE"))
 
@@ -2130,89 +2117,113 @@ class VerminConstantMemberTests(VerminTest):
                       detect("from socketserver import ForkingMixIn\n"
                              "ForkingMixIn().block_on_close"))
 
+  def test_block_on_close_from_socketserver_ThreadingMixIn(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from socketserver import ThreadingMixIn\n"
+                             "ThreadingMixIn().block_on_close"))
+
   def test_in_transaction_from_sqlite3_Connection(self):
     self.assertOnlyIn((3, 2),
                       detect("from sqlite3 import Connection\n"
                              "Connection().in_transaction"))
 
   def test_ALERT_DESCRIPTION_ACCESS_DENIED_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_ACCESS_DENIED"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect("from ssl import ALERT_DESCRIPTION_ACCESS_DENIED"))
 
   def test_ALERT_DESCRIPTION_BAD_CERTIFICATE_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_BAD_CERTIFICATE"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect("from ssl import ALERT_DESCRIPTION_BAD_CERTIFICATE"))
 
   def test_ALERT_DESCRIPTION_BAD_CERTIFICATE_HASH_VALUE_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect(
+    self.assertOnlyIn(((2, 7), (3, 4)), detect(
         "from ssl import ALERT_DESCRIPTION_BAD_CERTIFICATE_HASH_VALUE"))
 
   def test_ALERT_DESCRIPTION_BAD_CERTIFICATE_STATUS_RESPONSE_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect(
+    self.assertOnlyIn(((2, 7), (3, 4)), detect(
         "from ssl import ALERT_DESCRIPTION_BAD_CERTIFICATE_STATUS_RESPONSE"))
 
   def test_ALERT_DESCRIPTION_BAD_RECORD_MAC_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_BAD_RECORD_MAC"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect("from ssl import ALERT_DESCRIPTION_BAD_RECORD_MAC"))
 
   def test_ALERT_DESCRIPTION_CERTIFICATE_EXPIRED_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_CERTIFICATE_EXPIRED"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect(
+        "from ssl import ALERT_DESCRIPTION_CERTIFICATE_EXPIRED"))
 
   def test_ALERT_DESCRIPTION_CERTIFICATE_REVOKED_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_CERTIFICATE_REVOKED"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect(
+        "from ssl import ALERT_DESCRIPTION_CERTIFICATE_REVOKED"))
 
   def test_ALERT_DESCRIPTION_CERTIFICATE_UNKNOWN_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_CERTIFICATE_UNKNOWN"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect(
+        "from ssl import ALERT_DESCRIPTION_CERTIFICATE_UNKNOWN"))
 
   def test_ALERT_DESCRIPTION_CERTIFICATE_UNOBTAINABLE_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect(
+    self.assertOnlyIn(((2, 7), (3, 4)), detect(
         "from ssl import ALERT_DESCRIPTION_CERTIFICATE_UNOBTAINABLE"))
 
   def test_ALERT_DESCRIPTION_CLOSE_NOTIFY_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_CLOSE_NOTIFY"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect("from ssl import ALERT_DESCRIPTION_CLOSE_NOTIFY"))
 
   def test_ALERT_DESCRIPTION_DECODE_ERROR_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_DECODE_ERROR"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect("from ssl import ALERT_DESCRIPTION_DECODE_ERROR"))
 
   def test_ALERT_DESCRIPTION_DECOMPRESSION_FAILURE_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_DECOMPRESSION_FAILURE"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect(
+        "from ssl import ALERT_DESCRIPTION_DECOMPRESSION_FAILURE"))
 
   def test_ALERT_DESCRIPTION_DECRYPT_ERROR_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_DECRYPT_ERROR"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect("from ssl import ALERT_DESCRIPTION_DECRYPT_ERROR"))
+
+  def test_ALERT_DESCRIPTION_HANDSHAKE_FAILURE_of_ssl(self):
+    self.assertOnlyIn(((2, 7), (3, 4)), detect(
+        "from ssl import ALERT_DESCRIPTION_HANDSHAKE_FAILURE"))
 
   def test_ALERT_DESCRIPTION_ILLEGAL_PARAMETER_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_ILLEGAL_PARAMETER"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect(
+        "from ssl import ALERT_DESCRIPTION_ILLEGAL_PARAMETER"))
 
   def test_ALERT_DESCRIPTION_INSUFFICIENT_SECURITY_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_INSUFFICIENT_SECURITY"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect(
+        "from ssl import ALERT_DESCRIPTION_INSUFFICIENT_SECURITY"))
+
+  def test_ALERT_DESCRIPTION_INTERNAL_ERROR_of_ssl(self):
+    self.assertOnlyIn(((2, 7), (3, 4)), detect("from ssl import ALERT_DESCRIPTION_INTERNAL_ERROR"))
 
   def test_ALERT_DESCRIPTION_NO_RENEGOTIATION_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_NO_RENEGOTIATION"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect(
+        "from ssl import ALERT_DESCRIPTION_NO_RENEGOTIATION"))
 
   def test_ALERT_DESCRIPTION_PROTOCOL_VERSION_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_PROTOCOL_VERSION"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect(
+        "from ssl import ALERT_DESCRIPTION_PROTOCOL_VERSION"))
 
   def test_ALERT_DESCRIPTION_RECORD_OVERFLOW_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_RECORD_OVERFLOW"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect("from ssl import ALERT_DESCRIPTION_RECORD_OVERFLOW"))
 
   def test_ALERT_DESCRIPTION_UNEXPECTED_MESSAGE_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_UNEXPECTED_MESSAGE"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect(
+        "from ssl import ALERT_DESCRIPTION_UNEXPECTED_MESSAGE"))
 
   def test_ALERT_DESCRIPTION_UNKNOWN_CA_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_UNKNOWN_CA"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect("from ssl import ALERT_DESCRIPTION_UNKNOWN_CA"))
 
   def test_ALERT_DESCRIPTION_UNKNOWN_PSK_IDENTITY_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_UNKNOWN_PSK_IDENTITY"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect(
+        "from ssl import ALERT_DESCRIPTION_UNKNOWN_PSK_IDENTITY"))
 
   def test_ALERT_DESCRIPTION_UNRECOGNIZED_NAME_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_UNRECOGNIZED_NAME"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect(
+        "from ssl import ALERT_DESCRIPTION_UNRECOGNIZED_NAME"))
 
   def test_ALERT_DESCRIPTION_UNSUPPORTED_CERTIFICATE_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect(
+    self.assertOnlyIn(((2, 7), (3, 4)), detect(
         "from ssl import ALERT_DESCRIPTION_UNSUPPORTED_CERTIFICATE"))
 
   def test_ALERT_DESCRIPTION_UNSUPPORTED_EXTENSION_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_UNSUPPORTED_EXTENSION"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect(
+        "from ssl import ALERT_DESCRIPTION_UNSUPPORTED_EXTENSION"))
 
   def test_ALERT_DESCRIPTION_USER_CANCELLED_of_ssl(self):
-    self.assertOnlyIn((3, 4), detect("from ssl import ALERT_DESCRIPTION_USER_CANCELLED"))
+    self.assertOnlyIn(((2, 7), (3, 4)), detect("from ssl import ALERT_DESCRIPTION_USER_CANCELLED"))
 
   def test_HAS_SSLv2_of_ssl(self):
     self.assertOnlyIn((3, 7), detect("from ssl import HAS_SSLv2"))
