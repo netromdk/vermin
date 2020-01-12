@@ -2,12 +2,14 @@ import ast
 import re
 import sys
 
-from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, ARRAY_TYPECODE_REQS, \
-  CODECS_ERROR_HANDLERS, CODECS_ERRORS_INDICES, CODECS_ENCODINGS, CODECS_ENCODINGS_INDICES
+from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, BYTES_REQS,\
+  ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS, CODECS_ERRORS_INDICES, CODECS_ENCODINGS,\
+  CODECS_ENCODINGS_INDICES
 from .config import Config
 from .utility import dotted_name, reverse_range, combine_versions, version_strings
 
 STRFTIME_DIRECTIVE_REGEX = re.compile(r"%(?:[-\.\d#\s\+])*(\w)")
+BYTES_DIRECTIVE_REGEX = STRFTIME_DIRECTIVE_REGEX
 
 class SourceVisitor(ast.NodeVisitor):
   def __init__(self, config=None):
@@ -53,10 +55,13 @@ class SourceVisitor(ast.NodeVisitor):
     self.__depth = 0
     self.__line = 1
     self.__strftime_directives = []
+    self.__bytes_directives = []
     self.__codecs_error_handlers = []
     self.__codecs_encodings = []
     self.__with_statement = False
     self.__generalized_unpacking = False
+    self.__bytes_format = False
+    self.__bytearray_format = False
 
     # Imported members of modules, like "exc_clear" of "sys".
     self.__import_mem_mod = {}
@@ -151,6 +156,9 @@ class SourceVisitor(ast.NodeVisitor):
   def strftime_directives(self):
     return self.__strftime_directives
 
+  def bytes_directives(self):
+    return self.__bytes_directives
+
   def user_defined(self):
     return self.__user_defs
 
@@ -186,6 +194,12 @@ class SourceVisitor(ast.NodeVisitor):
 
   def generalized_unpacking(self):
     return self.__generalized_unpacking
+
+  def bytes_format(self):
+    return self.__bytes_format
+
+  def bytearray_format(self):
+    return self.__bytearray_format
 
   def minimum_versions(self):
     mins = [(0, 0), (0, 0)]
@@ -280,10 +294,25 @@ class SourceVisitor(ast.NodeVisitor):
     if self.generalized_unpacking():
       mins = combine_versions(mins, (None, (3, 5)))
 
+    if self.bytes_format():
+      # Since byte strings are a `str` synonym as of 2.6+, and thus also supports `%` formatting,
+      # (2, 6) is returned instead of None.
+      mins = combine_versions(mins, ((2, 6), (3, 5)))
+
+    if self.bytearray_format():
+      mins = combine_versions(mins, (None, (3, 5)))
+
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
         vers = STRFTIME_REQS[directive]
         self.__vvprint("strftime directive '{}' requires {}".
+                       format(directive, version_strings(vers)), directive)
+        mins = combine_versions(mins, vers)
+
+    for directive in self.bytes_directives():
+      if directive in BYTES_REQS:
+        vers = BYTES_REQS[directive]
+        self.__vvprint("bytes directive '{}' requires {}".
                        format(directive, version_strings(vers)), directive)
         mins = combine_versions(mins, vers)
 
@@ -428,6 +457,10 @@ class SourceVisitor(ast.NodeVisitor):
 
   def __add_strftime_directive(self, group, line=None, col=None):
     self.__strftime_directives.append(group)
+    self.__add_line_col(group, line, col)
+
+  def __add_bytes_directive(self, group, line=None, col=None):
+    self.__bytes_directives.append(group)
     self.__add_line_col(group, line, col)
 
   def __add_codecs_error_handler(self, func, node):
@@ -852,10 +885,41 @@ class SourceVisitor(ast.NodeVisitor):
     self.__bytesv3 = True
     self.__vvprint("byte strings (b'..') require 3+ (or 2.6+ as `str` synonym)")
 
+    if hasattr(node, "s"):
+      for directive in BYTES_DIRECTIVE_REGEX.findall(str(node.s)):
+        self.__add_bytes_directive(directive, node.lineno)
+
+  def visit_Str(self, node):
+    # As bytes to str fallback in python 2, add bytes formatting directives.
+    if sys.version_info.major == 2 and hasattr(node, "s"):
+      for directive in BYTES_DIRECTIVE_REGEX.findall(node.s):
+        self.__add_bytes_directive(directive, node.lineno)
+
+  def visit_BinOp(self, node):
+    # Examples:
+    #   BinOp(left=Bytes(s=b'%4x'), op=Mod(), right=Num(n=10))
+    #   BinOp(left=Call(func=Name(id='bytearray', ctx=Load()), args=[Bytes(s=b'%x')], keywords=[]),
+    #         op=Mod(), right=Num(n=10))
+    if ((hasattr(ast, "Bytes") and isinstance(node.left, ast.Bytes)) or
+       isinstance(node.left, ast.Str)) and isinstance(node.op, ast.Mod):
+      self.__bytes_format = True
+      self.__vvprint("bytes `%` formatting requires 3.5+ (or 2.6+ as `str` synonym)")
+
+    if (isinstance(node.left, ast.Call) and isinstance(node.left.func, ast.Name) and
+         node.left.func.id == "bytearray") and isinstance(node.op, ast.Mod):
+      self.__bytearray_format = True
+      self.__vvprint("bytearray `%` formatting requires 3.5+")
+
+    self.generic_visit(node)
+
   def visit_Constant(self, node):
+    # From 3.8, Bytes(s=b'%x') is represented as Constant(value=b'%x', kind=None) instead.
     if hasattr(node, "value") and type(node.value) == bytes:
       self.__bytesv3 = True
       self.__vvprint("byte strings (b'..') require 3+")
+
+      for directive in BYTES_DIRECTIVE_REGEX.findall(str(node.value)):
+        self.__add_bytes_directive(directive, node.lineno)
 
   def visit_JoinedStr(self, node):
     self.__fstrings = True

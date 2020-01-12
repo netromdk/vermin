@@ -299,3 +299,36 @@ class VerminLanguageTests(VerminTest):
       visitor = visit("function(**{'x': 42}, arg=84)")
       self.assertTrue(visitor.generalized_unpacking())
       self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+  def test_bytes_format(self):
+    v = current_version()
+    if v < 3 or v >= 3.5:
+      visitor = visit("b'%x' % 10")
+      self.assertTrue(visitor.bytes_format())
+      self.assertOnlyIn(((2, 6), (3, 5)), visitor.minimum_versions())
+
+  def test_bytearray_format(self):
+    if current_version() >= 3.5:
+      visitor = visit("bytearray(b'%x') % 10")
+      self.assertTrue(visitor.bytearray_format())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+  def test_bytes_directives(self):
+    visitor = visit("b'%b %x'")
+    self.assertOnlyIn(("b", "x"), visitor.bytes_directives())
+    visitor = visit("b'%4b'")
+    self.assertOnlyIn(("b",), visitor.bytes_directives())
+    visitor = visit("b'%4b'")
+    self.assertOnlyIn(("b",), visitor.bytes_directives())
+    visitor = visit("b'%#4b'")
+    self.assertOnlyIn(("b",), visitor.bytes_directives())
+    visitor = visit("b'%04b'")
+    self.assertOnlyIn(("b",), visitor.bytes_directives())
+    visitor = visit("b'%.4f'")
+    self.assertOnlyIn(("f",), visitor.bytes_directives())
+    visitor = visit("b'%-4f'")
+    self.assertOnlyIn(("f",), visitor.bytes_directives())
+    visitor = visit("b'%  f'")
+    self.assertOnlyIn(("f",), visitor.bytes_directives())
+    visitor = visit("b'%+f'")
+    self.assertOnlyIn(("f",), visitor.bytes_directives())

@@ -2935,6 +2935,12 @@ STRFTIME_REQS = {
   "f": ((2, 6), (3, 0)),
   "u": (None, (3, 6)),
 }
+
+# bytes/bytearray (and str for 2 compatibility) requirements: directive -> requiresments
+BYTES_REQS = {
+  "a": (None, (3, 5)),
+  "b": (None, (3, 5)),
+  "r": ((2, 7), (3, 5)),
 }
 
 # array.array typecode requirements: typecode -> requirements

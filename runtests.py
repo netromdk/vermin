@@ -32,3 +32,4 @@ if __name__ == '__main__':
   runsuite("exclusions")
   runsuite("comment_exclusions")
   runsuite("backports")
+  runsuite("bytes_directive")
