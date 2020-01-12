@@ -27,13 +27,13 @@ class VerminExclusionsTests(VerminTest):
   def test_codecs_error_handler(self):
     self.config.add_exclusion("ceh=surrogateescape")
     visitor = visit("import codecs\ncodecs.encode('test', 'utf-8', 'surrogateescape')")
-    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+    self.assertEqual([(2, 4), (3, 0)], visitor.minimum_versions())
     visitor = visit("import codecs\ncodecs.encode('test', 'utf-8', errors='surrogateescape')")
-    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+    self.assertEqual([(2, 4), (3, 0)], visitor.minimum_versions())
 
   def test_codecs_encoding(self):
     self.config.add_exclusion("ce=koi8_t")
     visitor = visit("import codecs\ncodecs.encode('test', 'koi8_t')")
-    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+    self.assertEqual([(2, 4), (3, 0)], visitor.minimum_versions())
     visitor = visit("import codecs\ncodecs.encode('test', data_encoding='koi8_t')")
-    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+    self.assertEqual([(2, 4), (3, 0)], visitor.minimum_versions())

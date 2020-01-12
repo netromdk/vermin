@@ -34,6 +34,9 @@ class VerminModuleTests(VerminTest):
   def test_winreg(self):
     self.assertOnlyIn((3, 0), detect("import winreg"))
 
+  def test_BaseHTTPServer(self):
+    self.assertOnlyIn((2, 0), detect("import BaseHTTPServer"))
+
   def test_ConfigParser(self):
     self.assertOnlyIn((2, 0), detect("import ConfigParser"))
 
@@ -132,17 +135,11 @@ class VerminModuleTests(VerminTest):
   def test_builtins(self):
     self.assertOnlyIn((3, 0), detect("import builtins"))
 
-  def test_string_letters(self):
-    self.assertOnlyIn((2, 0), detect("import string.letters"))
-
-  def test_string_lowercase(self):
-    self.assertOnlyIn((2, 0), detect("import string.lowercase"))
-
-  def test_string_uppercase(self):
-    self.assertOnlyIn((2, 0), detect("import string.uppercase"))
-
   def test_ast(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import ast"))
+
+  def test__ast(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import _ast"))
 
   def test_unittest(self):
     self.assertOnlyIn(((2, 1), (3, 0)), detect("import unittest"))
@@ -178,8 +175,8 @@ class VerminModuleTests(VerminTest):
   def test___future__(self):
     self.assertOnlyIn(((2, 1), (3, 0)), detect("import __future__"))
 
-  def test_atexit(self):
-    self.assertOnlyIn(((2, 0), (3, 0)), detect("import atexit"))
+  def test_bisect(self):
+    self.assertOnlyIn(((2, 1), (3, 0)), detect("import bisect"))
 
   def test_bz2(self):
     self.assertOnlyIn(((2, 3), (3, 0)), detect("import bz2"))
@@ -256,6 +253,12 @@ class VerminModuleTests(VerminTest):
   def test_email_headerregistry(self):
     self.assertOnlyIn((3, 6), detect("import email.headerregistry"))
 
+  def test_encodings_idna(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import encodings.idna"))
+
+  def test_encodings_utf_8_sig(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import encodings.utf_8_sig"))
+
   def test_fractions(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import fractions"))
 
@@ -316,14 +319,14 @@ class VerminModuleTests(VerminTest):
   def test_platform(self):
     self.assertOnlyIn(((2, 3), (3, 0)), detect("import platform"))
 
+  def test_popen2(self):
+    self.assertOnlyIn((2, 0), detect("import popen2"))
+
   def test_pydoc(self):
     self.assertOnlyIn(((2, 1), (3, 0)), detect("import pydoc"))
 
   def test_runpy(self):
     self.assertOnlyIn(((2, 5), (3, 0)), detect("import runpy"))
-
-  def test_shlex(self):
-    self.assertOnlyIn(((2, 0), (3, 0)), detect("import shlex"))
 
   def test_SimpleXMLRPCServer(self):
     self.assertOnlyIn((2, 2), detect("import SimpleXMLRPCServer"))
@@ -366,6 +369,9 @@ class VerminModuleTests(VerminTest):
 
   def test_wsgiref(self):
     self.assertOnlyIn(((2, 5), (3, 0)), detect("import wsgiref"))
+
+  def test_xml_etree_ElementTree(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import xml.etree.ElementTree"))
 
   def test_xmlrpclib(self):
     self.assertOnlyIn((2, 2), detect("import xmlrpclib"))

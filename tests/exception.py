@@ -1,6 +1,9 @@
 from .testutils import VerminTest, detect
 
 class VerminExceptionMemberTests(VerminTest):
+  def test_SSLCertVerificationError_of_ssl(self):
+    self.assertOnlyIn((3, 7), detect("from ssl import SSLCertVerificationError"))
+
   def test_SSLZeroReturnError_of_ssl(self):
     self.assertOnlyIn(((2, 7), (3, 3)), detect("from ssl import SSLZeroReturnError"))
 
@@ -54,11 +57,17 @@ class VerminExceptionMemberTests(VerminTest):
   def test_MissingHeaderBodySeparatorDefect_of_email_errors(self):
     self.assertOnlyIn((3, 3), detect("from email.errors import MissingHeaderBodySeparatorDefect"))
 
-  def test_namereplace_errors_of_codecs(self):
-    self.assertOnlyIn((3, 5), detect("from codecs import namereplace_errors"))
+  def test_InterpolationMissingOptionError_of_ConfigParser(self):
+    self.assertOnlyIn((2, 3), detect("from ConfigParser import InterpolationMissingOptionError"))
+
+  def test_InterpolationSyntaxError_of_ConfigParser(self):
+    self.assertOnlyIn((2, 3), detect("from ConfigParser import InterpolationSyntaxError"))
 
   def test_BrokenExecutor_of_concurrent_futures(self):
     self.assertOnlyIn((3, 7), detect("from concurrent.futures import BrokenExecutor"))
+
+  def test_InvalidStateError_of_concurrent_futures(self):
+    self.assertOnlyIn((3, 8), detect("from concurrent.futures import InvalidStateError"))
 
   def test_BrokenThreadPool_of_concurrent_futures_thread(self):
     self.assertOnlyIn((3, 7), detect("from concurrent.futures.thread import BrokenThreadPool"))
@@ -69,5 +78,116 @@ class VerminExceptionMemberTests(VerminTest):
   def test_BadGzipFile_of_gzip(self):
     self.assertOnlyIn((3, 8), detect("from gzip import BadGzipFile"))
 
+  def test_HTMLParseError_of_htmllib(self):
+    self.assertOnlyIn((2, 4), detect("from htmllib import HTMLParseError"))
+
+  def test_BadStatusLine_of_httplib(self):
+    self.assertOnlyIn((2, 0), detect("from httplib import BadStatusLine"))
+
+  def test_CannotSendHeader_of_httplib(self):
+    self.assertOnlyIn((2, 0), detect("from httplib import CannotSendHeader"))
+
+  def test_CannotSendRequest_of_httplib(self):
+    self.assertOnlyIn((2, 0), detect("from httplib import CannotSendRequest"))
+
+  def test_HTTPException_of_httplib(self):
+    self.assertOnlyIn((2, 0), detect("from httplib import HTTPException"))
+
+  def test_ImproperConnectionState_of_httplib(self):
+    self.assertOnlyIn((2, 0), detect("from httplib import ImproperConnectionState"))
+
+  def test_IncompleteRead_of_httplib(self):
+    self.assertOnlyIn((2, 0), detect("from httplib import IncompleteRead"))
+
+  def test_InvalidURL_of_httplib(self):
+    self.assertOnlyIn((2, 3), detect("from httplib import InvalidURL"))
+
+  def test_NotConnected_of_httplib(self):
+    self.assertOnlyIn((2, 0), detect("from httplib import NotConnected"))
+
+  def test_ResponseNotReady_of_httplib(self):
+    self.assertOnlyIn((2, 0), detect("from httplib import ResponseNotReady"))
+
+  def test_UnimplementedFileMode_of_httplib(self):
+    self.assertOnlyIn((2, 0), detect("from httplib import UnimplementedFileMode"))
+
+  def test_UnknownProtocol_of_httplib(self):
+    self.assertOnlyIn((2, 0), detect("from httplib import UnknownProtocol"))
+
+  def test_UnknownTransferEncoding_of_httplib(self):
+    self.assertOnlyIn((2, 0), detect("from httplib import UnknownTransferEncoding"))
+
+  def test_JSONDecodeError_of_json(self):
+    self.assertOnlyIn((3, 5), detect("from json import JSONDecodeError"))
+
+  def test_SGMLParseError_of_sgmllib(self):
+    self.assertOnlyIn((2, 1), detect("from sgmllib import SGMLParseError"))
+
+  def test_Error_of_shutil(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("from shutil import Error"))
+
+  def test_SameFileError_of_shutil(self):
+    self.assertOnlyIn((3, 4), detect("from shutil import SameFileError"))
+
   def test_SMTPNotSupportedError_of_smtplib(self):
     self.assertOnlyIn((3, 5), detect("from smtplib import SMTPNotSupportedError"))
+
+  def test_timeout_of_socket(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("from socket import timeout"))
+
+  def test_BrokenBarrierError_of_threading(self):
+    self.assertOnlyIn((3, 2), detect("from threading import BrokenBarrierError"))
+
+  def test_SkipTest_of_unittest(self):
+    self.assertOnlyIn(((2, 7), (3, 1)), detect("from unittest import SkipTest"))
+
+  def test_ContentTooShortError_of_urllib(self):
+    self.assertOnlyIn((2, 6), detect("from urllib import ContentTooShortError"))
+
+  def test_DOMException_of_xml_dom(self):
+    self.assertOnlyIn(((2, 1), (3, 0)), detect("from xml.dom import DOMException"))
+
+  def test_DomstringSizeErr_of_xml_dom(self):
+    self.assertOnlyIn(((2, 1), (3, 0)), detect("from xml.dom import DomstringSizeErr"))
+
+  def test_HierarchyRequestErr_of_xml_dom(self):
+    self.assertOnlyIn(((2, 1), (3, 0)), detect("from xml.dom import HierarchyRequestErr"))
+
+  def test_IndexSizeErr_of_xml_dom(self):
+    self.assertOnlyIn(((2, 1), (3, 0)), detect("from xml.dom import IndexSizeErr"))
+
+  def test_InuseAttributeErr_of_xml_dom(self):
+    self.assertOnlyIn(((2, 1), (3, 0)), detect("from xml.dom import InuseAttributeErr"))
+
+  def test_InvalidAccessErr_of_xml_dom(self):
+    self.assertOnlyIn(((2, 1), (3, 0)), detect("from xml.dom import InvalidAccessErr"))
+
+  def test_InvalidCharacterErr_of_xml_dom(self):
+    self.assertOnlyIn(((2, 1), (3, 0)), detect("from xml.dom import InvalidCharacterErr"))
+
+  def test_InvalidModificationErr_of_xml_dom(self):
+    self.assertOnlyIn(((2, 1), (3, 0)), detect("from xml.dom import InvalidModificationErr"))
+
+  def test_InvalidStateErr_of_xml_dom(self):
+    self.assertOnlyIn(((2, 1), (3, 0)), detect("from xml.dom import InvalidStateErr"))
+
+  def test_NamespaceErr_of_xml_dom(self):
+    self.assertOnlyIn(((2, 1), (3, 0)), detect("from xml.dom import NamespaceErr"))
+
+  def test_NoDataAllowedErr_of_xml_dom(self):
+    self.assertOnlyIn(((2, 1), (3, 0)), detect("from xml.dom import NoDataAllowedErr"))
+
+  def test_NoModificationAllowedErr_of_xml_dom(self):
+    self.assertOnlyIn(((2, 1), (3, 0)), detect("from xml.dom import NoModificationAllowedErr"))
+
+  def test_NotFoundErr_of_xml_dom(self):
+    self.assertOnlyIn(((2, 1), (3, 0)), detect("from xml.dom import NotFoundErr"))
+
+  def test_NotSupportedErr_of_xml_dom(self):
+    self.assertOnlyIn(((2, 1), (3, 0)), detect("from xml.dom import NotSupportedErr"))
+
+  def test_SyntaxErr_of_xml_dom(self):
+    self.assertOnlyIn(((2, 1), (3, 0)), detect("from xml.dom import SyntaxErr"))
+
+  def test_WrongDocumentErr_of_xml_dom(self):
+    self.assertOnlyIn(((2, 1), (3, 0)), detect("from xml.dom import WrongDocumentErr"))
