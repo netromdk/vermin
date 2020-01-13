@@ -896,19 +896,13 @@ class SourceVisitor(ast.NodeVisitor):
       for directive in BYTES_DIRECTIVE_REGEX.findall(str(node.s)):
         self.__add_bytes_directive(directive, node.lineno)
 
-  def visit_Str(self, node):
-    # As bytes to str fallback in python 2, add bytes formatting directives.
-    if sys.version_info.major == 2 and hasattr(node, "s"):
-      for directive in BYTES_DIRECTIVE_REGEX.findall(node.s):
-        self.__add_bytes_directive(directive, node.lineno)
-
   def visit_BinOp(self, node):
     # Examples:
     #   BinOp(left=Bytes(s=b'%4x'), op=Mod(), right=Num(n=10))
     #   BinOp(left=Call(func=Name(id='bytearray', ctx=Load()), args=[Bytes(s=b'%x')], keywords=[]),
     #         op=Mod(), right=Num(n=10))
-    if ((hasattr(ast, "Bytes") and isinstance(node.left, ast.Bytes)) or
-       isinstance(node.left, ast.Str)) and isinstance(node.op, ast.Mod):
+    if (hasattr(ast, "Bytes") and isinstance(node.left, ast.Bytes))\
+       and isinstance(node.op, ast.Mod):
       self.__bytes_format = True
       self.__vvprint("bytes `%` formatting requires 3.5+ (or 2.6+ as `str` synonym)")
 
@@ -923,7 +917,7 @@ class SourceVisitor(ast.NodeVisitor):
     # From 3.8, Bytes(s=b'%x') is represented as Constant(value=b'%x', kind=None) instead.
     if hasattr(node, "value") and type(node.value) == bytes:
       self.__bytesv3 = True
-      self.__vvprint("byte strings (b'..') require 3+")
+      self.__vvprint("byte strings (b'..') require 3+ (or 2.6+ as `str` synonym)")
 
       for directive in BYTES_DIRECTIVE_REGEX.findall(str(node.value)):
         self.__add_bytes_directive(directive, node.lineno)

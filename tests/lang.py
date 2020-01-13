@@ -43,6 +43,12 @@ class VerminLanguageTests(VerminTest):
     self.assertTrue(visitor.format27())
     self.assertOnlyIn(((2, 7), (3, 0)), visitor.minimum_versions())
 
+    # Ensure regular str formatting is ~2, ~3.
+    visitor = visit("'%x' % 66")
+    self.assertFalse(visitor.format27())
+    self.assertFalse(visitor.bytesv3())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
   def test_longv2(self):
     visitor = visit("v = long(42)")
     self.assertTrue(visitor.longv2())
@@ -307,8 +313,7 @@ class VerminLanguageTests(VerminTest):
       self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
   def test_bytes_format(self):
-    v = current_version()
-    if v < 3 or v >= 3.5:
+    if current_version() >= 3.5:
       visitor = visit("b'%x' % 10")
       self.assertTrue(visitor.bytes_format())
       self.assertOnlyIn(((2, 6), (3, 5)), visitor.minimum_versions())
@@ -320,21 +325,22 @@ class VerminLanguageTests(VerminTest):
       self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
   def test_bytes_directives(self):
-    visitor = visit("b'%b %x'")
-    self.assertOnlyIn(("b", "x"), visitor.bytes_directives())
-    visitor = visit("b'%4b'")
-    self.assertOnlyIn(("b",), visitor.bytes_directives())
-    visitor = visit("b'%4b'")
-    self.assertOnlyIn(("b",), visitor.bytes_directives())
-    visitor = visit("b'%#4b'")
-    self.assertOnlyIn(("b",), visitor.bytes_directives())
-    visitor = visit("b'%04b'")
-    self.assertOnlyIn(("b",), visitor.bytes_directives())
-    visitor = visit("b'%.4f'")
-    self.assertOnlyIn(("f",), visitor.bytes_directives())
-    visitor = visit("b'%-4f'")
-    self.assertOnlyIn(("f",), visitor.bytes_directives())
-    visitor = visit("b'%  f'")
-    self.assertOnlyIn(("f",), visitor.bytes_directives())
-    visitor = visit("b'%+f'")
-    self.assertOnlyIn(("f",), visitor.bytes_directives())
+    if current_version() >= 3.0:
+      visitor = visit("b'%b %x'")
+      self.assertOnlyIn(("b", "x"), visitor.bytes_directives())
+      visitor = visit("b'%4b'")
+      self.assertOnlyIn(("b",), visitor.bytes_directives())
+      visitor = visit("b'%4b'")
+      self.assertOnlyIn(("b",), visitor.bytes_directives())
+      visitor = visit("b'%#4b'")
+      self.assertOnlyIn(("b",), visitor.bytes_directives())
+      visitor = visit("b'%04b'")
+      self.assertOnlyIn(("b",), visitor.bytes_directives())
+      visitor = visit("b'%.4f'")
+      self.assertOnlyIn(("f",), visitor.bytes_directives())
+      visitor = visit("b'%-4f'")
+      self.assertOnlyIn(("f",), visitor.bytes_directives())
+      visitor = visit("b'%  f'")
+      self.assertOnlyIn(("f",), visitor.bytes_directives())
+      visitor = visit("b'%+f'")
+      self.assertOnlyIn(("f",), visitor.bytes_directives())
