@@ -287,16 +287,45 @@ class VerminLanguageTests(VerminTest):
       self.assertTrue(visitor.generalized_unpacking())
       self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
+      visitor = visit("(4, *range(4))")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("(*range(4),)")
+      self.assertFalse(visitor.generalized_unpacking())
+
       visitor = visit("[*range(4), 4]")  # list
       self.assertTrue(visitor.generalized_unpacking())
       self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("[4, *range(4)]")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("[*range(4)]")
+      self.assertFalse(visitor.generalized_unpacking())
 
     if current_version() >= 3.5:
       visitor = visit("{*range(4), 4}")  # set
       self.assertTrue(visitor.generalized_unpacking())
       self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
+      visitor = visit("{4, *range(4)}")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("{*range(4)}")
+      self.assertFalse(visitor.generalized_unpacking())
+
       visitor = visit("{'x': 1, **{'y': 2}}")  # dict
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("{**{'y': 2}, 'x': 1}")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("[*{1,2,3}, *(1,2,3), *[1,2,3], *range(3)]")
       self.assertTrue(visitor.generalized_unpacking())
       self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
@@ -311,6 +340,14 @@ class VerminLanguageTests(VerminTest):
       visitor = visit("function(**{'x': 42}, arg=84)")
       self.assertTrue(visitor.generalized_unpacking())
       self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("function(arg=84, **{'x': 42})")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+    # Not generalized unpacking.
+    visitor = visit("d = {'a': 'b'}\ndict(**d)")
+    self.assertFalse(visitor.generalized_unpacking())
 
   def test_bytes_format(self):
     if current_version() >= 3.5:

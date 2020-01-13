@@ -762,17 +762,54 @@ class SourceVisitor(ast.NodeVisitor):
     self.__printv2 = True
     self.generic_visit(node)
 
-  def __check_generalized_unpacking(self, elts):
-    # If any elements occur after a Starred element then generalized unpacking is used.
+  # Check for generalized unpacking: If any item occurs after or before a Starred element, or
+  # arg=None and value!=None, or key=None and value!=None, then generalized unpacking is used.
+  #
+  # Accepts nodes that have `.args` (call arguments), `.keywords` (call keywords), `.elts` (set,
+  # list, tuple), and `.keys`+`.values` (dict keys/values).
+  def __check_generalized_unpacking(self, node):
+    gen_unp = False
+
     if hasattr(ast, "Starred"):
       starred = False
-      for elt in elts:
+      elts = []
+      if hasattr(node, "args"):
+        elts = node.args
+      elif hasattr(node, "elts"):
+        elts = node.elts
+      for i in range(len(elts)):
+        elt = elts[i]
         if isinstance(elt, ast.Starred):
           starred = True
+          if i > 0:
+            gen_unp = True
+            break
         elif starred:
-          self.__generalized_unpacking = True
-          self.__vvprint("generalized unpacking requires 3.5+")
+          gen_unp = True
           break
+
+    if hasattr(node, "keywords"):
+      total = len(node.keywords)
+      for i in range(total):
+        arg = node.keywords[i]
+        if arg.arg is None and arg.value is not None and (total - i - 1 > 0 or i > 0):
+          gen_unp = True
+          break
+
+    # If any key is None and corresponding value is not None, and there are more items afterwards or
+    # before, then generalized unpacking is used.
+    if hasattr(node, "keys") and hasattr(node, "values"):
+      keys = len(node.keys)
+      values = len(node.values)
+      if keys > 0 and keys == values:
+        for i in range(keys):
+          if node.keys[i] is None and node.values[i] is not None and ((keys - i - 1) > 0 or i > 0):
+            gen_unp = True
+            break
+
+    if gen_unp:
+      self.__generalized_unpacking = True
+      self.__vvprint("generalized unpacking requires 3.5+")
 
   def visit_Call(self, node):
     if self.__is_no_line(node.lineno):
@@ -825,7 +862,7 @@ class SourceVisitor(ast.NodeVisitor):
               # "array.array" = 5 + 1 + 5 + 1 = 12
               self.__add_array_typecode(arg.s, node.lineno, node.col_offset + 12)
 
-    self.__check_generalized_unpacking(node.args)
+    self.__check_generalized_unpacking(node)
     self.generic_visit(node)
     self.__function_name = None
 
@@ -853,12 +890,6 @@ class SourceVisitor(ast.NodeVisitor):
 
   def visit_keyword(self, node):
     if self.__function_name is not None:
-      # If any function keyword argument is None and value is not None then generalized unpacking is
-      # used.
-      if node.arg is None and node.value is not None:
-        self.__generalized_unpacking = True
-        self.__vvprint("generalized unpacking requires 3.5+")
-
       # kwarg related.
       exp_name = self.__function_name.split(".")
 
@@ -1094,28 +1125,19 @@ class SourceVisitor(ast.NodeVisitor):
     self.generic_visit(node)
 
   def visit_Dict(self, node):
-    # If any key is None and corresponding value is not None then generalized unpacking is used.
-    keys = len(node.keys)
-    values = len(node.values)
-    if keys > 0 and keys == values:
-      for i in range(keys):
-        if node.keys[i] is None and node.values[i] is not None:
-          self.__generalized_unpacking = True
-          self.__vvprint("generalized unpacking requires 3.5+")
-          break
-
+    self.__check_generalized_unpacking(node)
     self.generic_visit(node)
 
   def visit_Tuple(self, node):
-    self.__check_generalized_unpacking(node.elts)
+    self.__check_generalized_unpacking(node)
     self.generic_visit(node)
 
   def visit_List(self, node):
-    self.__check_generalized_unpacking(node.elts)
+    self.__check_generalized_unpacking(node)
     self.generic_visit(node)
 
   def visit_Set(self, node):
-    self.__check_generalized_unpacking(node.elts)
+    self.__check_generalized_unpacking(node)
     self.generic_visit(node)
 
   # Lax mode and comment-excluded lines skip conditional blocks if enabled.
