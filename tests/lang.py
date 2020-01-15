@@ -282,7 +282,7 @@ class VerminLanguageTests(VerminTest):
       self.assertOnlyIn([(2, 5), (3, 0)], visitor.minimum_versions())
 
   def test_generalized_unpacking(self):
-    if current_version() >= 3.0:
+    if current_version() >= 3.5:
       visitor = visit("(*range(4), 4)")  # tuple
       self.assertTrue(visitor.generalized_unpacking())
       self.assertOnlyIn((3, 5), visitor.minimum_versions())
@@ -292,7 +292,32 @@ class VerminLanguageTests(VerminTest):
       self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
       visitor = visit("(*range(4),)")
-      self.assertFalse(visitor.generalized_unpacking())
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("(*(1,),)")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("(*(1, 2),)")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("(0, *(1, 2))")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("(*(1, 2), 3)")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("(0, *(1, 2), 3)")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("(*(1, 2), *(3, 4))")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
       visitor = visit("[*range(4), 4]")  # list
       self.assertTrue(visitor.generalized_unpacking())
@@ -303,9 +328,33 @@ class VerminLanguageTests(VerminTest):
       self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
       visitor = visit("[*range(4)]")
-      self.assertFalse(visitor.generalized_unpacking())
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
-    if current_version() >= 3.5:
+      visitor = visit("[*[1]]")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("[*[1, 2]]")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("[0, *[1, 2]]")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("[*[1, 2], 3]")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("[0, *[1, 2], 3]")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("[*[1, 2], *[3, 4]]")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
       visitor = visit("{*range(4), 4}")  # set
       self.assertTrue(visitor.generalized_unpacking())
       self.assertOnlyIn((3, 5), visitor.minimum_versions())
@@ -315,7 +364,32 @@ class VerminLanguageTests(VerminTest):
       self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
       visitor = visit("{*range(4)}")
-      self.assertFalse(visitor.generalized_unpacking())
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("{*{1}}")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("{*{1, 2}}")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("{0, *{1, 2}}")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("{*{1, 2}, 3}")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("{0, *{1, 2}, 3}")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("{*{1, 2}, *{3, 4}}")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
       visitor = visit("{'x': 1, **{'y': 2}}")  # dict
       self.assertTrue(visitor.generalized_unpacking())
@@ -325,7 +399,72 @@ class VerminLanguageTests(VerminTest):
       self.assertTrue(visitor.generalized_unpacking())
       self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
+      visitor = visit("{**{1: 1}}")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("{**{1: 1, 2: 2}}")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("{0: 0, **{1: 1, 2: 2}}")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("{**{1: 1, 2: 2}, 3: 3}")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("{0: 0, **{1: 1, 2: 2}, 3: 3}")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("{**{1: 1, 2: 2}, **{3: 3, 4: 4}}")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
       visitor = visit("[*{1,2,3}, *(1,2,3), *[1,2,3], *range(3)]")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("print(*(1,))")
+      self.assertFalse(visitor.generalized_unpacking())
+
+      visitor = visit("print(*(1, 2))")
+      self.assertFalse(visitor.generalized_unpacking())
+
+      visitor = visit("print(0, *(1, 2))")
+      self.assertFalse(visitor.generalized_unpacking())
+
+      visitor = visit("print(*(1, 2), 3)")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("print(0, *(1, 2), 3)")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("print(*(1, 2), *(3, 4))")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("dict(**{'b': 1, 'c': 2}, d=3)")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("dict(a=0, **{'b': 1, 'c': 2}, d=3)")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("dict(**{'b': 1, 'c': 2}, **{'d': 3, 'e': 4})")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("foo(0, *(1, 2), 3, a=1, **{'b': 2, 'c': 3})")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = visit("foo(0, *(1, 2), a=1, **{'b': 2, 'c': 3}, d=4)")
       self.assertTrue(visitor.generalized_unpacking())
       self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
@@ -341,11 +480,21 @@ class VerminLanguageTests(VerminTest):
       self.assertTrue(visitor.generalized_unpacking())
       self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
-      visitor = visit("function(arg=84, **{'x': 42})")
-      self.assertTrue(visitor.generalized_unpacking())
-      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+    visitor = visit("dict(**{'b': 1})")
+    self.assertFalse(visitor.generalized_unpacking())
 
-    # Not generalized unpacking.
+    visitor = visit("dict(**{'b': 1, 'c': 2})")
+    self.assertFalse(visitor.generalized_unpacking())
+
+    visitor = visit("dict(a=0, **{'b': 1, 'c': 2})")
+    self.assertFalse(visitor.generalized_unpacking())
+
+    visitor = visit("foo(0, *(1, 2), a=1, **{'b': 2, 'c': 3})")
+    self.assertFalse(visitor.generalized_unpacking())
+
+    visitor = visit("function(arg=84, **{'x': 42})")
+    self.assertFalse(visitor.generalized_unpacking())
+
     visitor = visit("d = {'a': 'b'}\ndict(**d)")
     self.assertFalse(visitor.generalized_unpacking())
 

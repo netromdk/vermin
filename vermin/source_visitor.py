@@ -762,50 +762,42 @@ class SourceVisitor(ast.NodeVisitor):
     self.__printv2 = True
     self.generic_visit(node)
 
-  # Check for generalized unpacking: If any item occurs after or before a Starred element, or
-  # arg=None and value!=None, or key=None and value!=None, then generalized unpacking is used.
-  #
-  # Accepts nodes that have `.args` (call arguments), `.keywords` (call keywords), `.elts` (set,
-  # list, tuple), and `.keys`+`.values` (dict keys/values).
   def __check_generalized_unpacking(self, node):
     gen_unp = False
 
-    if hasattr(ast, "Starred"):
-      starred = False
-      elts = []
-      if hasattr(node, "args"):
-        elts = node.args
-      elif hasattr(node, "elts"):
-        elts = node.elts
-      for i in range(len(elts)):
-        elt = elts[i]
-        if isinstance(elt, ast.Starred):
-          starred = True
-          if i > 0:
-            gen_unp = True
-            break
-        elif starred:
-          gen_unp = True
-          break
+    # Call arguments and keywords: Check if more than one unpacking is used or if unpacking is used
+    # before the end. This is so because in 3.4, unpacking in function call parameter list is only
+    # allowed at the end of the parameter list, and only one unpacking is allowed.
+    if isinstance(node, ast.Call):
+      def is_gen_unp(pos, total):
+        return len(pos) > 1 or any(p < total - 1 for p in pos)
 
-    if hasattr(node, "keywords"):
-      total = len(node.keywords)
-      for i in range(total):
-        arg = node.keywords[i]
-        if arg.arg is None and arg.value is not None and (total - i - 1 > 0 or i > 0):
-          gen_unp = True
-          break
+      if hasattr(node, "args") and hasattr(ast, "Starred"):
+        total = len(node.args)
+        pos = []
+        for i in range(total):
+          if isinstance(node.args[i], ast.Starred):
+            pos.append(i)
+        gen_unp |= is_gen_unp(pos, total)
 
-    # If any key is None and corresponding value is not None, and there are more items afterwards or
-    # before, then generalized unpacking is used.
-    if hasattr(node, "keys") and hasattr(node, "values"):
-      keys = len(node.keys)
-      values = len(node.values)
-      if keys > 0 and keys == values:
-        for i in range(keys):
-          if node.keys[i] is None and node.values[i] is not None and ((keys - i - 1) > 0 or i > 0):
-            gen_unp = True
-            break
+      if hasattr(node, "keywords"):
+        total = len(node.keywords)
+        pos = []
+        for i in range(total):
+          kw = node.keywords[i]
+          if kw.arg is None and kw.value is not None:
+            pos.append(i)
+        gen_unp |= is_gen_unp(pos, total)
+
+    # Any unpacking in tuples, sets, or lists is generalized unpacking.
+    elif (isinstance(node, ast.Tuple) or isinstance(node, ast.Set) or isinstance(node, ast.List))\
+       and hasattr(ast, "Starred"):
+      gen_unp |= any(isinstance(elt, ast.Starred) for elt in node.elts)
+
+    # Any unpacking in dicts is generalized unpacking.
+    elif isinstance(node, ast.Dict):
+      gen_unp |= any(key is None and value is not None
+                     for (key, value) in zip(node.keys, node.values))
 
     if gen_unp:
       self.__generalized_unpacking = True
