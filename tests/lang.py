@@ -88,6 +88,55 @@ class VerminLanguageTests(VerminTest):
       self.assertTrue(visitor.fstrings_self_doc())
       self.assertOnlyIn((3, 8), visitor.minimum_versions())
 
+      visitor = visit("name = 'world'\nf'hello={name}'")
+      self.assertFalse(visitor.fstrings_self_doc())
+
+      visitor = visit("a = 1\nf'={a}'")
+      self.assertFalse(visitor.fstrings_self_doc())
+
+      visitor = visit("a = 1\nf'{a=}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("a = 1\nb = 2\nf'={b}={a}'")
+      self.assertFalse(visitor.fstrings_self_doc())
+
+      visitor = visit("a = 1\nb = 2\nf'{b=}={a}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{user=!s}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{delta.days=:,d}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{user=!s}  {delta.days=:,d}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{delta.days:,d}'")
+      self.assertFalse(visitor.fstrings_self_doc())
+
+      visitor = visit("f'{cos(radians(theta)):.3f}'")
+      self.assertFalse(visitor.fstrings_self_doc())
+
+      visitor = visit("f'{cos(radians(theta))=:.3f}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'={cos(radians(theta)):.3f}'")
+      self.assertFalse(visitor.fstrings_self_doc())
+
+      visitor = visit("f'{theta}  {cos(radians(theta)):.3f}'")
+      self.assertFalse(visitor.fstrings_self_doc())
+
+      visitor = visit("f'{cos(radians(theta)):.3f} {theta=}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
   def test_coroutines_async(self):
     if current_version() >= 3.5:
       visitor = visit("async def func():\n\tpass")

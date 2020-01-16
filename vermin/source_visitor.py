@@ -945,15 +945,43 @@ class SourceVisitor(ast.NodeVisitor):
       for directive in BYTES_DIRECTIVE_REGEX.findall(str(node.value)):
         self.__add_bytes_directive(directive, node.lineno)
 
+  def __extract_fstring_value(self, node):
+    value = []
+    is_call = False
+    for n in ast.walk(node):
+      if isinstance(n, ast.Name):
+        value.append(n.id)
+
+      if isinstance(n, ast.Attribute):
+        value += self.__get_attribute_name(n)
+        # Breaking because the rest of the nodes have been traversed by __get_attribute_name.
+        break
+
+      elif isinstance(n, ast.Call):
+        is_call = True
+
+    if is_call:
+      return "(".join(value) + ")" * (len(value) - 1)  # "a(b(c()))"
+    return ".".join(value)  # "a" or "a.b"..
+
   def visit_JoinedStr(self, node):
     self.__fstrings = True
     self.__vvprint("f-strings require 3.6+")
     if hasattr(node, "values"):
-      for val in node.values:
+      total = len(node.values)
+      for i in range(total):
+        val = node.values[i]
+        # A self-referencing f-string will be at the end of the Constant, like "..stuff..expr=", and
+        # the next value will be a FormattedValue(value=..) with Names or nested Calls with Names
+        # inside, for instance.
         if type(val) == ast.Constant and hasattr(val, "value") and \
-           type(val.value) == str and val.value.endswith("="):
-            self.__fstrings_self_doc = True
-            self.__vvprint("self-documenting fstrings require 3.8+")
+           type(val.value) == str and val.value.endswith("=") and i + 1 < total:
+            next_val = node.values[i + 1]
+            if isinstance(next_val, ast.FormattedValue):
+              fstring_value = self.__extract_fstring_value(next_val.value)
+              if fstring_value is not None and val.value.endswith(fstring_value + "="):
+                self.__fstrings_self_doc = True
+                self.__vvprint("self-documenting fstrings require 3.8+")
 
   # Mark variable names as aliases.
   def visit_Assign(self, node):
