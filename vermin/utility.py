@@ -1,3 +1,4 @@
+import re
 from math import floor
 
 from .config import Config
@@ -82,3 +83,6 @@ def version_strings(vers):
     else:
       res.append(dotted_name(ver))
   return ", ".join(res)
+
+def remove_whitespace(string):
+  return re.sub("[ \t\n\r\f\v]", "", string)

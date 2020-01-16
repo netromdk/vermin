@@ -82,6 +82,13 @@ class VerminLanguageTests(VerminTest):
       self.assertTrue(visitor.fstrings())
       self.assertOnlyIn((3, 6), visitor.minimum_versions())
 
+  def test_fstrings_named_expr(self):
+    if current_version() >= 3.8:
+      visitor = visit("f'{(x:=1)}'")
+      self.assertTrue(visitor.fstrings())
+      self.assertTrue(visitor.named_expressions())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
   def test_fstrings_self_doc(self):
     if current_version() >= 3.8:
       visitor = visit("name = 'world'\nf'hello {name=}'")
@@ -102,6 +109,98 @@ class VerminLanguageTests(VerminTest):
       self.assertFalse(visitor.fstrings_self_doc())
 
       visitor = visit("a = 1\nb = 2\nf'{b=}={a}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{a =}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{ a=}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{a= }'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{ a = }'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{1+1=}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{1+b=}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{a+b=}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{a+1=}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{a-1=}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{a/1=}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{a//1=}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{a*1=}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{not a=}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{a or b=}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{a and b=}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{(1,2,3)=}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{[1,2,3]=}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{ {1,2,3}=}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{ {1:1, 2:2}=}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{[x for x in [1,2,3]]=}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{(x for x in [1,2,3])=}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{ {x for x in [1,2,3]}=}'")
+      self.assertTrue(visitor.fstrings_self_doc())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      visitor = visit("f'{ {x:1 for x in [1,2,3]}=}'")
       self.assertTrue(visitor.fstrings_self_doc())
       self.assertOnlyIn((3, 8), visitor.minimum_versions())
 

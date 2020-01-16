@@ -6,7 +6,8 @@ from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, BYTES_REQ
   ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS, CODECS_ERRORS_INDICES, CODECS_ENCODINGS,\
   CODECS_ENCODINGS_INDICES
 from .config import Config
-from .utility import dotted_name, reverse_range, combine_versions, version_strings
+from .utility import dotted_name, reverse_range, combine_versions, version_strings,\
+  remove_whitespace
 
 STRFTIME_DIRECTIVE_REGEX = re.compile(r"%(?:[-\.\d#\s\+])*(\w)")
 BYTES_DIRECTIVE_REGEX = STRFTIME_DIRECTIVE_REGEX
@@ -952,13 +953,111 @@ class SourceVisitor(ast.NodeVisitor):
       if isinstance(n, ast.Name):
         value.append(n.id)
 
-      if isinstance(n, ast.Attribute):
+      elif hasattr(ast, "Constant") and isinstance(n, ast.Constant):
+        value.append(str(n.value))
+
+      elif isinstance(n, ast.Add):
+        value.append("+")
+
+      elif isinstance(n, ast.Sub):
+        value.append("-")
+
+      elif isinstance(n, ast.Div):
+        value.append("/")
+
+      elif isinstance(n, ast.FloorDiv):
+        value.append("//")
+
+      elif isinstance(n, ast.Mult):
+        value.append("*")
+
+      elif isinstance(n, ast.Not):
+        value.append("not ")
+
+      elif isinstance(n, ast.Or):
+        value.append(" or ")
+
+      elif isinstance(n, ast.And):
+        value.append(" and ")
+
+      elif hasattr(ast, "comprehension") and isinstance(n, ast.comprehension):
+        target = self.__extract_fstring_value(n.target)
+        iter = self.__extract_fstring_value(n.iter)
+        value.append("{} in {}".format(target, iter))
+        break
+
+      elif isinstance(n, ast.Attribute):
         value += self.__get_attribute_name(n)
-        # Breaking because the rest of the nodes have been traversed by __get_attribute_name.
         break
 
       elif isinstance(n, ast.Call):
         is_call = True
+
+      elif isinstance(n, ast.BinOp):
+        left = self.__extract_fstring_value(n.left)
+        op = self.__extract_fstring_value(n.op)
+        right = self.__extract_fstring_value(n.right)
+        value.append(left + op + right)
+        break
+
+      elif isinstance(n, ast.UnaryOp):
+        op = self.__extract_fstring_value(n.op)
+        operand = self.__extract_fstring_value(n.operand)
+        value.append(op + operand)
+        break
+
+      elif isinstance(n, ast.BoolOp):
+        op = self.__extract_fstring_value(n.op)
+        vals = [self.__extract_fstring_value(v) for v in n.values]
+        value.append(op.join(vals))
+        break
+
+      elif isinstance(n, ast.Tuple):
+        elts = [self.__extract_fstring_value(elt) for elt in n.elts]
+        value.append("({})".format(",".join(elts)))
+        break
+
+      elif isinstance(n, ast.List):
+        elts = [self.__extract_fstring_value(elt) for elt in n.elts]
+        value.append("[{}]".format(",".join(elts)))
+        break
+
+      elif isinstance(n, ast.Set):
+        elts = [self.__extract_fstring_value(elt) for elt in n.elts]
+        value.append("{" + ",".join(elts) + "}")
+        break
+
+      elif isinstance(n, ast.Dict):
+        keys = [self.__extract_fstring_value(key) for key in n.keys]
+        vals = [self.__extract_fstring_value(val) for val in n.values]
+        kvs = ",".join(["{}:{}".format(k, v) for (k, v) in zip(keys, vals)])
+        value.append("{" + kvs + "}")
+        break
+
+      elif hasattr(ast, "ListComp") and isinstance(n, ast.ListComp):
+        elt = self.__extract_fstring_value(n.elt)
+        gens = [self.__extract_fstring_value(gen) for gen in n.generators]
+        value.append("[{} for {}]".format(elt, " ".join(gens)))
+        break
+
+      elif hasattr(ast, "SetComp") and isinstance(n, ast.SetComp):
+        elt = self.__extract_fstring_value(n.elt)
+        gens = [self.__extract_fstring_value(gen) for gen in n.generators]
+        value.append("{" + "{} for {}".format(elt, " ".join(gens)) + "}")
+        break
+
+      elif hasattr(ast, "DictComp") and isinstance(n, ast.DictComp):
+        key = self.__extract_fstring_value(n.key)
+        val = self.__extract_fstring_value(n.value)
+        gens = [self.__extract_fstring_value(gen) for gen in n.generators]
+        value.append("{" + "{}:{} for {}".format(key, val, " ".join(gens)) + "}")
+        break
+
+      elif hasattr(ast, "GeneratorExp") and isinstance(n, ast.GeneratorExp):
+        elt = self.__extract_fstring_value(n.elt)
+        gens = [self.__extract_fstring_value(gen) for gen in n.generators]
+        value.append("({} for {})".format(elt, " ".join(gens)))
+        break
 
     if is_call:
       return "(".join(value) + ")" * (len(value) - 1)  # "a(b(c()))"
@@ -975,13 +1074,16 @@ class SourceVisitor(ast.NodeVisitor):
         # the next value will be a FormattedValue(value=..) with Names or nested Calls with Names
         # inside, for instance.
         if type(val) == ast.Constant and hasattr(val, "value") and \
-           type(val.value) == str and val.value.endswith("=") and i + 1 < total:
+           type(val.value) == str and val.value.strip().endswith("=") and i + 1 < total:
             next_val = node.values[i + 1]
             if isinstance(next_val, ast.FormattedValue):
-              fstring_value = self.__extract_fstring_value(next_val.value)
-              if fstring_value is not None and val.value.endswith(fstring_value + "="):
-                self.__fstrings_self_doc = True
-                self.__vvprint("self-documenting fstrings require 3.8+")
+              fstring_value = remove_whitespace(self.__extract_fstring_value(next_val.value))
+              if len(fstring_value) > 0 and\
+                remove_whitespace(val.value).endswith(fstring_value + "="):
+                  self.__fstrings_self_doc = True
+                  self.__vvprint("self-documenting fstrings require 3.8+")
+
+    self.generic_visit(node)
 
   # Mark variable names as aliases.
   def visit_Assign(self, node):
