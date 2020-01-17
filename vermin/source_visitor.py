@@ -954,7 +954,10 @@ class SourceVisitor(ast.NodeVisitor):
         value.append(n.id)
 
       elif hasattr(ast, "Constant") and isinstance(n, ast.Constant):
-        value.append(str(n.value))
+        v = str(n.value)
+        if type(n.value) == str:
+          v = "\"{}\"".format(v)
+        value.append(v)
 
       elif isinstance(n, ast.Add):
         value.append("+")
@@ -974,11 +977,35 @@ class SourceVisitor(ast.NodeVisitor):
       elif isinstance(n, ast.Not):
         value.append("not ")
 
+      elif isinstance(n, ast.In):
+        value.append("in ")
+
+      elif isinstance(n, ast.NotIn):
+        value.append("not in ")
+
       elif isinstance(n, ast.Or):
         value.append(" or ")
 
       elif isinstance(n, ast.And):
         value.append(" and ")
+
+      elif isinstance(n, ast.Eq):
+        value.append(" == ")
+
+      elif isinstance(n, ast.NotEq):
+        value.append(" != ")
+
+      elif isinstance(n, ast.LtE):
+        value.append(" <= ")
+
+      elif isinstance(n, ast.GtE):
+        value.append(" >= ")
+
+      elif isinstance(n, ast.Gt):
+        value.append(" > ")
+
+      elif isinstance(n, ast.Lt):
+        value.append(" < ")
 
       elif hasattr(ast, "comprehension") and isinstance(n, ast.comprehension):
         target = self.__extract_fstring_value(n.target)
@@ -990,8 +1017,16 @@ class SourceVisitor(ast.NodeVisitor):
         value += self.__get_attribute_name(n)
         break
 
+      elif isinstance(n, ast.keyword):
+        val = self.__extract_fstring_value(n.value)
+        value.append("{}={}".format(n.arg, val))
+        break
+
       elif isinstance(n, ast.Call):
         is_call = True
+        if len(n.args) == 0 and len(n.keywords) == 0:
+          value.append("{}()".format(self.__extract_fstring_value(n.func)))
+          break
 
       elif isinstance(n, ast.BinOp):
         left = self.__extract_fstring_value(n.left)
@@ -1059,6 +1094,13 @@ class SourceVisitor(ast.NodeVisitor):
         value.append("({} for {})".format(elt, " ".join(gens)))
         break
 
+      elif isinstance(n, ast.Compare):
+        left = self.__extract_fstring_value(n.left)
+        ops = [self.__extract_fstring_value(op) for op in n.ops]
+        comps = [self.__extract_fstring_value(comp) for comp in n.comparators]
+        value.append(left + "".join(["{} {}".format(op, comp) for (op, comp) in zip(ops, comps)]))
+        break
+
     if is_call:
       return "(".join(value) + ")" * (len(value) - 1)  # "a(b(c()))"
     return ".".join(value)  # "a" or "a.b"..
@@ -1077,9 +1119,9 @@ class SourceVisitor(ast.NodeVisitor):
            type(val.value) == str and val.value.strip().endswith("=") and i + 1 < total:
             next_val = node.values[i + 1]
             if isinstance(next_val, ast.FormattedValue):
-              fstring_value = remove_whitespace(self.__extract_fstring_value(next_val.value))
+              fstring_value = self.__extract_fstring_value(next_val.value)
               if len(fstring_value) > 0 and\
-                remove_whitespace(val.value).endswith(fstring_value + "="):
+                remove_whitespace(val.value).endswith(remove_whitespace(fstring_value) + "="):
                   self.__fstrings_self_doc = True
                   self.__vvprint("self-documenting fstrings require 3.8+")
 
