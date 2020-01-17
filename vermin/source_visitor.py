@@ -974,14 +974,53 @@ class SourceVisitor(ast.NodeVisitor):
       elif isinstance(n, ast.Mult):
         value.append("*")
 
+      elif hasattr(ast, "MatMult") and isinstance(n, ast.MatMult):
+        value.append("@")
+
+      elif isinstance(n, ast.Mod):
+        value.append("%")
+
+      elif isinstance(n, ast.Pow):
+        value.append("**")
+
+      elif isinstance(n, ast.BitXor):
+        value.append("^")
+
+      elif isinstance(n, ast.BitOr):
+        value.append("|")
+
+      elif isinstance(n, ast.BitAnd):
+        value.append("&")
+
       elif isinstance(n, ast.Not):
         value.append("not ")
+
+      elif isinstance(n, ast.USub):
+        value.append("-")
+
+      elif isinstance(n, ast.UAdd):
+        value.append("+")
+
+      elif isinstance(n, ast.Invert):
+        value.append("~")
+
+      elif isinstance(n, ast.LShift):
+        value.append("<<")
+
+      elif isinstance(n, ast.RShift):
+        value.append(">>")
 
       elif isinstance(n, ast.In):
         value.append("in ")
 
       elif isinstance(n, ast.NotIn):
         value.append("not in ")
+
+      elif isinstance(n, ast.Is):
+        value.append(" is ")
+
+      elif isinstance(n, ast.IsNot):
+        value.append(" is not ")
 
       elif isinstance(n, ast.Or):
         value.append(" or ")
@@ -1047,6 +1086,13 @@ class SourceVisitor(ast.NodeVisitor):
         value.append(op.join(vals))
         break
 
+      elif isinstance(n, ast.IfExp):
+        test = self.__extract_fstring_value(n.test)
+        body = self.__extract_fstring_value(n.body)
+        orelse = self.__extract_fstring_value(n.orelse)
+        value.append("{} if {} else {}".format(body, test, orelse))
+        break
+
       elif isinstance(n, ast.Tuple):
         elts = [self.__extract_fstring_value(elt) for elt in n.elts]
         value.append("({})".format(",".join(elts)))
@@ -1067,6 +1113,11 @@ class SourceVisitor(ast.NodeVisitor):
         vals = [self.__extract_fstring_value(val) for val in n.values]
         kvs = ",".join(["{}:{}".format(k, v) for (k, v) in zip(keys, vals)])
         value.append("{" + kvs + "}")
+        break
+
+      elif isinstance(n, ast.Index):
+        val = self.__extract_fstring_value(n.value)
+        value.append(val)
         break
 
       elif hasattr(ast, "ListComp") and isinstance(n, ast.ListComp):
@@ -1101,9 +1152,20 @@ class SourceVisitor(ast.NodeVisitor):
         value.append(left + "".join(["{} {}".format(op, comp) for (op, comp) in zip(ops, comps)]))
         break
 
+      elif isinstance(n, ast.Subscript):
+        val = self.__extract_fstring_value(n.value)
+        slice = self.__extract_fstring_value(n.slice)
+        value.append("{}[{}]".format(val, slice))
+        break
+
     if is_call:
       return "(".join(value) + ")" * (len(value) - 1)  # "a(b(c()))"
     return ".".join(value)  # "a" or "a.b"..
+
+  def __trim_fstring_value(self, value):
+    # HACK: Since parentheses are stripped of the AST, we'll just remove all those deduced or
+    # directly available such that the self-doc f-strings can be compared.
+    return remove_whitespace(value, ["\\(", "\\)"])
 
   def visit_JoinedStr(self, node):
     self.__fstrings = True
@@ -1119,11 +1181,13 @@ class SourceVisitor(ast.NodeVisitor):
            type(val.value) == str and val.value.strip().endswith("=") and i + 1 < total:
             next_val = node.values[i + 1]
             if isinstance(next_val, ast.FormattedValue):
-              fstring_value = self.__extract_fstring_value(next_val.value)
+              fstring_value =\
+                self.__trim_fstring_value(self.__extract_fstring_value(next_val.value))
               if len(fstring_value) > 0 and\
-                remove_whitespace(val.value).endswith(remove_whitespace(fstring_value) + "="):
+                self.__trim_fstring_value(val.value).endswith(fstring_value + "="):
                   self.__fstrings_self_doc = True
                   self.__vvprint("self-documenting fstrings require 3.8+")
+                  break
 
     self.generic_visit(node)
 

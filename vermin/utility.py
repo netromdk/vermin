@@ -84,5 +84,5 @@ def version_strings(vers):
       res.append(dotted_name(ver))
   return ", ".join(res)
 
-def remove_whitespace(string):
-  return re.sub("[ \t\n\r\f\v]", "", string)
+def remove_whitespace(string, extras=[]):
+  return re.sub("[ \t\n\r\f\v{}]".format("".join(extras)), "", string)
