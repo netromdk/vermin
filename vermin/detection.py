@@ -1,15 +1,16 @@
 from os import listdir
-from os.path import abspath, isfile, isdir, join
+from os.path import abspath, isfile, isdir, join, splitext
 
 def probably_python_file(path):
-  if not isfile(path):
-    return False
+  _, ext = splitext(path.lower())
 
-  pl = path.lower()
-  if pl.endswith(".pyc"):
-    return False
-  if pl.endswith(".py") or pl.endswith(".pyw"):
+  # Always scan definite Python files.
+  if ext in (".py", ".py3", ".pyw", ".pyj", ".pyi"):
     return True
+
+  # Skip all non-code Python files.
+  if ext in (".pyc", ".pyd", ".pxd", ".pyx", ".pyo"):
+    return False
 
   # Try opening file for reading as a text device.
   try:

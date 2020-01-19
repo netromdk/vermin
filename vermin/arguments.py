@@ -21,10 +21,11 @@ class Arguments:
     if not full:
       print("\nFor full help and options, use `-h` or `--help`.")
 
-    print("\nHeuristics are employed when files don't have extensions 'py' or 'pyw':")
-    print("  - Magic lines with 'python' are accepted, like: #!/usr/bin/env python")
-    print("  - 'pyc' are ignored")
-    print("  - Files that cannot be opened for reading as text devices are ignored")
+    print("\nHeuristics are employed to determine which files to analyze:\n"
+          "  - 'py', 'py3', 'pyw', 'pyj', 'pyi' are always scanned\n"
+          "  - 'pyc', 'pyd', 'pxd', 'pyx', 'pyo' are ignored\n"
+          "  - Magic lines with 'python' are accepted, like: #!/usr/bin/env python\n"
+          "  - Files that cannot be opened for reading as text devices are ignored")
     print("\nHowever, files directly specified are always attempted parsing, even without\n"
           "accepted extensions or heuristics.")
     print("\nResults interpretation:")

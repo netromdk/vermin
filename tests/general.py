@@ -1,6 +1,6 @@
 import sys
 import os
-from os.path import abspath, basename, join
+from os.path import abspath, basename, join, splitext
 from tempfile import NamedTemporaryFile, mkdtemp
 from shutil import rmtree
 
@@ -122,6 +122,42 @@ class VerminGeneralTests(VerminTest):
 
     paths = detect_paths([join(tmp_fld, "no-shebang")])
     self.assertEqual(paths, [f])
+
+    rmtree(tmp_fld)
+
+  # Ensure all proper Python source code files are detected: py, py3, pyw, pyj, pyi
+  def test_detect_vermin_paths_all_exts(self):
+    tmp_fld = mkdtemp()
+
+    exts = ('py', 'py3', 'pyw', 'pyj', 'pyi')
+    for ext in exts:
+      f = touch(tmp_fld, "code." + ext)
+      with open(f, mode="w") as fp:
+        fp.write("print('this is code')")
+
+    found_exts = set()
+    for path in detect_paths([tmp_fld]):
+      _, ext = splitext(path)
+      found_exts.add(ext[1:])
+    self.assertEqualItems(found_exts, exts)
+
+    rmtree(tmp_fld)
+
+  # Ensure all non-Python source code files are not detected: pyc, pyd, pxd, pyx, pyo
+  def test_detect_vermin_paths_no_invalid_exts(self):
+    tmp_fld = mkdtemp()
+
+    exts = ("pyc", "pyd", "pxd", "pyx", "pyo")
+    for ext in exts:
+      f = touch(tmp_fld, "code." + ext)
+      with open(f, mode="w") as fp:
+        fp.write("print('this is code')")
+
+    found_exts = set()
+    for path in detect_paths([tmp_fld]):
+      _, ext = splitext(path)
+      found_exts.add(ext[1:])
+    self.assertEmpty(found_exts)
 
     rmtree(tmp_fld)
 
