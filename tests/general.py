@@ -279,6 +279,22 @@ class VerminGeneralTests(VerminTest):
       main()
     self.assertEqual(ex.exception.code, 1)
 
+  def test_main_full_usage(self):
+    # Print full usage and exit with code 0.
+    with self.assertRaises(SystemExit) as ex:
+      sys.argv = [sys.argv[0], "--help"]
+      main()
+    sys.argv = [sys.argv[0]]
+    self.assertEqual(ex.exception.code, 0)
+
+  def test_main_print_version(self):
+    # Print version and exit with code 0.
+    with self.assertRaises(SystemExit) as ex:
+      sys.argv = [sys.argv[0], "--version"]
+      main()
+    sys.argv = [sys.argv[0]]
+    self.assertEqual(ex.exception.code, 0)
+
   def test_main_no_paths(self):
     # The path doesn't exist and isn't a .py file which means no paths are detected.
     with self.assertRaises(SystemExit) as ex:
