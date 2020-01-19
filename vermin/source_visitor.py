@@ -866,7 +866,8 @@ class SourceVisitor(ast.NodeVisitor):
       for mod in self.__modules:
         if full_name[0] == mod:
           self.__add_module(dotted_name(full_name), line)
-        elif mod.endswith(full_name[0]):
+        elif mod is not None and full_name[0] is not None and isinstance(mod, str)\
+             and mod.endswith(full_name[0]):
           self.__add_member(dotted_name([mod, full_name[1:]]), line)
       self.__add_member(dotted_name(full_name), line)
 
@@ -1213,11 +1214,13 @@ class SourceVisitor(ast.NodeVisitor):
     if hasattr(node, "annotation"):
       ann = node.annotation
       if (isinstance(ann, ast.Name) and ann.id == "Final") or \
-         (isinstance(ann, ast.Subscript) and ann.value.id == "Final"):
+         (isinstance(ann, ast.Subscript) and hasattr(ann.value, "id") and
+           ann.value.id == "Final"):
         self.__final_annotations = True
         self.__vvprint("final variable annotations require 3.8+")
       elif (isinstance(ann, ast.Name) and ann.id == "Literal") or \
-         (isinstance(ann, ast.Subscript) and ann.value.id == "Literal"):
+         (isinstance(ann, ast.Subscript) and hasattr(ann.value, "id") and
+           ann.value.id == "Literal"):
         self.__literal_annotations = True
         self.__vvprint("literal variable annotations require 3.8+")
 

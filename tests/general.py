@@ -217,6 +217,8 @@ class VerminGeneralTests(VerminTest):
     self.assertEqual(dotted_name(["foo", ("bar", "baz"), "boom"]), "foo.bar.baz.boom")
     self.assertEqual(dotted_name([1, 2, 3]), "1.2.3")
     self.assertEqual(dotted_name("right"), "right")
+    self.assertEqual(dotted_name(["hello", None, "world"]), "hello.world")
+    self.assertEqual(dotted_name(["foo", (None, "baz"), None]), "foo.baz")
 
   def test_assign_rvalue_attribute(self):
     self.assertEqual([None, (3, 3)], detect("import bz2\nv = bz2.BZ2File\nv.writable"))

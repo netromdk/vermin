@@ -23,7 +23,9 @@ def dotted_name(names):
     elif isinstance(name, int):
       resolved.append(str(name))
     elif isinstance(name, list) or isinstance(name, tuple):
-      resolved += name
+      resolved += filter(lambda x: x is not None, name)
+    elif name is None:
+      continue
     else:
       assert False
   return ".".join(resolved)
