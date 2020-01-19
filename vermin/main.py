@@ -64,7 +64,7 @@ def main():
     if config.lax_mode() and not no_tips:
       print("Tip: Try without using lax mode for more thorough analysis.")
 
-  unique_bps = backports - config.backports()
+  unique_bps = sorted(backports - config.backports())
   if len(unique_bps) > 0 and not no_tips:
     print("Tip: You're using potentially backported modules: {}".format(", ".join(unique_bps)))
     print("If so, try using the following for better results: {}\n".
