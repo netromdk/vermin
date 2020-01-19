@@ -23,7 +23,7 @@ class Arguments:
 
     print("\nHeuristics are employed to determine which files to analyze:\n"
           "  - 'py', 'py3', 'pyw', 'pyj', 'pyi' are always scanned\n"
-          "  - 'pyc', 'pyd', 'pxd', 'pyx', 'pyo' are ignored\n"
+          "  - 'pyc', 'pyd', 'pxd', 'pyx', 'pyo' are ignored (including various other files)\n"
           "  - Magic lines with 'python' are accepted, like: #!/usr/bin/env python\n"
           "  - Files that cannot be opened for reading as text devices are ignored")
     print("\nHowever, files directly specified are always attempted parsing, even without\n"
