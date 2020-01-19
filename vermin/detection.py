@@ -1,5 +1,6 @@
-from os import listdir
-from os.path import abspath, isfile, isdir, join, splitext
+from stat import S_ISDIR, S_ISREG
+from os import listdir, stat
+from os.path import abspath, join, splitext
 
 NOT_PY_CODE_EXTS = {
   "3dm",
@@ -455,9 +456,17 @@ def detect_paths(paths, hidden=False, depth=0):
     if not hidden and path != "." and path[0] == ".":
       continue
     path = abspath(path)
-    if isdir(path):
+
+    # Only invoke os.stat() once per path. Instead of twice via a call to isdir() and isfile() that
+    # calls os.stat() internally.
+    try:
+      st = stat(path)
+    except OSError:
+      continue
+
+    if S_ISDIR(st.st_mode):
       files = [join(path, p) for p in listdir(path) if hidden or p[0] != "."]
       accept_paths += detect_paths(files, hidden, depth + 1)
-    elif isfile(path) and (depth == 0 or probably_python_file(path)):
+    elif S_ISREG(st.st_mode) and (depth == 0 or probably_python_file(path)):
       accept_paths.append(path)
   return accept_paths
