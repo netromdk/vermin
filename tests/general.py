@@ -327,12 +327,22 @@ class VerminGeneralTests(VerminTest):
   def test_process_syntax_error(self):
     # Syntax error triggers minimum versions [0, 0].
     fp = NamedTemporaryFile(suffix=".py", delete=False)
-    fp.write(b"(")  # SyntaxError: unexpected EOF while parsing
+    fp.write(b'(')  # SyntaxError: unexpected EOF while parsing
     fp.close()
     proc_res = process_individual((fp.name, self.config))
     self.assertEqual(proc_res.mins, [(0, 0), (0, 0)])
     self.assertEmpty(proc_res.text)
     self.assertEmpty(proc_res.bps)
+    os.remove(fp.name)
+
+  def test_process_value_error(self):
+    # (Py3) ValueError: source code string cannot contain null bytes
+    # (Py2) TypeError: compile() expected string without null bytes
+    fp = NamedTemporaryFile(suffix=".py", delete=False)
+    fp.write(b'\0')
+    fp.close()
+    proc_res = process_individual((fp.name, self.config))
+    self.assertEqual(proc_res, None)
     os.remove(fp.name)
 
   def test_process_invalid_versions(self):
@@ -353,4 +363,75 @@ class VerminGeneralTests(VerminTest):
     proc_res = process_individual((fp.name, self.config))
     self.assertEmpty(proc_res.text)
     self.assertEqualItems(["typing"], proc_res.bps)
+    os.remove(fp.name)
+
+  def test_processor_value_error(self):
+    fp = NamedTemporaryFile(suffix=".py", delete=False)
+    fp.write(b"\0")
+    fp.close()
+    paths = [fp.name]
+    processor = Processor()
+    (mins, incomp, unique_versions, backports) = processor.process(paths)
+    self.assertEqual(mins, [(0, 0), (0, 0)])
+    self.assertFalse(incomp)
+    self.assertEmpty(unique_versions)
+    self.assertEmpty(backports)
+    os.remove(fp.name)
+
+  def test_processor_incompatible(self):
+    fp = NamedTemporaryFile(suffix=".py", delete=False)
+    fp.write(b"import Queue\n")  # 2.0, !3
+    fp.write(b"import builtins\n")  # !2, 3.0
+    fp.close()
+    paths = [fp.name]
+    processor = Processor()
+    (mins, incomp, unique_versions, backports) = processor.process(paths)
+    self.assertEqual(mins, [(0, 0), (0, 0)])
+    self.assertTrue(incomp)
+    self.assertEmpty(unique_versions)
+    self.assertEmpty(backports)
+    os.remove(fp.name)
+
+  def test_processor_separately_incompatible(self):
+    paths = []
+    codes = [
+      b"import Queue\n",  # 2.0, !3
+      b"import builtins\n",  # !2, 3.0
+    ]
+    for code in codes:
+      fp = NamedTemporaryFile(suffix=".py", delete=False)
+      fp.write(code)
+      fp.close()
+      paths.append(fp.name)
+
+    processor = Processor()
+    (mins, incomp, unique_versions, backports) = processor.process(paths)
+    self.assertEqual(mins, [(2, 0), None])  # Because the Queue file is analyzed first.
+    self.assertTrue(incomp)
+    self.assertEqual(unique_versions, [(2, 0), (3, 0)])
+    self.assertEmpty(backports)
+
+    for path in paths:
+      os.remove(path)
+
+  def test_processor_indent_show_output_text(self):
+    self.config.set_verbose(4)  # Ensure output text.
+    fp = NamedTemporaryFile(suffix=".py", delete=False)
+    fp.write(b"def foo():\n\tpass\n")
+    fp.write(b"foo()\n")  # L3: Ignoring member 'foo' because it's user-defined!
+    fp.write(b"print('hello')\n")  # print(expr) requires 2+ or 3+
+    fp.close()
+    paths = [fp.name]
+    processor = Processor()
+    (mins, incomp, unique_versions, backports) = processor.process(paths)
+
+    if current_version() >= 3.0:
+      self.assertEqual(mins, [(2, 0), (3, 0)])
+      self.assertEqual(unique_versions, [(2, 0), (3, 0)])
+    else:
+      self.assertEqual(mins, [(2, 0), (0, 0)])
+      self.assertEqual(unique_versions, [(2, 0)])
+
+    self.assertFalse(incomp)
+    self.assertEmpty(backports)
     os.remove(fp.name)
