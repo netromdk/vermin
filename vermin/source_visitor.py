@@ -589,7 +589,7 @@ class SourceVisitor(ast.NodeVisitor):
         if len(full_name) == 0 or (full_name[0] != "list" and len(full_name) == 1):
           full_name.insert(0, "list")
       elif not primi_type and isinstance(attr, ast.Str):
-        if sys.version_info.major == 2 and type(attr.s) == unicode:
+        if sys.version_info.major == 2 and isinstance(attr.s, unicode):
           name = "unicode"
         else:
           name = "str"
@@ -636,7 +636,7 @@ class SourceVisitor(ast.NodeVisitor):
     elif isinstance(node.value, ast.List):
       value_name = "list"
     elif isinstance(node.value, ast.Str):
-      if sys.version_info.major == 2 and type(node.value.s) == unicode:
+      if sys.version_info.major == 2 and isinstance(node.value.s, unicode):
         value_name = "unicode"
       else:
         value_name = "str"
@@ -679,14 +679,14 @@ class SourceVisitor(ast.NodeVisitor):
     return line in self.__no_lines
 
   def __is_int(self, node):
-    return (isinstance(node, ast.Num) and type(node.n) == int) or \
+    return (isinstance(node, ast.Num) and isinstance(node.n, int)) or \
       (isinstance(node, ast.UnaryOp) and isinstance(node.operand, ast.Num) and
-       type(node.operand.n) == int)
+       isinstance(node.operand.n, int))
 
   def __is_neg_int(self, node):
-    return (isinstance(node, ast.Num) and type(node.n) == int and node.n < 0) or \
-      (isinstance(node, ast.UnaryOp) and type(node.op) == ast.USub and
-       isinstance(node.operand, ast.Num) and type(node.operand.n) == int)
+    return (isinstance(node, ast.Num) and isinstance(node.n, int) and node.n < 0) or \
+      (isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub) and
+       isinstance(node.operand, ast.Num) and isinstance(node.operand.n, int))
 
   def __after_visit_all(self):
     # Remove any modules and members that were added before any known user-definitions. Do it in
@@ -945,7 +945,7 @@ class SourceVisitor(ast.NodeVisitor):
 
   def visit_Constant(self, node):
     # From 3.8, Bytes(s=b'%x') is represented as Constant(value=b'%x', kind=None) instead.
-    if hasattr(node, "value") and type(node.value) == bytes:
+    if hasattr(node, "value") and isinstance(node.value, bytes):
       self.__bytesv3 = True
       self.__vvprint("byte strings (b'..') require 3+ (or 2.6+ as `str` synonym)")
 
@@ -961,7 +961,7 @@ class SourceVisitor(ast.NodeVisitor):
 
       elif hasattr(ast, "Constant") and isinstance(n, ast.Constant):
         v = str(n.value)
-        if type(n.value) == str:
+        if isinstance(n.value, str):
           v = "\"{}\"".format(v)
         value.append(v)
 
@@ -1183,8 +1183,8 @@ class SourceVisitor(ast.NodeVisitor):
         # A self-referencing f-string will be at the end of the Constant, like "..stuff..expr=", and
         # the next value will be a FormattedValue(value=..) with Names or nested Calls with Names
         # inside, for instance.
-        if type(val) == ast.Constant and hasattr(val, "value") and \
-           type(val.value) == str and val.value.strip().endswith("=") and i + 1 < total:
+        if isinstance(val, ast.Constant) and hasattr(val, "value") and \
+           isinstance(val.value, str) and val.value.strip().endswith("=") and i + 1 < total:
             next_val = node.values[i + 1]
             if isinstance(next_val, ast.FormattedValue):
               fstring_value =\

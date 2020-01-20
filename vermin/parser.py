@@ -21,7 +21,7 @@ class Parser:
     lineno = 0
     novermin = set()
     src = self.__source
-    if type(src) == bytes:
+    if isinstance(src, bytes):
       src = src.decode(errors="ignore")
     for line in src.splitlines():
       lineno += 1
