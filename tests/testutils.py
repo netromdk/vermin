@@ -65,7 +65,7 @@ def visit(source):
   (node, novermin) = parser.parse()
   visitor = SourceVisitor()
   visitor.set_no_lines(novermin)
-  visitor.visit(node)
+  visitor.tour(node)
   return visitor
 
 def detect(source, path=None):
@@ -75,5 +75,5 @@ def detect(source, path=None):
     return mins
   visitor = SourceVisitor()
   visitor.set_no_lines(novermin)
-  visitor.visit(node)
+  visitor.tour(node)
   return visitor.minimum_versions()

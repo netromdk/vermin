@@ -72,7 +72,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__name_res = {}
 
     # User-defined symbols to be ignored.
-    self.__user_defs = []
+    self.__user_defs = set()
 
     # List of lines of output text.
     self.__output_text = []
@@ -165,7 +165,7 @@ class SourceVisitor(ast.NodeVisitor):
     return self.__bytes_directives
 
   def user_defined(self):
-    return self.__user_defs
+    return list(self.__user_defs)
 
   def array_typecodes(self):
     return self.__array_typecodes
@@ -530,21 +530,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__add_codecs_encoding(func, node)
 
   def __add_user_def(self, name):
-    if name not in self.__user_defs:
-      self.__user_defs.append(name)
-
-    # Remove any modules and members that were added before any known user-definitions. Do it in
-    # reverse so the indices are kept while traversing!
-    for ud in self.__user_defs:
-      for i in reverse_range(self.__modules):
-        if self.__modules[i] == ud:
-          self.__vvvvprint("Ignoring module '{}' because it's user-defined!".format(ud))
-          del(self.__modules[i])
-
-      for i in reverse_range(self.__members):
-        if self.__members[i] == ud:
-          self.__vvvvprint("Ignoring member '{}' because it's user-defined!".format(ud))
-          del(self.__members[i])
+    self.__user_defs.add(name)
 
   def __add_user_def_node(self, node):
     """Add user-defined name from node, like ast.Name, ast.arg or str."""
@@ -701,6 +687,25 @@ class SourceVisitor(ast.NodeVisitor):
     return (isinstance(node, ast.Num) and type(node.n) == int and node.n < 0) or \
       (isinstance(node, ast.UnaryOp) and type(node.op) == ast.USub and
        isinstance(node.operand, ast.Num) and type(node.operand.n) == int)
+
+  def __after_visit_all(self):
+    # Remove any modules and members that were added before any known user-definitions. Do it in
+    # reverse so the indices are kept while traversing!
+    for ud in self.__user_defs:
+      for i in reverse_range(self.__modules):
+        if self.__modules[i] == ud:
+          self.__vvvvprint("Ignoring module '{}' because it's user-defined!".format(ud))
+          del(self.__modules[i])
+
+      for i in reverse_range(self.__members):
+        if self.__members[i] == ud:
+          self.__vvvvprint("Ignoring member '{}' because it's user-defined!".format(ud))
+          del(self.__members[i])
+
+  # Entry point of source visitor.
+  def tour(self, node):
+    self.visit(node)
+    self.__after_visit_all()
 
   def generic_visit(self, node):
     if hasattr(node, "lineno"):

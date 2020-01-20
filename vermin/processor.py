@@ -56,7 +56,7 @@ def process_individual(args):
   visitor.set_no_lines(res.novermin)
 
   try:
-    visitor.visit(res.node)
+    visitor.tour(res.node)
   except KeyboardInterrupt:
     return res
 
