@@ -50,8 +50,8 @@ class Arguments:
             "        A '-' can be appended to match target version or smaller, like '-t=3.5-'.\n"
             "        If not met Vermin will exit with code 1. Note that the amount of target\n"
             "        versions must match the amount of minimum required versions detected.")
-      print("  -p=N  Use N concurrent processes to analyze files (defaults to all cores = {})."
-            .format(cpu_count()))
+      print("  -p=N  Use N concurrent processes to detect and analyze files. Defaults to all\n"
+            "        cores ({}).".format(cpu_count()))
       print("  -i    Ignore incompatible versions and warnings. However, if no compatible\n"
             "        versions are found then incompatible versions will be shown in the end to\n"
             "        not have an absence of results.")

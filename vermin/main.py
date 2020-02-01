@@ -22,11 +22,13 @@ def main():
   processes = args["processes"]
   targets = args["targets"]
   no_tips = args["no-tips"]
+  hidden = args["hidden"]
+  paths = args["paths"]
 
   # Detect paths, remove duplicates, and sort for deterministic results.
   vprint("Detecting python files..")
-  paths = [abspath(p) for p in args["paths"]]
-  paths = list(set(detect_paths(paths, args["hidden"])))
+  paths = [abspath(p) for p in paths]
+  paths = list(set(detect_paths(paths, hidden=hidden, processes=processes)))
   paths.sort()
 
   amount = len(paths)

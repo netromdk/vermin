@@ -1,6 +1,7 @@
 from stat import S_ISDIR, S_ISREG
 from os import listdir, stat
 from os.path import abspath, join, splitext
+from multiprocessing import Pool, cpu_count
 
 NOT_PY_CODE_EXTS = {
   "3dm",
@@ -447,18 +448,19 @@ def probably_python_file(path):
 
   return False
 
-# Some detected paths might not be python code since not all files use ".py" and ".pyw". But try
-# directly specified files on CLI, on depth 0, in any case (non-pyhton files will be ignored when
-# trying to parse them).
-def detect_paths(paths, hidden=False, depth=0):
-  accept_paths = []
+# Called concurrently in an iterative fashion. Each invocation will return accepted paths and a list
+# of further arguments tuples, if any.
+def _detect_paths(args):
+  (paths, depth, hidden) = args
+  accepted = []
+  further_args = []
   for path in paths:
     if not hidden and path != "." and path[0] == ".":
       continue
     path = abspath(path)
 
-    # Only invoke os.stat() once per path. Instead of twice via a call to isdir() and isfile() that
-    # calls os.stat() internally.
+    # Only invoke os.stat() once per path. Instead of twice via a call to isdir() and isfile()
+    # that calls os.stat() internally.
     try:
       st = stat(path)
     except OSError:
@@ -466,7 +468,26 @@ def detect_paths(paths, hidden=False, depth=0):
 
     if S_ISDIR(st.st_mode):
       files = [join(path, p) for p in listdir(path) if hidden or p[0] != "."]
-      accept_paths += detect_paths(files, hidden, depth + 1)
+      further_args.append((files, depth + 1, hidden))
     elif S_ISREG(st.st_mode) and (depth == 0 or probably_python_file(path)):
-      accept_paths.append(path)
+      accepted.append(path)
+  return (accepted, further_args)
+
+# Some detected paths might not be python code since not all files use extensions like ".py" and
+# ".pyw", for instance. But try directly specified files on CLI, on depth 0, in any case (non-pyhton
+# files will be ignored when trying to parse them).
+def detect_paths(paths, hidden=False, processes=cpu_count()):
+  pool = Pool(processes=processes)
+  accept_paths = []
+  depth = 0
+  args = [(paths, depth, hidden)]
+  while args:
+    new_args = []
+    for (acc, further_args) in pool.imap(_detect_paths, args):
+      if acc:
+        accept_paths += acc
+      if further_args:
+        new_args += further_args
+    args = new_args
+  pool.close()
   return accept_paths
