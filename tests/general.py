@@ -5,7 +5,8 @@ from tempfile import NamedTemporaryFile, mkdtemp
 from shutil import rmtree
 
 from vermin import combine_versions, InvalidVersionException, detect_paths,\
-  probably_python_file, Processor, process_individual, reverse_range, dotted_name, main, Config
+  detect_paths_incremental, probably_python_file, Processor, process_individual, reverse_range,\
+  dotted_name, main, Config
 
 from .testutils import VerminTest, visit, detect, current_version
 
@@ -106,6 +107,74 @@ class VerminGeneralTests(VerminTest):
     self.assertEqualItems(files, paths2)
 
     rmtree(tmp_fld)
+
+  def test_detect_paths_incrementally(self):
+    tmp_fld = mkdtemp()
+    files = [touch(tmp_fld, ".test.py"), touch(tmp_fld, "test.py"), touch(tmp_fld, ".test2.py"),
+             touch(tmp_fld, "test2.py")]
+
+    depth = 0
+    hidden = False
+    (accepted, further_args) = detect_paths_incremental(([tmp_fld], depth, hidden))
+
+    self.assertEmpty(accepted)
+    self.assertEqual(len(further_args), 1)
+
+    (paths, depth, hidden) = further_args[0]
+    self.assertEqualItems(paths, [files[1], files[3]])
+    self.assertEqual(depth, 1)
+    self.assertFalse(hidden)
+
+    rmtree(tmp_fld)
+
+  def test_detect_hidden_paths_incrementally(self):
+    tmp_fld = mkdtemp()
+    files = [touch(tmp_fld, ".test.py"), touch(tmp_fld, "test.py"), touch(tmp_fld, ".test2.py"),
+             touch(tmp_fld, "test2.py")]
+
+    depth = 0
+    hidden = True
+    (accepted, further_args) = detect_paths_incremental(([tmp_fld], depth, hidden))
+
+    self.assertEmpty(accepted)
+    self.assertEqual(len(further_args), 1)
+
+    (paths, depth, hidden) = further_args[0]
+    self.assertEqualItems(paths, [files[0], files[1], files[2], files[3]])
+    self.assertEqual(depth, 1)
+    self.assertTrue(hidden)
+
+    rmtree(tmp_fld)
+
+  # Even though hidden=False it will detect files given at the top level (depth=0) because those
+  # files were directly specified on the CLI in real cases.
+  def test_detect_top_level_paths_incrementally(self):
+    tmp_fld = mkdtemp()
+    files = [touch(tmp_fld, ".test.py"), touch(tmp_fld, "test.py"), touch(tmp_fld, ".test2.py"),
+             touch(tmp_fld, "test2.py")]
+
+    depth = 0
+    hidden = False
+    (accepted, further_args) = detect_paths_incremental((files, depth, hidden))
+
+    self.assertEqualItems(accepted, files)
+    self.assertEmpty(further_args)
+
+    rmtree(tmp_fld)
+
+  def test_detect_nonexistent_paths_incrementally(self):
+    depth = 0
+    hidden = False
+    (accepted, further_args) = detect_paths_incremental((["i-do-not-exist"], depth, hidden))
+    self.assertEmpty(accepted)
+    self.assertEmpty(further_args)
+
+  def test_detect_nonexistent_paths_with_dot_incrementally(self):
+    depth = 0
+    hidden = False
+    (accepted, further_args) = detect_paths_incremental(([".i-start-with-dot"], depth, hidden))
+    self.assertEmpty(accepted)
+    self.assertEmpty(further_args)
 
   # Files directly specified at depth 0 should be accepted in any case, even if not with .py or
   # heuristics, but extensions and heuristics must be used further down.

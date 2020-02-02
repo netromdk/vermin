@@ -1,5 +1,5 @@
 from .main import main
-from .detection import detect_paths, probably_python_file
+from .detection import detect_paths, detect_paths_incremental, probably_python_file
 from .source_visitor import SourceVisitor
 from .parser import Parser
 from .processor import Processor, process_individual
@@ -28,6 +28,7 @@ __all__ = [
   "SourceVisitor",
   "combine_versions",
   "detect_paths",
+  "detect_paths_incremental",
   "dotted_name",
   "main",
   "probably_python_file",

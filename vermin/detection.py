@@ -450,7 +450,7 @@ def probably_python_file(path):
 
 # Called concurrently in an iterative fashion. Each invocation will return accepted paths and a list
 # of further arguments tuples, if any.
-def _detect_paths(args):
+def detect_paths_incremental(args):
   (paths, depth, hidden) = args
   accepted = []
   further_args = []
@@ -483,7 +483,7 @@ def detect_paths(paths, hidden=False, processes=cpu_count()):
   args = [(paths, depth, hidden)]
   while args:
     new_args = []
-    for (acc, further_args) in pool.imap(_detect_paths, args):
+    for (acc, further_args) in pool.imap(detect_paths_incremental, args):
       if acc:
         accept_paths += acc
       if further_args:
