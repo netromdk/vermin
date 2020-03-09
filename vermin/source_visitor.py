@@ -1254,9 +1254,9 @@ class SourceVisitor(ast.NodeVisitor):
         attr_name = dotted_name(self.__get_attribute_name(ann))
 
         if (isinstance(ann, ast.Name) and ann.id == "Literal") or \
-           (isinstance(ann, ast.Subscript) and hasattr(ann.value, "id") \
-            and ann.value.id == "Literal") or \
-            attr_name == "Literal" or attr_name == "typing.Literal":
+           (isinstance(ann, ast.Subscript) and hasattr(ann.value, "id") and
+            ann.value.id == "Literal") or \
+           attr_name == "Literal" or attr_name == "typing.Literal":
           self.__literal_annotations = True
           self.__vvprint("literal variable annotations require 3.8+")
           break
