@@ -36,3 +36,11 @@ class VerminModuleTests(VerminTest):
       visitor = visit("def foo(x: typing.Literal[4]):\n\treturn x")
       self.assertTrue(visitor.literal_annotations())
       self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+      # Detect literal annotations after first annotation.
+      visitor = visit("def foo(x: L[1], y: Literal[4]):\n\treturn y")
+      self.assertTrue(visitor.literal_annotations())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+      visitor = visit("def foo(x: L[1], y: L[1], z: Literal[4]):\n\treturn z")
+      self.assertTrue(visitor.literal_annotations())
+      self.assertOnlyIn((3, 8), visitor.minimum_versions())

@@ -1259,7 +1259,7 @@ class SourceVisitor(ast.NodeVisitor):
             attr_name == "Literal" or attr_name == "typing.Literal":
           self.__literal_annotations = True
           self.__vvprint("literal variable annotations require 3.8+")
-        break
+          break
     return True
 
   def visit_FunctionDef(self, node):
