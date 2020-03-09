@@ -17,9 +17,11 @@ class VerminModuleTests(VerminTest):
     if current_version() >= 3.6:
       self.assertOnlyIn((3, 8), detect("a: Final = 5"))
       self.assertOnlyIn((3, 8), detect("a: Final[int] = 5"))
+      self.assertOnlyIn((3, 8), detect("a: typing.Final[int] = 5"))
 
   def test_Literal_annotation(self):
     if current_version() >= 3.6:
       self.assertOnlyIn((3, 8), detect("a: Literal = 5"))
       self.assertOnlyIn((3, 8), detect("a: Literal[int] = 5"))
       self.assertOnlyIn((3, 8), detect("def only_four(x: Literal[4]):\n\treturn x"))
+      self.assertOnlyIn((3, 8), detect("def foo(x: typing.Literal[4]):\n\treturn x"))
