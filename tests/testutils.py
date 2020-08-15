@@ -60,11 +60,12 @@ override is made to work for all versions, also 3.0-3.1."""
     else:
       self.assertEqual(sorted(expected), sorted(actual))
 
-def visit(source):
+def visit(source, fstring_self_doc=False):
   parser = Parser(source)
   (node, novermin) = parser.parse()
   visitor = SourceVisitor()
   visitor.set_no_lines(novermin)
+  visitor.set_fstring_self_doc_enabled(fstring_self_doc)
   visitor.tour(node)
   return visitor
 

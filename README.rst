@@ -22,17 +22,17 @@ matches against internal dictionaries with **2974** rules, covering v2.0-2.7 and
 into **134** modules, **2180** classes/functions/constants members of modules, **628** kwargs of
 functions, **4** strftime directives, **3** bytes format directives, **2** array typecodes, **3**
 codecs error handler names, and **20** codecs encodings. Including looking for v2/v3 ``print expr``
-and ``print(expr)``, ``long``, f-strings, self-documenting f-strings, coroutines (``async`` and
-``await``), asynchronous generators (``await`` and ``yield`` in same function), asynchronous
-comprehensions, ``await`` in comprehensions, boolean constants, named expressions, keyword-only
-parameters, positional-only parameters, ``yield from``, exception context cause (``raise .. from
-..``), ``dict`` comprehensions, infix matrix multiplication, ``"..".format(..)``, imports (``import
-X``, ``from X import Y``, ``from X import *``), function calls wrt. name and kwargs, ``strftime`` +
-``strptime`` directives used, function and variable annotations (also ``Final`` and ``Literal``),
-``continue`` in ``finally`` block, modular inverse ``pow()``, array typecodes, codecs error handler
-names, encodings, ``%`` formatting and directives for bytes and bytearray, and generalized
-unpacking. It tries to detect and ignore user-defined functions, classes, arguments, and variables
-with names that clash with library-defined symbols.
+and ``print(expr)``, ``long``, f-strings, coroutines (``async`` and ``await``), asynchronous
+generators (``await`` and ``yield`` in same function), asynchronous comprehensions, ``await`` in
+comprehensions, boolean constants, named expressions, keyword-only parameters, positional-only
+parameters, ``yield from``, exception context cause (``raise .. from ..``), ``dict`` comprehensions,
+infix matrix multiplication, ``"..".format(..)``, imports (``import X``, ``from X import Y``, ``from
+X import *``), function calls wrt. name and kwargs, ``strftime`` + ``strptime`` directives used,
+function and variable annotations (also ``Final`` and ``Literal``), ``continue`` in ``finally``
+block, modular inverse ``pow()``, array typecodes, codecs error handler names, encodings, ``%``
+formatting and directives for bytes and bytearray, and generalized unpacking. It tries to detect and
+ignore user-defined functions, classes, arguments, and variables with names that clash with
+library-defined symbols.
 
 Backports of the standard library, like ``typing``, can be enabled for better results.
 
@@ -65,6 +65,15 @@ be used to check that the minimum required versions didn't change. The following
   - pip install vermin
   script:
   - vermin -t=2.7 -t=3 project_package otherfile.py
+
+Caveats
+=======
+
+Self-documenting fstrings detection has been disabled by default because the built-in AST cannot
+distinguish ``f'{a=}'`` from ``f'a={a}'``, for instance, since it optimizes some information away
+(`#39 <https://github.com/netromdk/vermin/issues/39>`__). And this incorrectly marks some source
+code as using fstring self-doc when only using general fstring. To enable (unstable) fstring
+self-doc detection, use ``--feature fstring-self-doc``.
 
 Examples
 ========
