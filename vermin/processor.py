@@ -54,6 +54,7 @@ def process_individual(args):
 
   visitor = SourceVisitor(config)
   visitor.set_no_lines(res.novermin)
+  visitor.set_fstring_self_doc_enabled(config.has_feature("fstring-self-doc"))
 
   try:
     visitor.tour(res.node)

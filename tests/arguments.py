@@ -2,7 +2,7 @@ import os
 from multiprocessing import cpu_count
 from tempfile import NamedTemporaryFile
 
-from vermin import Arguments, Config, Backports
+from vermin import Arguments, Config, Backports, Features
 
 from .testutils import VerminTest
 
@@ -163,3 +163,18 @@ class VerminArgumentsTests(VerminTest):
 
   def test_no_tips(self):
     self.assertContainsDict({"no-tips": True}, parse_args(["--no-tips"]))
+
+  def test_feature(self):
+    # Needs <name> part.
+    self.assertContainsDict({"code": 1}, parse_args(["--feature"]))
+    self.assertEmpty(self.config.features())
+
+    # Unknown feature.
+    self.assertContainsDict({"code": 1}, parse_args(["--feature", "foobarbaz"]))
+    self.assertEmpty(self.config.features())
+
+    # Known features.
+    for feature in Features.features():
+      self.config.reset()
+      self.assertContainsDict({"code": 0}, parse_args(["--feature", feature]))
+      self.assertEqualItems([feature], self.config.features())

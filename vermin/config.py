@@ -1,4 +1,5 @@
 from .backports import Backports
+from .features import Features
 
 class Config:
   __instance = None
@@ -22,6 +23,7 @@ class Config:
     self.__lax_mode = False
     self.__exclusions = set()
     self.__backports = set()
+    self.__features = set()
 
   def quiet(self):
     return self.__quiet
@@ -89,3 +91,15 @@ class Config:
 
   def backports(self):
     return self.__backports
+
+  def enable_feature(self, name):
+    if not Features.is_feature(name):
+      return False
+    self.__features.add(name)
+    return True
+
+  def has_feature(self, name):
+    return name in self.__features
+
+  def features(self):
+    return self.__features

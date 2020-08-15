@@ -5,6 +5,7 @@ from multiprocessing import cpu_count
 from .constants import VERSION
 from .config import Config
 from .backports import Backports
+from .features import Features
 
 TARGETS_SPLIT = re.compile("[\\.,]")
 
@@ -89,6 +90,9 @@ class Arguments:
             "        backport is specified as being used, the results will reflect that instead."
             "\n\n"
             "        Supported backports:\n{}".format(Backports.str(10)))
+      print("\n  [--feature <name>] ...\n"
+            "        Some features are disabled by default due to being unstable:\n{}".
+            format(Features.str(10)))
 
   def parse(self):
     if len(self.__args) == 0:
@@ -199,6 +203,15 @@ class Arguments:
         name = self.__args[i + 1]
         if not config.add_backport(name):
           print("Unknown backport: {}".format(name))
+          return {"code": 1}
+        path_pos += 2
+      elif arg == "--feature":
+        if (i + 1) >= len(self.__args):
+          print("Requires a feature name! Example: --feature fstring-self-doc")
+          return {"code": 1}
+        name = self.__args[i + 1]
+        if not config.enable_feature(name):
+          print("Unknown feature: {}".format(name))
           return {"code": 1}
         path_pos += 2
 

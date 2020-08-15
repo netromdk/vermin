@@ -9,6 +9,7 @@ from .arguments import Arguments
 from .config import Config
 from .utility import reverse_range, dotted_name, combine_versions, InvalidVersionException
 from .backports import Backports
+from .features import Features
 
 __all__ = [
   "ARRAY_TYPECODE_REQS",
@@ -18,6 +19,7 @@ __all__ = [
   "CODECS_ENCODINGS",
   "CODECS_ERROR_HANDLERS",
   "Config",
+  "Features",
   "InvalidVersionException",
   "KWARGS_REQS",
   "MOD_MEM_REQS",
