@@ -744,6 +744,11 @@ class SourceVisitor(ast.NodeVisitor):
     if node.module is None:
       return
 
+    # Ignore modules that aren't top-level, such as `.typing` and `..typing` that are relative and
+    # might be files in local packages.
+    if hasattr(node, "level") and node.level > 0:
+      return
+
     if self.__is_no_line(node.lineno):
       return
 

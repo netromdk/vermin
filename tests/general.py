@@ -275,6 +275,12 @@ class VerminGeneralTests(VerminTest):
     with self.assertRaises(InvalidVersionException):
       detect("import copy_reg, http")
 
+  def test_ignore_non_top_level_imports(self):
+    vers = [(0, 0), (0, 0)]
+    self.assertNotEqual(vers, detect("from typing import Final"))  # Don't ignore
+    self.assertEqual(vers, detect("from .typing import Final"))    # Ignore
+    self.assertEqual(vers, detect("from ..typing import Final"))   # Ignore
+
   def test_reverse_range(self):
     self.assertEqual(list(reverse_range([1, 2, 3])), [2, 1, 0])
     self.assertEqual(list(reverse_range([1, 2])), [1, 0])
