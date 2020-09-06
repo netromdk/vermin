@@ -16,9 +16,11 @@ test-all:
 
 count:
 	./count.py
-	@echo "Tests: `grep -ri 'def test_' tests | wc -l | xargs echo`"
-	@echo "Vermin SLOC: `sloccount vermin/ vermin.py 2>/dev/null | grep 'python:'`"
-	@echo "Tests  SLOC: `sloccount tests/ runtests.py 2>/dev/null | grep 'python:'`"
+	@echo "Tests: `grep -ri 'def test_' tests | wc -l | xargs` (\
+`find tests -iname '*.py' | xargs cat | grep -iE 'self\..*assert.*?\(' |\
+wc -l | xargs` assertions)"
+	@echo "Vermin SLOC: `sloccount vermin/ vermin.py 2>/dev/null | grep 'python:' | xargs`"
+	@echo "Tests  SLOC: `sloccount tests/ runtests.py 2>/dev/null | grep 'python:' | xargs`"
 
 setup-venv: clean-venv
 	virtualenv -p python3 .venv
