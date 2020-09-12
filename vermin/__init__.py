@@ -7,7 +7,8 @@ from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, BYTES_REQ
   ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS, CODECS_ENCODINGS
 from .arguments import Arguments
 from .config import Config
-from .utility import reverse_range, dotted_name, combine_versions, InvalidVersionException
+from .utility import reverse_range, dotted_name, combine_versions, InvalidVersionException,\
+  remove_whitespace
 from .backports import Backports
 from .features import Features
 
@@ -35,5 +36,6 @@ __all__ = [
   "main",
   "probably_python_file",
   "process_individual",
+  "remove_whitespace",
   "reverse_range",
 ]

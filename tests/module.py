@@ -21,6 +21,7 @@ class VerminModuleTests(VerminTest):
 
   def test_abc(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import abc"))
+    self.assertOnlyIn(((2, 6), (3, 0)), detect("import abc as ABC"))
 
   def test_multiprocessing(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import multiprocessing"))

@@ -146,6 +146,13 @@ class VerminArgumentsTests(VerminTest):
     os.remove(fp.name)
     self.assertEqual(["aaa", "bbb"], self.config.exclusions())  # Expect it sorted.
 
+    # Nonexistent file is ignored.
+    fn = "nonexistentfile"
+    self.assertFalse(os.path.exists(fn))
+    self.config.reset()
+    self.assertContainsDict({"code": 0}, parse_args(["--exclude-file", fn]))
+    self.assertEmpty(self.config.exclusions())
+
   def test_backport(self):
     # Needs <name> part.
     self.assertContainsDict({"code": 1}, parse_args(["--backport"]))

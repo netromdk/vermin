@@ -6,7 +6,7 @@ from shutil import rmtree
 
 from vermin import combine_versions, InvalidVersionException, detect_paths,\
   detect_paths_incremental, probably_python_file, Processor, process_individual, reverse_range,\
-  dotted_name, main, Config
+  dotted_name, remove_whitespace, main, Config
 
 from .testutils import VerminTest, visit, detect, current_version
 
@@ -290,10 +290,21 @@ class VerminGeneralTests(VerminTest):
     self.assertEqual(dotted_name(["hello", "world"]), "hello.world")
     self.assertEqual(dotted_name(["foo", ["bar", "baz"], "boom"]), "foo.bar.baz.boom")
     self.assertEqual(dotted_name(["foo", ("bar", "baz"), "boom"]), "foo.bar.baz.boom")
+    self.assertEqual(dotted_name(1), "1")
     self.assertEqual(dotted_name([1, 2, 3]), "1.2.3")
     self.assertEqual(dotted_name("right"), "right")
     self.assertEqual(dotted_name(["hello", None, "world"]), "hello.world")
     self.assertEqual(dotted_name(["foo", (None, "baz"), None]), "foo.baz")
+
+    # Invalid values yield `assert False`.
+    with self.assertRaises(AssertionError):
+      dotted_name([4.2])
+
+  def test_remove_whitespace(self):
+    self.assertEqual(remove_whitespace("abc"), "abc")
+    self.assertEqual(remove_whitespace("abc", ["a", "c"]), "b")
+    self.assertEqual(remove_whitespace(" \t\n\r\f\v"), "")
+    self.assertEqual(remove_whitespace(" \t1\n2\r3\f\v", ["1", "3"]), "2")
 
   def test_assign_rvalue_attribute(self):
     self.assertEqual([None, (3, 3)], detect("import bz2\nv = bz2.BZ2File\nv.writable"))
@@ -367,6 +378,20 @@ class VerminGeneralTests(VerminTest):
     with self.assertRaises(SystemExit) as ex:
       sys.argv = [sys.argv[0], "--version"]
       main()
+    sys.argv = [sys.argv[0]]
+    self.assertEqual(ex.exception.code, 0)
+
+  def test_main_print_versions_range(self):
+    fp = NamedTemporaryFile(suffix=".py", delete=False)
+    fp.write(b"import weakref\n")
+    fp.close()
+
+    # Print versions range and exit with code 0.
+    with self.assertRaises(SystemExit) as ex:
+      sys.argv = [sys.argv[0], "--versions", fp.name]
+      main()
+
+    os.remove(fp.name)
     sys.argv = [sys.argv[0]]
     self.assertEqual(ex.exception.code, 0)
 
