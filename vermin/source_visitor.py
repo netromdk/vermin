@@ -220,7 +220,7 @@ class SourceVisitor(ast.NodeVisitor):
       # `Call(func=Name(id="print"..)..)`. Otherwise it will say not compatible with 3 when run on
       # py3. The reason for now using `combine_versions(2.0, 3.0)` is that in py2 we cannot
       # distinguish `print x` from `print(x)` - the first fails in py3 but not the second form.
-      mins[0] = (2, 0)
+      mins[0] = (2, 0)  # pragma: no cover
 
     if self.printv3():
       # print() is used so often that we only want to show it once, and with no line.
@@ -241,10 +241,10 @@ class SourceVisitor(ast.NodeVisitor):
     if self.fstrings():
       mins = combine_versions(mins, (None, (3, 6)))
 
-    if self.fstrings_self_doc():
+    if self.fstrings_self_doc():  # pragma: no cover
       mins = combine_versions(mins, (None, (3, 8)))
 
-    if self.bool_const():
+    if self.bool_const():  # pragma: no cover
       mins = combine_versions(mins, ((2, 2), (3, 0)))
 
     if self.annotations():
@@ -390,14 +390,14 @@ class SourceVisitor(ast.NodeVisitor):
   def set_fstring_self_doc_enabled(self, enabled):
     self.__fstring_self_doc_enabled = enabled
 
-  def fstring_self_doc_enabled(self):
+  def fstring_self_doc_enabled(self):  # pragma: no cover
     return self.__fstring_self_doc_enabled
 
   def __nprint(self, msg):
-    if not self.__config.quiet():
+    if not self.__config.quiet():  # pragma: no cover
       self.__output_text.append(msg)
 
-  def __verbose_print(self, msg, level, entity=None, line=None):
+  def __verbose_print(self, msg, level, entity=None, line=None):  # pragma: no cover
     config_level = self.__config.verbose()
     if self.__config.quiet() or config_level < level:
       return
@@ -421,16 +421,16 @@ class SourceVisitor(ast.NodeVisitor):
         msg = "L{}: ".format(line) + msg
     self.__output_text.append(msg)
 
-  def __vprint(self, msg, entity=None):
+  def __vprint(self, msg, entity=None):  # pragma: no cover
     self.__verbose_print(msg, 1, entity)
 
-  def __vvprint(self, msg, entity=None, line=None):
+  def __vvprint(self, msg, entity=None, line=None):  # pragma: no cover
     self.__verbose_print(msg, 2, entity, line)
 
-  def __vvvprint(self, msg, entity=None, line=None):
+  def __vvvprint(self, msg, entity=None, line=None):  # pragma: no cover
     self.__verbose_print(msg, 3, entity, line)
 
-  def __vvvvprint(self, msg, entity=None, line=None):
+  def __vvvvprint(self, msg, entity=None, line=None):  # pragma: no cover
     self.__verbose_print(msg, 4, entity, line)
 
   def __add_module(self, module, line=None, col=None):
@@ -601,7 +601,7 @@ class SourceVisitor(ast.NodeVisitor):
           full_name.insert(0, "list")
       elif not primi_type and isinstance(attr, ast.Str):
         if sys.version_info.major == 2 and isinstance(attr.s, unicode):
-          name = "unicode"
+          name = "unicode"  # pragma: no cover
         else:
           name = "str"
         if len(full_name) == 0 or (full_name[0] != name and len(full_name) == 1):
@@ -614,7 +614,7 @@ class SourceVisitor(ast.NodeVisitor):
         elif t == float:
           name = "float"
         if sys.version_info.major == 2 and t == long:  # novm
-          name = "long"
+          name = "long"  # pragma: no cover
         if name is not None and len(full_name) == 0 or \
           (full_name[0] != name and len(full_name) == 1):
           full_name.insert(0, name)
@@ -648,7 +648,7 @@ class SourceVisitor(ast.NodeVisitor):
       value_name = "list"
     elif isinstance(node.value, ast.Str):
       if sys.version_info.major == 2 and isinstance(node.value.s, unicode):
-        value_name = "unicode"
+        value_name = "unicode"  # pragma: no cover
       else:
         value_name = "str"
     elif isinstance(node.value, ast.Num):
@@ -656,7 +656,7 @@ class SourceVisitor(ast.NodeVisitor):
       if t == int:
         value_name = "int"
       elif sys.version_info.major == 2 and t == long:  # novm
-        value_name = "long"
+        value_name = "long"  # pragma: no cover
       elif t == float:
         value_name = "float"
     elif hasattr(ast, "Bytes") and isinstance(node.value, ast.Bytes):
@@ -723,7 +723,7 @@ class SourceVisitor(ast.NodeVisitor):
       self.__line = node.lineno
     self.__depth += 1
     if self.__config.print_visits():
-      self.__nprint("| " * self.__depth + ast.dump(node))
+      self.__nprint("| " * self.__depth + ast.dump(node))  # pragma: no cover
     super(SourceVisitor, self).generic_visit(node)
     self.__depth -= 1
 
@@ -780,7 +780,7 @@ class SourceVisitor(ast.NodeVisitor):
         self.__longv2 = True
         self.__vvprint("long is a v2 feature")
 
-  def visit_Print(self, node):
+  def visit_Print(self, node):  # pragma: no cover
     self.__printv2 = True
     self.generic_visit(node)
 
@@ -968,7 +968,7 @@ class SourceVisitor(ast.NodeVisitor):
       for directive in BYTES_DIRECTIVE_REGEX.findall(str(node.value)):
         self.__add_bytes_directive(directive, node.lineno)
 
-  def __extract_fstring_value(self, node):
+  def __extract_fstring_value(self, node):  # pragma: no cover
     value = []
     is_call = False
     for n in ast.walk(node):
@@ -1184,7 +1184,7 @@ class SourceVisitor(ast.NodeVisitor):
       return "(".join(value) + ")" * (len(value) - 1)  # "a(b(c()))"
     return ".".join(value)  # "a" or "a.b"..
 
-  def __trim_fstring_value(self, value):
+  def __trim_fstring_value(self, value):  # pragma: no cover
     # HACK: Since parentheses are stripped of the AST, we'll just remove all those deduced or
     # directly available such that the self-doc f-strings can be compared.
     return remove_whitespace(value, ["\\(", "\\)"])
@@ -1192,7 +1192,7 @@ class SourceVisitor(ast.NodeVisitor):
   def visit_JoinedStr(self, node):
     self.__fstrings = True
     self.__vvprint("f-strings require 3.6+")
-    if self.__fstring_self_doc_enabled and hasattr(node, "values"):
+    if self.__fstring_self_doc_enabled and hasattr(node, "values"):  # pragma: no cover
       total = len(node.values)
       for i in range(total):
         val = node.values[i]
@@ -1312,7 +1312,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.generic_visit(node)
 
   def visit_NameConstant(self, node):
-    if node.value is True or node.value is False:
+    if node.value is True or node.value is False:  # pragma: no cover
       self.__bool_const = True
       self.__vvvprint("True/False constant requires v2.2+.")
 
@@ -1434,10 +1434,10 @@ class SourceVisitor(ast.NodeVisitor):
     self.__handle_Try(node)
 
   def visit_TryExcept(self, node):
-    self.__handle_Try(node)
+    self.__handle_Try(node)  # pragma: no cover
 
   def visit_TryFinally(self, node):
-    self.__handle_Try(node)
+    self.__handle_Try(node)  # pragma: no cover
 
   def visit_BoolOp(self, node):
     if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
@@ -1446,64 +1446,64 @@ class SourceVisitor(ast.NodeVisitor):
   # Ignore unused nodes as a speed optimization.
 
   def visit_alias(self, node):
-    pass
+    pass  # pragma: no cover
 
   def visit_Load(self, node):
-    pass
+    pass  # pragma: no cover
 
   def visit_Store(self, node):
-    pass
+    pass  # pragma: no cover
 
   def visit_Pass(self, node):
-    pass
+    pass  # pragma: no cover
 
   def visit_Num(self, node):
-    pass
+    pass  # pragma: no cover
 
   def visit_Not(self, node):
-    pass
+    pass  # pragma: no cover
 
   def visit_Add(self, node):
-    pass
+    pass  # pragma: no cover
 
   def visit_Sub(self, node):
-    pass
+    pass  # pragma: no cover
 
   def visit_Mult(self, node):
-    pass
+    pass  # pragma: no cover
 
   def visit_Div(self, node):
-    pass
+    pass  # pragma: no cover
 
   def visit_BitAnd(self, node):
-    pass
+    pass  # pragma: no cover
 
   def visit_Or(self, node):
-    pass
+    pass  # pragma: no cover
 
   def visit_BitOr(self, node):
-    pass
+    pass  # pragma: no cover
 
   def visit_Eq(self, node):
-    pass
+    pass  # pragma: no cover
 
   def visit_NotEq(self, node):
-    pass
+    pass  # pragma: no cover
 
   def visit_Lt(self, node):
-    pass
+    pass  # pragma: no cover
 
   def visit_Gt(self, node):
-    pass
+    pass  # pragma: no cover
 
   def visit_In(self, node):
-    pass
+    pass  # pragma: no cover
 
   def visit_Is(self, node):
-    pass
+    pass  # pragma: no cover
 
   def visit_Break(self, node):
-    pass
+    pass  # pragma: no cover
 
   def visit_Mod(self, node):
-    pass
+    pass  # pragma: no cover

@@ -13,10 +13,11 @@ class VerminLanguageTests(VerminTest):
     if v >= 3.4:
       self.assertEqual(node, None)
       self.assertOnlyIn((2, 0), mins)
-    elif v >= 3.0 and v < 3.4:
+    elif v >= 3.0 and v < 3.4:  # pragma: no cover
       self.assertEqual(node, None)
       self.assertEqual(mins, [(0, 0), (0, 0)])
-    else:  # < 3.0
+    # < 3.0
+    else:  # pragma: no cover
       visitor = visit(source)
       self.assertTrue(visitor.printv2())
       self.assertEqual([(2, 0), (0, 0)], visitor.minimum_versions())
@@ -24,7 +25,7 @@ class VerminLanguageTests(VerminTest):
   def test_printv3(self):
     """Allowed in both v2 and v3."""
     visitor = visit("print('hello')")
-    if current_version() < 3.0:
+    if current_version() < 3.0:  # pragma: no cover
       self.assertTrue(visitor.printv2())
       self.assertFalse(visitor.printv3())
     else:
@@ -62,7 +63,7 @@ class VerminLanguageTests(VerminTest):
     v = current_version()
 
     # py2: type(b'hello') = <type 'str'>
-    if v >= 2.0 and v < 3.0:
+    if v >= 2.0 and v < 3.0:  # pragma: no cover
       visitor = visit("s = b'hello'")
       self.assertFalse(visitor.bytesv3())
       self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
@@ -105,7 +106,7 @@ class VerminLanguageTests(VerminTest):
 
   def test_fstrings_self_doc(self):
     enabled = False
-    if enabled and current_version() >= 3.8:
+    if enabled and current_version() >= 3.8:  # pragma: no cover
       def visit_fstring_self_doc(source):
         return visit(source=source, fstring_self_doc=True)
 
@@ -558,7 +559,7 @@ class VerminLanguageTests(VerminTest):
     self.assertIn("str.zfill", visitor.members())
 
   def test_unicode_from_type(self):
-    if current_version() < 3.0:
+    if current_version() < 3.0:  # pragma: no cover
       visitor = visit("u\"\".isdecimal()")
       self.assertIn("unicode.isdecimal", visitor.members())
       visitor = visit("unicode().isdecimal()")
@@ -593,7 +594,7 @@ class VerminLanguageTests(VerminTest):
     self.assertIn("int.bit_length", visitor.members())
 
   def test_long_from_type(self):
-    if current_version() < 3.0:
+    if current_version() < 3.0:  # pragma: no cover
       visitor = visit("(1L).bit_length()")
       self.assertIn("long.bit_length", visitor.members())
       visitor = visit("long().bit_length()")

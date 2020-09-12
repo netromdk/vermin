@@ -34,18 +34,18 @@ def process_individual(args):
     try:
       parser = Parser(fp.read(), path)
       (res.node, res.mins, res.novermin) = parser.detect()
-    except KeyboardInterrupt:
+    except KeyboardInterrupt:  # pragma: no cover
       return res
 
     # When input isn't python code, ignore it.
     except ValueError:
       # source code string cannot contain null bytes
       return None
-    except TypeError:
+    except TypeError:  # pragma: no cover
       # compile() expected string without null bytes
       return None
 
-    except Exception as ex:
+    except Exception as ex:  # pragma: no cover
       res.text = "{}: {}, {}".format(path, type(ex), ex)
       res.mins = [(0, 0), (0, 0)]
 
@@ -58,7 +58,7 @@ def process_individual(args):
 
   try:
     visitor.tour(res.node)
-  except KeyboardInterrupt:
+  except KeyboardInterrupt:  # pragma: no cover
     return res
 
   try:
@@ -110,7 +110,7 @@ class Processor:
         lines.sort()
         subtext = "\n  " + "  ".join(lines)
         if not subtext.endswith("\n"):
-          subtext += "\n"
+          subtext += "\n"  # pragma: no cover
 
       vprint("{:<12} {}{}".format(version_strings(proc_res.mins), proc_res.path, subtext))
       try:

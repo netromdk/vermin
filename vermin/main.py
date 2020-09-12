@@ -17,7 +17,7 @@ def main():
     sys.exit(args["code"])
 
   if args["code"] != 0:
-    sys.exit(args["code"])
+    sys.exit(args["code"])  # pragma: no cover
 
   processes = args["processes"]
   targets = args["targets"]
@@ -44,11 +44,11 @@ def main():
   try:
     processor = Processor()
     (mins, incomp, unique_versions, backports) = processor.process(paths, processes)
-  except KeyboardInterrupt:
+  except KeyboardInterrupt:  # pragma: no cover
     print("Aborting..")
     sys.exit(1)
 
-  if incomp and not config.ignore_incomp():
+  if incomp and not config.ignore_incomp():  # pragma: no cover
     nprint("Note: Some files had incompatible versions so the results might not be correct!")
 
   incomps = []
@@ -56,18 +56,18 @@ def main():
   for i in range(len(mins)):
     ver = mins[i]
     if ver is None:
-      incomps.append(i + 2)
+      incomps.append(i + 2)  # pragma: no cover
     elif ver is not None and ver != 0:
       reqs.append(ver)
 
-  if len(reqs) == 0 and len(incomps) == 0:
+  if len(reqs) == 0 and len(incomps) == 0:  # pragma: no cover
     print("No known reason found that it will not work with 2+ and 3+.")
     print("Please report if it does not: https://github.com/netromdk/vermin/issues/")
     if config.lax_mode() and not no_tips:
       print("Tip: Try without using lax mode for more thorough analysis.")
 
   unique_bps = sorted(backports - config.backports())
-  if len(unique_bps) > 0 and not no_tips:
+  if len(unique_bps) > 0 and not no_tips:  # pragma: no cover
     print("Tip: You're using potentially backported modules: {}".format(", ".join(unique_bps)))
     print("If so, try using the following for better results: {}\n".
           format("".join([" --backport {}".format(n) for n in unique_bps]).strip()))
