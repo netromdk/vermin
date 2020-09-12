@@ -15,8 +15,10 @@ python:
 - '3.8'
 
 install:
-- pip install -U pip virtualenv
+- misc/travis/install.sh
+
 script:
-- misc/travis.sh
+- misc/travis/script.sh
+
 after_success:
-- if [[ $TRAVIS_PYTHON_VERSION != 3.2 && $TRAVIS_PYTHON_VERSION != 3.3 && $TRAVIS_PYTHON_VERSION != 3.4 ]]; then make coveralls; fi
+- misc/travis/after_success.sh
