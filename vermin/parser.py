@@ -29,7 +29,7 @@ class Parser:
       m = RE_COMMENT.match(line)
       if m is not None:
         comment = m.group(2).strip()
-        if comment == "novermin" or comment == "novm":
+        if comment.startswith("novermin") or comment.startswith("novm"):
           # Ignore if it is inside another comment, like: `# test: # novm`
           if m.start(0) < m.start(1) and m.group(0).strip().startswith("#"):
             continue
