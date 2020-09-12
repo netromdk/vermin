@@ -555,18 +555,6 @@ class SourceVisitor(ast.NodeVisitor):
   def __add_name_res(self, source, target):
     self.__name_res[source] = target
 
-  def __get_name(self, node):
-    full_name = []
-    if isinstance(node, ast.Attribute):
-      if hasattr(node, "attr"):
-        full_name.insert(0, node.attr)
-      if hasattr(node, "value") and hasattr(node.value, "id"):
-        full_name.insert(0, node.value.id)
-    elif isinstance(node, ast.Name):
-      if hasattr(node, "id"):
-        full_name.insert(0, node.id)
-    return full_name
-
   def __is_builtin_type(self, name):
     return name in {"dict", "set", "list", "unicode", "str", "int", "float", "long", "bytes"}
 
