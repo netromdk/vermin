@@ -36,6 +36,17 @@ setup-bandit: clean
 
 setup: setup-venv setup-misc setup-coverage setup-bandit
 
+setup-misc-3.5: clean
+	.venv/bin/pip install -r misc/.misc-requirements.3_5.txt
+
+setup-coverage-3.5: clean
+	.venv/bin/pip install -r misc/.coverage-requirements.3_5.txt
+
+setup-bandit-3.5: clean
+	.venv/bin/pip install -r misc/.bandit-requirements.3_5.txt
+
+setup-3.5: setup-venv setup-misc-3.5 setup-coverage-3.5 setup-bandit-3.5
+
 clean:
 	find . -iname __pycache__ | xargs rm -fr
 	find . -iname '*.pyc' | xargs rm -f

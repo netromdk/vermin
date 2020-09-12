@@ -1,0 +1,8 @@
+bandit==1.6.2
+gitdb2==2.0.6
+GitPython==3.0.5
+pbr==5.4.4
+PyYAML==5.2
+six==1.13.0
+smmap2==2.0.5
+stevedore==1.31.0
