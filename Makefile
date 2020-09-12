@@ -94,4 +94,4 @@ test-coverage:
 	.venv/bin/coverage run --append --source=vermin ./vermin.py -v -t=2.7 -t=3 ${VERMIN_FILES}
 
 coveralls:
-	COVERALLS_REPO_TOKEN=twBSHlgE5AMFEQNmUK04LDcN7SVth3lDV .venv/bin/coveralls
+	@COVERALLS_REPO_TOKEN=twBSHlgE5AMFEQNmUK04LDcN7SVth3lDV .venv/bin/coveralls
