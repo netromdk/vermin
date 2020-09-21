@@ -29,6 +29,38 @@ class VerminCommentsExclusionsTests(VerminTest):
     self.assertIn(1, visitor.no_lines())
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
 
+    # Testing multiple comment segments.
+    visitor = visit("import email.parser.FeedParser  # noqa # novm")
+    self.assertIn(1, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    visitor = visit("import email.parser.FeedParser  # novm # noqa")
+    self.assertIn(1, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    visitor = visit("import email.parser.FeedParser  # noqa # novermin # nolint")
+    self.assertIn(1, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    visitor = visit("import email.parser.FeedParser "
+                    "# type: ignore[attr-defined] # novm # pylint: disable=no-member")
+    self.assertIn(1, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    # Testing multiple comment segments on its own refers to the next line.
+    visitor = visit("# noqa # novm # nolint\nimport email.parser.FeedParser")
+    self.assertIn(2, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    visitor = visit("# noqa # novermin # nolint\nimport email.parser.FeedParser")
+    self.assertIn(2, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    visitor = visit("# type: ignore[attr-defined] # novm # pylint: disable=no-member\n"
+                    "import email.parser.FeedParser")
+    self.assertIn(2, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
   def test_from_import(self):
     visitor = visit("# novm\nfrom email.parser import FeedParser")
     self.assertIn(2, visitor.no_lines())

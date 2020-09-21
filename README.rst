@@ -36,7 +36,7 @@ library-defined symbols.
 
 Backports of the standard library, like ``typing``, can be enabled for better results.
 
-The project is fairly well-tested with **3240** unit and integration tests employing **3838**
+The project is fairly well-tested with **3240** unit and integration tests employing **3852**
 assertions.
 
 It is recommended to use the most recent Python version to run Vermin on projects since Python's own
@@ -174,6 +174,14 @@ for that particular ``if`` and its body:
   import ssl
   tls_version = ssl.PROTOCOL_TLSv1
   if hasattr(ssl, "PROTOCOL_TLS"):  # novermin
+    tls_version = ssl.PROTOCOL_TLS
+
+In scenarios where multiple tools are employed that use comments for various features, exclusions
+can be defined by having ``#`` for each comment "segment":
+
+.. code-block:: python
+
+  if hasattr(ssl, "PROTOCOL_TLS"):  # noqa # novermin # pylint: disable=no-member
     tls_version = ssl.PROTOCOL_TLS
 
 Contributing

@@ -1,9 +1,8 @@
 import ast
-import re
+import io
+from tokenize import generate_tokens, COMMENT
 
 from .printing import vvprint
-
-RE_COMMENT = re.compile(".*(#)(.+)", re.IGNORECASE)
 
 class Parser:
   def __init__(self, source, path=None):
@@ -18,23 +17,35 @@ class Parser:
 
   def comments(self):
     """Finds 'novermin' and 'novm' comments and associates to line numbers."""
-    lineno = 0
     novermin = set()
     src = self.__source
     if isinstance(src, bytes):
       src = src.decode(errors="ignore")
-    for line in src.splitlines():
-      lineno += 1
-      line = line.strip()
-      m = RE_COMMENT.match(line)
-      if m is not None:
-        comment = m.group(2).strip()
+
+    try:
+      tokens = generate_tokens(io.StringIO(src).readline)
+    except Exception:
+      return novermin
+
+    for tok in tokens:
+      # <3.0: tuple instance.
+      if type(tok) == tuple:
+        typ, comment, lineno, linecol = tok[0], tok[1], tok[2][0], tok[2][1]
+
+      # 3.0+: TokenInfo instance.
+      else:
+        typ, comment, lineno, linecol = tok.type, tok.string, tok.start[0], tok.start[1]
+
+      if typ != COMMENT:
+        continue
+
+      # Check each comment segment for "novermin" and "novm", not just the start of the whole
+      # comment.
+      for comment in comment.split("#"):
+        comment = comment.strip()
         if comment.startswith("novermin") or comment.startswith("novm"):
-          # Ignore if it is inside another comment, like: `# test: # novm`
-          if m.start(0) < m.start(1) and m.group(0).strip().startswith("#"):
-            continue
           # Associate with next line if the comment is "alone" on a line, i.e. '#' starts the line.
-          novermin.add(lineno + 1 if m.start(1) == 0 else lineno)
+          novermin.add(lineno + 1 if linecol == 0 else lineno)
     return novermin
 
   def detect(self):
