@@ -1,6 +1,7 @@
 import ast
 import re
 import sys
+from collections import deque
 
 from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, BYTES_REQS,\
   ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS, CODECS_ERRORS_INDICES, CODECS_ENCODINGS,\
@@ -53,6 +54,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__try_finally = []
     self.__mod_inverse_pow = False
     self.__function_name = None
+    self.__function_name_stack = deque()
     self.__kwargs = []
     self.__depth = 0
     self.__line = 1
@@ -813,14 +815,23 @@ class SourceVisitor(ast.NodeVisitor):
       self.__generalized_unpacking = True
       self.__vvprint("generalized unpacking requires 3.5+")
 
+  def __push_function_name(self, name):
+    self.__function_name = name
+    self.__function_name_stack.append(name)
+
+  def __pop_function_name(self):
+    self.__function_name = self.__function_name_stack.pop() \
+      if len(self.__function_name_stack) > 0 else None
+
   def visit_Call(self, node):
     if self.__is_no_line(node.lineno):
       return
 
     if hasattr(node, "func"):
       func = node.func
+
       if hasattr(func, "id"):
-        self.__function_name = func.id
+        self.__push_function_name(func.id)
         self.__add_member(func.id, node.lineno, node.col_offset)
 
         if func.id in self.__import_mem_mod:
@@ -855,8 +866,9 @@ class SourceVisitor(ast.NodeVisitor):
             if hasattr(arg, "s"):
               for directive in STRFTIME_DIRECTIVE_REGEX.findall(arg.s):
                 self.__add_strftime_directive(directive, node.lineno)
+
       if isinstance(func, ast.Attribute):
-        self.__function_name = dotted_name(self.__get_attribute_name(func))
+        self.__push_function_name(dotted_name(self.__get_attribute_name(func)))
         self.__check_codecs_function(self.__function_name, node)
         if self.__function_name == "array.array":
           for arg in node.args:
@@ -866,7 +878,7 @@ class SourceVisitor(ast.NodeVisitor):
 
     self.__check_generalized_unpacking(node)
     self.generic_visit(node)
-    self.__function_name = None
+    self.__pop_function_name()
 
   def visit_Attribute(self, node):
     full_name = self.__get_attribute_name(node)
@@ -892,20 +904,20 @@ class SourceVisitor(ast.NodeVisitor):
     self.generic_visit(node)
 
   def visit_keyword(self, node):
-    if self.__function_name is not None:
+    for func_name in self.__function_name_stack:
       # kwarg related.
-      exp_name = self.__function_name.split(".")
+      exp_name = func_name.split(".")
 
       # Check if function is imported from module.
-      if self.__function_name in self.__import_mem_mod:
-        mod = self.__import_mem_mod[self.__function_name]
-        self.__add_kwargs(dotted_name([mod, self.__function_name]), node.arg, self.__line)
+      if func_name in self.__import_mem_mod:
+        mod = self.__import_mem_mod[func_name]
+        self.__add_kwargs(dotted_name([mod, func_name]), node.arg, self.__line)
 
       # When having "ElementTree.tostringlist", for instance, and include mapping "{'ElementTree':
       # 'xml.etree'}" then try piecing them together to form a match.
       elif exp_name[0] in self.__import_mem_mod:
         mod = self.__import_mem_mod[exp_name[0]]
-        self.__add_kwargs(dotted_name([mod, self.__function_name]), node.arg, self.__line)
+        self.__add_kwargs(dotted_name([mod, func_name]), node.arg, self.__line)
 
       # Lookup indirect names via variables.
       elif exp_name[0] in self.__name_res:
@@ -920,7 +932,7 @@ class SourceVisitor(ast.NodeVisitor):
 
       # Only add direct function if not found via module/class/member.
       else:
-        self.__add_kwargs(self.__function_name, node.arg, self.__line)
+        self.__add_kwargs(func_name, node.arg, self.__line)
 
   def visit_Bytes(self, node):
     self.__bytesv3 = True

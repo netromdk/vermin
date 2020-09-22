@@ -557,6 +557,9 @@ class VerminKwargsTests(VerminTest):
                       detect("from zipfile import ZipFile\n"
                              "zf = ZipFile()\n"
                              "zf.writestr(compress_type=None)"))
+    self.assertOnlyIn(((2, 7), (3, 2)),
+                      detect("from zipfile import ZipFile\n"
+                             "ZipFile().writestr(compress_type=None)"))
 
   def test_filterfunc_of_writepy_from_zipfile_PyZipFile(self):
     self.assertOnlyIn((3, 4),

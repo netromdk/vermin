@@ -65,6 +65,8 @@ class VerminGeneralTests(VerminTest):
     self.assertOnlyIn([("os.open", "dir_fd")], visitor.kwargs())
     visitor = visit("fd = open(dir_fd = None)")
     self.assertOnlyIn([("open", "dir_fd")], visitor.kwargs())
+    visitor = visit("ZipFile().writestr(compress_type=None)")
+    self.assertOnlyIn([("ZipFile.writestr", "compress_type")], visitor.kwargs())
 
   def test_probably_python_file(self):
     tmp_fld = mkdtemp()
