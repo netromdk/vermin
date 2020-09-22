@@ -867,3 +867,13 @@ class VerminLanguageTests(VerminTest):
       self.assertOnlyIn(("f",), visitor.bytes_directives())
       visitor = visit("b'%+f'")
       self.assertOnlyIn(("f",), visitor.bytes_directives())
+
+  def test_detect_raise_members(self):
+    visitor = visit("raise ModuleNotFoundError")
+    self.assertOnlyIn("ModuleNotFoundError", visitor.members())
+    self.assertOnlyIn((3, 6), visitor.minimum_versions())
+
+  def test_detect_except_members(self):
+    visitor = visit("try: pass\nexcept ModuleNotFoundError: pass")
+    self.assertOnlyIn("ModuleNotFoundError", visitor.members())
+    self.assertOnlyIn((3, 6), visitor.minimum_versions())

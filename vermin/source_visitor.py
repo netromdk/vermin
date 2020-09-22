@@ -66,6 +66,8 @@ class SourceVisitor(ast.NodeVisitor):
     self.__generalized_unpacking = False
     self.__bytes_format = False
     self.__bytearray_format = False
+    self.__seen_except_handler = False
+    self.__seen_raise = False
 
     # Imported members of modules, like "exc_clear" of "sys".
     self.__import_mem_mod = {}
@@ -770,6 +772,10 @@ class SourceVisitor(ast.NodeVisitor):
         self.__longv2 = True
         self.__vvprint("long is a v2 feature")
 
+    # Names used within `except ..:` or `raise ..` should be detected as members being used.
+    if self.__seen_except_handler or self.__seen_raise:
+      self.__add_member(node.id, node.lineno, node.col_offset)
+
   def visit_Print(self, node):  # pragma: no cover
     self.__printv2 = True
     self.generic_visit(node)
@@ -1343,7 +1349,16 @@ class SourceVisitor(ast.NodeVisitor):
     if hasattr(node, "cause") and node.cause is not None:
       self.__raise_cause = True
       self.__vvprint("exception cause requires 3.3+", line=node.lineno)
+    seen_raise = self.__seen_raise
+    self.__seen_raise = True
     self.generic_visit(node)
+    self.__seen_raise = seen_raise
+
+  def visit_ExceptHandler(self, node):
+    seen_except = self.__seen_except_handler
+    self.__seen_except_handler = True
+    self.generic_visit(node)
+    self.__seen_except_handler = seen_except
 
   def visit_DictComp(self, node):
     self.__dict_comp = True
