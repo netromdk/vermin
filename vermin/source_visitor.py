@@ -590,7 +590,7 @@ class SourceVisitor(ast.NodeVisitor):
         if len(full_name) == 0 or (full_name[0] != "list" and len(full_name) == 1):
           full_name.insert(0, "list")
       elif not primi_type and isinstance(attr, ast.Str):
-        if sys.version_info.major == 2 and isinstance(attr.s, unicode):
+        if sys.version_info.major == 2 and isinstance(attr.s, unicode):  # novm
           name = "unicode"  # pragma: no cover
         else:
           name = "str"
@@ -637,7 +637,7 @@ class SourceVisitor(ast.NodeVisitor):
     elif isinstance(node.value, ast.List):
       value_name = "list"
     elif isinstance(node.value, ast.Str):
-      if sys.version_info.major == 2 and isinstance(node.value.s, unicode):
+      if sys.version_info.major == 2 and isinstance(node.value.s, unicode):  # novm
         value_name = "unicode"  # pragma: no cover
       else:
         value_name = "str"
