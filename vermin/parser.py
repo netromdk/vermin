@@ -23,29 +23,32 @@ class Parser:
       src = src.decode(errors="ignore")
 
     try:
-      tokens = generate_tokens(io.StringIO(src).readline)
+      def only_comments(token):
+        return token[0] == COMMENT if type(token) == tuple else token.type == COMMENT
+      tokens = filter(only_comments, generate_tokens(io.StringIO(src).readline))
     except Exception:
       return novermin
 
-    for tok in tokens:
+    def find_comment(comment, lineno, linecol):
+      if comment.startswith("novermin") or comment.startswith("novm"):
+        # Associate with next line if the comment is "alone" on a line, i.e. '#' starts the line.
+        novermin.add(lineno + 1 if linecol == 0 else lineno)
+        return True
+      return False
+
+    for token in tokens:
       # <3.0: tuple instance.
-      if type(tok) == tuple:
-        typ, comment, lineno, linecol = tok[0], tok[1], tok[2][0], tok[2][1]
+      if type(token) == tuple:
+        comment, lineno, linecol = token[1], token[2][0], token[2][1]
 
       # 3.0+: TokenInfo instance.
       else:
-        typ, comment, lineno, linecol = tok.type, tok.string, tok.start[0], tok.start[1]
-
-      if typ != COMMENT:
-        continue
+        comment, lineno, linecol = token.string, token.start[0], token.start[1]
 
       # Check each comment segment for "novermin" and "novm", not just the start of the whole
       # comment.
-      for comment in comment.split("#"):
-        comment = comment.strip()
-        if comment.startswith("novermin") or comment.startswith("novm"):
-          # Associate with next line if the comment is "alone" on a line, i.e. '#' starts the line.
-          novermin.add(lineno + 1 if linecol == 0 else lineno)
+      any(find_comment(segment.strip(), lineno, linecol)
+          for segment in comment[1:].strip().split("#"))
     return novermin
 
   def detect(self):
