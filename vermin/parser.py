@@ -26,7 +26,7 @@ class Parser:
       def only_comments(token):
         return token[0] == COMMENT if type(token) == tuple else token.type == COMMENT
       tokens = filter(only_comments, generate_tokens(io.StringIO(src).readline))
-    except Exception:
+    except Exception:  # pragma: no cover
       return novermin
 
     def find_comment(comment, lineno, linecol):
@@ -38,7 +38,7 @@ class Parser:
 
     for token in tokens:
       # <3.0: tuple instance.
-      if type(token) == tuple:
+      if type(token) == tuple:  # pragma: no cover
         comment, lineno, linecol = token[1], token[2][0], token[2][1]
 
       # 3.0+: TokenInfo instance.

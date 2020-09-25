@@ -26,6 +26,9 @@ class VerminLaxModeTests(VerminTest):
     if current_version() >= 3.6:
       visitor = visit("print('ok') if True else (lambda: print(f'no'))()")
       self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+      self.config.set_lax_mode(False)
+      visitor = visit("print('ok') if True else (lambda: print(f'no'))()")
+      self.assertEqual([None, (3, 6)], visitor.minimum_versions())
 
   def test_for(self):
     visitor = visit("for a in []:\n\timport ssl")

@@ -55,7 +55,7 @@ override is made to work for all versions, also 3.0-3.1."""
     v = current_version()
     if v >= 3.2:
       self.assertCountEqual(expected, actual)
-    if v >= 2.7 and v < 3.0:
+    if v >= 2.7 and v < 3.0:  # pragma: no cover
       self.assertItemsEqual(expected, actual)
     else:
       self.assertEqual(sorted(expected), sorted(actual))

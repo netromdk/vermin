@@ -382,7 +382,7 @@ class SourceVisitor(ast.NodeVisitor):
   def output_text(self):
     text = "\n".join(self.__output_text)
     if len(text) > 0:
-      text += "\n"
+      text += "\n"  # pragma: no cover
     return text
 
   def set_no_lines(self, lines):
@@ -438,7 +438,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__verbose_print(msg, 4, entity, line)
 
   def __add_module(self, module, line=None, col=None):
-    if module in self.__user_defs:
+    if module in self.__user_defs:  # pragma: no cover
       self.__vvvvprint("Ignoring module '{}' because it's user-defined!".format(module))
       return
 
@@ -465,7 +465,7 @@ class SourceVisitor(ast.NodeVisitor):
       self.__add_line_col(member, line, col)
 
   def __add_kwargs(self, function, keyword, line=None, col=None):
-    if function in self.__user_defs:
+    if function in self.__user_defs:  # pragma: no cover
       self.__vvvvprint("Ignoring function '{}' because it's user-defined!".format(function))
       return
 
@@ -551,7 +551,7 @@ class SourceVisitor(ast.NodeVisitor):
     """Add user-defined name from node, like ast.Name, ast.arg or str."""
     if isinstance(node, str):
       self.__add_user_def(node)
-    if isinstance(node, ast.Name) and hasattr(node, "id"):
+    elif isinstance(node, ast.Name) and hasattr(node, "id"):
       self.__add_user_def(node.id)
     elif hasattr(node, "arg"):
       self.__add_user_def(node.arg)
@@ -617,7 +617,7 @@ class SourceVisitor(ast.NodeVisitor):
 
   def __add_name_res_assign_node(self, node):
     if not hasattr(node, "value"):
-      return
+      return  # pragma: no cover
 
     value_name = None
 
@@ -696,12 +696,12 @@ class SourceVisitor(ast.NodeVisitor):
     # reverse so the indices are kept while traversing!
     for ud in self.__user_defs:
       for i in reverse_range(self.__modules):
-        if self.__modules[i] == ud:
+        if self.__modules[i] == ud:  # pragma: no cover
           self.__vvvvprint("Ignoring module '{}' because it's user-defined!".format(ud))
           del(self.__modules[i])
 
       for i in reverse_range(self.__members):
-        if self.__members[i] == ud:
+        if self.__members[i] == ud:  # pragma: no cover
           self.__vvvvprint("Ignoring member '{}' because it's user-defined!".format(ud))
           del(self.__members[i])
 
@@ -734,7 +734,7 @@ class SourceVisitor(ast.NodeVisitor):
 
   def visit_ImportFrom(self, node):
     if node.module is None:
-      return
+      return  # pragma: no cover
 
     # Ignore modules that aren't top-level, such as `.typing` and `..typing` that are relative and
     # might be files in local packages.
@@ -1262,9 +1262,6 @@ class SourceVisitor(ast.NodeVisitor):
     if hasattr(node, "returns") and node.returns:
       self.__annotations = True
       self.__vvprint("annotations require 3+")
-      return True
-    # Then we are going to check the args
-    if not hasattr(node, "args") or not hasattr(node.args, "args"):
       return True
     for arg in node.args.args:
       if hasattr(arg, "annotation") and arg.annotation:

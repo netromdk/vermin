@@ -36,7 +36,7 @@ library-defined symbols.
 
 Backports of the standard library, like ``typing``, can be enabled for better results.
 
-The project is fairly well-tested with **3242** unit and integration tests employing **3858**
+The project is fairly well-tested with **3243** unit and integration tests employing **3864**
 assertions.
 
 It is recommended to use the most recent Python version to run Vermin on projects since Python's own

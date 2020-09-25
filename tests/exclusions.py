@@ -53,3 +53,11 @@ class VerminExclusionsTests(VerminTest):
     self.assertEqual([(2, 4), (3, 0)], visitor.minimum_versions())
     visitor = visit("import codecs\ncodecs.encode('test', data_encoding='koi8_t')")
     self.assertEqual([(2, 4), (3, 0)], visitor.minimum_versions())
+
+  def test_long(self):
+    visitor = visit("a = long(1)")
+    self.assertEqual([(2, 0), None], visitor.minimum_versions())
+
+    self.config.add_exclusion("long")
+    visitor = visit("a = long(1)")
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())

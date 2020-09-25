@@ -53,6 +53,7 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn(((2, 4), (3, 0)), detect("sorted(reverse=None)"))
 
   def test_fillchar_of_str_ljust(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), detect("s = str()\ns.ljust(fillchar=None)"))
     self.assertOnlyIn(((2, 4), (3, 0)), detect("str.ljust(fillchar=None)"))
 
   def test_chars_of_str_lstrip(self):

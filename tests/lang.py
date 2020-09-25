@@ -55,6 +55,10 @@ class VerminLanguageTests(VerminTest):
     self.assertTrue(visitor.longv2())
     self.assertOnlyIn((2, 0), visitor.minimum_versions())
 
+    visitor = visit("v = 1\nv += long(42)")
+    self.assertTrue(visitor.longv2())
+    self.assertOnlyIn((2, 0), visitor.minimum_versions())
+
     visitor = visit("isinstance(42, long)")
     self.assertTrue(visitor.longv2())
     self.assertOnlyIn((2, 0), visitor.minimum_versions())

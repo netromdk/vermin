@@ -180,14 +180,14 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
     self.assertOnlyIn((3, 0), detect("str().isprintable()"))
 
   def test_isdecimal_of_unicode(self):
-    if current_version() < 3.0:
+    if current_version() < 3.0:  # pragma: no cover
       self.assertOnlyIn((2, 0), detect("s=u\"\"\ns.isdecimal()"))
       self.assertOnlyIn((2, 0), detect("u\"\".isdecimal()"))
       self.assertOnlyIn((2, 0), detect("s=unicode()\ns.isdecimal()"))
       self.assertOnlyIn((2, 0), detect("unicode().isdecimal()"))
 
   def test_isnumeric_of_unicode(self):
-    if current_version() < 3.0:
+    if current_version() < 3.0:  # pragma: no cover
       self.assertOnlyIn((2, 0), detect("s=u\"\"\ns.isnumeric()"))
       self.assertOnlyIn((2, 0), detect("u\"\".isnumeric()"))
       self.assertOnlyIn((2, 0), detect("s=unicode()\ns.isnumeric()"))
@@ -253,7 +253,7 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
     self.assertOnlyIn((3, 2), detect("int.from_bytes([42])"))
 
   def test_bit_length_of_long(self):
-    if current_version() < 3.0:
+    if current_version() < 3.0:  # pragma: no cover
       self.assertOnlyIn((2, 7), detect("(42L).bit_length()"))
       self.assertOnlyIn((2, 7), detect("n=42L\nn.bit_length()"))
 

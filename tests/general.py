@@ -224,8 +224,9 @@ class VerminGeneralTests(VerminTest):
       with open(f, mode="w") as fp:
         fp.write("print('this is code')")
 
+    # Since the detection ignores the extensions, no body of this for-loop will be executed.
     found_exts = set()
-    for path in detect_paths([tmp_fld]):
+    for path in detect_paths([tmp_fld]):  # pragma: no cover
       _, ext = splitext(path)
       found_exts.add(ext[1:])
     self.assertEmpty(found_exts)
@@ -431,7 +432,7 @@ class VerminGeneralTests(VerminTest):
     if current_version() >= 3.0:
       exc = FileNotFoundError
     else:
-      exc = Exception
+      exc = Exception  # pragma: no cover
     with self.assertRaises(exc):
       process_individual(("nonexistent", self.config))
 
@@ -534,9 +535,17 @@ class VerminGeneralTests(VerminTest):
 
   def test_processor_indent_show_output_text(self):
     self.config.set_verbose(4)  # Ensure output text.
+
+    # Trigger SourceVisitor.__nprint() while visiting AST, which is one way to add some output text.
+    self.config.set_print_visits(True)
+
     fp = NamedTemporaryFile(suffix=".py", delete=False)
     fp.write(b"def foo():\n\tpass\n")
-    fp.write(b"foo()\n")  # L3: Ignoring member 'foo' because it's user-defined!
+    fp.write(b"foo()\n")  # Ignoring member 'foo' because it's user-defined!
+    fp.write(b"import Queue\n")
+    fp.write(b"class Queue: pass\n")  # Ignoring module 'Queue' because it's user-defined!
+    fp.write(b"def any(): pass\n")
+    fp.write(b"any(test=1)\n")  # Ignoring function 'any' because it's user-defined!
     fp.write(b"print('hello')\n")  # print(expr) requires 2+ or 3+
     fp.close()
     paths = [fp.name]
@@ -546,7 +555,7 @@ class VerminGeneralTests(VerminTest):
     if current_version() >= 3.0:
       self.assertEqual(mins, [(2, 0), (3, 0)])
       self.assertEqual(unique_versions, [(2, 0), (3, 0)])
-    else:
+    else:  # pragma: no cover
       self.assertEqual(mins, [(2, 0), (0, 0)])
       self.assertEqual(unique_versions, [(2, 0)])
 

@@ -81,7 +81,7 @@ def main():
   # and `reqs = []`. But if `incomps = [2]` and `reqs = [3.4]`, for instance, then it makes sense
   # not to show incompatible versions with -i specified.
   if len(incomps) > 0 and (not config.ignore_incomp() or len(reqs) == 0):
-    print("Incompatible versions:     {}".format(version_strings(incomps)))
+    print("Incompatible versions:     {}".format(version_strings(incomps)))  # pragma: no cover
 
   if args["versions"] and len(unique_versions) > 0:
     print("Version range:             {}".format(version_strings(unique_versions)))
