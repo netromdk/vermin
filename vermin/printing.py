@@ -14,6 +14,3 @@ def vprint(msg):
 
 def vvprint(msg):
   verbose_print(msg, 2)
-
-def vvvprint(msg):
-  verbose_print(msg, 3)
