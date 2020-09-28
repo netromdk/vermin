@@ -38,7 +38,7 @@ def process_individual(args):
   # inherit those resources necessary to run the process objects run() method. In particular,
   # unnecessary file descriptors and handles from the parent process will not be inherited."
   if hasattr(mp, "get_start_method") and mp.get_start_method() == "spawn":  # novm
-    Config.set(config)
+    Config.set(config)  # pragma: no cover
 
   res = ProcessResult(path)
 

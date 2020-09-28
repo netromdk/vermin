@@ -17,7 +17,7 @@ class Config:
 
   @staticmethod
   def set(config):
-    Config.__instance = config
+    Config.__instance = config  # pragma: no cover
 
   def reset(self):
     self.__quiet = False
