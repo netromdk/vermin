@@ -54,9 +54,16 @@ Or via `PyPi <https://pypi.python.org/pypi/vermin/>`__::
   % pip install vermin
   % vermin /path/to/your/project
 
-Or via `Arch Linux (AUR) <https://aur.archlinux.org/packages/python-vermin/>`__::
+`Arch Linux (AUR) <https://aur.archlinux.org/packages/python-vermin/>`__::
 
   % yay -S python-vermin
+
+`Spack <https://spack.io/>`__::
+
+  % git clone https://github.com/spack/spack.git
+  % . spack/share/spack/setup-env.sh  # depending on shell
+  % spack install py-vermin
+  % spack load py-vermin
 
 When using continuous integration (CI) tools, like `Travis CI <https://travis-ci.org/>`_, Vermin can
 be used to check that the minimum required versions didn't change. The following is an excerpt::
