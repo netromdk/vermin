@@ -1,14 +1,11 @@
-from multiprocessing import cpu_count
+import multiprocessing as mp
 
 from .printing import nprint, vprint
 from .config import Config
-from .utility import combine_versions, InvalidVersionException, version_strings, \
-  get_multiprocessing_context
+from .utility import combine_versions, InvalidVersionException, version_strings
 from .parser import Parser
 from .source_visitor import SourceVisitor
 from .backports import Backports
-
-MULTI_CONTEXT = get_multiprocessing_context()
 
 class ProcessResult:
   def __init__(self, path):
@@ -31,6 +28,18 @@ class ProcessResult:
 #   Can't pickle <type 'instancemethod'>: attribute lookup __builtin__.instancemethod failed
 def process_individual(args):
   (path, config) = args
+
+  # When process_individual() is called via spawn(), it doensn't inherit as much as when fork() is
+  # used. That means that the static config instance is destroyed, so we set the instance to the
+  # config copied to this function.
+  #
+  # https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods:
+  # "The parent process starts a fresh python interpreter process. The child process will only
+  # inherit those resources necessary to run the process objects run() method. In particular,
+  # unnecessary file descriptors and handles from the parent process will not be inherited."
+  if hasattr(mp, "get_start_method") and mp.get_start_method() == "spawn":  # novm
+    Config.set(config)
+
   res = ProcessResult(path)
 
   with open(path, mode="rb") as fp:
@@ -77,8 +86,8 @@ def process_individual(args):
   return res
 
 class Processor:
-  def process(self, paths, processes=cpu_count()):
-    pool = MULTI_CONTEXT.Pool(processes=processes)
+  def process(self, paths, processes=mp.cpu_count()):
+    pool = mp.Pool(processes=processes)
     mins = [(0, 0), (0, 0)]
     incomp = False
     config = Config.get()

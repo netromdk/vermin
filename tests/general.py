@@ -563,10 +563,11 @@ class VerminGeneralTests(VerminTest):
     self.assertEmpty(backports)
     os.remove(fp.name)
 
-  # Since Python 3.8+ the multiprocessing context has been defaulting to using spawn instead of
-  # fork, which doesn't work well with Vermin on *nix and thus yields incorrect results. Using a
-  # fork context fixes this.
-  def test_processor_argparse_backport_fork_context(self):
+  # Since python 3.8+, the multiprocessing context on macOS started using spawn() instead of fork(),
+  # which means that the concurrently run functionality doesn't inherit the same information. It was
+  # fixed such that when spawn() is used, it reestablishes the information that isn't inherited.
+  # This test fails if that isn't done, and always succeeds when fork() is used.
+  def test_processor_argparse_backport_spawn_or_fork(self):
     fp = NamedTemporaryFile(suffix=".py", delete=False)
     fp.write(b"import argparse\n")  # 2.7, 3.2
     fp.close()

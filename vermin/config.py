@@ -15,6 +15,10 @@ class Config:
       Config()
     return Config.__instance
 
+  @staticmethod
+  def set(config):
+    Config.__instance = config
+
   def reset(self):
     self.__quiet = False
     self.__verbose = 0
