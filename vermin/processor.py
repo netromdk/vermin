@@ -1,11 +1,14 @@
-from multiprocessing import Pool, cpu_count
+from multiprocessing import cpu_count
 
 from .printing import nprint, vprint
 from .config import Config
-from .utility import combine_versions, InvalidVersionException, version_strings
+from .utility import combine_versions, InvalidVersionException, version_strings, \
+  get_multiprocessing_context
 from .parser import Parser
 from .source_visitor import SourceVisitor
 from .backports import Backports
+
+MULTI_CONTEXT = get_multiprocessing_context()
 
 class ProcessResult:
   def __init__(self, path):
@@ -75,7 +78,7 @@ def process_individual(args):
 
 class Processor:
   def process(self, paths, processes=cpu_count()):
-    pool = Pool(processes=processes)
+    pool = MULTI_CONTEXT.Pool(processes=processes)
     mins = [(0, 0), (0, 0)]
     incomp = False
     config = Config.get()

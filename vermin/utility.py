@@ -1,4 +1,6 @@
 import re
+import sys
+import platform
 from math import floor
 
 from .config import Config
@@ -82,3 +84,15 @@ def version_strings(vers):
 
 def remove_whitespace(string, extras=[]):
   return re.sub("[ \t\n\r\f\v{}]".format("".join(extras)), "", string)
+
+# Since Python 3.8.x, multiprocessing started defaulting to using `spawn` on macOS rather than
+# `fork`, which results in incorrect results for Vermin. Thus, on *nix we force the use of `fork`.
+# Refs:
+# - https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods
+# - https://bugs.python.org/issue40106
+# - https://github.com/spack/spack/pull/18124
+def get_multiprocessing_context():
+  import multiprocessing
+  if platform.system() != "Windows" and sys.version_info >= (3, 8):
+    return multiprocessing.get_context('fork')  # novm
+  return multiprocessing

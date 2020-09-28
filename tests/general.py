@@ -562,3 +562,20 @@ class VerminGeneralTests(VerminTest):
     self.assertFalse(incomp)
     self.assertEmpty(backports)
     os.remove(fp.name)
+
+  # Since Python 3.8+ the multiprocessing context has been defaulting to using spawn instead of
+  # fork, which doesn't work well with Vermin on *nix and thus yields incorrect results. Using a
+  # fork context fixes this.
+  def test_processor_argparse_backport_fork_context(self):
+    fp = NamedTemporaryFile(suffix=".py", delete=False)
+    fp.write(b"import argparse\n")  # 2.7, 3.2
+    fp.close()
+    self.config.add_backport("argparse")  # -> 2.3, 3.1
+    paths = [fp.name]
+    processor = Processor()
+    (mins, incomp, unique_versions, backports) = processor.process(paths)
+    self.assertEqual(mins, [(2, 3), (3, 1)])
+    self.assertFalse(incomp)
+    self.assertEqual(unique_versions, [(2, 3), (3, 1)])
+    self.assertEqual(backports, {"argparse"})
+    os.remove(fp.name)
