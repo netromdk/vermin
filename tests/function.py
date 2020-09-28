@@ -168,6 +168,7 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_get_start_method_of_multiprocessing(self):
     self.assertOnlyIn((3, 4), detect("from multiprocessing import get_start_method"))
+    self.assertOnlyIn((3, 4), detect("import multiprocessing as mp\nmp.get_start_method"))
 
   def test_set_start_method_of_multiprocessing(self):
     self.assertOnlyIn((3, 4), detect("from multiprocessing import set_start_method"))

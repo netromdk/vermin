@@ -562,6 +562,10 @@ class SourceVisitor(ast.NodeVisitor):
   def __is_builtin_type(self, name):
     return name in {"dict", "set", "list", "unicode", "str", "int", "float", "long", "bytes"}
 
+  def __resolve_module_name(self, name):
+    return self.__module_as_name[name] if name in self.__module_as_name\
+      else name
+
   def __get_attribute_name(self, node):
     """Retrieve full attribute name path, like ["ipaddress", "IPv4Address"] from:
     `Attribute(value=Name(id='ipaddress', ctx=Load()), attr='IPv4Address', ctx=Load())`
@@ -578,7 +582,7 @@ class SourceVisitor(ast.NodeVisitor):
         if hasattr(attr, "attr"):
           full_name.insert(0, attr.attr)
         if hasattr(attr, "value") and hasattr(attr.value, "id"):
-          full_name.insert(0, attr.value.id)
+          full_name.insert(0, self.__resolve_module_name(attr.value.id))
       elif isinstance(attr, ast.Call):
         if hasattr(attr, "func") and hasattr(attr.func, "id"):
           full_name.insert(0, attr.func.id)
@@ -730,7 +734,6 @@ class SourceVisitor(ast.NodeVisitor):
       self.__add_member(name.name, line, col)
       if hasattr(name, "asname") and name.asname is not None:
         self.__module_as_name[name.asname] = name.name
-    self.generic_visit(node)
 
   def visit_ImportFrom(self, node):
     if node.module is None:
