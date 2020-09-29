@@ -868,7 +868,7 @@ class SourceVisitor(ast.NodeVisitor):
         attr = func.attr
         if attr == "format" and hasattr(func, "value") and isinstance(func.value, ast.Str) and \
            "{}" in func.value.s:
-          self.__vvprint("`\"..{}..\".format(..)` requires (2.7, 3.0)")
+          self.__vvprint("`\"..{}..\".format(..)` requires 2.7, 3.0")
           self.__format27 = True
         elif (attr == "strftime" or attr == "strptime") and hasattr(node, "args"):
           for arg in node.args:

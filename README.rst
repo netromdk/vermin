@@ -58,7 +58,7 @@ Or via `PyPi <https://pypi.python.org/pypi/vermin/>`__::
 
   % yay -S python-vermin
 
-`Spack <https://spack.io/>`__::
+`Spack <https://spack.io>`__ (`pkg <https://github.com/spack/spack/blob/develop/var/spack/repos/builtin/packages/py-vermin/package.py>`__)::
 
   % git clone https://github.com/spack/spack.git
   % . spack/share/spack/setup-env.sh  # depending on shell
@@ -99,7 +99,7 @@ Examples
 
   % ./vermin.py -q --versions vermin
   Minimum required versions: 2.7, 3.0
-  Version range:             2.0, 2.2, 2.5, 2.7, 3.0
+  Version range:             2.0, 2.6, 2.7, 3.0
 
   % ./vermin.py -v examples
   Detecting python files..
@@ -117,8 +117,8 @@ Examples
   Detecting python files..
   Analyzing using 8 processes..
   !2, 3.4      /path/to/examples/abc.py
-    'abc' requires (2.6, 3.0)
-    'abc.ABC' requires (None, 3.4)
+    'abc' requires 2.6, 3.0
+    'abc.ABC' requires !2, 3.4
 
   Minimum required versions: 3.4
   Incompatible versions:     2
@@ -127,8 +127,8 @@ Examples
   Detecting python files..
   Analyzing using 8 processes..
   !2, 3.4      /path/to/examples/abc.py
-    L1 C7: 'abc' requires (2.6, 3.0)
-    L2: 'abc.ABC' requires (None, 3.4)
+    L1 C7: 'abc' requires 2.6, 3.0
+    L2: 'abc.ABC' requires !2, 3.4
 
   Minimum required versions: 3.4
   Incompatible versions:     2
@@ -168,9 +168,9 @@ error handler names, or codecs encodings by name from being analysed via argumen
   if hasattr(ssl, "PROTOCOL_TLS"):
     tls_version = ssl.PROTOCOL_TLS
 
-It will state that "'ssl.PROTOCOL_TLS' requires (2.7, 3.6)" but to exclude that from the results,
-use ``--exclude 'ssl.PROTOCOL_TLS'``. Afterwards, only "'ssl' requires (2.6, 3.0)" will be shown and
-the final minimum required versions are v2.6 and v3.0 instead of v2.7 and v3.6.
+It will state that "'ssl.PROTOCOL_TLS' requires 2.7, 3.6" but to exclude that from the results, use
+``--exclude 'ssl.PROTOCOL_TLS'``. Afterwards, only "'ssl' requires 2.6, 3.0" will be shown and the
+final minimum required versions are v2.6 and v3.0 instead of v2.7 and v3.6.
 
 Code can even be excluded on a more fine grained level using the ``# novermin`` or ``# novm``
 comments at line level. The following yields the same behavior as the previous code block, but only
