@@ -68,6 +68,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__bytearray_format = False
     self.__seen_except_handler = False
     self.__seen_raise = False
+    self.__dict_union = False
 
     # Imported members of modules, like "exc_clear" of "sys".
     self.__import_mem_mod = {}
@@ -215,6 +216,9 @@ class SourceVisitor(ast.NodeVisitor):
   def bytearray_format(self):
     return self.__bytearray_format
 
+  def dict_union(self):
+    return self.__dict_union
+
   def minimum_versions(self):
     mins = [(0, 0), (0, 0)]
 
@@ -318,6 +322,9 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.bytearray_format():
       mins = combine_versions(mins, (None, (3, 5)))
+
+    if self.dict_union():
+      mins = combine_versions(mins, (None, (3, 9)))
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
@@ -951,6 +958,32 @@ class SourceVisitor(ast.NodeVisitor):
       for directive in BYTES_DIRECTIVE_REGEX.findall(str(node.s)):
         self.__add_bytes_directive(directive, node.lineno)
 
+  def __is_dict(self, node):
+    """Checks if node is a dict either by direct instance, name, constructor, function/lambda body,
+    or subscript index value."""
+    if isinstance(node, ast.Dict):
+      return True
+    elif isinstance(node, ast.Name) and\
+       node.id in self.__name_res and self.__name_res[node.id] == "dict":
+      return True
+    elif isinstance(node, ast.Call):
+      if isinstance(node.func, ast.Name) and node.func.id == "dict":
+        return True
+      elif isinstance(node.func, ast.Lambda) and self.__is_dict(node.func.body):
+        return True
+    elif isinstance(node, ast.Subscript):
+      n = None
+      if isinstance(node.slice, ast.Index) and isinstance(node.slice.value, ast.Num):
+        n = node.slice.value.n
+      elif hasattr(ast, "Constant") and isinstance(node.slice, ast.Constant):
+        n = node.slice.value
+      if isinstance(n, int):
+        for tup in ast.iter_fields(node.value):
+          if (tup[0] == "elts" or tup[0] == "values") and n < len(tup[1]) and\
+             self.__is_dict(tup[1][n]):
+            return True
+    return False
+
   def visit_BinOp(self, node):
     # Examples:
     #   BinOp(left=Bytes(s=b'%4x'), op=Mod(), right=Num(n=10))
@@ -965,6 +998,14 @@ class SourceVisitor(ast.NodeVisitor):
          node.left.func.id == "bytearray") and isinstance(node.op, ast.Mod):
       self.__bytearray_format = True
       self.__vvprint("bytearray `%` formatting requires 3.5+")
+
+    # Example:
+    # BinOp(left=Dict(keys=[Constant(value='a')], values=[Constant(value=1)]),
+    #       op=BitOr(),
+    #       right=Dict(keys=[Constant(value='b')], values=[Constant(value=2)]))
+    if isinstance(node.op, ast.BitOr) and self.__is_dict(node.left) and self.__is_dict(node.right):
+      self.__dict_union = True
+      self.__vvprint("dict union (dict | dict) requires 3.9+")
 
     self.generic_visit(node)
 
