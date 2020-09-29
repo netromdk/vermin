@@ -39,26 +39,31 @@ class Arguments:
 
     if full:
       print("\nOptions:")
-      print("  -q    Quiet mode. It only prints the final versions verdict.")
+      print("  --quiet | -q\n"
+            "        Quiet mode. It only prints the final versions verdict.\n")
       print("  -v..  Verbosity level 1 to 4. -v, -vv, -vvv, and -vvvv shows increasingly more\n"
             "        information.\n"
             "        -v     will show the individual versions required per file.\n"
             "        -vv    will also show which modules, functions etc. that constitutes\n"
             "               the requirements.\n"
             "        -vvv   will also show line/col numbers.\n"
-            "        -vvvv  will also show user-defined symbols being ignored.")
-      print("  -t=V  Target version that files must abide by. Can be specified once or twice.\n"
+            "        -vvvv  will also show user-defined symbols being ignored.\n")
+      print("  --target=V | -t=V\n"
+            "        Target version that files must abide by. Can be specified once or twice.\n"
             "        A '-' can be appended to match target version or smaller, like '-t=3.5-'.\n"
             "        If not met Vermin will exit with code 1. Note that the amount of target\n"
-            "        versions must match the amount of minimum required versions detected.")
-      print("  -p=N  Use N concurrent processes to detect and analyze files. Defaults to all\n"
-            "        cores ({}).".format(cpu_count()))
-      print("  -i    Ignore incompatible versions and warnings. However, if no compatible\n"
+            "        versions must match the amount of minimum required versions detected.\n")
+      print("  --processes=N | -p=N\n"
+            "        Use N concurrent processes to detect and analyze files. Defaults to all\n"
+            "        cores ({}).\n".format(cpu_count()))
+      print("  --ignore | -i\n"
+            "        Ignore incompatible versions and warnings. However, if no compatible\n"
             "        versions are found then incompatible versions will be shown in the end to\n"
-            "        not have an absence of results.")
-      print("  -l    Lax mode: ignores conditionals (if, ternary, for, while, try, bool op) on\n"
+            "        not have an absence of results.\n")
+      print("  --lax | -l\n"
+            "        Lax mode: ignores conditionals (if, ternary, for, while, try, bool op) on\n"
             "        AST traversal, which can be useful when minimum versions are detected in\n"
-            "        conditionals that it is known does not affect the results.")
+            "        conditionals that it is known does not affect the results.\n")
       print("  -d    Dump AST node visits.")
       print("\n  --help | -h\n"
             "        Shows this information and exists.")
@@ -112,13 +117,13 @@ class Arguments:
       if arg == "--version":
         print(VERSION)
         exit(0)
-      if arg == "-q":
+      if arg == "-q" or arg == "--quiet":
         config.set_quiet(True)
         path_pos += 1
       elif arg.startswith("-v"):
         config.set_verbose(arg.count("v"))
         path_pos += 1
-      elif arg.startswith("-t="):
+      elif arg.startswith("-t=") or arg.startswith("--target="):
         value = arg.split("=")[1]
         exact = True
         if value.endswith("-"):
@@ -154,10 +159,10 @@ class Arguments:
 
         targets.append((exact, elms))
         path_pos += 1
-      elif arg == "-i":
+      elif arg == "-i" or arg == "--ignore":
         config.set_ignore_incomp(True)
         path_pos += 1
-      elif arg.startswith("-p="):
+      elif arg.startswith("-p=") or arg.startswith("--processes="):
         value = arg.split("=")[1]
         try:
           processes = int(value)
@@ -168,7 +173,7 @@ class Arguments:
           print("Non-positive number: {}".format(processes))
           return {"code": 1}
         path_pos += 1
-      elif arg == "-l":
+      elif arg == "-l" or arg == "--lax":
         print("Running in lax mode!")
         config.set_lax_mode(True)
         path_pos += 1
