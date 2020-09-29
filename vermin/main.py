@@ -64,13 +64,13 @@ def main():
     print("No known reason found that it will not work with 2+ and 3+.")
     print("Please report if it does not: https://github.com/netromdk/vermin/issues/")
     if config.lax_mode() and not no_tips:
-      print("Tip: Try without using lax mode for more thorough analysis.")
+      nprint("Tip: Try without using lax mode for more thorough analysis.")
 
   unique_bps = sorted(backports - config.backports())
   if len(unique_bps) > 0 and not no_tips:  # pragma: no cover
-    print("Tip: You're using potentially backported modules: {}".format(", ".join(unique_bps)))
-    print("If so, try using the following for better results: {}\n".
-          format("".join([" --backport {}".format(n) for n in unique_bps]).strip()))
+    nprint("Tip: You're using potentially backported modules: {}".format(", ".join(unique_bps)))
+    nprint("If so, try using the following for better results: {}\n".
+           format("".join([" --backport {}".format(n) for n in unique_bps]).strip()))
 
   if len(reqs) > 0:
     print("Minimum required versions: {}".format(version_strings(reqs)))
@@ -93,8 +93,8 @@ def main():
       vers = ["{}{}".format(dotted_name(t), "-" if not e else "") for (e, t) in targets]
       print("Target versions not met:   {}".format(version_strings(vers)))
       if len(targets) < len(reqs):
-        print("Note: Number of specified targets ({}) doesn't match number of detected minimum "
-              "versions ({}).".format(len(targets), len(reqs)))
+        nprint("Note: Number of specified targets ({}) doesn't match number of detected minimum "
+               "versions ({}).".format(len(targets), len(reqs)))
       sys.exit(1)
 
   sys.exit(0)
