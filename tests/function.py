@@ -871,19 +871,19 @@ class VerminFunctionMemberTests(VerminTest):
                              "ctx.set_alpn_protocols()"))
 
   def test_cert_store_stats_from_ssl_SSLContext(self):
-    self.assertOnlyIn((3, 4),
+    self.assertOnlyIn(((2, 7), (3, 4)),
                       detect("from ssl import SSLContext\n"
                              "ctx = SSLContext()\n"
                              "ctx.cert_store_stats()"))
 
   def test_load_default_certs_from_ssl_SSLContext(self):
-    self.assertOnlyIn((3, 4),
+    self.assertOnlyIn(((2, 7), (3, 4)),
                       detect("from ssl import SSLContext\n"
                              "ctx = SSLContext()\n"
                              "ctx.load_default_certs()"))
 
   def test_get_ca_certs_from_ssl_SSLContext(self):
-    self.assertOnlyIn((3, 4),
+    self.assertOnlyIn(((2, 7), (3, 4)),
                       detect("from ssl import SSLContext\n"
                              "ctx = SSLContext()\n"
                              "ctx.get_ca_certs()"))
@@ -901,19 +901,19 @@ class VerminFunctionMemberTests(VerminTest):
                              "ctx.set_npn_protocols()"))
 
   def test_load_dh_params_from_ssl_SSLContext(self):
-    self.assertOnlyIn((3, 3),
+    self.assertOnlyIn(((2, 7), (3, 3)),
                       detect("from ssl import SSLContext\n"
                              "ctx = SSLContext()\n"
                              "ctx.load_dh_params()"))
 
   def test_set_ecdh_curve_from_ssl_SSLContext(self):
-    self.assertOnlyIn((3, 3),
+    self.assertOnlyIn(((2, 7), (3, 3)),
                       detect("from ssl import SSLContext\n"
                              "ctx = SSLContext()\n"
                              "ctx.set_ecdh_curve()"))
 
   def test_set_servername_callback_from_ssl_SSLContext(self):
-    self.assertOnlyIn((3, 4),
+    self.assertOnlyIn(((2, 7), (3, 4)),
                       detect("from ssl import SSLContext\n"
                              "ctx = SSLContext()\n"
                              "ctx.set_servername_callback()"))
