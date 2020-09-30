@@ -951,6 +951,15 @@ class VerminConstantMemberTests(VerminTest):
   def test_F_SEAL_WRITE_of_fcntl(self):
     self.assertOnlyIn((3, 8), detect("from fcntl import F_SEAL_WRITE"))
 
+  def test_F_OFD_GETLK_of_fcntl(self):
+    self.assertOnlyIn((3, 9), detect("from fcntl import F_OFD_GETLK"))
+
+  def test_F_OFD_SETLK_of_fcntl(self):
+    self.assertOnlyIn((3, 9), detect("from fcntl import F_OFD_SETLK"))
+
+  def test_F_OFD_SETLKW_of_fcntl(self):
+    self.assertOnlyIn((3, 9), detect("from fcntl import F_OFD_SETLKW"))
+
   def test_DEFAULT_IGNORES_of_filecmp(self):
     self.assertOnlyIn((3, 4), detect("from filecmp import DEFAULT_IGNORES"))
 
@@ -982,6 +991,21 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn((3, 8),
                       detect("from http import HTTPStatus\n"
                              "HTTPStatus().UNAVAILABLE_FOR_LEGAL_REASONS"))
+
+  def test_EARLY_HINTS_from_http_HTTPStatus(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from http import HTTPStatus\n"
+                             "HTTPStatus().EARLY_HINTS"))
+
+  def test_IM_A_TEAPOT_from_http_HTTPStatus(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from http import HTTPStatus\n"
+                             "HTTPStatus().IM_A_TEAPOT"))
+
+  def test_TOO_EARLY_from_http_HTTPStatus(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from http import HTTPStatus\n"
+                             "HTTPStatus().TOO_EARLY"))
 
   def test_blocksize_from_http_client_HTTPConnection(self):
     self.assertOnlyIn((3, 7),
@@ -1084,6 +1108,12 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_CLD_TRAPPED_of_os(self):
     self.assertOnlyIn((3, 3), detect("from os import CLD_TRAPPED"))
+
+  def test_CLD_KILLED_of_os(self):
+    self.assertOnlyIn((3, 9), detect("from os import CLD_KILLED"))
+
+  def test_CLD_STOPPED_of_os(self):
+    self.assertOnlyIn((3, 9), detect("from os import CLD_STOPPED"))
 
   def test_EX_CANTCREAT_of_os(self):
     self.assertOnlyIn(((2, 3), (3, 0)), detect("from os import EX_CANTCREAT"))
@@ -1279,6 +1309,9 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_killpg_of_os(self):
     self.assertOnlyIn(((2, 3), (3, 0)), detect("from os import killpg"))
+
+  def test_P_PIDFD_of_os(self):
+    self.assertOnlyIn((3, 9), detect("from os import P_PIDFD"))
 
   def test_st_atime_from_os_stat(self):
     self.assertOnlyIn(((2, 2), (3, 0)),
@@ -1854,11 +1887,17 @@ class VerminConstantMemberTests(VerminTest):
   def test_CAN_ISOTP_of_socket(self):
     self.assertOnlyIn((3, 7), detect("from socket import CAN_ISOTP"))
 
+  def test_CAN_J1939_of_socket(self):
+    self.assertOnlyIn((3, 9), detect("from socket import CAN_J1939"))
+
   def test_CAN_RAW_of_socket(self):
     self.assertOnlyIn((3, 3), detect("from socket import CAN_RAW"))
 
   def test_CAN_RAW_ERR_FILTER_of_socket(self):
     self.assertOnlyIn((3, 3), detect("from socket import CAN_RAW_ERR_FILTER"))
+
+  def test_CAN_RAW_JOIN_FILTERS_of_socket(self):
+    self.assertOnlyIn((3, 9), detect("from socket import CAN_RAW_JOIN_FILTERS"))
 
   def test_CAN_RAW_FD_FRAMES_of_socket(self):
     self.assertOnlyIn((3, 5), detect("from socket import CAN_RAW_FD_FRAMES"))
@@ -2332,6 +2371,9 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_dont_write_bytecode_of_sys(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("from sys import dont_write_bytecode"))
+
+  def test_platlibdir_of_sys(self):
+    self.assertOnlyIn((3, 9), detect("from sys import platlibdir"))
 
   def test_dev_mode_from_sys_flags(self):
     self.assertOnlyIn((3, 7),

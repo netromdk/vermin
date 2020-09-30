@@ -766,10 +766,15 @@ class VerminKwargsTests(VerminTest):
                       detect("import compileall\n"
                              "compileall.compile_file(invalidation_mode='hello')"))
 
-  def test_chunksize_of_concurrent_futures_Executor(self):
+  def test_chunksize_of_concurrent_futures_Executor_map(self):
     self.assertOnlyIn((3, 5),
                       detect("from concurrent.futures import Executor\n"
-                             "Executor(chunksize=123)"))
+                             "Executor().map(chunksize=123)"))
+
+  def test_cancel_futures_of_concurrent_futures_Executor_shutdown(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from concurrent.futures import Executor\n"
+                             "Executor().shutdown(cancel_futures=True)"))
 
   def test_thread_name_prefix_of_concurrent_futures_ThreadPoolExecutor(self):
     self.assertOnlyIn((3, 6),
@@ -854,6 +859,9 @@ class VerminKwargsTests(VerminTest):
 
   def test_timeout_of_smtplib_SMTP(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import smtplib\nsmtplib.SMTP(timeout=1)"))
+
+  def test_timeout_of_smtplib_LMTP(self):
+    self.assertOnlyIn((3, 9), detect("import smtplib\nsmtplib.LMTP(timeout=1)"))
 
   def test_source_address_of_smtplib_SMTP(self):
     self.assertOnlyIn((3, 3), detect("import smtplib\nsmtplib.SMTP(source_address=1)"))
@@ -1291,6 +1299,21 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn((3, 3),
                       detect("from imaplib import IMAP4_SSL\n"
                              "IMAP4_SSL(ssl_context=None)"))
+
+  def test_timeout_of_IMAP4_SSL_from_imaplib(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from imaplib import IMAP4_SSL\n"
+                             "IMAP4_SSL(timeout=None)"))
+
+  def test_timeout_of_IMAP4_from_imaplib(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from imaplib import IMAP4\n"
+                             "IMAP4(timeout=None)"))
+
+  def test_timeout_of_IMAP4_open_from_imaplib(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from imaplib import IMAP4\n"
+                             "IMAP4().open(timeout=None)"))
 
   def test_opener_of_FileIO_from_io(self):
     self.assertOnlyIn((3, 3),
@@ -2957,3 +2980,13 @@ class VerminKwargsTests(VerminTest):
                       detect("from xml.etree.ElementTree import ElementTree\n"
                              "x = ElementTree()\n"
                              "x.write(short_empty_elements=None)"))
+
+  def test_indent_of_dump_from_ast(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from ast import dump\n"
+                             "dump(indent=None)"))
+
+  def test_include_extras_of_get_type_hints_from_typing(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from typing import get_type_hints\n"
+                             "get_type_hints(include_extras=None)"))

@@ -1233,6 +1233,9 @@ class VerminFunctionMemberTests(VerminTest):
   def test_link_to_from_path(self):
     self.assertOnlyIn((3, 8), detect("from pathlib import Path\np=Path('foo')\np.link_to()"))
 
+  def test_readlink_from_path(self):
+    self.assertOnlyIn((3, 9), detect("from pathlib import Path\np=Path('foo')\np.readlink()"))
+
   def test_all_suffixes_of_importlib_machinery(self):
     self.assertOnlyIn((3, 3),
                       detect("from importlib import machinery\nmachinery.all_suffixes()"))
@@ -1905,6 +1908,14 @@ class VerminFunctionMemberTests(VerminTest):
                       detect("from asyncio import loop\n"
                              "loop().start_tls()"))
 
+  def test_shutdown_default_executor_from_asyncio_loop(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from asyncio import loop\n"
+                             "loop().shutdown_default_executor()"))
+
+  def test_to_thread_from_asyncio(self):
+    self.assertOnlyIn((3, 9), detect("from asyncio import to_thread"))
+
   def test_b85decode_from_base64(self):
     self.assertOnlyIn((3, 4), detect("import base64\nbase64.b85decode()"))
 
@@ -2196,6 +2207,9 @@ class VerminFunctionMemberTests(VerminTest):
   def test_is_tracked_from_gc(self):
     self.assertOnlyIn(((2, 7), (3, 1)), detect("import gc\ngc.is_tracked()"))
 
+  def test_is_finalized_from_gc(self):
+    self.assertOnlyIn((3, 9), detect("import gc\ngc.is_finalized()"))
+
   def test_unfreeze_from_gc(self):
     self.assertOnlyIn((3, 7), detect("import gc\ngc.unfreeze()"))
 
@@ -2435,6 +2449,11 @@ class VerminFunctionMemberTests(VerminTest):
                       detect("from imaplib import IMAP4\n"
                              "IMAP4().thread()"))
 
+  def test_unselect_from_imaplib_IMAP4(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from imaplib import IMAP4\n"
+                             "IMAP4().unselect()"))
+
   def test_acquire_lock_from_imp(self):
     self.assertOnlyIn(((2, 3), (3, 0)), detect("import imp\nimp.acquire_lock()"))
 
@@ -2605,6 +2624,15 @@ class VerminFunctionMemberTests(VerminTest):
   def test_factorial_from_math(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import math\nmath.factorial()"))
 
+  def test_lcm_from_math(self):
+    self.assertOnlyIn((3, 9), detect("import math\nmath.lcm()"))
+
+  def test_nextafter_from_math(self):
+    self.assertOnlyIn((3, 9), detect("import math\nmath.nextafter()"))
+
+  def test_ulp_from_math(self):
+    self.assertOnlyIn((3, 9), detect("import math\nmath.ulp()"))
+
   def test_read_windows_registry_from_mimetypes_MimeTypes(self):
     self.assertOnlyIn(((2, 7), (3, 2)),
                       detect("from mimetypes import MimeTypes\n"
@@ -2655,6 +2683,11 @@ class VerminFunctionMemberTests(VerminTest):
   def test_parent_process_from_multiprocessing(self):
     self.assertOnlyIn((3, 8), detect(
         "import multiprocessing\nmultiprocessing.parent_process()"))
+
+  def test_close_from_multiprocessing_SimpleQueue(self):
+    self.assertOnlyIn((3, 9), detect(
+      "from multiprocessing import SimpleQueue\n"
+      "multiprocessing.SimpleQueue().close()"))
 
   def test_get_default_domain_from_nis(self):
     self.assertOnlyIn(((2, 5), (3, 0)), detect("import nis\nnis.get_default_domain()"))
@@ -3009,6 +3042,12 @@ class VerminFunctionMemberTests(VerminTest):
   def test_walk_from_os(self):
     self.assertOnlyIn(((2, 3), (3, 0)), detect("import os\nos.walk()"))
 
+  def test_pidfd_open_from_os(self):
+    self.assertOnlyIn((3, 9), detect("import os\nos.pidfd_open()"))
+
+  def test_waitstatus_to_exitcode_from_os(self):
+    self.assertOnlyIn((3, 9), detect("import os\nos.waitstatus_to_exitcode()"))
+
   def test_win32_edition_from_platform(self):
     self.assertOnlyIn((3, 8), detect("import platform\nplatform.win32_edition()"))
 
@@ -3058,6 +3097,9 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_triangular_from_random(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import random\nrandom.triangular()"))
+
+  def test_randbytes_from_random(self):
+    self.assertOnlyIn((3, 9), detect("import random\nrandom.randbytes()"))
 
   def test_fullmatch_from_re_Pattern(self):
     self.assertOnlyIn((3, 4),
@@ -3746,3 +3788,9 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(((2, 5), (3, 0)),
                       detect("from zlib import Decompress\n"
                              "Decompress().copy()"))
+
+  def test_unparse_from_ast(self):
+    self.assertOnlyIn((3, 9), detect("import ast\nast.unparse()"))
+
+  def test_reset_peak_from_tracemalloc(self):
+    self.assertOnlyIn((3, 9), detect("import tracemalloc\ntracemalloc.reset_peak()"))

@@ -40,6 +40,9 @@ class VerminClassMemberTests(VerminTest):
   def test_ThreadedChildWatcher_of_asyncio(self):
     self.assertOnlyIn((3, 8), detect("from asyncio import ThreadedChildWatcher"))
 
+  def test_PidfdChildWatcher_of_asyncio(self):
+    self.assertOnlyIn((3, 9), detect("from asyncio import PidfdChildWatcher"))
+
   def test_Calendar_of_calendar(self):
     self.assertOnlyIn(((2, 5), (3, 0)), detect("from calendar import Calendar"))
 
