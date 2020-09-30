@@ -30,13 +30,14 @@ infix matrix multiplication, ``"..".format(..)``, imports (``import X``, ``from 
 X import *``), function calls wrt. name and kwargs, ``strftime`` + ``strptime`` directives used,
 function and variable annotations (also ``Final`` and ``Literal``), ``continue`` in ``finally``
 block, modular inverse ``pow()``, array typecodes, codecs error handler names, encodings, ``%``
-formatting and directives for bytes and bytearray, generalized unpacking, and dictionary union
-(``{..} | {..}``). It tries to detect and ignore user-defined functions, classes, arguments, and
-variables with names that clash with library-defined symbols.
+formatting and directives for bytes and bytearray, generalized unpacking, dictionary union (``{..} |
+{..}``), and dictionary union merge (``a = {..}; a |= {..}``). It tries to detect and ignore
+user-defined functions, classes, arguments, and variables with names that clash with library-defined
+symbols.
 
 Backports of the standard library, like ``typing``, can be enabled for better results.
 
-The project is fairly well-tested with **3245** unit and integration tests employing **3906**
+The project is fairly well-tested with **3246** unit and integration tests employing **3922**
 assertions.
 
 It is recommended to use the most recent Python version to run Vermin on projects since Python's own

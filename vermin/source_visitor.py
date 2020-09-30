@@ -69,6 +69,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__seen_except_handler = False
     self.__seen_raise = False
     self.__dict_union = False
+    self.__dict_union_merge = False
 
     # Imported members of modules, like "exc_clear" of "sys".
     self.__import_mem_mod = {}
@@ -219,6 +220,9 @@ class SourceVisitor(ast.NodeVisitor):
   def dict_union(self):
     return self.__dict_union
 
+  def dict_union_merge(self):
+    return self.__dict_union_merge
+
   def minimum_versions(self):
     mins = [(0, 0), (0, 0)]
 
@@ -323,7 +327,7 @@ class SourceVisitor(ast.NodeVisitor):
     if self.bytearray_format():
       mins = combine_versions(mins, (None, (3, 5)))
 
-    if self.dict_union():
+    if self.dict_union() or self.dict_union_merge():
       mins = combine_versions(mins, (None, (3, 9)))
 
     for directive in self.strftime_directives():
@@ -1273,6 +1277,23 @@ class SourceVisitor(ast.NodeVisitor):
   def visit_AugAssign(self, node):
     self.__add_user_def_node(node.target)
     self.__add_name_res_assign_node(node)
+
+    # Example:
+    # AugAssign(target=Name(id='d', ctx=Store()),
+    #           op=BitOr(),
+    #           value=Dict(keys=[Constant(value='b')], values=[Constant(value=2)]))
+    if isinstance(node.op, ast.BitOr) and self.__is_dict(node.value):
+      def has_dum():
+        self.__dict_union_merge = True
+        self.__vvprint("dict union merge (dict var |= dict) requires 3.9+", line=node.lineno)
+      if self.__is_dict(node.target):
+        has_dum()
+      elif isinstance(node.target, ast.Attribute):
+        # "os.environ" and "os.environb" were modified to also support "|=".
+        target_name = dotted_name(self.__get_attribute_name(node.target))
+        if "os.environ" == target_name or "os.environb" == target_name:
+          has_dum()
+
     self.generic_visit(node)
 
   def visit_AnnAssign(self, node):
@@ -1464,11 +1485,30 @@ class SourceVisitor(ast.NodeVisitor):
     if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
       self.generic_visit(node)
 
-  def visit_For(self, node):
+  def __handle_for(self, node):
     if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
       self.__seen_for += 1
+
+      # Check if any value of the for-iterable is a dictionary, then associate for-target variable
+      # with a ditionary type such that sub-levels of the for-loop can use it for dict union merge
+      # detection.
+      old_name_res = self.__name_res
+      if hasattr(node.target, "id"):
+        for tup in ast.iter_fields(node.iter):
+          if tup[0] == "elts" or tup[0] == "values":
+            if any(self.__is_dict(elm) for elm in tup[1]):
+              self.__name_res[node.target.id] = "dict"
+              break
+
       self.generic_visit(node)
       self.__seen_for -= 1
+      self.__name_res = old_name_res
+
+  def visit_For(self, node):
+    self.__handle_for(node)
+
+  def visit_AsyncFor(self, node):
+    self.__handle_for(node)
 
   def visit_While(self, node):
     if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
