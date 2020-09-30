@@ -5,7 +5,7 @@ from collections import deque
 
 from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, BYTES_REQS,\
   ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS, CODECS_ERRORS_INDICES, CODECS_ENCODINGS,\
-  CODECS_ENCODINGS_INDICES
+  CODECS_ENCODINGS_INDICES, BUILTIN_GENERIC_ANNOTATION_TYPES
 from .config import Config
 from .utility import dotted_name, reverse_range, combine_versions, version_strings,\
   remove_whitespace
@@ -70,12 +70,16 @@ class SourceVisitor(ast.NodeVisitor):
     self.__seen_raise = False
     self.__dict_union = False
     self.__dict_union_merge = False
+    self.__builtin_generic_type_annotations = False
 
     # Imported members of modules, like "exc_clear" of "sys".
     self.__import_mem_mod = {}
 
     # Name -> name resolutions.
     self.__name_res = {}
+
+    # Name -> type resolutions.
+    self.__name_res_type = {}
 
     # User-defined symbols to be ignored.
     self.__user_defs = set()
@@ -223,6 +227,9 @@ class SourceVisitor(ast.NodeVisitor):
   def dict_union_merge(self):
     return self.__dict_union_merge
 
+  def builtin_generic_type_annotations(self):
+    return self.__builtin_generic_type_annotations
+
   def minimum_versions(self):
     mins = [(0, 0), (0, 0)]
 
@@ -328,6 +335,9 @@ class SourceVisitor(ast.NodeVisitor):
       mins = combine_versions(mins, (None, (3, 5)))
 
     if self.dict_union() or self.dict_union_merge():
+      mins = combine_versions(mins, (None, (3, 9)))
+
+    if self.builtin_generic_type_annotations():
       mins = combine_versions(mins, (None, (3, 9)))
 
     for directive in self.strftime_directives():
@@ -570,6 +580,9 @@ class SourceVisitor(ast.NodeVisitor):
   def __add_name_res(self, source, target):
     self.__name_res[source] = target
 
+  def __add_name_res_type(self, source, target):
+    self.__name_res_type[source] = target
+
   def __is_builtin_type(self, name):
     return name in {"dict", "set", "list", "unicode", "str", "int", "float", "long", "bytes"}
 
@@ -635,6 +648,7 @@ class SourceVisitor(ast.NodeVisitor):
       return  # pragma: no cover
 
     value_name = None
+    type_name = None
 
     # If rvalue is a Call.
     if isinstance(node.value, ast.Call):
@@ -669,7 +683,11 @@ class SourceVisitor(ast.NodeVisitor):
     elif hasattr(ast, "Bytes") and isinstance(node.value, ast.Bytes):
       value_name = "bytes"
 
-    if value_name is None:
+    # When a type name is used, and not a type instance.
+    elif isinstance(node.value, ast.Name):
+      type_name = node.value.id
+
+    if value_name is None and type_name is None:
       return
 
     targets = []
@@ -680,7 +698,10 @@ class SourceVisitor(ast.NodeVisitor):
     for target in targets:
       if isinstance(target, ast.Name):
         target_name = target.id
-        self.__add_name_res(target_name, value_name)
+        if value_name is not None:
+          self.__add_name_res(target_name, value_name)
+        elif type_name is not None:
+          self.__add_name_res_type(target_name, type_name)
 
   def __add_line_col(self, entity, line, col=None):
     if line is not None and col is None:
@@ -1473,6 +1494,26 @@ class SourceVisitor(ast.NodeVisitor):
 
   def visit_Set(self, node):
     self.__check_generalized_unpacking(node)
+    self.generic_visit(node)
+
+  def visit_Subscript(self, node):
+    if isinstance(node.value, ast.Name):
+      def match(name):
+        if name in self.__user_defs:
+          self.__vvvvprint("Ignoring type '{}' because it's user-defined!".format(name))
+        else:
+          self.__builtin_generic_type_annotations = True
+          self.__vvprint("builtin generic type annotation ({}[..]) requires 3.9+".format(name))
+      coll_name = node.value.id
+      if coll_name in BUILTIN_GENERIC_ANNOTATION_TYPES:
+        match(coll_name)
+      elif coll_name in self.__import_mem_mod:
+        full_coll_name = dotted_name([self.__import_mem_mod[coll_name], coll_name])
+        if full_coll_name in BUILTIN_GENERIC_ANNOTATION_TYPES:
+          match(full_coll_name)
+      elif coll_name in self.__name_res_type and\
+           self.__name_res_type[coll_name] in BUILTIN_GENERIC_ANNOTATION_TYPES:
+        match(self.__name_res_type[coll_name])
     self.generic_visit(node)
 
   # Lax mode and comment-excluded lines skip conditional blocks if enabled.

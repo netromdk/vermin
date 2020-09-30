@@ -1,3 +1,5 @@
+from vermin import BUILTIN_GENERIC_ANNOTATION_TYPES, dotted_name
+
 from .testutils import VerminTest, detect, current_version, current_major_version, visit, Parser
 
 class VerminLanguageTests(VerminTest):
@@ -963,3 +965,55 @@ class VerminLanguageTests(VerminTest):
     visitor = visit("from os import environb\nos.environb |= {'var':'val'}")
     self.assertTrue(visitor.dict_union_merge())
     self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+  def test_builtin_generic_type_annotation(self):
+    # For each type, either use directly if builtin or import and then use.
+    # Examples:
+    # -  from re import Match
+    #    Match[str]
+    # -  tuple[str]
+    for typ in BUILTIN_GENERIC_ANNOTATION_TYPES:
+      names = [typ]
+      src = ""
+      if "." in typ:
+        names = typ.split(".")
+        src = "from {} import {}\n".format(dotted_name(names[:-1]), names[-1])
+      src += "{}[str]".format(names[-1])
+      visitor = visit(src)
+      self.assertTrue(visitor.builtin_generic_type_annotations(), msg=src)
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+    visitor = visit("class A: pass\nA[str]")
+    self.assertFalse(visitor.builtin_generic_type_annotations())
+
+    # Ignore user-defined types that clash with builtin types.
+    visitor = visit("class dict: pass\ndict[str]")
+    self.assertFalse(visitor.builtin_generic_type_annotations())
+
+    visitor = visit("dict[str, list[int]]")
+    self.assertTrue(visitor.builtin_generic_type_annotations())
+    self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+    visitor = visit("tuple[int, ...]")
+    self.assertTrue(visitor.builtin_generic_type_annotations())
+    self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+    visitor = visit("from collections import ChainMap\nChainMap[str, list[str]]")
+    self.assertTrue(visitor.builtin_generic_type_annotations())
+    self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+    visitor = visit("l = list[str]()")
+    self.assertTrue(visitor.builtin_generic_type_annotations())
+    self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+    visitor = visit("import types\nisinstance(list[str], types.GenericAlias)")
+    self.assertTrue(visitor.builtin_generic_type_annotations())
+    self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+    visitor = visit("l = list\nl[-1]")
+    self.assertTrue(visitor.builtin_generic_type_annotations())
+    self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+    # Not a result because a list instance rather than list type is used.
+    visitor = visit("l = [1,2,3]\nl[-1]")
+    self.assertFalse(visitor.builtin_generic_type_annotations())

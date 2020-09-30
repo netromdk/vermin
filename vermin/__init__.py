@@ -4,7 +4,7 @@ from .source_visitor import SourceVisitor
 from .parser import Parser
 from .processor import Processor, process_individual
 from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, BYTES_REQS,\
-  ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS, CODECS_ENCODINGS
+  ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS, CODECS_ENCODINGS, BUILTIN_GENERIC_ANNOTATION_TYPES
 from .arguments import Arguments
 from .config import Config
 from .utility import reverse_range, dotted_name, combine_versions, InvalidVersionException,\
@@ -15,6 +15,7 @@ from .features import Features
 __all__ = [
   "ARRAY_TYPECODE_REQS",
   "Arguments",
+  "BUILTIN_GENERIC_ANNOTATION_TYPES",
   "BYTES_REQS",
   "Backports",
   "CODECS_ENCODINGS",
