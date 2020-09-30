@@ -426,3 +426,9 @@ class VerminModuleTests(VerminTest):
 
   def test_urlparse(self):
     self.assertOnlyIn((2, 0), detect("import urlparse"))
+
+  def test_timezone(self):
+    self.assertOnlyIn((3, 9), detect("import timezone"))
+
+  def test_graphlib(self):
+    self.assertOnlyIn((3, 9), detect("import graphlib"))
