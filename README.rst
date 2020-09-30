@@ -18,8 +18,8 @@ Concurrently detect the minimum Python versions needed to run code. Additionally
 vanilla Python, and it doesn't have any external dependencies, it works with v2.7+ and v3+.
 
 It functions by parsing Python code into an abstract syntax tree (AST), which it traverses and
-matches against internal dictionaries with **2974** rules, covering v2.0-2.7 and v3.0-3.9, divided
-into **134** modules, **2180** classes/functions/constants members of modules, **628** kwargs of
+matches against internal dictionaries with **2980** rules, covering v2.0-2.7 and v3.0-3.9, divided
+into **134** modules, **2186** classes/functions/constants members of modules, **628** kwargs of
 functions, **4** strftime directives, **3** bytes format directives, **2** array typecodes, **3**
 codecs error handler names, and **20** codecs encodings. Including looking for v2/v3 ``print expr``
 and ``print(expr)``, ``long``, f-strings, coroutines (``async`` and ``await``), asynchronous
@@ -37,7 +37,7 @@ symbols.
 
 Backports of the standard library, like ``typing``, can be enabled for better results.
 
-The project is fairly well-tested with **3246** unit and integration tests employing **3922**
+The project is fairly well-tested with **3252** unit and integration tests employing **3934**
 assertions.
 
 It is recommended to use the most recent Python version to run Vermin on projects since Python's own

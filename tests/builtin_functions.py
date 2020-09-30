@@ -213,6 +213,18 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
     self.assertOnlyIn((3, 0), detect("s=str()\ns.maketrans()"))
     self.assertOnlyIn((3, 0), detect("str().maketrans()"))
 
+  def test_removeprefix_of_str(self):
+    self.assertOnlyIn((3, 9), detect("s=\"\"\ns.removeprefix()"))
+    self.assertOnlyIn((3, 9), detect("\"\".removeprefix()"))
+    self.assertOnlyIn((3, 9), detect("s=str()\ns.removeprefix()"))
+    self.assertOnlyIn((3, 9), detect("str().removeprefix()"))
+
+  def test_removesuffix_of_str(self):
+    self.assertOnlyIn((3, 9), detect("s=\"\"\ns.removesuffix()"))
+    self.assertOnlyIn((3, 9), detect("\"\".removesuffix()"))
+    self.assertOnlyIn((3, 9), detect("s=str()\ns.removesuffix()"))
+    self.assertOnlyIn((3, 9), detect("str().removesuffix()"))
+
   def test_partition_of_str(self):
     self.assertOnlyIn(((2, 5), (3, 0)), detect("s=\"\"\ns.partition('a')"))
     self.assertOnlyIn(((2, 5), (3, 0)), detect("\"\".partition('a')"))
@@ -291,6 +303,12 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
   def test_maketrans_of_bytes(self):
     self.assertOnlyIn((3, 1), detect("bytes.maketrans(b'a', b'b')"))
 
+  def test_removeprefix_of_bytes(self):
+    self.assertOnlyIn((3, 9), detect("bytes.removeprefix(b'a')"))
+
+  def test_removesuffix_of_bytes(self):
+    self.assertOnlyIn((3, 9), detect("bytes.removesuffix(b'a')"))
+
   def test_hex_of_bytearray(self):
     self.assertOnlyIn((3, 5), detect("bytearray(b'\x10').hex()"))
     self.assertOnlyIn((3, 5), detect("b=bytearray(b'\x10')\nb.hex()"))
@@ -301,6 +319,12 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
 
   def test_maketrans_of_bytearray(self):
     self.assertOnlyIn((3, 1), detect("bytearray.maketrans(b'a', b'b')"))
+
+  def test_removeprefix_of_bytearray(self):
+    self.assertOnlyIn((3, 9), detect("bytearray.removeprefix(b'a')"))
+
+  def test_removesuffix_of_bytearray(self):
+    self.assertOnlyIn((3, 9), detect("bytearray.removesuffix(b'a')"))
 
   def test_hex_of_memoryview(self):
     self.assertOnlyIn((3, 5), detect("memoryview(b'1').hex()"))
