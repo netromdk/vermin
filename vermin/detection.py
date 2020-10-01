@@ -477,17 +477,26 @@ def detect_paths_incremental(args):
 # ".pyw", for instance. But try directly specified files on CLI, on depth 0, in any case (non-pyhton
 # files will be ignored when trying to parse them).
 def detect_paths(paths, hidden=False, processes=cpu_count()):
-  pool = Pool(processes=processes)
+  pool = Pool(processes=processes) if processes > 1 else None
   accept_paths = []
   depth = 0
   args = [(paths, depth, hidden)]
+
+  # Automatically don't use concurrency when only one process is specified to be used.
+  def act(args):
+    if processes == 1:
+      return [detect_paths_incremental(arg) for arg in args]  # pragma: no cover
+    return pool.imap(detect_paths_incremental, args)
+
   while args:
     new_args = []
-    for (acc, further_args) in pool.imap(detect_paths_incremental, args):
+    for (acc, further_args) in act(args):
       if acc:
         accept_paths += acc
       if further_args:
         new_args += further_args
     args = new_args
-  pool.close()
+
+  if pool:
+    pool.close()
   return accept_paths

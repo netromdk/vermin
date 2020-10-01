@@ -87,7 +87,7 @@ def process_individual(args):
 
 class Processor:
   def process(self, paths, processes=mp.cpu_count()):
-    pool = mp.Pool(processes=processes)
+    pool = mp.Pool(processes=processes) if processes > 1 else None
     mins = [(0, 0), (0, 0)]
     incomp = False
     config = Config.get()
@@ -96,9 +96,15 @@ class Processor:
       if not config.ignore_incomp():
         nprint("File with incompatible versions: {}".format(path))
 
+    # Automatically don't use concurrency when only one process is specified to be used.
+    def act():
+      if processes == 1:
+        return [process_individual((path, config)) for path in paths]  # pragma: no cover
+      return pool.imap(process_individual, ((path, config) for path in paths))
+
     unique_versions = set()
     all_backports = set()
-    for proc_res in pool.imap(process_individual, ((path, config) for path in paths)):
+    for proc_res in act():
       # Ignore paths that didn't contain python code.
       if proc_res is None:
         continue
@@ -131,7 +137,8 @@ class Processor:
         incomp = True
         print_incomp(proc_res.path)
 
-    pool.close()
+    if pool:
+      pool.close()
 
     unique_versions = list(unique_versions)
     unique_versions.sort()
