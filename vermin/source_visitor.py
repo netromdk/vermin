@@ -21,6 +21,7 @@ class SourceVisitor(ast.NodeVisitor):
     else:
       self.__config = config
 
+    self.__print_visits = self.__config.print_visits()
     self.__modules = []
     self.__members = []
     self.__printv2 = False
@@ -71,6 +72,9 @@ class SourceVisitor(ast.NodeVisitor):
     self.__dict_union = False
     self.__dict_union_merge = False
     self.__builtin_generic_type_annotations = False
+    self.__builtin_types = {"dict", "set", "list", "unicode", "str", "int", "float", "long",
+                            "bytes"}
+    self.__codecs_encodings_kwargs = ("encoding", "data_encoding", "file_encoding")
 
     # Imported members of modules, like "exc_clear" of "sys".
     self.__import_mem_mod = {}
@@ -524,19 +528,16 @@ class SourceVisitor(ast.NodeVisitor):
 
       # Check for "errors" keyword arguments.
       for kw in node.keywords:
-        if kw.arg == "errors":
-          value = kw.value
-          if hasattr(value, "s"):
-            name = kw.value.s
-            if self.__config.is_excluded_codecs_error_handler(name):
-              self.__vvprint("Excluding codecs error handler: {}".format(name))
-              continue
-            self.__codecs_error_handlers.append(name)
-            self.__add_line_col(name, node.lineno)
+        if kw.arg == "errors" and hasattr(kw.value, "s"):
+          name = kw.value.s
+          if self.__config.is_excluded_codecs_error_handler(name):
+            self.__vvprint("Excluding codecs error handler: {}".format(name))
+            continue
+          self.__codecs_error_handlers.append(name)
+          self.__add_line_col(name, node.lineno)
 
   def __add_codecs_encoding(self, func, node):
     if func in CODECS_ENCODINGS_INDICES:
-      kwargs = ("encoding", "data_encoding", "file_encoding")
       for idx in CODECS_ENCODINGS_INDICES[func]:
         # Check indexed arguments.
         if idx >= 0 and idx < len(node.args):
@@ -551,15 +552,13 @@ class SourceVisitor(ast.NodeVisitor):
 
         # Check for "encoding", "data_encoding", "file_encoding" keyword arguments.
         for kw in node.keywords:
-          if kw.arg in kwargs:
-            value = kw.value
-            if hasattr(value, "s"):
-              name = kw.value.s
-              if self.__config.is_excluded_codecs_encoding(name):
-                self.__vvprint("Excluding codecs encoding: {}".format(name))
-                continue
-              self.__codecs_encodings.append(name)
-              self.__add_line_col(name, node.lineno)
+          if kw.arg in self.__codecs_encodings_kwargs and hasattr(kw.value, "s"):
+            name = kw.value.s
+            if self.__config.is_excluded_codecs_encoding(name):
+              self.__vvprint("Excluding codecs encoding: {}".format(name))
+              continue
+            self.__codecs_encodings.append(name)
+            self.__add_line_col(name, node.lineno)
 
   def __check_codecs_function(self, func, node):
     self.__add_codecs_error_handler(func, node)
@@ -569,13 +568,8 @@ class SourceVisitor(ast.NodeVisitor):
     self.__user_defs.add(name)
 
   def __add_user_def_node(self, node):
-    """Add user-defined name from node, like ast.Name, ast.arg or str."""
-    if isinstance(node, str):
-      self.__add_user_def(node)
-    elif isinstance(node, ast.Name) and hasattr(node, "id"):
+    if isinstance(node, ast.Name) and hasattr(node, "id"):
       self.__add_user_def(node.id)
-    elif hasattr(node, "arg"):
-      self.__add_user_def(node.arg)
 
   def __add_name_res(self, source, target):
     self.__name_res[source] = target
@@ -584,7 +578,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__name_res_type[source] = target
 
   def __is_builtin_type(self, name):
-    return name in {"dict", "set", "list", "unicode", "str", "int", "float", "long", "bytes"}
+    return name in self.__builtin_types
 
   def __resolve_module_name(self, name):
     return self.__module_as_name[name] if name in self.__module_as_name\
@@ -604,28 +598,28 @@ class SourceVisitor(ast.NodeVisitor):
         primi_type = True
       if isinstance(attr, ast.Attribute):
         if hasattr(attr, "attr"):
-          full_name.insert(0, attr.attr)
+          full_name.append(attr.attr)
         if hasattr(attr, "value") and hasattr(attr.value, "id"):
-          full_name.insert(0, self.__resolve_module_name(attr.value.id))
+          full_name.append(self.__resolve_module_name(attr.value.id))
       elif isinstance(attr, ast.Call):
         if hasattr(attr, "func") and hasattr(attr.func, "id"):
-          full_name.insert(0, attr.func.id)
+          full_name.append(attr.func.id)
       elif not primi_type and isinstance(attr, ast.Dict):
         if len(full_name) == 0 or (full_name[0] != "dict" and len(full_name) == 1):
-          full_name.insert(0, "dict")
+          full_name.append("dict")
       elif not primi_type and isinstance(attr, ast.Set):
         if len(full_name) == 0 or (full_name[0] != "set" and len(full_name) == 1):
-          full_name.insert(0, "set")
+          full_name.append("set")
       elif not primi_type and isinstance(attr, ast.List):
         if len(full_name) == 0 or (full_name[0] != "list" and len(full_name) == 1):
-          full_name.insert(0, "list")
+          full_name.append("list")
       elif not primi_type and isinstance(attr, ast.Str):
         if sys.version_info.major == 2 and isinstance(attr.s, unicode):  # novm
           name = "unicode"  # pragma: no cover
         else:
           name = "str"
         if len(full_name) == 0 or (full_name[0] != name and len(full_name) == 1):
-          full_name.insert(0, name)
+          full_name.append(name)
       elif not primi_type and isinstance(attr, ast.Num):
         t = type(attr.n)
         name = None
@@ -637,10 +631,11 @@ class SourceVisitor(ast.NodeVisitor):
           name = "long"  # pragma: no cover
         if name is not None and len(full_name) == 0 or \
           (full_name[0] != name and len(full_name) == 1):
-          full_name.insert(0, name)
+          full_name.append(name)
       elif not primi_type and hasattr(ast, "Bytes") and isinstance(attr, ast.Bytes):
         if len(full_name) == 0 or (full_name[0] != "bytes" and len(full_name) == 1):
-          full_name.insert(0, "bytes")
+          full_name.append("bytes")
+    full_name.reverse()
     return full_name
 
   def __add_name_res_assign_node(self, node):
@@ -704,9 +699,7 @@ class SourceVisitor(ast.NodeVisitor):
           self.__add_name_res_type(target_name, type_name)
 
   def __add_line_col(self, entity, line, col=None):
-    if line is not None and col is None:
-      self.__line_col_entities[entity] = (line, None)
-    elif line is not None and col is not None:
+    if line is not None:
       self.__line_col_entities[entity] = (line, col)
 
   def __add_array_typecode(self, typecode, line=None, col=None):
@@ -750,7 +743,7 @@ class SourceVisitor(ast.NodeVisitor):
     if hasattr(node, "lineno"):
       self.__line = node.lineno
     self.__depth += 1
-    if self.__config.print_visits():
+    if self.__print_visits:
       self.__nprint("| " * self.__depth + ast.dump(node))  # pragma: no cover
     super(SourceVisitor, self).generic_visit(node)
     self.__depth -= 1
@@ -816,14 +809,19 @@ class SourceVisitor(ast.NodeVisitor):
     self.generic_visit(node)
 
   def __check_generalized_unpacking(self, node):
-    gen_unp = False
+    def has_gen_unp():
+      self.__generalized_unpacking = True
+      self.__vvprint("generalized unpacking requires 3.5+")
 
     # Call arguments and keywords: Check if more than one unpacking is used or if unpacking is used
     # before the end. This is so because in 3.4, unpacking in function call parameter list is only
     # allowed at the end of the parameter list, and only one unpacking is allowed.
     if isinstance(node, ast.Call):
-      def is_gen_unp(pos, total):
-        return len(pos) > 1 or any(p < total - 1 for p in pos)
+      def check_gen_unp(pos, total):
+        val = len(pos) > 1 or any(p < total - 1 for p in pos)
+        if val:
+          has_gen_unp()
+        return val
 
       if hasattr(node, "args") and hasattr(ast, "Starred"):
         total = len(node.args)
@@ -831,7 +829,8 @@ class SourceVisitor(ast.NodeVisitor):
         for i in range(total):
           if isinstance(node.args[i], ast.Starred):
             pos.append(i)
-        gen_unp |= is_gen_unp(pos, total)
+        if check_gen_unp(pos, total):
+          return
 
       if hasattr(node, "keywords"):
         total = len(node.keywords)
@@ -840,21 +839,21 @@ class SourceVisitor(ast.NodeVisitor):
           kw = node.keywords[i]
           if kw.arg is None and kw.value is not None:
             pos.append(i)
-        gen_unp |= is_gen_unp(pos, total)
+        if check_gen_unp(pos, total):
+          return
 
     # Any unpacking in tuples, sets, or lists is generalized unpacking.
     elif (isinstance(node, ast.Tuple) or isinstance(node, ast.Set) or isinstance(node, ast.List))\
        and hasattr(ast, "Starred"):
-      gen_unp |= any(isinstance(elt, ast.Starred) for elt in node.elts)
+      if any(isinstance(elt, ast.Starred) for elt in node.elts):
+        has_gen_unp()
+        return
 
     # Any unpacking in dicts is generalized unpacking.
     elif isinstance(node, ast.Dict):
-      gen_unp |= any(key is None and value is not None
-                     for (key, value) in zip(node.keys, node.values))
-
-    if gen_unp:
-      self.__generalized_unpacking = True
-      self.__vvprint("generalized unpacking requires 3.5+")
+      if any(key is None and value is not None
+             for (key, value) in zip(node.keys, node.values)):
+        has_gen_unp()
 
   def __push_function_name(self, name):
     self.__function_name = name
@@ -1344,27 +1343,37 @@ class SourceVisitor(ast.NodeVisitor):
     self.__add_user_def(node.name)
     self.generic_visit(node)
 
-    # Check if the return annotation is set
-    if hasattr(node, "returns") and node.returns:
+    def has_ann():
       self.__annotations = True
       self.__vvprint("annotations require 3+")
+
+    # Check if the return annotation is set
+    if hasattr(node, "returns") and node.returns:
+      has_ann()
       return True
+
+    def has_lit_ann():
+      self.__literal_annotations = True
+      self.__vvprint("literal variable annotations require 3.8+")
+
     for arg in node.args.args:
-      if hasattr(arg, "annotation") and arg.annotation:
-        self.__annotations = True
-        self.__vvprint("annotations require 3+")
-        ann = arg.annotation
+      if not hasattr(arg, "annotation") or not arg.annotation:
+        continue
 
-        # If attribute then get dotted name.
-        attr_name = dotted_name(self.__get_attribute_name(ann))
+      has_ann()
 
-        if (isinstance(ann, ast.Name) and ann.id == "Literal") or \
-           (isinstance(ann, ast.Subscript) and hasattr(ann.value, "id") and
-            ann.value.id == "Literal") or \
-           attr_name == "Literal" or attr_name == "typing.Literal":
-          self.__literal_annotations = True
-          self.__vvprint("literal variable annotations require 3.8+")
-          break
+      ann = arg.annotation
+      if (isinstance(ann, ast.Name) and ann.id == "Literal") or \
+         (isinstance(ann, ast.Subscript) and
+         hasattr(ann.value, "id") and ann.value.id == "Literal"):
+        has_lit_ann()
+        break
+
+      attr_name = dotted_name(self.__get_attribute_name(ann))
+      if attr_name == "Literal" or attr_name == "typing.Literal":
+        has_lit_ann()
+        break
+
     return True
 
   def visit_FunctionDef(self, node):
