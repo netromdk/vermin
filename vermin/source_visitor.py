@@ -1345,7 +1345,7 @@ class SourceVisitor(ast.NodeVisitor):
 
     def has_ann():
       self.__annotations = True
-      self.__vvprint("annotations require 3+")
+      self.__vvprint("annotations require 3+", line=node.lineno)
 
     # Check if the return annotation is set
     if hasattr(node, "returns") and node.returns:
@@ -1354,7 +1354,7 @@ class SourceVisitor(ast.NodeVisitor):
 
     def has_lit_ann():
       self.__literal_annotations = True
-      self.__vvprint("literal variable annotations require 3.8+")
+      self.__vvprint("literal variable annotations require 3.8+", line=node.lineno)
 
     for arg in node.args.args:
       if not hasattr(arg, "annotation") or not arg.annotation:
