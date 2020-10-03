@@ -2,7 +2,7 @@ import multiprocessing as mp
 
 from .printing import nprint, vprint
 from .config import Config
-from .utility import combine_versions, InvalidVersionException, version_strings
+from .utility import combine_versions, InvalidVersionException, version_strings, sort_line_column
 from .parser import Parser
 from .source_visitor import SourceVisitor
 from .backports import Backports
@@ -125,7 +125,14 @@ class Processor:
       if len(proc_res.text) > 0:
         # Keep newlines and throw away dups.
         lines = list(set(proc_res.text.splitlines(True)))
-        lines.sort()
+
+        # Sort for line and column numbers, if present and when printing visits (dumps) isn't
+        # enabled. Otherwise, sort lexicographically.
+        if config.verbose() > 2 and not config.print_visits():
+          lines.sort(key=sort_line_column)
+        else:
+          lines.sort()  # pragma: no cover
+
         subtext = "\n  " + "  ".join(lines)
         if not subtext.endswith("\n"):
           subtext += "\n"  # pragma: no cover

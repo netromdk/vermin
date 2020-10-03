@@ -8,7 +8,7 @@ from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, BYTES_REQ
 from .arguments import Arguments
 from .config import Config
 from .utility import reverse_range, dotted_name, combine_versions, InvalidVersionException,\
-  remove_whitespace
+  remove_whitespace, sort_line_column
 from .backports import Backports
 from .features import Features
 
@@ -39,4 +39,5 @@ __all__ = [
   "process_individual",
   "remove_whitespace",
   "reverse_range",
+  "sort_line_column",
 ]

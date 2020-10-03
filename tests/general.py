@@ -6,7 +6,7 @@ from shutil import rmtree
 
 from vermin import combine_versions, InvalidVersionException, detect_paths,\
   detect_paths_incremental, probably_python_file, Processor, process_individual, reverse_range,\
-  dotted_name, remove_whitespace, main, Config
+  dotted_name, remove_whitespace, main, Config, sort_line_column
 
 from .testutils import VerminTest, visit, detect, current_version
 
@@ -308,6 +308,36 @@ class VerminGeneralTests(VerminTest):
     self.assertEqual(remove_whitespace("abc", ["a", "c"]), "b")
     self.assertEqual(remove_whitespace(" \t\n\r\f\v"), "")
     self.assertEqual(remove_whitespace(" \t1\n2\r3\f\v", ["1", "3"]), "2")
+
+  def test_sort_line_column(self):
+    text = [
+      "L2: two",
+      "hello, world",
+      "L2 C10: two ten",
+      "L1: one",
+      "L3: three",
+      "print",
+      "L2 C2: two two",
+    ]
+
+    expected = [
+      "print",
+      "hello, world",
+      "L1: one",
+      "L2: two",
+      "L2 C2: two two",
+      "L2 C10: two ten",
+      "L3: three"
+    ]
+
+    value = text
+    value.sort(key=sort_line_column)
+    self.assertEqual(value, expected)
+
+    # Repeated sortings yield the same.
+    value2 = text
+    value2.sort(key=sort_line_column)
+    self.assertEqual(value2, expected)
 
   def test_assign_rvalue_attribute(self):
     self.assertEqual([None, (3, 3)], detect("import bz2\nv = bz2.BZ2File\nv.writable"))

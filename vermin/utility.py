@@ -1,5 +1,6 @@
 import re
 from math import floor
+from functools import reduce
 
 from .config import Config
 
@@ -82,3 +83,28 @@ def version_strings(vers):
 
 def remove_whitespace(string, extras=[]):
   return re.sub("[ \t\n\r\f\v{}]".format("".join(extras)), "", string)
+
+def bounded_str_hash(value):
+  """Computes bounded hash value of string input that isn't randomly seeded, like `hash()` does
+because we need the same hash value for every program execution.
+  """
+  h = reduce(lambda acc, ch: acc + 29 * ord(ch), value, 13)
+  return float(h % 1000000) / 1000000
+
+LINE_COL_REGEX = re.compile(r"L(\d+)(?:\s*C(\d+))?:(.*)")
+
+def sort_line_column(key):
+  """Sorts line and column numbers of input texts with format "LX[ CY]: ..". In order to
+consistently sort texts of same line/column but with different subtext, the subtext is hashed and
+included in the value. Text without line/column numbers is still hashed and thought of as having
+line number 0. This function can be used with `list.sort(key=sort_line_column)`.
+  """
+  m = LINE_COL_REGEX.match(key)
+  if not m:
+    return bounded_str_hash(key)
+  line = int(m.group(1))
+  col = m.group(2)
+  h = bounded_str_hash(m.group(3)) / 1000
+  if col is None:
+    return line + h
+  return line + float(col) / 1000 + h
