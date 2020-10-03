@@ -39,6 +39,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__coroutines = False
     self.__async_generator = False
     self.__async_comprehension = False
+    self.__async_for = False
     self.__seen_yield = 0
     self.__seen_await = 0
     self.__await_in_comprehension = False
@@ -171,6 +172,9 @@ class SourceVisitor(ast.NodeVisitor):
   def await_in_comprehension(self):
     return self.__await_in_comprehension
 
+  def async_for(self):
+    return self.__async_for
+
   def kw_only_args(self):
     return self.__kw_only_args
 
@@ -296,6 +300,9 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.await_in_comprehension():
       mins = combine_versions(mins, (None, (3, 7)))
+
+    if self.async_for():
+      mins = combine_versions(mins, (None, (3, 6)))
 
     if self.named_expressions():
       mins = combine_versions(mins, (None, (3, 8)))
@@ -1558,6 +1565,8 @@ class SourceVisitor(ast.NodeVisitor):
     self.__handle_for(node)
 
   def visit_AsyncFor(self, node):
+    self.__async_for = True
+    self.__vvprint("async for-loops require 3.6+", line=node.lineno)
     self.__handle_for(node)
 
   def visit_While(self, node):

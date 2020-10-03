@@ -475,6 +475,10 @@ class VerminLanguageTests(VerminTest):
       self.assertTrue(visitor.await_in_comprehension())
       self.assertOnlyIn((3, 7), visitor.minimum_versions())
 
+  def test_async_for(self):
+    if current_version() >= 3.6:
+      self.assertOnlyIn((3, 6), detect("async def foo():\n\tasync for a in []:pass"))
+
   def test_continue_in_finally(self):
     if current_version() >= 3.8:
       visitor = visit("try: pass\nfinally: continue")
