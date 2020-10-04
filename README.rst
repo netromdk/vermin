@@ -22,19 +22,7 @@ matches against internal dictionaries with **3114** rules, covering v2.0-2.7 and
 into **138** modules, **2242** classes/functions/constants members of modules, **664** kwargs of
 functions, **4** strftime directives, **3** bytes format directives, **2** array typecodes, **3**
 codecs error handler names, **20** codecs encodings, and **38** builtin generic annotation
-types. Including looking for v2/v3 ``print expr`` and ``print(expr)``, ``long``, f-strings,
-coroutines (``async`` and ``await``), asynchronous generators (``await`` and ``yield`` in same
-function), asynchronous comprehensions, ``await`` in comprehensions, asynchronous ``for``-loops,
-boolean constants, named expressions, keyword-only parameters, positional-only parameters, ``yield
-from``, exception context cause (``raise .. from ..``), ``dict`` comprehensions, infix matrix
-multiplication, ``"..".format(..)``, imports (``import X``, ``from X import Y``, ``from X import
-*``), function calls wrt. name and kwargs, ``strftime`` + ``strptime`` directives used, function and
-variable annotations (also ``Final`` and ``Literal``), ``continue`` in ``finally`` block, modular
-inverse ``pow()``, array typecodes, codecs error handler names, encodings, ``%`` formatting and
-directives for bytes and bytearray, generalized unpacking, dictionary union (``{..} | {..}``),
-dictionary union merge (``a = {..}; a |= {..}``), and builtin generic type annotations
-(``list[str]``). It tries to detect and ignore user-defined functions, classes, arguments, and
-variables with names that clash with library-defined symbols.
+types.
 
 Backports of the standard library, like ``typing``, can be enabled for better results.
 
@@ -75,6 +63,23 @@ be used to check that the minimum required versions didn't change. The following
   - pip install vermin
   script:
   - vermin -t=2.7 -t=3 project_package otherfile.py
+
+Features
+========
+
+Features detected include v2/v3 ``print expr`` and ``print(expr)``, ``long``, f-strings,
+coroutines (``async`` and ``await``), asynchronous generators (``await`` and ``yield`` in same
+function), asynchronous comprehensions, ``await`` in comprehensions, asynchronous ``for``-loops,
+boolean constants, named expressions, keyword-only parameters, positional-only parameters, ``yield
+from``, exception context cause (``raise .. from ..``), ``dict`` comprehensions, infix matrix
+multiplication, ``"..".format(..)``, imports (``import X``, ``from X import Y``, ``from X import
+*``), function calls wrt. name and kwargs, ``strftime`` + ``strptime`` directives used, function and
+variable annotations (also ``Final`` and ``Literal``), ``continue`` in ``finally`` block, modular
+inverse ``pow()``, array typecodes, codecs error handler names, encodings, ``%`` formatting and
+directives for bytes and bytearray, generalized unpacking, dictionary union (``{..} | {..}``),
+dictionary union merge (``a = {..}; a |= {..}``), and builtin generic type annotations
+(``list[str]``). It tries to detect and ignore user-defined functions, classes, arguments, and
+variables with names that clash with library-defined symbols.
 
 Caveats
 =======
