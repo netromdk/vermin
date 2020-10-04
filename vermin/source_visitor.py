@@ -1015,6 +1015,22 @@ class SourceVisitor(ast.NodeVisitor):
             return True
     return False
 
+  def __resolve_full_name(self, name):
+    """Tries to resolve name into a fully dotted name. Takes name as a string, ast.Name or
+ast.Call(func=ast.Name)."""
+    if isinstance(name, ast.Name):
+      name = name.id
+    elif isinstance(name, ast.Call) and isinstance(name.func, ast.Name):
+      name = name.func.id
+    elif isinstance(name, ast.Attribute):
+      name = dotted_name(self.__get_attribute_name(name))
+    name = self.__name_res[name] if name in self.__name_res else name
+    if name in self.__module_as_name:
+      return self.__module_as_name[name]
+    elif name in self.__import_mem_mod:
+      return dotted_name([self.__import_mem_mod[name], name])
+    return name
+
   def visit_BinOp(self, node):
     # Examples:
     #   BinOp(left=Bytes(s=b'%4x'), op=Mod(), right=Num(n=10))
@@ -1034,9 +1050,20 @@ class SourceVisitor(ast.NodeVisitor):
     # BinOp(left=Dict(keys=[Constant(value='a')], values=[Constant(value=1)]),
     #       op=BitOr(),
     #       right=Dict(keys=[Constant(value='b')], values=[Constant(value=2)]))
-    if isinstance(node.op, ast.BitOr) and self.__is_dict(node.left) and self.__is_dict(node.right):
-      self.__dict_union = True
-      self.__vvprint("dict union (dict | dict) requires 3.9+")
+    if isinstance(node.op, ast.BitOr):
+      def has_du():
+        self.__dict_union = True
+        self.__vvprint("dict union (dict | dict) requires 3.9+", line=node.lineno)
+
+      left_dict = self.__is_dict(node.left)
+      right_dict = self.__is_dict(node.right)
+
+      # "types.MappingProxyType" was modified to also support "|".
+      left_special = self.__resolve_full_name(node.left) == "types.MappingProxyType"
+      right_special = self.__resolve_full_name(node.right) == "types.MappingProxyType"
+
+      if (left_dict or left_special) and (right_dict or right_special):
+        has_du()
 
     self.generic_visit(node)
 
@@ -1310,16 +1337,11 @@ class SourceVisitor(ast.NodeVisitor):
     #           op=BitOr(),
     #           value=Dict(keys=[Constant(value='b')], values=[Constant(value=2)]))
     if isinstance(node.op, ast.BitOr) and self.__is_dict(node.value):
-      def has_dum():
+      # "os.environ" and "os.environb" were modified to also support "|=".
+      full_name = self.__resolve_full_name(node.target)
+      if (full_name == "os.environ" or full_name == "os.environb") or self.__is_dict(node.target):
         self.__dict_union_merge = True
         self.__vvprint("dict union merge (dict var |= dict) requires 3.9+", line=node.lineno)
-      if self.__is_dict(node.target):
-        has_dum()
-      elif isinstance(node.target, ast.Attribute):
-        # "os.environ" and "os.environb" were modified to also support "|=".
-        target_name = dotted_name(self.__get_attribute_name(node.target))
-        if "os.environ" == target_name or "os.environb" == target_name:
-          has_dum()
 
     self.generic_visit(node)
 
