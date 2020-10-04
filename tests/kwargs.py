@@ -583,6 +583,11 @@ class VerminKwargsTests(VerminTest):
                       detect("from venv import EnvBuilder\n"
                              "EnvBuilder(with_pip=False)"))
 
+  def test_upgrade_deps_of_EnvBuilder_from_venv(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from venv import EnvBuilder\n"
+                             "EnvBuilder(upgrade_deps=False)"))
+
   def test_with_pip_of_create_from_venv(self):
     self.assertOnlyIn((3, 4),
                       detect("from venv import create\n"
@@ -749,6 +754,26 @@ class VerminKwargsTests(VerminTest):
                       detect("import compileall\n"
                              "compileall.compile_dir(invalidation_mode='hello')"))
 
+  def test_stripdir_of_compileall_compile_dir(self):
+    self.assertOnlyIn((3, 9),
+                      detect("import compileall\n"
+                             "compileall.compile_dir(stripdir=None)"))
+
+  def test_prependdir_of_compileall_compile_dir(self):
+    self.assertOnlyIn((3, 9),
+                      detect("import compileall\n"
+                             "compileall.compile_dir(prependdir=None)"))
+
+  def test_limit_sl_dest_of_compileall_compile_dir(self):
+    self.assertOnlyIn((3, 9),
+                      detect("import compileall\n"
+                             "compileall.compile_dir(limit_sl_dest=None)"))
+
+  def test_hardlink_dupes_of_compileall_compile_dir(self):
+    self.assertOnlyIn((3, 9),
+                      detect("import compileall\n"
+                             "compileall.compile_dir(hardlink_dupes=None)"))
+
   def test_legacy_of_compileall_compile_path(self):
     self.assertOnlyIn((3, 2), detect("import compileall\ncompileall.compile_path(legacy='hello')"))
 
@@ -765,6 +790,26 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn((3, 7),
                       detect("import compileall\n"
                              "compileall.compile_file(invalidation_mode='hello')"))
+
+  def test_stripdir_of_compileall_compile_file(self):
+    self.assertOnlyIn((3, 9),
+                      detect("import compileall\n"
+                             "compileall.compile_file(stripdir=None)"))
+
+  def test_prependdir_of_compileall_compile_file(self):
+    self.assertOnlyIn((3, 9),
+                      detect("import compileall\n"
+                             "compileall.compile_file(prependdir=None)"))
+
+  def test_limit_sl_dest_of_compileall_compile_file(self):
+    self.assertOnlyIn((3, 9),
+                      detect("import compileall\n"
+                             "compileall.compile_file(limit_sl_dest=None)"))
+
+  def test_hardlink_dupes_of_compileall_compile_file(self):
+    self.assertOnlyIn((3, 9),
+                      detect("import compileall\n"
+                             "compileall.compile_file(hardlink_dupes=None)"))
 
   def test_chunksize_of_concurrent_futures_Executor_map(self):
     self.assertOnlyIn((3, 5),
@@ -2990,3 +3035,96 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn((3, 9),
                       detect("from typing import get_type_hints\n"
                              "get_type_hints(include_extras=None)"))
+
+  def test_base_url_of_include_from_xml_etree_ElementInclude(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from xml.etree import ElementInclude\n"
+                             "x = ElementInclude()\n"
+                             "x.include(base_url=None)"))
+
+  def test_max_depth_of_include_from_xml_etree_ElementInclude(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from xml.etree import ElementInclude\n"
+                             "x = ElementInclude()\n"
+                             "x.include(max_depth=None)"))
+
+  def test_msg_of_cancel_from_asyncio_Task(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from asyncio import Task\n"
+                             "x = Task()\n"
+                             "x.cancel(msg=None)"))
+
+  def test_usedforsecurity_of_new_from_hashlib(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from hashlib import new\n"
+                             "new(usedforsecurity=None)"))
+
+  def test_usedforsecurity_of_blake2b_from_hashlib(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from hashlib import blake2b\n"
+                             "blake2b(usedforsecurity=None)"))
+
+  def test_usedforsecurity_of_blake2s_from_hashlib(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from hashlib import blake2s\n"
+                             "blake2s(usedforsecurity=None)"))
+
+  def test_usedforsecurity_of_md5_from_hashlib(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from hashlib import md5\n"
+                             "md5(usedforsecurity=None)"))
+
+  def test_usedforsecurity_of_sha1_from_hashlib(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from hashlib import sha1\n"
+                             "sha1(usedforsecurity=None)"))
+
+  def test_usedforsecurity_of_sha224_from_hashlib(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from hashlib import sha224\n"
+                             "sha224(usedforsecurity=None)"))
+
+  def test_usedforsecurity_of_sha256_from_hashlib(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from hashlib import sha256\n"
+                             "sha256(usedforsecurity=None)"))
+
+  def test_usedforsecurity_of_sha384_from_hashlib(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from hashlib import sha384\n"
+                             "sha384(usedforsecurity=None)"))
+
+  def test_usedforsecurity_of_sha512_from_hashlib(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from hashlib import sha512\n"
+                             "sha512(usedforsecurity=None)"))
+
+  def test_usedforsecurity_of_sha3_224_from_hashlib(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from hashlib import sha3_224\n"
+                             "sha3_224(usedforsecurity=None)"))
+
+  def test_usedforsecurity_of_sha3_256_from_hashlib(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from hashlib import sha3_256\n"
+                             "sha3_256(usedforsecurity=None)"))
+
+  def test_usedforsecurity_of_sha3_384_from_hashlib(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from hashlib import sha3_384\n"
+                             "sha3_384(usedforsecurity=None)"))
+
+  def test_usedforsecurity_of_sha3_512_from_hashlib(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from hashlib import sha3_512\n"
+                             "sha3_512(usedforsecurity=None)"))
+
+  def test_usedforsecurity_of_shake_128_from_hashlib(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from hashlib import shake_128\n"
+                             "shake_128(usedforsecurity=None)"))
+
+  def test_usedforsecurity_of_shake_256_from_hashlib(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from hashlib import shake_256\n"
+                             "shake_256(usedforsecurity=None)"))

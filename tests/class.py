@@ -498,6 +498,12 @@ class VerminClassMemberTests(VerminTest):
   def test_ResourceReader_of_importlib_abc(self):
     self.assertOnlyIn((3, 7), detect("from importlib.abc import ResourceReader"))
 
+  def test_Traversable_of_importlib_abc(self):
+    self.assertOnlyIn((3, 9), detect("from importlib.abc import Traversable"))
+
+  def test_TraversableReader_of_importlib_abc(self):
+    self.assertOnlyIn((3, 9), detect("from importlib.abc import TraversableReader"))
+
   def test_WindowsRegistryFinder_of_importlib_machinery(self):
     self.assertOnlyIn((3, 3), detect("from importlib.machinery import WindowsRegistryFinder"))
 
@@ -563,3 +569,6 @@ class VerminClassMemberTests(VerminTest):
 
   def test_zipimporter_of_zipimport(self):
     self.assertOnlyIn(((2, 7), (3, 0)), detect("from zipimport import zipimporter"))
+
+  def test_ElementInclude_of_xml_etree(self):
+    self.assertOnlyIn((3, 7), detect("from xml.etree import ElementInclude"))

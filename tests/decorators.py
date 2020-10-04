@@ -28,6 +28,9 @@ class VerminDecoratorMemberTests(VerminTest):
   def test_total_ordering_of_functools(self):
     self.assertOnlyIn(((2, 7), (3, 2)), detect("from functools import total_ordering"))
 
+  def test_cache_of_functools(self):
+    self.assertOnlyIn((3, 9), detect("from functools import cache"))
+
   def test_recursive_repr_of_reprlib(self):
     self.assertOnlyIn((3, 2), detect("from reprlib import recursive_repr"))
 

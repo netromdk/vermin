@@ -511,6 +511,9 @@ class VerminConstantMemberTests(VerminTest):
   def test_CLOCK_REALTIME_of_time(self):
     self.assertOnlyIn((3, 3), detect("from time import CLOCK_REALTIME"))
 
+  def test_CLOCK_TAI_of_time(self):
+    self.assertOnlyIn((3, 9), detect("from time import CLOCK_TAI"))
+
   def test_cssclass_noday_of_calendar_HTMLCalendar(self):
     self.assertOnlyIn((3, 7),
                       detect("from calendar import HTMLCalendar\n"
@@ -2587,6 +2590,11 @@ class VerminConstantMemberTests(VerminTest):
                       detect("from tracemalloc import Trace\n"
                              "Trace().domain"))
 
+  def test_total_nframe_from_tracemalloc_Traceback(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from tracemalloc import Traceback\n"
+                             "Traceback().total_nframe"))
+
   def test_AsyncGeneratorType_of_types(self):
     self.assertOnlyIn((3, 6), detect("from types import AsyncGeneratorType"))
 
@@ -2631,6 +2639,9 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_NoReturn_of_typing(self):
     self.assertOnlyIn((3, 5), detect("from typing import NoReturn"))
+
+  def test_Annotated_of_typing(self):
+    self.assertOnlyIn((3, 9), detect("from typing import Annotated"))
 
   def test_ucd_3_2_0_of_unicodedata(self):
     self.assertOnlyIn(((2, 3), (3, 0)), detect("from unicodedata import ucd_3_2_0"))
@@ -2926,3 +2937,6 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_XML_NAMESPACE_of_xml_dom(self):
     self.assertOnlyIn(((2, 2), (3, 0)), detect("from xml.dom import XML_NAMESPACE"))
+
+  def test_softkwlist_from_keyword(self):
+    self.assertOnlyIn((3, 9), detect("from keyword import softkwlist"))

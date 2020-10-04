@@ -1037,6 +1037,12 @@ class VerminFunctionMemberTests(VerminTest):
                              "elm = Element()\n"
                              "elm.itertext()"))
 
+  def test_indent_from_xml_etree_ElementTree_Element(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from xml.etree.ElementTree import Element\n"
+                             "elm = Element()\n"
+                             "elm.indent()"))
+
   def test_iterfind_from_xml_etree_ElementTree_ElementTree(self):
     self.assertOnlyIn(((2, 7), (3, 2)),
                       detect("from xml.etree.ElementTree import ElementTree\n"
@@ -2533,6 +2539,9 @@ class VerminFunctionMemberTests(VerminTest):
   def test_reload_from_importlib(self):
     self.assertOnlyIn((3, 4), detect("import importlib\nimportlib.reload()"))
 
+  def test_files_from_importlib_resources(self):
+    self.assertOnlyIn((3, 9), detect("import importlib.resources\nimportlib.resources.files()"))
+
   def test_from_callable_from_inspect_Signature(self):
     self.assertOnlyIn((3, 5),
                       detect("from inspect import Signature\n"
@@ -3794,3 +3803,11 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_reset_peak_from_tracemalloc(self):
     self.assertOnlyIn((3, 9), detect("import tracemalloc\ntracemalloc.reset_peak()"))
+
+  def test_upgrade_dependencies_from_venv_EnvBuilder(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from venv import EnvBuilder\n"
+                             "EnvBuilder().upgrade_dependencies()"))
+
+  def test_issoftkeyword_from_keyword(self):
+    self.assertOnlyIn((3, 9), detect("from keyword import issoftkeyword"))
