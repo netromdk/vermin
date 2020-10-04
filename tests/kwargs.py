@@ -725,6 +725,10 @@ class VerminKwargsTests(VerminTest):
   def test_allow_abbrev_of_argparse_ArgumentParser(self):
     self.assertOnlyIn((3, 5), detect("import argparse\nargparse.ArgumentParser(allow_abbrev=True)"))
 
+  def test_exit_on_error_of_argparse_ArgumentParser(self):
+    self.assertOnlyIn((3, 9),
+                      detect("import argparse\nargparse.ArgumentParser(exit_on_error=True)"))
+
   def test_skip_of_bdb_Bdb(self):
     self.assertOnlyIn(((2, 7), (3, 1)), detect("import bdb\nbdb.Bdb(skip=True)"))
 
@@ -3128,3 +3132,8 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn((3, 9),
                       detect("from hashlib import shake_256\n"
                              "shake_256(usedforsecurity=None)"))
+
+  def test_counts_of_sample_from_random(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from random import sample\n"
+                             "sample(counts=None)"))

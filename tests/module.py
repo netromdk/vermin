@@ -432,3 +432,9 @@ class VerminModuleTests(VerminTest):
 
   def test_graphlib(self):
     self.assertOnlyIn((3, 9), detect("import graphlib"))
+
+  def test_test_support_socket_helper(self):
+    self.assertOnlyIn((3, 9), detect("import test.support.socket_helper"))
+
+  def test_test_support_bytecode_helper(self):
+    self.assertOnlyIn((3, 9), detect("import test.support.bytecode_helper"))

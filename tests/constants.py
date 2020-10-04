@@ -2136,6 +2136,9 @@ class VerminConstantMemberTests(VerminTest):
   def test_VMADDR_PORT_ANY_of_socket(self):
     self.assertOnlyIn((3, 7), detect("from socket import VMADDR_PORT_ANY"))
 
+  def test_IPPROTO_UDPLITE_of_socket(self):
+    self.assertOnlyIn((3, 9), detect("from socket import IPPROTO_UDPLITE"))
+
   def test_has_ipv6_of_socket(self):
     self.assertOnlyIn(((2, 3), (3, 0)), detect("from socket import has_ipv6"))
 
@@ -2940,3 +2943,6 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_softkwlist_from_keyword(self):
     self.assertOnlyIn((3, 9), detect("from keyword import softkwlist"))
+
+  def test_HAVE_CONTEXTVAR_from_decimal(self):
+    self.assertOnlyIn((3, 7), detect("from decimal import HAVE_CONTEXTVAR"))

@@ -572,3 +572,6 @@ class VerminClassMemberTests(VerminTest):
 
   def test_ElementInclude_of_xml_etree(self):
     self.assertOnlyIn((3, 7), detect("from xml.etree import ElementInclude"))
+
+  def test_addinfourl_of_urllib_response(self):
+    self.assertOnlyIn((3, 9), detect("from urllib.response import addinfourl"))

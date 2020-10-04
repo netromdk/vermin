@@ -762,6 +762,9 @@ class VerminFunctionMemberTests(VerminTest):
   def test_get_data_from_pkgutil(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import pkgutil\npkgutil.get_data()"))
 
+  def test_resolve_name_from_pkgutil(self):
+    self.assertOnlyIn((3, 9), detect("import pkgutil\npkgutil.resolve_name()"))
+
   def test_python_branch_from_platform(self):
     self.assertOnlyIn(((2, 6), (3, 0)), detect("import platform\nplatform.python_branch()"))
 
@@ -1241,6 +1244,18 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_readlink_from_path(self):
     self.assertOnlyIn((3, 9), detect("from pathlib import Path\np=Path('foo')\np.readlink()"))
+
+  def test_is_relative_to_from_pathlib_PurePath(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from pathlib import PurePath\n"
+                             "p = PurePath()\n"
+                             "p.is_relative_to()"))
+
+  def test_with_stem_from_pathlib_PurePath(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from pathlib import PurePath\n"
+                             "p = PurePath()\n"
+                             "p.with_stem()"))
 
   def test_all_suffixes_of_importlib_machinery(self):
     self.assertOnlyIn((3, 3),
@@ -3291,6 +3306,9 @@ class VerminFunctionMemberTests(VerminTest):
   def test_valid_signals_from_signal(self):
     self.assertOnlyIn((3, 8), detect("import signal\nsignal.valid_signals()"))
 
+  def test_pidfd_send_signal_from_signal(self):
+    self.assertOnlyIn((3, 9), detect("import signal\nsignal.pidfd_send_signal()"))
+
   def test_getsitepackages_from_site(self):
     self.assertOnlyIn(((2, 7), (3, 2)), detect("import site\nsite.getsitepackages()"))
 
@@ -3811,3 +3829,24 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_issoftkeyword_from_keyword(self):
     self.assertOnlyIn((3, 9), detect("from keyword import issoftkeyword"))
+
+  def test_reversed_from_types_MappingProxyType(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from types import MappingProxyType\n"
+                             "mpt = MappingProxyType({})\n"
+                             "mpt.reversed()"))
+
+  def test_print_warning_from_test_support(self):
+    self.assertOnlyIn((3, 9), detect("from test.support import print_warning"))
+
+  def test_wait_process_from_test_support(self):
+    self.assertOnlyIn((3, 9), detect("from test.support import wait_process"))
+
+  def test_zscore_from_statistics_NormalDist(self):
+    self.assertOnlyIn((3, 9), detect("from statistics import NormalDist\nNormalDist().zscore()"))
+
+  def test_send_fds_from_socket(self):
+    self.assertOnlyIn((3, 9), detect("from socket import send_fds"))
+
+  def test_recv_fds_from_socket(self):
+    self.assertOnlyIn((3, 9), detect("from socket import recv_fds"))
