@@ -5,7 +5,8 @@ from collections import deque
 
 from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, BYTES_REQS,\
   ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS, CODECS_ERRORS_INDICES, CODECS_ENCODINGS,\
-  CODECS_ENCODINGS_INDICES, BUILTIN_GENERIC_ANNOTATION_TYPES
+  CODECS_ENCODINGS_INDICES, BUILTIN_GENERIC_ANNOTATION_TYPES, DICT_UNION_SUPPORTED_TYPES,\
+  DICT_UNION_MERGE_SUPPORTED_TYPES
 from .config import Config
 from .utility import dotted_name, reverse_range, combine_versions, version_strings,\
   remove_whitespace
@@ -1057,11 +1058,8 @@ ast.Call(func=ast.Name)."""
 
       left_dict = self.__is_dict(node.left)
       right_dict = self.__is_dict(node.right)
-
-      # "types.MappingProxyType" was modified to also support "|".
-      left_special = self.__resolve_full_name(node.left) == "types.MappingProxyType"
-      right_special = self.__resolve_full_name(node.right) == "types.MappingProxyType"
-
+      left_special = self.__resolve_full_name(node.left) in DICT_UNION_SUPPORTED_TYPES
+      right_special = self.__resolve_full_name(node.right) in DICT_UNION_SUPPORTED_TYPES
       if (left_dict or left_special) and (right_dict or right_special):
         has_du()
 
@@ -1337,9 +1335,8 @@ ast.Call(func=ast.Name)."""
     #           op=BitOr(),
     #           value=Dict(keys=[Constant(value='b')], values=[Constant(value=2)]))
     if isinstance(node.op, ast.BitOr) and self.__is_dict(node.value):
-      # "os.environ" and "os.environb" were modified to also support "|=".
       full_name = self.__resolve_full_name(node.target)
-      if (full_name == "os.environ" or full_name == "os.environb") or self.__is_dict(node.target):
+      if full_name in DICT_UNION_MERGE_SUPPORTED_TYPES or self.__is_dict(node.target):
         self.__dict_union_merge = True
         self.__vvprint("dict union merge (dict var |= dict) requires 3.9+", line=node.lineno)
 

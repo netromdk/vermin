@@ -1,4 +1,5 @@
-from vermin import BUILTIN_GENERIC_ANNOTATION_TYPES, dotted_name
+from vermin import BUILTIN_GENERIC_ANNOTATION_TYPES, DICT_UNION_SUPPORTED_TYPES,\
+  DICT_UNION_MERGE_SUPPORTED_TYPES, dotted_name
 
 from .testutils import VerminTest, detect, current_version, current_major_version, visit, Parser
 
@@ -934,7 +935,7 @@ class VerminLanguageTests(VerminTest):
     self.assertTrue(visitor.dict_union())
     self.assertOnlyIn((3, 9), visitor.minimum_versions())
 
-    # "types.MappingProxyType" was modified to support "|".
+    # Builtin types were modified to support "|".
     visitor = visit("from types import MappingProxyType\nm=MappingProxyType({})\nm|{}")
     self.assertTrue(visitor.dict_union())
     self.assertOnlyIn((3, 9), visitor.minimum_versions())
@@ -953,6 +954,13 @@ class VerminLanguageTests(VerminTest):
     visitor = visit("from types import MappingProxyType as MPT\n{}|MPT({})")
     self.assertTrue(visitor.dict_union())
     self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+    for typ in DICT_UNION_SUPPORTED_TYPES:
+      names = typ.split(".")
+      src = "from {} import {} as X\nX() | dict()".format(dotted_name(names[:-1]), names[-1])
+      visitor = visit(src)
+      self.assertTrue(visitor.dict_union(), msg=src)
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
 
   def test_dict_union_merge(self):
     visitor = visit("a = {'a':1}\na |= {'b':2}")
@@ -983,7 +991,7 @@ class VerminLanguageTests(VerminTest):
     self.assertTrue(visitor.dict_union_merge())
     self.assertOnlyIn((3, 9), visitor.minimum_versions())
 
-    # "os.environ" and "os.environb" were modified to also support "|=".
+    # Builtin types were modified to also support "|=".
     visitor = visit("from os import environ\nos.environ |= {'var':'val'}")
     self.assertTrue(visitor.dict_union_merge())
     self.assertOnlyIn((3, 9), visitor.minimum_versions())
@@ -993,15 +1001,14 @@ class VerminLanguageTests(VerminTest):
     visitor = visit("from os import environ as e\ne |= {}")
     self.assertTrue(visitor.dict_union_merge())
     self.assertOnlyIn((3, 9), visitor.minimum_versions())
-    visitor = visit("from os import environb\nos.environb |= {'var':'val'}")
-    self.assertTrue(visitor.dict_union_merge())
-    self.assertOnlyIn((3, 9), visitor.minimum_versions())
-    visitor = visit("from os import environb\ne=os.environb\ne |= {}")
-    self.assertTrue(visitor.dict_union_merge())
-    self.assertOnlyIn((3, 9), visitor.minimum_versions())
-    visitor = visit("from os import environb as e\ne |= {}")
-    self.assertTrue(visitor.dict_union_merge())
-    self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+    for typ in DICT_UNION_MERGE_SUPPORTED_TYPES:
+      names = typ.split(".")
+      src = "from {} import {} as X\nx = X()\nx |= dict()".\
+        format(dotted_name(names[:-1]), names[-1])
+      visitor = visit(src)
+      self.assertTrue(visitor.dict_union_merge(), msg=src)
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
 
   def test_builtin_generic_type_annotation(self):
     # For each type, either use directly if builtin or import and then use.

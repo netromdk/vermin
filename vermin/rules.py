@@ -3199,7 +3199,7 @@ CODECS_ENCODINGS_INDICES = {
 }
 
 # Builtin types that work as annotation types from 3.9+
-BUILTIN_GENERIC_ANNOTATION_TYPES = [
+BUILTIN_GENERIC_ANNOTATION_TYPES = (
   "collections.ChainMap",
   "collections.Counter",
   "collections.OrderedDict",
@@ -3238,4 +3238,25 @@ BUILTIN_GENERIC_ANNOTATION_TYPES = [
   "set",
   "tuple",
   "type",
-]
+)
+
+# Types that support dictionary union operator | (3.9).
+DICT_UNION_SUPPORTED_TYPES = (
+  "collections.ChainMap",
+  "collections.OrderedDict",
+  "collections.defaultdict",
+  "types.MappingProxyType",
+  "weakref.WeakKeyDictionary",
+  "weakref.WeakValueDictionary",
+)
+
+# Types that support dictionary union merge operator |= (3.9).
+DICT_UNION_MERGE_SUPPORTED_TYPES = (
+  "collections.ChainMap",
+  "collections.OrderedDict",
+  "collections.defaultdict",
+  "os.environ",
+  "os.environb",
+  "weakref.WeakKeyDictionary",
+  "weakref.WeakValueDictionary",
+)
