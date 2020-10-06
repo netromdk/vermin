@@ -1,6 +1,6 @@
 import ast
 import io
-from tokenize import generate_tokens, COMMENT
+from tokenize import generate_tokens, COMMENT, NEWLINE
 
 from .printing import vvprint
 
@@ -23,32 +23,38 @@ class Parser:
       src = src.decode(errors="ignore")
 
     try:
-      def only_comments(token):
-        return token[0] == COMMENT if type(token) == tuple else token.type == COMMENT
-      tokens = filter(only_comments, generate_tokens(io.StringIO(src).readline))
+      tokens = generate_tokens(io.StringIO(src).readline)
     except Exception:  # pragma: no cover
       return novermin
 
-    def find_comment(comment, lineno, linecol):
+    def find_comment(comment, lineno, alone):
       if comment.startswith("novermin") or comment.startswith("novm"):
         # Associate with next line if the comment is "alone" on a line, i.e. '#' starts the line.
-        novermin.add(lineno + 1 if linecol == 0 else lineno)
+        novermin.add(lineno + 1 if alone else lineno)
         return True
       return False
 
+    prev_newline = False
     for token in tokens:
       # <3.0: tuple instance.
-      if type(token) == tuple:  # pragma: no cover
-        comment, lineno, linecol = token[1], token[2][0], token[2][1]
-
       # 3.0+: TokenInfo instance.
-      else:
-        comment, lineno, linecol = token.string, token.start[0], token.start[1]
+      is_tuple = (type(token) == tuple)
+      typ = token[0] if is_tuple else token.type
 
-      # Check each comment segment for "novermin" and "novm", not just the start of the whole
-      # comment.
-      any(find_comment(segment.strip(), lineno, linecol)
-          for segment in comment[1:].strip().split("#"))
+      if typ == COMMENT:
+        if is_tuple:  # pragma: no cover
+          comment, lineno, linecol = token[1], token[2][0], token[2][1]
+        else:
+          comment, lineno, linecol = token.string, token.start[0], token.start[1]
+
+        # Check each comment segment for "novermin" and "novm", not just the start of the whole
+        # comment. A comment is alone on a line if the previous token is a newline or the line
+        # column is zero.
+        alone = (prev_newline or linecol == 0)
+        any(find_comment(segment.strip(), lineno, alone)
+            for segment in comment[1:].strip().split("#"))
+
+      prev_newline = (typ == NEWLINE)
     return novermin
 
   def detect(self):

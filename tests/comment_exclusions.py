@@ -61,6 +61,17 @@ class VerminCommentsExclusionsTests(VerminTest):
     self.assertIn(2, visitor.no_lines())
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
 
+    # Detect comments on line that are indented, i.e. col != 0 but the comment is alone on the line.
+    visitor = visit("if 1:\n # novermin\n import email.parser.FeedParser")
+    self.assertIn(3, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+    visitor = visit("if 1:\n\t# novermin\n\timport email.parser.FeedParser")
+    self.assertIn(3, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+    visitor = visit("if 1:\n\tif 1:\n\t\t# novermin\n\t\timport email.parser.FeedParser")
+    self.assertIn(4, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
   def test_from_import(self):
     visitor = visit("# novm\nfrom email.parser import FeedParser")
     self.assertIn(2, visitor.no_lines())
