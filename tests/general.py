@@ -294,6 +294,7 @@ class VerminGeneralTests(VerminTest):
     self.assertEqual(dotted_name(["foo", ["bar", "baz"], "boom"]), "foo.bar.baz.boom")
     self.assertEqual(dotted_name(["foo", ("bar", "baz"), "boom"]), "foo.bar.baz.boom")
     self.assertEqual(dotted_name(1), "1")
+    self.assertEqual(dotted_name(4.2), "4.2")
     self.assertEqual(dotted_name([1, 2, 3]), "1.2.3")
     self.assertEqual(dotted_name("right"), "right")
     self.assertEqual(dotted_name(["hello", None, "world"]), "hello.world")
@@ -501,7 +502,31 @@ class VerminGeneralTests(VerminTest):
     fp.close()
     proc_res = process_individual((fp.name, self.config))
     self.assertEqual(proc_res.mins, None)
-    self.assertTrue(proc_res.text.startswith("Versions could not be combined"))
+    msg = "'long' member (requires 2.0, !3) vs. 'breakpoint' member (requires !2, 3.7)"
+    self.assertEqual(proc_res.text, msg)
+    self.assertEmpty(proc_res.bps)
+    os.remove(fp.name)
+
+    fp = NamedTemporaryFile(suffix=".py", delete=False)
+    fp.write(b"try:\n\timport socketserver\n")  # !2, 3.0
+    fp.write(b"except ImportError:\n\timport SocketServer\n")  # 2.0, !3
+    fp.close()
+    proc_res = process_individual((fp.name, self.config))
+    self.assertEqual(proc_res.mins, None)
+    msg = "'socketserver' module (requires !2, 3.0) vs. 'SocketServer' module (requires 2.0, !3)"
+    self.assertEqual(proc_res.text, msg)
+    self.assertEmpty(proc_res.bps)
+    os.remove(fp.name)
+
+    fp = NamedTemporaryFile(suffix=".py", delete=False)
+    fp.write(b"import time\ntime.strftime('%u', gmtime())\n")  # !2, 3.6
+    fp.write(b"from urllib import urlopen\nurlopen(context=None)\n")  # 2.7, !3
+    fp.close()
+    proc_res = process_individual((fp.name, self.config))
+    self.assertEqual(proc_res.mins, None)
+    msg =\
+      "strftime directive 'u' (requires !2, 3.6) vs. 'urllib.urlopen(context)' (requires 2.7, !3)"
+    self.assertEqual(proc_res.text, msg)
     self.assertEmpty(proc_res.bps)
     os.remove(fp.name)
 

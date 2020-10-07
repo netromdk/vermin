@@ -241,6 +241,17 @@ class SourceVisitor(ast.NodeVisitor):
 
   def minimum_versions(self):
     mins = [(0, 0), (0, 0)]
+    entity_versions = {}  # Used for incompatible versions texts.
+
+    def add_versions_entity(mins, versions, entity=None):
+      if entity is not None:
+        if versions in entity_versions:
+          entity_versions[versions].append(entity)
+        else:
+          entity_versions[versions] = [entity]
+        # TODO: if entity string ends with "s" maybe dno't put "s" in "requires"?
+        self.__vvprint("{} requires {}".format(entity, version_strings(versions)))
+      return combine_versions(mins, versions, entity_versions)
 
     if self.printv2():
       # Must be like this, not `combine_versions(2.0, None)`, since in py2 all print statements call
@@ -253,162 +264,152 @@ class SourceVisitor(ast.NodeVisitor):
     if self.printv3():
       # print() is used so often that we only want to show it once, and with no line.
       self.__vvprint("print(expr) requires 2+ or 3+", line=-1)
-      mins = combine_versions(mins, ((2, 0), (3, 0)))
+      mins = add_versions_entity(mins, ((2, 0), (3, 0)))
 
     if self.format27():
-      mins = combine_versions(mins, ((2, 7), (3, 0)))
+      mins = add_versions_entity(mins, ((2, 7), (3, 0)), "`\"..{}..\".format(..)`")
 
     if self.longv2():
-      mins = combine_versions(mins, ((2, 0), None))
+      # `long` is also in `MOD_MEM_REQS`, which means it will trigger below, so we don't put an
+      # entity description here.
+      mins = add_versions_entity(mins, ((2, 0), None))
 
     if self.bytesv3():
       # Since byte strings are a `str` synonym as of 2.6+, (2, 6) is returned instead of None.
       # Ref: https://github.com/netromdk/vermin/issues/32
-      mins = combine_versions(mins, ((2, 6), (3, 0)))
+      mins = add_versions_entity(mins, ((2, 6), (3, 0)), "'bytes' type")
 
     if self.fstrings():
-      mins = combine_versions(mins, (None, (3, 6)))
+      mins = add_versions_entity(mins, (None, (3, 6)), "fstrings")
 
     if self.fstrings_self_doc():  # pragma: no cover
-      mins = combine_versions(mins, (None, (3, 8)))
+      mins = add_versions_entity(mins, (None, (3, 8)), "self-documenting fstrings")
 
     if self.bool_const():  # pragma: no cover
-      mins = combine_versions(mins, ((2, 2), (3, 0)))
+      mins = add_versions_entity(mins, ((2, 2), (3, 0)), "'bool' constant")
 
     if self.annotations():
-      mins = combine_versions(mins, (None, (3, 0)))
+      mins = add_versions_entity(mins, (None, (3, 0)), "annotations")
 
     if self.var_annotations():
-      mins = combine_versions(mins, (None, (3, 6)))
+      mins = add_versions_entity(mins, (None, (3, 6)), "variable annotations")
 
     if self.final_annotations():
-      mins = combine_versions(mins, (None, (3, 8)))
+      mins = add_versions_entity(mins, (None, (3, 8)), "Final annotations")
 
     if self.literal_annotations():
-      mins = combine_versions(mins, (None, (3, 8)))
+      mins = add_versions_entity(mins, (None, (3, 8)), "Literal annotations")
 
     if self.coroutines():
-      mins = combine_versions(mins, (None, (3, 5)))
+      mins = add_versions_entity(mins, (None, (3, 5)), "coroutines")
 
     if self.async_generator():
-      mins = combine_versions(mins, (None, (3, 6)))
+      mins = add_versions_entity(mins, (None, (3, 6)), "async generators")
 
     # NOTE: While async comprehensions and await in comprehensions should be in 3.6, they were first
     # put into 3.7 for some reason!
 
     if self.async_comprehension():
-      mins = combine_versions(mins, (None, (3, 7)))
+      mins = add_versions_entity(mins, (None, (3, 7)), "async comprehensions")
 
     if self.await_in_comprehension():
-      mins = combine_versions(mins, (None, (3, 7)))
+      mins = add_versions_entity(mins, (None, (3, 7)), "await in comprehension")
 
     if self.async_for():
-      mins = combine_versions(mins, (None, (3, 6)))
+      mins = add_versions_entity(mins, (None, (3, 6)), "async for-loop")
 
     if self.named_expressions():
-      mins = combine_versions(mins, (None, (3, 8)))
+      mins = add_versions_entity(mins, (None, (3, 8)), "named expressions")
 
     if self.kw_only_args():
-      mins = combine_versions(mins, (None, (3, 0)))
+      mins = add_versions_entity(mins, (None, (3, 0)), "keyword-only arguments")
 
     if self.pos_only_args():
-      mins = combine_versions(mins, (None, (3, 8)))
+      mins = add_versions_entity(mins, (None, (3, 8)), "position only arguments")
 
     if self.yield_from():
-      mins = combine_versions(mins, (None, (3, 3)))
+      mins = add_versions_entity(mins, (None, (3, 3)), "yield from")
 
     if self.raise_cause():
-      mins = combine_versions(mins, (None, (3, 3)))
+      mins = add_versions_entity(mins, (None, (3, 3)), "raise clause")
 
     if self.dict_comprehension():
-      mins = combine_versions(mins, ((2, 7), (3, 0)))
+      mins = add_versions_entity(mins, ((2, 7), (3, 0)), "dict comprehension")
 
     if self.infix_matrix_multiplication():
-      mins = combine_versions(mins, (None, (3, 5)))
+      mins = add_versions_entity(mins, (None, (3, 5)), "infix matrix multiplication")
 
     if self.continue_in_finally():
-      mins = combine_versions(mins, (None, (3, 8)))
+      mins = add_versions_entity(mins, (None, (3, 8)), "'continue' in 'finally'")
 
     if self.modular_inverse_pow():
-      mins = combine_versions(mins, (None, (3, 8)))
+      mins = add_versions_entity(mins, (None, (3, 8)), "modular inverse 'pow()'")
 
     if self.with_statement():
-      mins = combine_versions(mins, ((2, 5), (3, 0)))
+      mins = add_versions_entity(mins, ((2, 5), (3, 0)), "'with' statement")
 
     if self.generalized_unpacking():
-      mins = combine_versions(mins, (None, (3, 5)))
+      mins = add_versions_entity(mins, (None, (3, 5)), "generalized unpacking")
 
     if self.bytes_format():
       # Since byte strings are a `str` synonym as of 2.6+, and thus also supports `%` formatting,
       # (2, 6) is returned instead of None.
-      mins = combine_versions(mins, ((2, 6), (3, 5)))
+      mins = add_versions_entity(mins, ((2, 6), (3, 5)), "bytes format")
 
     if self.bytearray_format():
-      mins = combine_versions(mins, (None, (3, 5)))
+      mins = add_versions_entity(mins, (None, (3, 5)), "bytearray format")
 
-    if self.dict_union() or self.dict_union_merge():
-      mins = combine_versions(mins, (None, (3, 9)))
+    if self.dict_union():
+      mins = add_versions_entity(mins, (None, (3, 9)), "dict union")
+    if self.dict_union_merge():
+      mins = add_versions_entity(mins, (None, (3, 9)), "dict union merge")
 
     if self.builtin_generic_type_annotations():
-      mins = combine_versions(mins, (None, (3, 9)))
+      mins = add_versions_entity(mins, (None, (3, 9)), "builtin generic type annotations")
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
         vers = STRFTIME_REQS[directive]
-        self.__vvprint("strftime directive '{}' requires {}".
-                       format(directive, version_strings(vers)), directive)
-        mins = combine_versions(mins, vers)
+        mins = add_versions_entity(mins, vers, "strftime directive '{}'".format(directive))
 
     for directive in self.bytes_directives():
       if directive in BYTES_REQS:
         vers = BYTES_REQS[directive]
-        self.__vvprint("bytes directive '{}' requires {}".
-                       format(directive, version_strings(vers)), directive)
-        mins = combine_versions(mins, vers)
+        mins = add_versions_entity(mins, vers, "bytes directive '{}'".format(directive))
 
     for typecode in self.array_typecodes():
       if typecode in ARRAY_TYPECODE_REQS:
         vers = ARRAY_TYPECODE_REQS[typecode]
-        self.__vvprint("array typecode '{}' requires {}".
-                       format(typecode, version_strings(vers)), typecode)
-        mins = combine_versions(mins, vers)
+        mins = add_versions_entity(mins, vers, "array typecode '{}'".format(typecode))
 
     for name in self.codecs_error_handlers():
       if name in CODECS_ERROR_HANDLERS:
         vers = CODECS_ERROR_HANDLERS[name]
-        self.__vvprint("codecs error handler name '{}' requires {}".
-                       format(name, version_strings(vers)), name)
-        mins = combine_versions(mins, vers)
+        mins = add_versions_entity(mins, vers, "codecs error handler name '{}'".format(name))
 
     for encoding in self.codecs_encodings():
       for encs in CODECS_ENCODINGS:
         if encoding.lower() in encs:
           vers = CODECS_ENCODINGS[encs]
-          self.__vvprint("codecs encoding '{}' requires {}".
-                         format(encoding, version_strings(vers)), encoding)
-          mins = combine_versions(mins, vers)
+          mins = add_versions_entity(mins, vers, "codecs encoding '{}'".format(encoding))
 
     mods = self.modules()
     for mod in mods:
       if mod in self.__mod_rules:
         vers = self.__mod_rules[mod]
-        self.__vvprint("'{}' requires {}".format(mod, version_strings(vers)), mod)
-        mins = combine_versions(mins, vers)
+        mins = add_versions_entity(mins, vers, "'{}' module".format(mod))
 
     mems = self.members()
     for mem in mems:
       if mem in self.__mod_mem_reqs_rules:
         vers = self.__mod_mem_reqs_rules[mem]
-        self.__vvprint("'{}' requires {}".format(mem, version_strings(vers)), mem)
-        mins = combine_versions(mins, vers)
+        mins = add_versions_entity(mins, vers, "'{}' member".format(mem))
 
     kwargs = self.kwargs()
     for fn_kw in kwargs:
       if fn_kw in KWARGS_REQS:
         vers = KWARGS_REQS[fn_kw]
-        self.__vvprint("'{}({})' requires {}".format(fn_kw[0], fn_kw[1],
-                                                     version_strings(vers)), fn_kw)
-        mins = combine_versions(mins, vers)
+        mins = add_versions_entity(mins, vers, "'{}({})'".format(fn_kw[0], fn_kw[1]))
 
     return mins
 

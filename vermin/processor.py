@@ -92,9 +92,11 @@ class Processor:
     incomp = False
     config = Config.get()
 
-    def print_incomp(path):
+    def print_incomp(path, text):
       if not config.ignore_incomp():
-        nprint("File with incompatible versions: {}".format(path))
+        if len(text) > 0:
+          text = "\n  " + text
+        nprint("File with incompatible versions: {}{}".format(path, text))
 
     # Automatically don't use concurrency when only one process is specified to be used.
     def act():
@@ -111,7 +113,7 @@ class Processor:
 
       if proc_res.mins is None:
         incomp = True
-        print_incomp(proc_res.path)
+        print_incomp(proc_res.path, proc_res.text)
         continue
 
       all_backports = all_backports | proc_res.bps
@@ -142,7 +144,7 @@ class Processor:
         mins = combine_versions(mins, proc_res.mins)
       except InvalidVersionException:
         incomp = True
-        print_incomp(proc_res.path)
+        print_incomp(proc_res.path, proc_res.text)
 
     if pool:
       pool.close()

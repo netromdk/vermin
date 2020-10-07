@@ -14,7 +14,7 @@ def dotted_name(names):
   # It will just return the value instead of "b.a.d" if input was "bad"!
   if isinstance(names, str):
     return names
-  elif isinstance(names, int):
+  elif isinstance(names, int) or isinstance(names, float):
     return str(names)
 
   resolved = []
@@ -31,9 +31,6 @@ def dotted_name(names):
       assert False
   return ".".join(resolved)
 
-class InvalidVersionException(BaseException):
-  pass
-
 def float_version(f):
   """Converts a float X.Y into (X, Y)."""
   assert(not f < 0)
@@ -41,13 +38,31 @@ def float_version(f):
   minor = int((f - major) * 10)
   return (major, minor)
 
-def combine_versions(list1, list2):
+class InvalidVersionException(BaseException):
+  pass
+
+def __handle_incomp_versions(list1, list2, version_refs=None):
+  v1, v2 = version_strings(list1), version_strings(list2)
+  t1, t2 = tuple(list1), tuple(list2)
+  if version_refs is None or t1 not in version_refs or t2 not in version_refs:
+    raise InvalidVersionException("Versions could not be combined: {} and {}".format(v1, v2))
+
+  def get_ref(key):
+    ref = version_refs[key]
+    if len(ref) == 1:
+      ref = ref[0]
+    return ref
+  ref1, ref2 = get_ref(t1), get_ref(t2)
+  raise InvalidVersionException("{} (requires {}) vs. {} (requires {})".format(ref1, v1, ref2, v2))
+
+def combine_versions(list1, list2, version_refs=None):
   assert len(list1) == len(list2)
   assert len(list1) == 2
   if not Config.get().ignore_incomp() and\
     ((list1[0] is None and list1[1] is not None and list2[0] is not None and list2[1] is None) or
      (list1[0] is not None and list1[1] is None and list2[0] is None and list2[1] is not None)):
-    raise InvalidVersionException("Versions could not be combined: {} and {}".format(list1, list2))
+    __handle_incomp_versions(list1, list2, version_refs)
+
   res = []
 
   # Convert integers and floats into version tuples.
