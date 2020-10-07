@@ -131,7 +131,7 @@ class Processor:
         # Sort for line and column numbers, if present and when printing visits (dumps) isn't
         # enabled. Otherwise, sort lexicographically.
         if config.verbose() > 2 and not config.print_visits():
-          lines.sort(key=sort_line_column)
+          lines.sort(key=sort_line_column)  # pragma: no cover
         else:
           lines.sort()  # pragma: no cover
 

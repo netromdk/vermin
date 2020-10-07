@@ -1,5 +1,7 @@
 import unittest
 import sys
+import os
+from tempfile import NamedTemporaryFile
 
 from vermin import SourceVisitor, Parser
 
@@ -78,3 +80,34 @@ def detect(source, path=None):
   visitor.set_no_lines(novermin)
   visitor.tour(node)
   return visitor.minimum_versions()
+
+class ScopedTemporaryFile:
+  """Creates a temporary file that is automatically removed when this instance goes out of scope.
+The difference to NamedTemporaryFile is that it isn't deleted when closing the file.
+  """
+
+  def __init__(self, suffix=".py"):
+    self.__fp = NamedTemporaryFile(suffix=suffix, delete=False)
+
+  def __del__(self):
+    os.remove(self.path())
+
+  def __enter__(self):
+    return self
+
+  def __exit__(self, _exc_type, _exc_val, _exc_tb):
+    return False
+
+  def write(self, data, newline=False):
+    self.__fp.write(data)
+    if newline:
+      self.__fp.write(b"\n")
+
+  def writeln(self, data):
+    self.write(data, newline=True)
+
+  def close(self):
+    self.__fp.close()
+
+  def path(self):
+    return self.__fp.name

@@ -8,7 +8,7 @@ from vermin import combine_versions, InvalidVersionException, detect_paths,\
   detect_paths_incremental, probably_python_file, Processor, process_individual, reverse_range,\
   dotted_name, remove_whitespace, main, Config, sort_line_column
 
-from .testutils import VerminTest, visit, detect, current_version
+from .testutils import VerminTest, visit, detect, current_version, ScopedTemporaryFile
 
 def touch(fld, name):
   filename = join(fld, name)
@@ -416,16 +416,15 @@ class VerminGeneralTests(VerminTest):
     self.assertEqual(ex.exception.code, 0)
 
   def test_main_print_versions_range(self):
-    fp = NamedTemporaryFile(suffix=".py", delete=False)
-    fp.write(b"import weakref\n")
+    fp = ScopedTemporaryFile()
+    fp.writeln(b"import weakref")
     fp.close()
 
     # Print versions range and exit with code 0.
     with self.assertRaises(SystemExit) as ex:
-      sys.argv = [sys.argv[0], "--versions", fp.name]
+      sys.argv = [sys.argv[0], "--versions", fp.path()]
       main()
 
-    os.remove(fp.name)
     sys.argv = [sys.argv[0]]
     self.assertEqual(ex.exception.code, 0)
 
@@ -439,23 +438,21 @@ class VerminGeneralTests(VerminTest):
 
   def test_main_no_rules_hit(self):
     # Python file that doesn't hit any rules should exit successfully.
-    fp = NamedTemporaryFile(suffix=".py", delete=False)
+    fp = ScopedTemporaryFile()
     fp.close()
     with self.assertRaises(SystemExit) as ex:
-      sys.argv = [sys.argv[0], fp.name]
+      sys.argv = [sys.argv[0], fp.path()]
       main()
-    os.remove(fp.name)
     sys.argv = [sys.argv[0]]
     self.assertEqual(ex.exception.code, 0)
 
   def test_main_target_not_met(self):
     # Ensure exit code 1 when target isn't met.
-    fp = NamedTemporaryFile(suffix=".py", delete=False)
+    fp = ScopedTemporaryFile()
     fp.close()
     with self.assertRaises(SystemExit) as ex:
-      sys.argv = [sys.argv[0], "-t=3.0", fp.name]
+      sys.argv = [sys.argv[0], "-t=3.0", fp.path()]
       main()
-    os.remove(fp.name)
     sys.argv = [sys.argv[0]]
     self.assertEqual(ex.exception.code, 1)
 
@@ -476,95 +473,95 @@ class VerminGeneralTests(VerminTest):
 
   def test_process_syntax_error(self):
     # Syntax error triggers minimum versions [0, 0].
-    fp = NamedTemporaryFile(suffix=".py", delete=False)
+    fp = ScopedTemporaryFile()
     fp.write(b'(')  # SyntaxError: unexpected EOF while parsing
     fp.close()
-    proc_res = process_individual((fp.name, self.config))
+    proc_res = process_individual((fp.path(), self.config))
     self.assertEqual(proc_res.mins, [(0, 0), (0, 0)])
     self.assertEmpty(proc_res.text)
     self.assertEmpty(proc_res.bps)
-    os.remove(fp.name)
 
   def test_process_value_error(self):
     # (Py3) ValueError: source code string cannot contain null bytes
     # (Py2) TypeError: compile() expected string without null bytes
-    fp = NamedTemporaryFile(suffix=".py", delete=False)
+    fp = ScopedTemporaryFile()
     fp.write(b'\0')
     fp.close()
-    proc_res = process_individual((fp.name, self.config))
+    proc_res = process_individual((fp.path(), self.config))
     self.assertEqual(proc_res, None)
-    os.remove(fp.name)
 
   def test_process_invalid_versions(self):
-    fp = NamedTemporaryFile(suffix=".py", delete=False)
-    fp.write(b"long(42)\n")  # long is a v2 feature: 2.0 !3
-    fp.write(b"breakpoint()\n")  # breakpoint(): !2, 3.7
-    fp.close()
-    proc_res = process_individual((fp.name, self.config))
-    self.assertEqual(proc_res.mins, None)
-    msg = "'long' member (requires 2.0, !3) vs. 'breakpoint' member (requires !2, 3.7)"
-    self.assertEqual(proc_res.text, msg)
-    self.assertEmpty(proc_res.bps)
-    os.remove(fp.name)
+    with ScopedTemporaryFile() as fp:
+      fp.write(b"""long(42)
+breakpoint()
+""")
+      fp.close()
+      proc_res = process_individual((fp.path(), self.config))
+      self.assertEqual(proc_res.mins, None)
+      msg = "'long' member (requires 2.0, !3) vs. 'breakpoint' member (requires !2, 3.7)"
+      self.assertEqual(proc_res.text, msg)
+      self.assertEmpty(proc_res.bps)
 
-    fp = NamedTemporaryFile(suffix=".py", delete=False)
-    fp.write(b"try:\n\timport socketserver\n")  # !2, 3.0
-    fp.write(b"except ImportError:\n\timport SocketServer\n")  # 2.0, !3
-    fp.close()
-    proc_res = process_individual((fp.name, self.config))
-    self.assertEqual(proc_res.mins, None)
-    msg = "'socketserver' module (requires !2, 3.0) vs. 'SocketServer' module (requires 2.0, !3)"
-    self.assertEqual(proc_res.text, msg)
-    self.assertEmpty(proc_res.bps)
-    os.remove(fp.name)
+    with ScopedTemporaryFile() as fp:
+      fp.write(b"""try:
+  import socketserver
+except ImportError:
+  import SocketServer
+""")
+      fp.close()
+      proc_res = process_individual((fp.path(), self.config))
+      self.assertEqual(proc_res.mins, None)
+      msg = "'socketserver' module (requires !2, 3.0) vs. 'SocketServer' module (requires 2.0, !3)"
+      self.assertEqual(proc_res.text, msg)
+      self.assertEmpty(proc_res.bps)
 
-    fp = NamedTemporaryFile(suffix=".py", delete=False)
-    fp.write(b"import time\ntime.strftime('%u', gmtime())\n")  # !2, 3.6
-    fp.write(b"from urllib import urlopen\nurlopen(context=None)\n")  # 2.7, !3
-    fp.close()
-    proc_res = process_individual((fp.name, self.config))
-    self.assertEqual(proc_res.mins, None)
-    msg =\
-      "strftime directive 'u' (requires !2, 3.6) vs. 'urllib.urlopen(context)' (requires 2.7, !3)"
-    self.assertEqual(proc_res.text, msg)
-    self.assertEmpty(proc_res.bps)
-    os.remove(fp.name)
+    with ScopedTemporaryFile() as fp:
+      fp.write(b"""import time
+time.strftime("%u", gmtime())
+
+from urllib import urlopen
+urlopen(context=None)
+""")
+      fp.close()
+      proc_res = process_individual((fp.path(), self.config))
+      self.assertEqual(proc_res.mins, None)
+      msg =\
+        "strftime directive 'u' (requires !2, 3.6) vs. 'urllib.urlopen(context)' (requires 2.7, !3)"
+      self.assertEqual(proc_res.text, msg)
+      self.assertEmpty(proc_res.bps)
 
   def test_process_file_using_backport(self):
-    fp = NamedTemporaryFile(suffix=".py", delete=False)
-    fp.write(b"import typing\n")
+    fp = ScopedTemporaryFile()
+    fp.writeln(b"import typing")
     fp.close()
-    proc_res = process_individual((fp.name, self.config))
+    proc_res = process_individual((fp.path(), self.config))
     self.assertEmpty(proc_res.text)
     self.assertEqualItems(["typing"], proc_res.bps)
-    os.remove(fp.name)
 
   def test_processor_value_error(self):
-    fp = NamedTemporaryFile(suffix=".py", delete=False)
+    fp = ScopedTemporaryFile()
     fp.write(b"\0")
     fp.close()
-    paths = [fp.name]
+    paths = [fp.path()]
     processor = Processor()
     (mins, incomp, unique_versions, backports) = processor.process(paths)
     self.assertEqual(mins, [(0, 0), (0, 0)])
     self.assertFalse(incomp)
     self.assertEmpty(unique_versions)
     self.assertEmpty(backports)
-    os.remove(fp.name)
 
   def test_processor_incompatible(self):
-    fp = NamedTemporaryFile(suffix=".py", delete=False)
-    fp.write(b"import Queue\n")  # 2.0, !3
-    fp.write(b"import builtins\n")  # !2, 3.0
+    fp = ScopedTemporaryFile()
+    fp.writeln(b"import Queue")  # 2.0, !3
+    fp.writeln(b"import builtins")  # !2, 3.0
     fp.close()
-    paths = [fp.name]
+    paths = [fp.path()]
     processor = Processor()
     (mins, incomp, unique_versions, backports) = processor.process(paths)
     self.assertEqual(mins, [(0, 0), (0, 0)])
     self.assertTrue(incomp)
     self.assertEmpty(unique_versions)
     self.assertEmpty(backports)
-    os.remove(fp.name)
 
   def test_processor_separately_incompatible(self):
     paths = []
@@ -594,16 +591,17 @@ class VerminGeneralTests(VerminTest):
     # Trigger SourceVisitor.__nprint() while visiting AST, which is one way to add some output text.
     self.config.set_print_visits(True)
 
-    fp = NamedTemporaryFile(suffix=".py", delete=False)
-    fp.write(b"def foo():\n\tpass\n")
-    fp.write(b"foo()\n")  # Ignoring member 'foo' because it's user-defined!
-    fp.write(b"import Queue\n")
-    fp.write(b"class Queue: pass\n")  # Ignoring module 'Queue' because it's user-defined!
-    fp.write(b"def any(): pass\n")
-    fp.write(b"any(test=1)\n")  # Ignoring function 'any' because it's user-defined!
-    fp.write(b"print('hello')\n")  # print(expr) requires 2+ or 3+
+    fp = ScopedTemporaryFile()
+    fp.write(b"""def foo(): pass
+foo()              # Ignoring member 'foo' because it's user-defined!
+import Queue
+class Queue: pass  # Ignoring module 'Queue' because it's user-defined!
+def any(): pass
+any(test=1)        # Ignoring function 'any' because it's user-defined!
+print('hello')     # print(expr) requires 2+ or 3+
+""")
     fp.close()
-    paths = [fp.name]
+    paths = [fp.path()]
     processor = Processor()
     (mins, incomp, unique_versions, backports) = processor.process(paths)
 
@@ -616,22 +614,20 @@ class VerminGeneralTests(VerminTest):
 
     self.assertFalse(incomp)
     self.assertEmpty(backports)
-    os.remove(fp.name)
 
   # Since python 3.8+, the multiprocessing context on macOS started using spawn() instead of fork(),
   # which means that the concurrently run functionality doesn't inherit the same information. It was
   # fixed such that when spawn() is used, it reestablishes the information that isn't inherited.
   # This test fails if that isn't done, and always succeeds when fork() is used.
   def test_processor_argparse_backport_spawn_or_fork(self):
-    fp = NamedTemporaryFile(suffix=".py", delete=False)
-    fp.write(b"import argparse\n")  # 2.7, 3.2
+    fp = ScopedTemporaryFile()
+    fp.writeln(b"import argparse")  # 2.7, 3.2
     fp.close()
     self.config.add_backport("argparse")  # -> 2.3, 3.1
-    paths = [fp.name]
+    paths = [fp.path()]
     processor = Processor()
     (mins, incomp, unique_versions, backports) = processor.process(paths)
     self.assertEqual(mins, [(2, 3), (3, 1)])
     self.assertFalse(incomp)
     self.assertEqual(unique_versions, [(2, 3), (3, 1)])
     self.assertEqual(backports, {"argparse"})
-    os.remove(fp.name)

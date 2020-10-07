@@ -1,10 +1,9 @@
 import os
 from multiprocessing import cpu_count
-from tempfile import NamedTemporaryFile
 
 from vermin import Arguments, Config, Backports, Features
 
-from .testutils import VerminTest
+from .testutils import VerminTest, ScopedTemporaryFile
 
 def parse_args(args):
   return Arguments(args).parse()
@@ -183,11 +182,12 @@ class VerminArgumentsTests(VerminTest):
     self.assertContainsDict({"code": 1}, parse_args(["--exclude-file"]))  # Needs <file> part.
     self.assertEmpty(self.config.exclusions())
 
-    fp = NamedTemporaryFile(delete=False)
-    fp.write(b"bbb\naaa\n")
+    fp = ScopedTemporaryFile()
+    fp.write(b"""bbb
+aaa
+""")
     fp.close()
-    self.assertContainsDict({"code": 0}, parse_args(["--exclude-file", fp.name]))
-    os.remove(fp.name)
+    self.assertContainsDict({"code": 0}, parse_args(["--exclude-file", fp.path()]))
     self.assertEqual(["aaa", "bbb"], self.config.exclusions())  # Expect it sorted.
 
     # Nonexistent file is ignored.
