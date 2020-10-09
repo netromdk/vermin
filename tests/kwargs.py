@@ -3137,3 +3137,249 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn((3, 9),
                       detect("from random import sample\n"
                              "sample(counts=None)"))
+
+  def test_encoding_of_FTP_from_ftplib(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from ftplib import FTP\n"
+                             "FTP(encoding=None)"))
+
+  def test_encoding_of_FTP_TLS_from_ftplib(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from ftplib import FTP_TLS\n"
+                             "FTP_TLS(encoding=None)"))
+
+  def test_recursive_of_iglob_from_glob(self):
+    self.assertOnlyIn((3, 5),
+                      detect("from glob import iglob\n"
+                             "iglob(recursive=None)"))
+
+  def test_encoding_of_basicConfig_from_logging(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from logging import basicConfig\n"
+                             "basicConfig(encoding=None)"))
+
+  def test_errors_of_basicConfig_from_logging(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from logging import basicConfig\n"
+                             "basicConfig(errors=None)"))
+
+  def test_errors_of_RotatingFileHandler_from_logging_handlers(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from logging.handlers import RotatingFileHandler\n"
+                             "RotatingFileHandler(errors=None)"))
+
+  def test_errors_of_TimedRotatingFileHandler_from_logging_handlers(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from logging.handlers import TimedRotatingFileHandler\n"
+                             "TimedRotatingFileHandler(errors=None)"))
+
+  def test_errors_of_WatchedFileHandler_from_logging_handlers(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from logging.handlers import WatchedFileHandler\n"
+                             "WatchedFileHandler(errors=None)"))
+
+  def test_in_fd_of_sendfile_from_os(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from os import sendfile\n"
+                             "sendfile(in_fd=None)"))
+
+  def test_out_fd_of_sendfile_from_os(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from os import sendfile\n"
+                             "sendfile(out_fd=None)"))
+
+  def test_extra_groups_of_Popen_from_subprocess(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from subprocess import Popen\n"
+                             "Popen(extra_groups=None)"))
+
+  def test_group_of_Popen_from_subprocess(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from subprocess import Popen\n"
+                             "Popen(group=None)"))
+
+  def test_umask_of_Popen_from_subprocess(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from subprocess import Popen\n"
+                             "Popen(umask=None)"))
+
+  def test_user_of_Popen_from_subprocess(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from subprocess import Popen\n"
+                             "Popen(user=None)"))
+
+  def test_encoding_of_call_from_subprocess(self):
+    self.assertOnlyIn((3, 6),
+                      detect("from subprocess import call\n"
+                             "call(encoding=None)"))
+
+  def test_errors_of_call_from_subprocess(self):
+    self.assertOnlyIn((3, 6),
+                      detect("from subprocess import call\n"
+                             "call(errors=None)"))
+
+  def test_extra_groups_of_call_from_subprocess(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from subprocess import call\n"
+                             "call(extra_groups=None)"))
+
+  def test_group_of_call_from_subprocess(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from subprocess import call\n"
+                             "call(group=None)"))
+
+  def test_pass_fds_of_call_from_subprocess(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from subprocess import call\n"
+                             "call(pass_fds=None)"))
+
+  def test_restore_signals_of_call_from_subprocess(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from subprocess import call\n"
+                             "call(restore_signals=None)"))
+
+  def test_start_new_session_of_call_from_subprocess(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from subprocess import call\n"
+                             "call(start_new_session=None)"))
+
+  def test_text_of_call_from_subprocess(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from subprocess import call\n"
+                             "call(text=None)"))
+
+  def test_umask_of_call_from_subprocess(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from subprocess import call\n"
+                             "call(umask=None)"))
+
+  def test_user_of_call_from_subprocess(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from subprocess import call\n"
+                             "call(user=None)"))
+
+  def test_encoding_of_check_call_from_subprocess(self):
+    self.assertOnlyIn((3, 6),
+                      detect("from subprocess import check_call\n"
+                             "check_call(encoding=None)"))
+
+  def test_errors_of_check_call_from_subprocess(self):
+    self.assertOnlyIn((3, 6),
+                      detect("from subprocess import check_call\n"
+                             "check_call(errors=None)"))
+
+  def test_extra_groups_of_check_call_from_subprocess(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from subprocess import check_call\n"
+                             "check_call(extra_groups=None)"))
+
+  def test_group_of_check_call_from_subprocess(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from subprocess import check_call\n"
+                             "check_call(group=None)"))
+
+  def test_pass_fds_of_check_call_from_subprocess(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from subprocess import check_call\n"
+                             "check_call(pass_fds=None)"))
+
+  def test_restore_signals_of_check_call_from_subprocess(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from subprocess import check_call\n"
+                             "check_call(restore_signals=None)"))
+
+  def test_start_new_session_of_check_call_from_subprocess(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from subprocess import check_call\n"
+                             "check_call(start_new_session=None)"))
+
+  def test_text_of_check_call_from_subprocess(self):
+    self.assertOnlyIn((3, 7),
+                      detect("from subprocess import check_call\n"
+                             "check_call(text=None)"))
+
+  def test_umask_of_check_call_from_subprocess(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from subprocess import check_call\n"
+                             "check_call(umask=None)"))
+
+  def test_user_of_check_call_from_subprocess(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from subprocess import check_call\n"
+                             "check_call(user=None)"))
+
+  def test_extra_groups_of_check_output_from_subprocess(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from subprocess import check_output\n"
+                             "check_output(extra_groups=None)"))
+
+  def test_group_of_check_output_from_subprocess(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from subprocess import check_output\n"
+                             "check_output(group=None)"))
+
+  def test_pass_fds_of_check_output_from_subprocess(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from subprocess import check_output\n"
+                             "check_output(pass_fds=None)"))
+
+  def test_restore_signals_of_check_output_from_subprocess(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from subprocess import check_output\n"
+                             "check_output(restore_signals=None)"))
+
+  def test_start_new_session_of_check_output_from_subprocess(self):
+    self.assertOnlyIn((3, 2),
+                      detect("from subprocess import check_output\n"
+                             "check_output(start_new_session=None)"))
+
+  def test_umask_of_check_output_from_subprocess(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from subprocess import check_output\n"
+                             "check_output(umask=None)"))
+
+  def test_user_of_check_output_from_subprocess(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from subprocess import check_output\n"
+                             "check_output(user=None)"))
+
+  def test_extra_groups_of_run_from_subprocess(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from subprocess import run\n"
+                             "run(extra_groups=None)"))
+
+  def test_group_of_run_from_subprocess(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from subprocess import run\n"
+                             "run(group=None)"))
+
+  def test_umask_of_run_from_subprocess(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from subprocess import run\n"
+                             "run(umask=None)"))
+
+  def test_user_of_run_from_subprocess(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from subprocess import run\n"
+                             "run(user=None)"))
+
+  def test_msg_of_cancel_from_asyncio_Future(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from asyncio import Future\n"
+                             "x = Future()\n"
+                             "x.cancel(msg=None)"))
+
+  def test_n_of_release_from_threading_Semaphore(self):
+    self.assertOnlyIn((3, 9),
+                      detect("from threading import Semaphore\n"
+                             "x = Semaphore()\n"
+                             "x.release(n=None)"))
+
+  def test_base_of_pow(self):
+    self.assertOnlyIn((3, 8), detect("pow(base=None)"))
+
+  def test_exp_of_pow(self):
+    self.assertOnlyIn((3, 8), detect("pow(exp=None)"))
+
+  def test_mod_of_pow(self):
+    self.assertOnlyIn((3, 8), detect("pow(mod=None)"))

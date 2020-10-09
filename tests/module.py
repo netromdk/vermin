@@ -374,6 +374,9 @@ class VerminModuleTests(VerminTest):
   def test_xml_etree_ElementTree(self):
     self.assertOnlyIn(((2, 5), (3, 0)), detect("import xml.etree.ElementTree"))
 
+  def test_xml_etree_ElementInclude(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), detect("import xml.etree.ElementInclude"))
+
   def test_xmlrpclib(self):
     self.assertOnlyIn((2, 2), detect("import xmlrpclib"))
 
@@ -427,8 +430,8 @@ class VerminModuleTests(VerminTest):
   def test_urlparse(self):
     self.assertOnlyIn((2, 0), detect("import urlparse"))
 
-  def test_timezone(self):
-    self.assertOnlyIn((3, 9), detect("import timezone"))
+  def test_zoneinfo(self):
+    self.assertOnlyIn((3, 9), detect("import zoneinfo"))
 
   def test_graphlib(self):
     self.assertOnlyIn((3, 9), detect("import graphlib"))

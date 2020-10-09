@@ -1040,11 +1040,10 @@ class VerminFunctionMemberTests(VerminTest):
                              "elm = Element()\n"
                              "elm.itertext()"))
 
-  def test_indent_from_xml_etree_ElementTree_Element(self):
+  def test_indent_from_xml_etree_ElementTree(self):
     self.assertOnlyIn((3, 9),
-                      detect("from xml.etree.ElementTree import Element\n"
-                             "elm = Element()\n"
-                             "elm.indent()"))
+                      detect("from xml.etree.ElementTree import indent\n"
+                             "indent()"))
 
   def test_iterfind_from_xml_etree_ElementTree_ElementTree(self):
     self.assertOnlyIn(((2, 7), (3, 2)),
@@ -2890,6 +2889,9 @@ class VerminFunctionMemberTests(VerminTest):
   def test_is__from_operator(self):
     self.assertOnlyIn(((2, 3), (3, 0)), detect("import operator\noperator.is_()"))
 
+  def test_is_not_from_operator(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), detect("import operator\noperator.is_not()"))
+
   def test_isub_from_operator(self):
     self.assertOnlyIn(((2, 5), (3, 0)), detect("import operator\noperator.isub()"))
 
@@ -3830,12 +3832,6 @@ class VerminFunctionMemberTests(VerminTest):
   def test_issoftkeyword_from_keyword(self):
     self.assertOnlyIn((3, 9), detect("from keyword import issoftkeyword"))
 
-  def test_reversed_from_types_MappingProxyType(self):
-    self.assertOnlyIn((3, 9),
-                      detect("from types import MappingProxyType\n"
-                             "mpt = MappingProxyType({})\n"
-                             "mpt.reversed()"))
-
   def test_print_warning_from_test_support(self):
     self.assertOnlyIn((3, 9), detect("from test.support import print_warning"))
 
@@ -3850,3 +3846,16 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_recv_fds_from_socket(self):
     self.assertOnlyIn((3, 9), detect("from socket import recv_fds"))
+
+  def test_create_module_from_importlib_machinery_FrozenImporter(self):
+    self.assertOnlyIn((3, 4),
+                      detect("import importlib.machinery.FrozenImporter\n"
+                             "importlib.machinery.FrozenImporter.create_module()"))
+
+  def test_exec_module_from_importlib_machinery_FrozenImporter(self):
+    self.assertOnlyIn((3, 4),
+                      detect("import importlib.machinery.FrozenImporter\n"
+                             "importlib.machinery.FrozenImporter.exec_module()"))
+
+  def test_get_stats_profile_from_pstats_Stats(self):
+    self.assertOnlyIn((3, 9), detect("import pstats.Stats\npstats.Stats.get_stats_profile()"))
