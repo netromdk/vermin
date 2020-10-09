@@ -3267,7 +3267,7 @@ CODECS_ENCODINGS_INDICES = {
 }
 
 # Builtin types that work as annotation types from 3.9+
-# The list is taken from Lib/test/test_genericalias.py in the CPython repository
+# The list is taken from https://github.com/python/cpython/blob/master/Lib/test/test_genericalias.py
 BUILTIN_GENERIC_ANNOTATION_TYPES = (
   "collections.ChainMap",
   "collections.Counter",

@@ -3848,10 +3848,14 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((3, 9), detect("from socket import recv_fds"))
 
   def test_create_module_from_importlib_machinery_FrozenImporter(self):
-    self.assertOnlyIn((3, 4), detect("import importlib.machinery.FrozenImporter\nimportlib.machinery.FrozenImporter.create_module()"))
+    self.assertOnlyIn((3, 4),
+                      detect("import importlib.machinery.FrozenImporter\n"
+                             "importlib.machinery.FrozenImporter.create_module()"))
 
   def test_exec_module_from_importlib_machinery_FrozenImporter(self):
-    self.assertOnlyIn((3, 4), detect("import importlib.machinery.FrozenImporter\nimportlib.machinery.FrozenImporter.exec_module()"))
+    self.assertOnlyIn((3, 4),
+                      detect("import importlib.machinery.FrozenImporter\n"
+                             "importlib.machinery.FrozenImporter.exec_module()"))
 
   def test_get_stats_profile_from_pstats_Stats(self):
     self.assertOnlyIn((3, 9), detect("import pstats.Stats\npstats.Stats.get_stats_profile()"))
