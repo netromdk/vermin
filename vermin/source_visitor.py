@@ -243,14 +243,15 @@ class SourceVisitor(ast.NodeVisitor):
     mins = [(0, 0), (0, 0)]
     entity_versions = {}  # Used for incompatible versions texts.
 
-    def add_versions_entity(mins, versions, entity=None):
+    def add_versions_entity(mins, versions, entity=None, vvprint=False):
       if entity is not None:
         if versions in entity_versions:
           entity_versions[versions].append(entity)
         else:
           entity_versions[versions] = [entity]
-        # TODO: if entity string ends with "s" maybe dno't put "s" in "requires"?
-        self.__vvprint("{} requires {}".format(entity, version_strings(versions)))
+        if vvprint:
+          # TODO: if entity string ends with "s" maybe dno't put "s" in "requires"?
+          self.__vvprint("{} requires {}".format(entity, version_strings(versions)))
       return combine_versions(mins, versions, entity_versions)
 
     if self.printv2():
@@ -370,46 +371,50 @@ class SourceVisitor(ast.NodeVisitor):
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
         vers = STRFTIME_REQS[directive]
-        mins = add_versions_entity(mins, vers, "strftime directive '{}'".format(directive))
+        mins = add_versions_entity(mins, vers, "strftime directive '{}'".format(directive),
+                                   vvprint=True)
 
     for directive in self.bytes_directives():
       if directive in BYTES_REQS:
         vers = BYTES_REQS[directive]
-        mins = add_versions_entity(mins, vers, "bytes directive '{}'".format(directive))
+        mins = add_versions_entity(mins, vers, "bytes directive '{}'".format(directive),
+                                   vvprint=True)
 
     for typecode in self.array_typecodes():
       if typecode in ARRAY_TYPECODE_REQS:
         vers = ARRAY_TYPECODE_REQS[typecode]
-        mins = add_versions_entity(mins, vers, "array typecode '{}'".format(typecode))
+        mins = add_versions_entity(mins, vers, "array typecode '{}'".format(typecode), vvprint=True)
 
     for name in self.codecs_error_handlers():
       if name in CODECS_ERROR_HANDLERS:
         vers = CODECS_ERROR_HANDLERS[name]
-        mins = add_versions_entity(mins, vers, "codecs error handler name '{}'".format(name))
+        mins = add_versions_entity(mins, vers, "codecs error handler name '{}'".format(name),
+                                   vvprint=True)
 
     for encoding in self.codecs_encodings():
       for encs in CODECS_ENCODINGS:
         if encoding.lower() in encs:
           vers = CODECS_ENCODINGS[encs]
-          mins = add_versions_entity(mins, vers, "codecs encoding '{}'".format(encoding))
+          mins = add_versions_entity(mins, vers, "codecs encoding '{}'".format(encoding),
+                                     vvprint=True)
 
     mods = self.modules()
     for mod in mods:
       if mod in self.__mod_rules:
         vers = self.__mod_rules[mod]
-        mins = add_versions_entity(mins, vers, "'{}' module".format(mod))
+        mins = add_versions_entity(mins, vers, "'{}' module".format(mod), vvprint=True)
 
     mems = self.members()
     for mem in mems:
       if mem in self.__mod_mem_reqs_rules:
         vers = self.__mod_mem_reqs_rules[mem]
-        mins = add_versions_entity(mins, vers, "'{}' member".format(mem))
+        mins = add_versions_entity(mins, vers, "'{}' member".format(mem), vvprint=True)
 
     kwargs = self.kwargs()
     for fn_kw in kwargs:
       if fn_kw in KWARGS_REQS:
         vers = KWARGS_REQS[fn_kw]
-        mins = add_versions_entity(mins, vers, "'{}({})'".format(fn_kw[0], fn_kw[1]))
+        mins = add_versions_entity(mins, vers, "'{}({})'".format(fn_kw[0], fn_kw[1]), vvprint=True)
 
     return mins
 
