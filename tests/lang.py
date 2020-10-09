@@ -1078,8 +1078,43 @@ class VerminLanguageTests(VerminTest):
     visitor = visit("@functools.wraps(func)\ndef foo(): pass")
     self.assertFalse(visitor.relaxed_decorators())
 
+    visitor = visit("@f\nclass foo: pass")
+    self.assertFalse(visitor.relaxed_decorators())
+
+    visitor = visit("@button_0.clicked.connect\nclass foo: pass")
+    self.assertFalse(visitor.relaxed_decorators())
+
+    visitor = visit("@eval('buttons[1].clicked.connect')\nclass foo: pass")
+    self.assertFalse(visitor.relaxed_decorators())
+
+    visitor = visit("@_(buttons[0].clicked.connect)\nclass foo: pass")
+    self.assertFalse(visitor.relaxed_decorators())
+
+    visitor = visit("@functools.wraps(func)\nclass foo: pass")
+    self.assertFalse(visitor.relaxed_decorators())
+
+    if current_version() >= 3.6:
+      visitor = visit("@f\nasync def foo(): pass")
+      self.assertFalse(visitor.relaxed_decorators())
+
+      visitor = visit("@button_0.clicked.connect\nasync def foo(): pass")
+      self.assertFalse(visitor.relaxed_decorators())
+
+      visitor = visit("@eval('buttons[1].clicked.connect')\nasync def foo(): pass")
+      self.assertFalse(visitor.relaxed_decorators())
+
+      visitor = visit("@_(buttons[0].clicked.connect)\nasync def foo(): pass")
+      self.assertFalse(visitor.relaxed_decorators())
+
+      visitor = visit("@functools.wraps(func)\nasync def foo(): pass")
+      self.assertFalse(visitor.relaxed_decorators())
+
     if current_version() >= 3.9:
       visitor = visit("@[bax][0]\ndef foo(): pass")
+      self.assertTrue(visitor.relaxed_decorators())
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+      visitor = visit("@x[0]()\ndef foo(): pass")
       self.assertTrue(visitor.relaxed_decorators())
       self.assertOnlyIn((3, 9), visitor.minimum_versions())
 
@@ -1100,5 +1135,62 @@ class VerminLanguageTests(VerminTest):
       self.assertOnlyIn((3, 9), visitor.minimum_versions())
 
       visitor = visit("@non_relaxed\n@buttons[1].clicked.connect\n@not_relaxed\ndef foo(): pass")
+      self.assertTrue(visitor.relaxed_decorators())
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+      visitor = visit("@[bax][0]\nclass foo: pass")
+      self.assertTrue(visitor.relaxed_decorators())
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+      visitor = visit("@x[0]()\nclass foo: pass")
+      self.assertTrue(visitor.relaxed_decorators())
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+      visitor = visit("@buttons[1].clicked.connect\nclass foo: pass")
+      self.assertTrue(visitor.relaxed_decorators())
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+      visitor = visit("@(lambda x: 1)\nclass foo: pass")
+      self.assertTrue(visitor.relaxed_decorators())
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+      visitor = visit("@buttons[1].clicked.connect\n@not_relaxed\nclass foo: pass")
+      self.assertTrue(visitor.relaxed_decorators())
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+      visitor = visit("@non_relaxed\n@buttons[1].clicked.connect\nclass foo: pass")
+      self.assertTrue(visitor.relaxed_decorators())
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+      visitor = visit("@non_relaxed\n@buttons[1].clicked.connect\n@not_relaxed\nclass foo: pass")
+      self.assertTrue(visitor.relaxed_decorators())
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+      visitor = visit("@[bax][0]\nasync def foo(): pass")
+      self.assertTrue(visitor.relaxed_decorators())
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+      visitor = visit("@x[0]()\nasync def foo(): pass")
+      self.assertTrue(visitor.relaxed_decorators())
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+      visitor = visit("@buttons[1].clicked.connect\nasync def foo(): pass")
+      self.assertTrue(visitor.relaxed_decorators())
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+      visitor = visit("@(lambda x: 1)\nasync def foo(): pass")
+      self.assertTrue(visitor.relaxed_decorators())
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+      visitor = visit("@buttons[1].clicked.connect\n@not_relaxed\nasync def foo(): pass")
+      self.assertTrue(visitor.relaxed_decorators())
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+      visitor = visit("@non_relaxed\n@buttons[1].clicked.connect\nasync def foo(): pass")
+      self.assertTrue(visitor.relaxed_decorators())
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+      visitor =\
+        visit("@non_relaxed\n@buttons[1].clicked.connect\n@not_relaxed\nasync def foo(): pass")
       self.assertTrue(visitor.relaxed_decorators())
       self.assertOnlyIn((3, 9), visitor.minimum_versions())

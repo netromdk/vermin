@@ -1375,26 +1375,30 @@ ast.Call(func=ast.Name)."""
         self.__literal_annotations = True
         self.__vvprint("literal variable annotations require 3.8+")
 
-  def __handle_FunctionDef(self, node):
-    if self.__is_no_line(node.lineno):
-      return False
-
-    self.__add_user_def(node.name)
-    self.generic_visit(node)
-
+  def __check_relaxed_decorators(self, node):
     # Checking for relaxed decorators, i.e. decorators that aren't a dotted name (name or attribute)
     # or a function call. `Load()` is also ignored since they occur all over the place for
     # non-relaxed decorators, too.
     if hasattr(node, "decorator_list"):
       for decorator in node.decorator_list:
-        if self.__is_no_line(decorator.lineno) or isinstance(decorator, ast.Call):
+        if self.__is_no_line(decorator.lineno):
           continue
-        for n in ast.walk(decorator):
+        # If decorator is a function call, then only look in the body branch, not arguments and
+        # such.
+        for n in ast.walk(decorator if not isinstance(decorator, ast.Call) else decorator.func):
           if not (isinstance(n, ast.Name) or isinstance(n, ast.Attribute) or
                   isinstance(n, ast.Load)):
             self.__relaxed_decorators = True
             self.__vvprint("relaxed decorators require 3.9+", line=decorator.lineno)
             break
+
+  def __handle_FunctionDef(self, node):
+    if self.__is_no_line(node.lineno):
+      return False
+
+    self.__add_user_def(node.name)
+    self.__check_relaxed_decorators(node)
+    self.generic_visit(node)
 
     def has_ann():
       self.__annotations = True
@@ -1460,6 +1464,7 @@ ast.Call(func=ast.Name)."""
     if self.__is_no_line(node.lineno):
       return
     self.__add_user_def(node.name)
+    self.__check_relaxed_decorators(node)
     self.generic_visit(node)
 
   def visit_NameConstant(self, node):
