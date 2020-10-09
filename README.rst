@@ -26,7 +26,7 @@ builtin dict union (``|``) types, and **7** builtin dict union merge (``|=``) ty
 
 Backports of the standard library, like ``typing``, can be enabled for better results.
 
-The project is fairly well-tested with **3408** unit and integration tests employing **4165**
+The project is fairly well-tested with **3409** unit and integration tests employing **4182**
 assertions.
 
 It is recommended to use the most recent Python version to run Vermin on projects since Python's own
@@ -67,19 +67,19 @@ be used to check that the minimum required versions didn't change. The following
 Features
 ========
 
-Features detected include v2/v3 ``print expr`` and ``print(expr)``, ``long``, f-strings,
-coroutines (``async`` and ``await``), asynchronous generators (``await`` and ``yield`` in same
-function), asynchronous comprehensions, ``await`` in comprehensions, asynchronous ``for``-loops,
-boolean constants, named expressions, keyword-only parameters, positional-only parameters, ``yield
-from``, exception context cause (``raise .. from ..``), ``dict`` comprehensions, infix matrix
+Features detected include v2/v3 ``print expr`` and ``print(expr)``, ``long``, f-strings, coroutines
+(``async`` and ``await``), asynchronous generators (``await`` and ``yield`` in same function),
+asynchronous comprehensions, ``await`` in comprehensions, asynchronous ``for``-loops, boolean
+constants, named expressions, keyword-only parameters, positional-only parameters, ``yield from``,
+exception context cause (``raise .. from ..``), ``dict`` comprehensions, infix matrix
 multiplication, ``"..".format(..)``, imports (``import X``, ``from X import Y``, ``from X import
 *``), function calls wrt. name and kwargs, ``strftime`` + ``strptime`` directives used, function and
 variable annotations (also ``Final`` and ``Literal``), ``continue`` in ``finally`` block, modular
 inverse ``pow()``, array typecodes, codecs error handler names, encodings, ``%`` formatting and
 directives for bytes and bytearray, generalized unpacking, dictionary union (``{..} | {..}``),
-dictionary union merge (``a = {..}; a |= {..}``), and builtin generic type annotations
-(``list[str]``). It tries to detect and ignore user-defined functions, classes, arguments, and
-variables with names that clash with library-defined symbols.
+dictionary union merge (``a = {..}; a |= {..}``), builtin generic type annotations (``list[str]``),
+and relaxed decorators. It tries to detect and ignore user-defined functions, classes, arguments,
+and variables with names that clash with library-defined symbols.
 
 Caveats
 =======

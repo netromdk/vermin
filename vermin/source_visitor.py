@@ -74,6 +74,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__dict_union = False
     self.__dict_union_merge = False
     self.__builtin_generic_type_annotations = False
+    self.__relaxed_decorators = False
     self.__builtin_types = {"dict", "set", "list", "unicode", "str", "int", "float", "long",
                             "bytes"}
     self.__codecs_encodings_kwargs = ("encoding", "data_encoding", "file_encoding")
@@ -239,6 +240,9 @@ class SourceVisitor(ast.NodeVisitor):
   def builtin_generic_type_annotations(self):
     return self.__builtin_generic_type_annotations
 
+  def relaxed_decorators(self):
+    return self.__relaxed_decorators
+
   def minimum_versions(self):
     mins = [(0, 0), (0, 0)]
     entity_versions = {}  # Used for incompatible versions texts.
@@ -367,6 +371,9 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.builtin_generic_type_annotations():
       mins = add_versions_entity(mins, (None, (3, 9)), "builtin generic type annotations")
+
+    if self.relaxed_decorators():
+      mins = add_versions_entity(mins, (None, (3, 9)), "relaxed decorators")
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
@@ -1374,6 +1381,20 @@ ast.Call(func=ast.Name)."""
 
     self.__add_user_def(node.name)
     self.generic_visit(node)
+
+    # Checking for relaxed decorators, i.e. decorators that aren't a dotted name (name or attribute)
+    # or a function call. `Load()` is also ignored since they occur all over the place for
+    # non-relaxed decorators, too.
+    if hasattr(node, "decorator_list"):
+      for decorator in node.decorator_list:
+        if self.__is_no_line(decorator.lineno) or isinstance(decorator, ast.Call):
+          continue
+        for n in ast.walk(decorator):
+          if not (isinstance(n, ast.Name) or isinstance(n, ast.Attribute) or
+                  isinstance(n, ast.Load)):
+            self.__relaxed_decorators = True
+            self.__vvprint("relaxed decorators require 3.9+", line=decorator.lineno)
+            break
 
     def has_ann():
       self.__annotations = True

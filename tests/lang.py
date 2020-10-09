@@ -1061,3 +1061,44 @@ class VerminLanguageTests(VerminTest):
     # Not a result because a list instance rather than list type is used.
     visitor = visit("l = [1,2,3]\nl[-1]")
     self.assertFalse(visitor.builtin_generic_type_annotations())
+
+  def test_relaxed_decorators(self):
+    visitor = visit("@f\ndef foo(): pass")
+    self.assertFalse(visitor.relaxed_decorators())
+
+    visitor = visit("@button_0.clicked.connect\ndef foo(): pass")
+    self.assertFalse(visitor.relaxed_decorators())
+
+    visitor = visit("@eval('buttons[1].clicked.connect')\ndef foo(): pass")
+    self.assertFalse(visitor.relaxed_decorators())
+
+    visitor = visit("@_(buttons[0].clicked.connect)\ndef foo(): pass")
+    self.assertFalse(visitor.relaxed_decorators())
+
+    visitor = visit("@functools.wraps(func)\ndef foo(): pass")
+    self.assertFalse(visitor.relaxed_decorators())
+
+    if current_version() >= 3.9:
+      visitor = visit("@[bax][0]\ndef foo(): pass")
+      self.assertTrue(visitor.relaxed_decorators())
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+      visitor = visit("@buttons[1].clicked.connect\ndef foo(): pass")
+      self.assertTrue(visitor.relaxed_decorators())
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+      visitor = visit("@(lambda x: 1)\ndef foo(): pass")
+      self.assertTrue(visitor.relaxed_decorators())
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+      visitor = visit("@buttons[1].clicked.connect\n@not_relaxed\ndef foo(): pass")
+      self.assertTrue(visitor.relaxed_decorators())
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+      visitor = visit("@non_relaxed\n@buttons[1].clicked.connect\ndef foo(): pass")
+      self.assertTrue(visitor.relaxed_decorators())
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+      visitor = visit("@non_relaxed\n@buttons[1].clicked.connect\n@not_relaxed\ndef foo(): pass")
+      self.assertTrue(visitor.relaxed_decorators())
+      self.assertOnlyIn((3, 9), visitor.minimum_versions())
