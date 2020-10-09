@@ -1,4 +1,6 @@
-from .testutils import VerminTest, detect
+from vermin import detect
+
+from .testutils import VerminTest
 
 class VerminCodecsEncodingTests(VerminTest):
   def test_encoding_german(self):

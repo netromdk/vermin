@@ -71,16 +71,6 @@ def visit(source, fstring_self_doc=False):
   visitor.tour(node)
   return visitor
 
-def detect(source, path=None):
-  parser = Parser(source, path)
-  (node, mins, novermin) = parser.detect()
-  if node is None:
-    return mins
-  visitor = SourceVisitor()
-  visitor.set_no_lines(novermin)
-  visitor.tour(node)
-  return visitor.minimum_versions()
-
 class ScopedTemporaryFile:
   """Creates a temporary file that is automatically removed when this instance goes out of scope.
 The difference to NamedTemporaryFile is that it isn't deleted when closing the file.

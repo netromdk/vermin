@@ -1,6 +1,6 @@
-from vermin import Config
+from vermin import Config, detect
 
-from .testutils import VerminTest, detect
+from .testutils import VerminTest
 
 class VerminClassMemberTests(VerminTest):
   def __init__(self, methodName):

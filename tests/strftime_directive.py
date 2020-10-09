@@ -1,4 +1,6 @@
-from .testutils import VerminTest, detect
+from vermin import detect
+
+from .testutils import VerminTest
 
 class VerminStrftimeDirectiveTests(VerminTest):
   def test_G_directive(self):

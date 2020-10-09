@@ -1,7 +1,7 @@
 from vermin import BUILTIN_GENERIC_ANNOTATION_TYPES, DICT_UNION_SUPPORTED_TYPES,\
-  DICT_UNION_MERGE_SUPPORTED_TYPES, dotted_name
+  DICT_UNION_MERGE_SUPPORTED_TYPES, dotted_name, detect
 
-from .testutils import VerminTest, detect, current_version, current_major_version, visit, Parser
+from .testutils import VerminTest, current_version, current_major_version, visit, Parser
 
 class VerminLanguageTests(VerminTest):
   def test_printv2(self):

@@ -1,4 +1,6 @@
-from .testutils import VerminTest, detect
+from vermin import detect
+
+from .testutils import VerminTest
 
 class VerminDecoratorMemberTests(VerminTest):
   def test_abstractclassmethod_of_abc(self):

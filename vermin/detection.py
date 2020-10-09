@@ -3,6 +3,9 @@ from os import listdir, stat
 from os.path import abspath, join, splitext
 from multiprocessing import Pool, cpu_count
 
+from .parser import Parser
+from .source_visitor import SourceVisitor
+
 NOT_PY_CODE_EXTS = {
   "3dm",
   "3ds",
@@ -500,3 +503,13 @@ def detect_paths(paths, hidden=False, processes=cpu_count()):
   if pool:
     pool.close()
   return accept_paths
+
+def detect(source, path=None):
+  parser = Parser(source, path)
+  (node, mins, novermin) = parser.detect()
+  if node is None:
+    return mins
+  visitor = SourceVisitor()
+  visitor.set_no_lines(novermin)
+  visitor.tour(node)
+  return visitor.minimum_versions()

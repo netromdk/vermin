@@ -1,5 +1,5 @@
 from .main import main
-from .detection import detect_paths, detect_paths_incremental, probably_python_file
+from .detection import detect, detect_paths, detect_paths_incremental, probably_python_file
 from .source_visitor import SourceVisitor
 from .parser import Parser
 from .processor import Processor, process_individual
@@ -34,6 +34,7 @@ __all__ = [
   "STRFTIME_REQS",
   "SourceVisitor",
   "combine_versions",
+  "detect",
   "detect_paths",
   "detect_paths_incremental",
   "dotted_name",

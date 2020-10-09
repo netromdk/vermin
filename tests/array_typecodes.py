@@ -1,4 +1,6 @@
-from .testutils import VerminTest, detect
+from vermin import detect
+
+from .testutils import VerminTest
 
 class VerminArrayTypecodeTests(VerminTest):
   def test_typecode_q(self):

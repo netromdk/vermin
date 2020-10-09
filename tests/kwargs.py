@@ -1,4 +1,6 @@
-from .testutils import VerminTest, detect, current_major_version
+from vermin import detect
+
+from .testutils import VerminTest, current_major_version
 
 class VerminKwargsTests(VerminTest):
   def test_name_of_ImportError(self):

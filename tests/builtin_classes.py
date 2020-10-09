@@ -1,4 +1,6 @@
-from .testutils import VerminTest, detect
+from vermin import detect
+
+from .testutils import VerminTest
 
 class VerminBuiltinClassesMemberTests(VerminTest):
   def test_bool(self):

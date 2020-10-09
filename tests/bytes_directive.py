@@ -1,4 +1,6 @@
-from .testutils import VerminTest, detect, current_version
+from vermin import detect
+
+from .testutils import VerminTest, current_version
 
 class VerminBytesDirectiveTests(VerminTest):
   def test_b_directive(self):

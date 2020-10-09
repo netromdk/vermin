@@ -1,4 +1,6 @@
-from .testutils import VerminTest, detect
+from vermin import detect
+
+from .testutils import VerminTest
 
 class VerminCodecsErrorHandlerTests(VerminTest):
   def test_handler_surrogateescape(self):

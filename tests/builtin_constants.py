@@ -1,4 +1,6 @@
-from .testutils import VerminTest, detect
+from vermin import detect
+
+from .testutils import VerminTest
 
 class VerminBuiltinConstantsTests(VerminTest):
   def test_obj_of_memoryview(self):

@@ -1,4 +1,6 @@
-from .testutils import VerminTest, detect
+from vermin import detect
+
+from .testutils import VerminTest
 
 class VerminExceptionMemberTests(VerminTest):
   def test_SSLCertVerificationError_of_ssl(self):
