@@ -570,8 +570,8 @@ class VerminClassMemberTests(VerminTest):
   def test_zipimporter_of_zipimport(self):
     self.assertOnlyIn(((2, 7), (3, 0)), detect("from zipimport import zipimporter"))
 
-  def test_ElementInclude_of_xml_etree(self):
-    self.assertOnlyIn((3, 7), detect("from xml.etree import ElementInclude"))
+  def test_FunctionProfile_of_pstats(self):
+    self.assertOnlyIn((3, 9), detect("from pstats import FunctionProfile"))
 
-  def test_addinfourl_of_urllib_response(self):
-    self.assertOnlyIn((3, 9), detect("from urllib.response import addinfourl"))
+  def test_StatsProfile_of_pstats(self):
+    self.assertOnlyIn((3, 9), detect("from pstats import StatsProfile"))

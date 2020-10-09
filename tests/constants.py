@@ -2946,3 +2946,24 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_HAVE_CONTEXTVAR_from_decimal(self):
     self.assertOnlyIn((3, 7), detect("from decimal import HAVE_CONTEXTVAR"))
+
+  def test_annotations_of___future__(self):
+    self.assertOnlyIn((3, 7), detect("from __future__ import annotations"))
+
+  def test_F_GETPATH_of_fcntl(self):
+    self.assertOnlyIn((3, 9), detect("from fcntl import F_GETPATH"))
+
+  def test_COLONEQUAL_of_token(self):
+    self.assertOnlyIn((3, 8), detect("from token import COLONEQUAL"))
+
+  def test_TYPE_IGNORE_of_token(self):
+    self.assertOnlyIn((3, 8), detect("from token import TYPE_IGNORE"))
+
+  def test_args_of_unittest_mock_Mock_call_args(self):
+    self.assertOnlyIn((3, 8), detect("from unittest.mock.Mock.call_args import args"))
+
+  def test_kwargs_of_unittest_mock_Mock_call_args(self):
+    self.assertOnlyIn((3, 8), detect("from unittest.mock.Mock.call_args import kwargs"))
+
+  def test_status_of_urllib_response_addinfourl(self):
+    self.assertOnlyIn((3, 9), detect("from urllib.response.addinfourl import status"))
