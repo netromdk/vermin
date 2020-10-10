@@ -1,6 +1,6 @@
-from vermin import detect
+from vermin import detect, visit
 
-from .testutils import VerminTest, current_version, visit
+from .testutils import VerminTest, current_version
 
 class VerminModuleTests(VerminTest):
   def test_return_annotation(self):

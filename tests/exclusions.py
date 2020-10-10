@@ -1,6 +1,6 @@
-from vermin import Config
+from vermin import Config, visit
 
-from .testutils import VerminTest, visit
+from .testutils import VerminTest
 
 class VerminExclusionsTests(VerminTest):
   def __init__(self, methodName):

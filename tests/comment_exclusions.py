@@ -1,4 +1,6 @@
-from .testutils import VerminTest, visit, current_version
+from vermin import visit
+
+from .testutils import VerminTest, current_version
 
 class VerminCommentsExclusionsTests(VerminTest):
   def test_import(self):

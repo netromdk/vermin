@@ -3,8 +3,6 @@ import sys
 import os
 from tempfile import NamedTemporaryFile
 
-from vermin import SourceVisitor, Parser
-
 def current_major_version():
   return float(sys.version_info.major)
 
@@ -61,14 +59,6 @@ override is made to work for all versions, also 3.0-3.1."""
       self.assertItemsEqual(expected, actual)
     else:
       self.assertEqual(sorted(expected), sorted(actual))
-
-def visit(source):
-  parser = Parser(source)
-  (node, novermin) = parser.parse()
-  visitor = SourceVisitor()
-  visitor.set_no_lines(novermin)
-  visitor.tour(node)
-  return visitor
 
 class ScopedTemporaryFile:
   """Creates a temporary file that is automatically removed when this instance goes out of scope.

@@ -505,6 +505,9 @@ def detect_paths(paths, hidden=False, processes=cpu_count()):
   return accept_paths
 
 def detect(source, path=None):
+  """Analyze and detect minimum versions from source code. If path is specified, it will occur in
+errors instead of the default '<unknown>'.
+  """
   parser = Parser(source, path)
   (node, mins, novermin) = parser.detect()
   if node is None:
@@ -513,3 +516,14 @@ def detect(source, path=None):
   visitor.set_no_lines(novermin)
   visitor.tour(node)
   return visitor.minimum_versions()
+
+def visit(source):
+  """Analyze source code and yield source code visitor instance which can be queried for further
+information.
+  """
+  parser = Parser(source)
+  (node, novermin) = parser.parse()
+  visitor = SourceVisitor()
+  visitor.set_no_lines(novermin)
+  visitor.tour(node)
+  return visitor

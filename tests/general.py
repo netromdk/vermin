@@ -6,9 +6,9 @@ from shutil import rmtree
 
 from vermin import combine_versions, InvalidVersionException, detect_paths,\
   detect_paths_incremental, probably_python_file, Processor, process_individual, reverse_range,\
-  dotted_name, remove_whitespace, main, Config, sort_line_column, detect
+  dotted_name, remove_whitespace, main, Config, sort_line_column, detect, visit
 
-from .testutils import VerminTest, visit, current_version, ScopedTemporaryFile
+from .testutils import VerminTest, current_version, ScopedTemporaryFile
 
 def touch(fld, name):
   filename = join(fld, name)

@@ -1,6 +1,6 @@
-from vermin import Config
+from vermin import Config, visit
 
-from .testutils import VerminTest, current_version, visit
+from .testutils import VerminTest, current_version
 
 class VerminLaxModeTests(VerminTest):
   def __init__(self, methodName):
