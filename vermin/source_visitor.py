@@ -109,7 +109,7 @@ class SourceVisitor(ast.NodeVisitor):
     # Default to disabling fstring self-doc detection since the built-in AST cannot distinguish
     # `f'{a=}'` from `f'a={a}'`, for instance, because it optimizes some information away. And this
     # incorrectly marks some source code as using fstring self-doc when only using general fstring.
-    self.__fstring_self_doc_enabled = False
+    self.__fstring_self_doc_enabled = self.__config.has_feature("fstring-self-doc")
 
     self.__mod_rules = MOD_REQS()
     self.__mod_mem_reqs_rules = MOD_MEM_REQS()
@@ -436,12 +436,6 @@ class SourceVisitor(ast.NodeVisitor):
 
   def no_lines(self):
     return self.__no_lines
-
-  def set_fstring_self_doc_enabled(self, enabled):
-    self.__fstring_self_doc_enabled = enabled
-
-  def fstring_self_doc_enabled(self):  # pragma: no cover
-    return self.__fstring_self_doc_enabled
 
   def __nprint(self, msg):
     if not self.__config.quiet():  # pragma: no cover
