@@ -1,34 +1,32 @@
-from vermin import detect
-
 from .testutils import VerminTest
 
 class VerminBuiltinClassesMemberTests(VerminTest):
   def test_bool(self):
-    self.assertOnlyIn(((2, 2), (3, 0)), detect("bool()"))
+    self.assertOnlyIn(((2, 2), (3, 0)), self.detect("bool()"))
 
   def test_bytearray(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), detect("bytearray()"))
+    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("bytearray()"))
 
   def test_frozenset(self):
-    self.assertOnlyIn(((2, 4), (3, 0)), detect("frozenset()"))
+    self.assertOnlyIn(((2, 4), (3, 0)), self.detect("frozenset()"))
 
   def test_object(self):
-    self.assertOnlyIn(((2, 2), (3, 0)), detect("object()"))
+    self.assertOnlyIn(((2, 2), (3, 0)), self.detect("object()"))
 
   def test_reversed(self):
-    self.assertOnlyIn(((2, 4), (3, 0)), detect("reversed()"))
+    self.assertOnlyIn(((2, 4), (3, 0)), self.detect("reversed()"))
 
   def test_set(self):
-    self.assertOnlyIn(((2, 4), (3, 0)), detect("set()"))
+    self.assertOnlyIn(((2, 4), (3, 0)), self.detect("set()"))
 
   def test_dict(self):
-    self.assertOnlyIn(((2, 2), (3, 0)), detect("dict()"))
+    self.assertOnlyIn(((2, 2), (3, 0)), self.detect("dict()"))
 
   def test_type(self):
-    self.assertOnlyIn(((2, 2), (3, 0)), detect("type()"))
+    self.assertOnlyIn(((2, 2), (3, 0)), self.detect("type()"))
 
   def test_memoryview(self):
-    self.assertOnlyIn(((2, 7), (3, 0)), detect("memoryview()"))
+    self.assertOnlyIn(((2, 7), (3, 0)), self.detect("memoryview()"))
 
   def test_long(self):
-    self.assertOnlyIn((2, 0), detect("long()"))
+    self.assertOnlyIn((2, 0), self.detect("long()"))

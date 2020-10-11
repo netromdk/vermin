@@ -3,7 +3,7 @@ import sys
 import os
 from tempfile import NamedTemporaryFile
 
-from vermin import Config
+from vermin import Config, detect, visit
 
 def current_major_version():
   return float(sys.version_info.major)
@@ -22,6 +22,12 @@ class VerminTest(unittest.TestCase):
 
   def setUp(self):
     self.config.reset()
+
+  def detect(self, source):
+    return detect(source)
+
+  def visit(self, source):
+    return visit(source)
 
   """General test case class for all Vermin tests."""
   def assertOnlyIn(self, values, data):

@@ -6,7 +6,7 @@ from shutil import rmtree
 
 from vermin import combine_versions, InvalidVersionException, detect_paths,\
   detect_paths_incremental, probably_python_file, Processor, process_individual, reverse_range,\
-  dotted_name, remove_whitespace, main, Config, sort_line_column, detect, visit
+  dotted_name, remove_whitespace, main, sort_line_column
 
 from .testutils import VerminTest, current_version, ScopedTemporaryFile
 
@@ -19,43 +19,43 @@ def touch(fld, name):
 class VerminGeneralTests(VerminTest):
   def test_format(self):
     # Empty field name requires 2.7+
-    visitor = visit("print('{}'.format(42))")
+    visitor = self.visit("print('{}'.format(42))")
     self.assertTrue(visitor.format27())
 
     # Non-empty field name requires 2.6+
-    visitor = visit("print('{0}'.format(42))")
+    visitor = self.visit("print('{0}'.format(42))")
     self.assertFalse(visitor.format27())
 
   def test_strftime_directives(self):
-    visitor = visit("from datetime import datetime\ndatetime.now().strftime('%A %d. %B %Y')")
+    visitor = self.visit("from datetime import datetime\ndatetime.now().strftime('%A %d. %B %Y')")
     self.assertOnlyIn(("A", "d", "B", "Y"), visitor.strftime_directives())
-    visitor = visit("from datetime import datetime\ndatetime.strptime('2018', '%Y')")
+    visitor = self.visit("from datetime import datetime\ndatetime.strptime('2018', '%Y')")
     self.assertOnlyIn("Y", visitor.strftime_directives())
 
   def test_modules(self):
-    visitor = visit("import ast\nimport sys, argparse\nfrom os import *")
+    visitor = self.visit("import ast\nimport sys, argparse\nfrom os import *")
     self.assertOnlyIn(("ast", "sys", "argparse", "os"), visitor.modules())
 
   def test_member_class(self):
-    visitor = visit("from abc import ABC")
+    visitor = self.visit("from abc import ABC")
     self.assertOnlyIn("abc.ABC", visitor.members())
-    visitor = visit("import abc\nclass a(abc.ABC): pass")
+    visitor = self.visit("import abc\nclass a(abc.ABC): pass")
     self.assertOnlyIn("abc.ABC", visitor.members())
 
   def test_member_function(self):
-    visitor = visit("from sys import exc_clear")
+    visitor = self.visit("from sys import exc_clear")
     self.assertOnlyIn("sys.exc_clear", visitor.members())
 
   def test_member_constant(self):
-    visitor = visit("from sys import version_info")
+    visitor = self.visit("from sys import version_info")
     self.assertOnlyIn("sys.version_info", visitor.members())
 
   def test_member_kwargs(self):
-    visitor = visit("from os import open\nfd = open(dir_fd = None)")
+    visitor = self.visit("from os import open\nfd = open(dir_fd = None)")
     self.assertOnlyIn([("os.open", "dir_fd")], visitor.kwargs())
-    visitor = visit("fd = open(dir_fd = None)")
+    visitor = self.visit("fd = open(dir_fd = None)")
     self.assertOnlyIn([("open", "dir_fd")], visitor.kwargs())
-    visitor = visit("ZipFile().writestr(compress_type=None)")
+    visitor = self.visit("ZipFile().writestr(compress_type=None)")
     self.assertOnlyIn([("ZipFile.writestr", "compress_type")], visitor.kwargs())
 
   def test_probably_python_file(self):
@@ -253,26 +253,26 @@ class VerminGeneralTests(VerminTest):
     self.assertEqual([(2, 0), (3, 0)], combine_versions([2.0, 3.0], [2.0, 0]))
 
   def test_detect_min_version(self):
-    self.assertEqual([(2, 6), (3, 0)], detect("import abc"))
+    self.assertEqual([(2, 6), (3, 0)], self.detect("import abc"))
 
     # (2.6, 3.0) vs. (2.7, 3.2) = (2.7, 3.2)
-    self.assertEqual([(2, 7), (3, 2)], detect("import abc, argparse"))
+    self.assertEqual([(2, 7), (3, 2)], self.detect("import abc, argparse"))
 
     # (2.6, 3.0) vs. (None, 3.4) = (None, 3.4)
-    self.assertEqual([None, (3, 4)], detect("import abc\nfrom abc import ABC"))
+    self.assertEqual([None, (3, 4)], self.detect("import abc\nfrom abc import ABC"))
 
     # (2.0, None) vs. (2.0, 3.0) = (2.0, None)
-    self.assertEqual([(2, 0), None], detect("import repr\nfrom sys import getdefaultencoding"))
+    self.assertEqual([(2, 0), None], self.detect("import repr\nfrom sys import getdefaultencoding"))
 
     # (2.0, None) vs. (None, 3.0) = both exclude the other major version -> exception!
     with self.assertRaises(InvalidVersionException):
-      detect("import copy_reg, http")
+      self.detect("import copy_reg, http")
 
   def test_ignore_non_top_level_imports(self):
     vers = [(0, 0), (0, 0)]
-    self.assertNotEqual(vers, detect("from typing import Final"))  # Don't ignore
-    self.assertEqual(vers, detect("from .typing import Final"))    # Ignore
-    self.assertEqual(vers, detect("from ..typing import Final"))   # Ignore
+    self.assertNotEqual(vers, self.detect("from typing import Final"))  # Don't ignore
+    self.assertEqual(vers, self.detect("from .typing import Final"))    # Ignore
+    self.assertEqual(vers, self.detect("from ..typing import Final"))   # Ignore
 
   def test_reverse_range(self):
     self.assertEqual(list(reverse_range([1, 2, 3])), [2, 1, 0])
@@ -331,21 +331,21 @@ class VerminGeneralTests(VerminTest):
     self.assertEqual(value2, expected)
 
   def test_assign_rvalue_attribute(self):
-    self.assertEqual([None, (3, 3)], detect("import bz2\nv = bz2.BZ2File\nv.writable"))
+    self.assertEqual([None, (3, 3)], self.detect("import bz2\nv = bz2.BZ2File\nv.writable"))
 
   def test_user_defined(self):
-    visitor = visit("def hello(): pass\nhello2()\nclass foo(): pass")
+    visitor = self.visit("def hello(): pass\nhello2()\nclass foo(): pass")
     self.assertOnlyIn(["hello", "foo"], visitor.user_defined())
 
   def test_ignore_members_when_user_defined_funcs(self):
     # `next()` was builtin from 2.6.
-    visitor = visit("def next(): pass\nnext()")
+    visitor = self.visit("def next(): pass\nnext()")
     self.assertOnlyIn("next", visitor.user_defined())
     self.assertEmpty(visitor.members())
 
   def test_ignore_members_when_user_defined_classes(self):
     # `bytearray` was builtin from 2.6.
-    visitor = visit("class bytearray: pass\nba = bytearray()")
+    visitor = self.visit("class bytearray: pass\nba = bytearray()")
     self.assertOnlyIn(["bytearray", "ba"], visitor.user_defined())
     self.assertEmpty(visitor.members())
 
@@ -353,9 +353,9 @@ class VerminGeneralTests(VerminTest):
     # This test relies on the rule for "SimpleXMLRPCServer" module.
 
     # Ignore module due to class def.
-    visitor = visit("import SimpleXMLRPCServer\n"
-                    "def SimpleXMLRPCServer(): pass\n"
-                    "src = SimpleXMLRPCServer()")
+    visitor = self.visit("import SimpleXMLRPCServer\n"
+                         "def SimpleXMLRPCServer(): pass\n"
+                         "src = SimpleXMLRPCServer()")
     self.assertOnlyIn(["SimpleXMLRPCServer", "src"], visitor.user_defined())
     self.assertEmpty(visitor.modules())
 
@@ -363,23 +363,23 @@ class VerminGeneralTests(VerminTest):
     # This test relies on the rule for "SimpleXMLRPCServer" module.
 
     # Ignore module due to class def.
-    visitor = visit("import SimpleXMLRPCServer\n"
-                    "class SimpleXMLRPCServer: pass\n"
-                    "src = SimpleXMLRPCServer()")
+    visitor = self.visit("import SimpleXMLRPCServer\n"
+                         "class SimpleXMLRPCServer: pass\n"
+                         "src = SimpleXMLRPCServer()")
     self.assertOnlyIn(["SimpleXMLRPCServer", "src"], visitor.user_defined())
     self.assertEmpty(visitor.modules())
 
   def test_mod_inverse_pow(self):
     # All arguments must be ints.
-    visitor = visit("pow(1.1, -1, 3)")
+    visitor = self.visit("pow(1.1, -1, 3)")
     self.assertFalse(visitor.modular_inverse_pow())
-    visitor = visit("pow(1, -1.0, 3)")
+    visitor = self.visit("pow(1, -1.0, 3)")
     self.assertFalse(visitor.modular_inverse_pow())
-    visitor = visit("pow(1, -1, 3.0)")
+    visitor = self.visit("pow(1, -1, 3.0)")
     self.assertFalse(visitor.modular_inverse_pow())
 
     # The second argument can be negative to yield modular inverse calculation.
-    visitor = visit("pow(1, -2, 3)")
+    visitor = self.visit("pow(1, -2, 3)")
     self.assertTrue(visitor.modular_inverse_pow())
     self.assertOnlyIn((3, 8), visitor.minimum_versions())
 
