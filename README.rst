@@ -26,7 +26,7 @@ builtin dict union (``|``) types, and **7** builtin dict union merge (``|=``) ty
 
 Backports of the standard library, like ``typing``, can be enabled for better results.
 
-The project is fairly well-tested with **3409** unit and integration tests employing **4245**
+The project is fairly well-tested with **3414** unit and integration tests employing **4269**
 assertions.
 
 It is recommended to use the most recent Python version to run Vermin on projects since Python's own
@@ -139,6 +139,34 @@ Examples
 
   Minimum required versions: 3.4
   Incompatible versions:     2
+
+API (experimental)
+==================
+
+Information such as minimum versions, used functionality constructs etc. can also be accessed
+programmatically via the ``vermin`` Python module, though it's an experimental feature. It is still
+recommended to use the command-line interface.
+
+.. code-block:: python
+
+  >>> import vermin as V
+  >>> V.version_strings(V.detect("a = long(1)"))
+  '2.0, !3'
+
+  >>> config = V.Config()
+  >>> config.add_exclusion("long")
+  >>> V.version_strings(V.detect("a = long(1)", config))
+  '~2, ~3'
+
+  >>> config.set_verbose(3)
+  >>> v = V.visit("""from argparse import ArgumentParser
+  ... ap = ArgumentParser(allow_abbrev=True)
+  ... """, config)
+  >>> print(v.output_text(), end="")
+  L1 C5: 'argparse' module requires 2.7, 3.2
+  L2: 'argparse.ArgumentParser(allow_abbrev)' requires !2, 3.5
+  >>> V.version_strings(v.minimum_versions())
+  '!2, 3.5'
 
 Lax Mode
 ========

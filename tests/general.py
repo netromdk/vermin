@@ -6,7 +6,7 @@ from shutil import rmtree
 
 from vermin import combine_versions, InvalidVersionException, detect_paths,\
   detect_paths_incremental, probably_python_file, Processor, process_individual, reverse_range,\
-  dotted_name, remove_whitespace, main, sort_line_column
+  dotted_name, remove_whitespace, main, sort_line_column, version_strings
 
 from .testutils import VerminTest, current_version, ScopedTemporaryFile, detect, visit
 
@@ -289,6 +289,21 @@ L6 C9: 'argparse' module requires 2.7, 3.2
     self.assertEqual([(2, 0), (3, 0)], combine_versions([2.0, 3.0], [0, 3.0], self.config))
     self.assertEqual([(2, 0), (3, 0)], combine_versions([2.0, 0], [2.0, 3.0], self.config))
     self.assertEqual([(2, 0), (3, 0)], combine_versions([2.0, 3.0], [2.0, 0], self.config))
+
+  def test_version_strings(self):
+    self.assertEqual("~2, ~3", version_strings([0.0, 0.0]))
+    self.assertEqual("2.0, ~3", version_strings([2.0, 0.0]))
+    self.assertEqual("2.0, 3.0", version_strings([2.0, 3.0]))
+    self.assertEqual("~2, 3.1", version_strings([0.0, 3.1]))
+    self.assertEqual("!2, 3.0", version_strings([None, 3.0]))
+    self.assertEqual("2.0, !3", version_strings([2.0, None]))
+    self.assertEqual("!2, !3", version_strings([None, None]))
+    self.assertEqual("2.3", version_strings([2.3]))
+    self.assertEqual("3.4", version_strings([3.4]))
+    with self.assertRaises(AssertionError):
+      version_strings([])
+    with self.assertRaises(AssertionError):
+      version_strings([1, 2, 3])
 
   def test_detect_min_version(self):
     self.assertEqual([(2, 6), (3, 0)], self.detect("import abc"))

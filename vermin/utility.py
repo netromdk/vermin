@@ -80,18 +80,21 @@ def combine_versions(list1, list2, config, version_refs=None):
       res.append(max(v1, v2))
   return res
 
-def version_strings(vers):
+def version_strings(versions):
+  """Yields version strings of versions. Must be either one or two version values."""
+  amount = len(versions)
+  assert(amount >= 1 and amount <= 2)
   res = []
-  for i in range(len(vers)):
-    ver = vers[i]
+  for i in range(amount):
+    version = versions[i]
     # When versions aren't known, show something instead of nothing. It might run with any
     # version.
-    if ver == 0 or ver == (0, 0):
+    if version == 0 or version == (0, 0):
       res.append("~{}".format(i + 2))
-    elif ver is None:
+    elif version is None:
       res.append("!{}".format(i + 2))
     else:
-      res.append(dotted_name(ver))
+      res.append(dotted_name(version))
   return ", ".join(res)
 
 def remove_whitespace(string, extras=[]):
