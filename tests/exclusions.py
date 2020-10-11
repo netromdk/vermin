@@ -1,18 +1,8 @@
-from vermin import Config, visit
+from vermin import visit
 
 from .testutils import VerminTest
 
 class VerminExclusionsTests(VerminTest):
-  def __init__(self, methodName):
-    super(VerminExclusionsTests, self).__init__(methodName)
-    self.config = Config.get()
-
-  def setUp(self):
-    self.config.reset()
-
-  def tearDown(self):
-    self.config.reset()
-
   def test_module(self):
     visitor = visit("from email.parser import FeedParser")
     self.assertEqual([(2, 4), (3, 0)], visitor.minimum_versions())

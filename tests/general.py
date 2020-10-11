@@ -17,16 +17,6 @@ def touch(fld, name):
   return filename
 
 class VerminGeneralTests(VerminTest):
-  def __init__(self, methodName):
-    super(VerminGeneralTests, self).__init__(methodName)
-    self.config = Config.get()
-
-  def setUp(self):
-    self.config.reset()
-
-  def tearDown(self):
-    self.config.reset()
-
   def test_format(self):
     # Empty field name requires 2.7+
     visitor = visit("print('{}'.format(42))")

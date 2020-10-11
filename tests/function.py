@@ -1,18 +1,8 @@
-from vermin import Config, detect
+from vermin import detect
 
 from .testutils import VerminTest
 
 class VerminFunctionMemberTests(VerminTest):
-  def __init__(self, methodName):
-    super(VerminFunctionMemberTests, self).__init__(methodName)
-    self.config = Config.get()
-
-  def setUp(self):
-    self.config.reset()
-
-  def tearDown(self):
-    self.config.reset()
-
   def test_exc_clear_of_sys(self):
     self.assertOnlyIn((2, 3), detect("from sys import exc_clear"))
 

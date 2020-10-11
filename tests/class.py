@@ -1,18 +1,8 @@
-from vermin import Config, detect
+from vermin import detect
 
 from .testutils import VerminTest
 
 class VerminClassMemberTests(VerminTest):
-  def __init__(self, methodName):
-    super(VerminClassMemberTests, self).__init__(methodName)
-    self.config = Config.get()
-
-  def setUp(self):
-    self.config.reset()
-
-  def tearDown(self):
-    self.config.reset()
-
   def test_ConfigParser_of_ConfigParser(self):
     self.assertOnlyIn((2, 3), detect("from ConfigParser import ConfigParser"))
 

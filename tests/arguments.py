@@ -1,7 +1,7 @@
 import os
 from multiprocessing import cpu_count
 
-from vermin import Arguments, Config, Backports, Features
+from vermin import Arguments, Backports, Features
 
 from .testutils import VerminTest, ScopedTemporaryFile
 
@@ -9,16 +9,6 @@ def parse_args(args):
   return Arguments(args).parse()
 
 class VerminArgumentsTests(VerminTest):
-  def __init__(self, methodName):
-    super(VerminArgumentsTests, self).__init__(methodName)
-    self.config = Config.get()
-
-  def setUp(self):
-    self.config.reset()
-
-  def tearDown(self):
-    self.config.reset()
-
   def test_not_enough_args(self):
     self.assertContainsDict({"code": 1, "usage": True, "full": False}, parse_args([]))
 

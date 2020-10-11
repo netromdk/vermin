@@ -4,16 +4,6 @@ from vermin import BUILTIN_GENERIC_ANNOTATION_TYPES, DICT_UNION_SUPPORTED_TYPES,
 from .testutils import VerminTest, current_version, current_major_version
 
 class VerminLanguageTests(VerminTest):
-  def __init__(self, methodName):
-    super(VerminLanguageTests, self).__init__(methodName)
-    self.config = Config.get()
-
-  def setUp(self):
-    self.config.reset()
-
-  def tearDown(self):
-    self.config.reset()
-
   def test_printv2(self):
     # Before 3.4 it just said "invalid syntax" and didn't hint at missing parentheses.
     if current_version() >= 3.4:

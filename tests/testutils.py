@@ -3,6 +3,8 @@ import sys
 import os
 from tempfile import NamedTemporaryFile
 
+from vermin import Config
+
 def current_major_version():
   return float(sys.version_info.major)
 
@@ -15,6 +17,11 @@ class VerminTest(unittest.TestCase):
 
     # Allow test diffs of any size (instead of 640 char max).
     self.maxDiff = None
+
+    self.config = Config.get()
+
+  def setUp(self):
+    self.config.reset()
 
   """General test case class for all Vermin tests."""
   def assertOnlyIn(self, values, data):

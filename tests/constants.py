@@ -1,18 +1,8 @@
-from vermin import Config, detect
+from vermin import detect
 
 from .testutils import VerminTest
 
 class VerminConstantMemberTests(VerminTest):
-  def __init__(self, methodName):
-    super(VerminConstantMemberTests, self).__init__(methodName)
-    self.config = Config.get()
-
-  def setUp(self):
-    self.config.reset()
-
-  def tearDown(self):
-    self.config.reset()
-
   def test___suppress_context___of_BaseException(self):
     self.assertOnlyIn((3, 3), detect("BaseException.__suppress_context__"))
 

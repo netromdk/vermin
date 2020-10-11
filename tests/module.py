@@ -1,18 +1,8 @@
-from vermin import Config, detect
+from vermin import detect
 
 from .testutils import VerminTest
 
 class VerminModuleTests(VerminTest):
-  def __init__(self, methodName):
-    super(VerminModuleTests, self).__init__(methodName)
-    self.config = Config.get()
-
-  def setUp(self):
-    self.config.reset()
-
-  def tearDown(self):
-    self.config.reset()
-
   def test_argparse(self):
     self.assertOnlyIn(((2, 7), (3, 2)), detect("import argparse"))
     self.assertOnlyIn(((2, 7), (3, 2)), detect("from argparse import *"))

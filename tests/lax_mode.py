@@ -1,18 +1,10 @@
-from vermin import Config, visit
+from vermin import visit
 
 from .testutils import VerminTest, current_version
 
 class VerminLaxModeTests(VerminTest):
-  def __init__(self, methodName):
-    super(VerminLaxModeTests, self).__init__(methodName)
-    self.config = Config.get()
-
   def setUp(self):
-    self.config.reset()
     self.config.set_lax_mode(True)
-
-  def tearDown(self):
-    self.config.reset()
 
   def test_if(self):
     visitor = visit("if False:\n\timport ssl")
