@@ -1,11 +1,9 @@
-from .config import Config
-
-def bp(name):
+def bp(name, config):
   """Checking if backport is used."""
-  return name in Config.get().backports()
+  return name in config.backports()
 
 # Module requirements: name -> min version per major or None if N.A.
-def MOD_REQS():
+def MOD_REQS(config):
   return {
     "BaseHTTPServer": ((2, 0), None),
     "ConfigParser": ((2, 0), None),
@@ -22,7 +20,7 @@ def MOD_REQS():
     "_markupbase": (None, (3, 0)),
     "_winreg": ((2, 0), None),
     "abc": ((2, 6), (3, 0)),
-    "argparse": ((2, 7), (3, 2)) if not bp("argparse") else ((2, 3), (3, 1)),
+    "argparse": ((2, 7), (3, 2)) if not bp("argparse", config) else ((2, 3), (3, 1)),
     "ast": ((2, 6), (3, 0)),
     "asyncio": (None, (3, 4)),
     "bisect": ((2, 1), (3, 0)),
@@ -33,7 +31,7 @@ def MOD_REQS():
     "collections": ((2, 4), (3, 0)),
     "collections.abc": (None, (3, 3)),
     "concurrent.futures": (None, (3, 2)),
-    "configparser": (None if not bp("configparser") else (2, 6), (3, 0)),
+    "configparser": (None if not bp("configparser", config) else (2, 6), (3, 0)),
     "contextlib": ((2, 5), (3, 0)),
     "contextvars": (None, (3, 7)),
     "cookielib": ((2, 4), None),
@@ -64,8 +62,8 @@ def MOD_REQS():
     "encodings.idna": ((2, 3), (3, 0)),
     "encodings.utf_8_sig": ((2, 5), (3, 0)),
     "ensurepip": ((2, 7), (3, 4)),
-    "enum": (None, (3, 4)) if not bp("enum") else ((2, 4), (3, 3)),
-    "faulthandler": (None, (3, 3)) if not bp("faulthandler") else ((2, 6), (3, 0)),
+    "enum": (None, (3, 4)) if not bp("enum", config) else ((2, 4), (3, 3)),
+    "faulthandler": (None, (3, 3)) if not bp("faulthandler", config) else ((2, 6), (3, 0)),
     "fractions": ((2, 6), (3, 0)),
     "functools": ((2, 5), (3, 0)),
     "future_builtins": ((2, 6), None),
@@ -126,7 +124,7 @@ def MOD_REQS():
     "timeit": ((2, 3), (3, 0)),
     "tkinter": (None, (3, 0)),
     "tracemalloc": (None, (3, 4)),
-    "typing": (None, (3, 5)) if not bp("typing") else ((2, 7), (3, 4)),
+    "typing": (None, (3, 5)) if not bp("typing", config) else ((2, 7), (3, 4)),
     "unittest": ((2, 1), (3, 0)),
     "unittest.mock": (None, (3, 3)),
     "urllib2": ((2, 0), None),
@@ -149,7 +147,7 @@ def MOD_REQS():
    }
 
 # Module member requirements: member -> (module, requirements)
-def MOD_MEM_REQS():
+def MOD_MEM_REQS(config):
   return {
     # Builtin classes
     "bool": ((2, 2), (3, 0)),
@@ -310,18 +308,18 @@ def MOD_MEM_REQS():
     "typing.AsyncIterator": (None, (3, 5)),
     "typing.Awaitable": (None, (3, 5)),
     "typing.ChainMap": (None, (3, 6)),
-    "typing.ClassVar": (None if not bp("typing") else (2, 7), (3, 5)),
+    "typing.ClassVar": (None if not bp("typing", config) else (2, 7), (3, 5)),
     "typing.Collection": (None, (3, 6)),
-    "typing.ContextManager": (None if not bp("typing") else (2, 7), (3, 5)),
-    "typing.Coroutine": (None if not bp("typing") else (2, 7), (3, 5)),
-    "typing.Counter": (None if not bp("typing") else (2, 7), (3, 5)),
-    "typing.DefaultDict": (None if not bp("typing") else (2, 7), (3, 5)),
-    "typing.Deque": (None if not bp("typing") else (2, 7), (3, 5)),
-    "typing.OrderedDict": (None if not bp("typing") else (2, 7), (3, 7)),
+    "typing.ContextManager": (None if not bp("typing", config) else (2, 7), (3, 5)),
+    "typing.Coroutine": (None if not bp("typing", config) else (2, 7), (3, 5)),
+    "typing.Counter": (None if not bp("typing", config) else (2, 7), (3, 5)),
+    "typing.DefaultDict": (None if not bp("typing", config) else (2, 7), (3, 5)),
+    "typing.Deque": (None if not bp("typing", config) else (2, 7), (3, 5)),
+    "typing.OrderedDict": (None if not bp("typing", config) else (2, 7), (3, 7)),
     "typing.Protocol": (None, (3, 8)),
     "typing.SupportsIndex": (None, (3, 8)),
-    "typing.Text": (None if not bp("typing") else (2, 7), (3, 5)),
-    "typing.Type": (None if not bp("typing") else (2, 7), (3, 5)),
+    "typing.Text": (None if not bp("typing", config) else (2, 7), (3, 5)),
+    "typing.Type": (None if not bp("typing", config) else (2, 7), (3, 5)),
     "typing.TypedDict": (None, (3, 8)),
     "unittest.IsolatedAsyncioTestCase": (None, (3, 8)),
     "unittest.TextTestResult": ((2, 7), (3, 2)),
@@ -1463,7 +1461,7 @@ def MOD_MEM_REQS():
     "types.new_class": (None, (3, 3)),
     "types.prepare_class": (None, (3, 3)),
     "types.resolve_bases": (None, (3, 7)),
-    "typing.NewType": (None if not bp("typing") else (2, 7), (3, 5)),
+    "typing.NewType": (None if not bp("typing", config) else (2, 7), (3, 5)),
     "typing.get_args": (None, (3, 8)),
     "typing.get_origin": (None, (3, 8)),
     "unicodedata.east_asian_width": ((2, 4), (3, 0)),
@@ -2329,7 +2327,7 @@ def MOD_MEM_REQS():
     "typing.Final": (None, (3, 8)),
     "typing.Literal": (None, (3, 8)),
     "typing.NoReturn": (None, (3, 5)),
-    "typing.TYPE_CHECKING": (None if not bp("typing") else (2, 7), (3, 5)),
+    "typing.TYPE_CHECKING": (None if not bp("typing", config) else (2, 7), (3, 5)),
     "unicodedata.ucd_3_2_0": ((2, 3), (3, 0)),
     "unicodedata.unidata_version": ((2, 3), (3, 0)),
     "unittest.TestCase.longMessage": ((2, 7), (3, 1)),

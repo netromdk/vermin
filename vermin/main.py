@@ -9,9 +9,9 @@ from .arguments import Arguments
 from .utility import version_strings, dotted_name
 
 def main():
-  config = Config.get()
+  config = Config()
 
-  args = Arguments(sys.argv[1:]).parse()
+  args = Arguments(sys.argv[1:]).parse(config)
   if "usage" in args:
     Arguments.print_usage(args["full"])
     sys.exit(args["code"])
@@ -26,7 +26,7 @@ def main():
   paths = args["paths"]
 
   # Detect paths, remove duplicates, and sort for deterministic results.
-  vprint("Detecting python files..")
+  vprint("Detecting python files..", config)
   paths = [abspath(p) for p in paths]
   paths = list(set(detect_paths(paths, hidden=hidden, processes=processes)))
   paths.sort()
@@ -39,17 +39,18 @@ def main():
   msg = "Analyzing"
   if amount > 1:
     msg += " {} files".format(amount)
-  vprint("{} using {} processes..".format(msg, processes))
+  vprint("{} using {} processes..".format(msg, processes), config)
 
   try:
     processor = Processor()
-    (mins, incomp, unique_versions, backports) = processor.process(paths, processes)
+    (mins, incomp, unique_versions, backports) = processor.process(paths, config, processes)
   except KeyboardInterrupt:  # pragma: no cover
     print("Aborting..")
     sys.exit(1)
 
   if incomp and not config.ignore_incomp():  # pragma: no cover
-    nprint("Note: Some files had incompatible versions so the results might not be correct!")
+    nprint("Note: Some files had incompatible versions so the results might not be correct!",
+           config)
 
   incomps = []
   reqs = []
@@ -64,13 +65,14 @@ def main():
     print("No known reason found that it will not work with 2+ and 3+.")
     print("Please report if it does not: https://github.com/netromdk/vermin/issues/")
     if config.lax_mode() and not no_tips:
-      nprint("Tip: Try without using lax mode for more thorough analysis.")
+      nprint("Tip: Try without using lax mode for more thorough analysis.", config)
 
   unique_bps = sorted(backports - config.backports())
   if len(unique_bps) > 0 and not no_tips:  # pragma: no cover
-    nprint("Tip: You're using potentially backported modules: {}".format(", ".join(unique_bps)))
+    nprint("Tip: You're using potentially backported modules: {}".format(", ".join(unique_bps)),
+           config)
     nprint("If so, try using the following for better results: {}\n".
-           format("".join([" --backport {}".format(n) for n in unique_bps]).strip()))
+           format("".join([" --backport {}".format(n) for n in unique_bps]).strip()), config)
 
   if len(reqs) > 0:
     print("Minimum required versions: {}".format(version_strings(reqs)))
@@ -94,7 +96,7 @@ def main():
       print("Target versions not met:   {}".format(version_strings(vers)))
       if len(targets) < len(reqs):
         nprint("Note: Number of specified targets ({}) doesn't match number of detected minimum "
-               "versions ({}).".format(len(targets), len(reqs)))
+               "versions ({}).".format(len(targets), len(reqs)), config)
       sys.exit(1)
 
   sys.exit(0)

@@ -8,7 +8,7 @@ from vermin import combine_versions, InvalidVersionException, detect_paths,\
   detect_paths_incremental, probably_python_file, Processor, process_individual, reverse_range,\
   dotted_name, remove_whitespace, main, sort_line_column
 
-from .testutils import VerminTest, current_version, ScopedTemporaryFile
+from .testutils import VerminTest, current_version, ScopedTemporaryFile, detect, visit
 
 def touch(fld, name):
   filename = join(fld, name)
@@ -17,6 +17,18 @@ def touch(fld, name):
   return filename
 
 class VerminGeneralTests(VerminTest):
+  def test_detect_without_config(self):
+    self.config.add_exclusion("abc")
+    self.config.add_exclusion("abc.ABC")
+    self.assertNotEqual(self.detect("from abc import ABC"),
+                        detect("from abc import ABC", config=None))
+
+  def test_visit_without_config(self):
+    self.config.add_exclusion("abc")
+    self.config.add_exclusion("abc.ABC")
+    self.assertNotEqual(self.visit("from abc import ABC").minimum_versions(),
+                        visit("from abc import ABC", config=None).minimum_versions())
+
   def test_format(self):
     # Empty field name requires 2.7+
     visitor = self.visit("print('{}'.format(42))")
@@ -226,31 +238,32 @@ class VerminGeneralTests(VerminTest):
   def test_detect_vermin_min_versions(self):
     paths = detect_paths([abspath("vermin")])
     processor = Processor()
-    (mins, incomp, unique_versions, backports) = processor.process(paths)
+    (mins, incomp, unique_versions, backports) = processor.process(paths, self.config)
     self.assertOnlyIn(((2, 7), (3, 0)), mins)
     self.assertEmpty(backports)
 
   def test_combine_versions(self):
     with self.assertRaises(AssertionError):
-      combine_versions([None], [None, None])
-    self.assertEqual([(2, 0), (3, 1)], combine_versions([(2, 0), (3, 0)], [(2, 0), (3, 1)]))
-    self.assertEqual([(2, 0), (3, 1)], combine_versions([2, (3, 0)], [(2, 0), 3.1]))
-    self.assertEqual([(2, 0), (3, 1)], combine_versions([(2, 0), 3], [2, 3.1]))
-    self.assertEqual([(2, 0), (3, 1)], combine_versions([2.0, 3.0], [2.0, 3.1]))
-    self.assertEqual([(2, 1), (3, 0)], combine_versions([2.1, 3.0], [2.0, 3.0]))
-    self.assertEqual([None, (3, 0)], combine_versions([2.0, 3.0], [None, 3.0]))
-    self.assertEqual([(2, 0), None], combine_versions([2.0, None], [2.0, 3.0]))
-    self.assertEqual([None, None], combine_versions([2.0, 3.0], [None, None]))
-    self.assertEqual([None, None], combine_versions([None, None], [2.0, 3.0]))
+      combine_versions([None], [None, None], self.config)
+    self.assertEqual([(2, 0), (3, 1)],
+                     combine_versions([(2, 0), (3, 0)], [(2, 0), (3, 1)], self.config))
+    self.assertEqual([(2, 0), (3, 1)], combine_versions([2, (3, 0)], [(2, 0), 3.1], self.config))
+    self.assertEqual([(2, 0), (3, 1)], combine_versions([(2, 0), 3], [2, 3.1], self.config))
+    self.assertEqual([(2, 0), (3, 1)], combine_versions([2.0, 3.0], [2.0, 3.1], self.config))
+    self.assertEqual([(2, 1), (3, 0)], combine_versions([2.1, 3.0], [2.0, 3.0], self.config))
+    self.assertEqual([None, (3, 0)], combine_versions([2.0, 3.0], [None, 3.0], self.config))
+    self.assertEqual([(2, 0), None], combine_versions([2.0, None], [2.0, 3.0], self.config))
+    self.assertEqual([None, None], combine_versions([2.0, 3.0], [None, None], self.config))
+    self.assertEqual([None, None], combine_versions([None, None], [2.0, 3.0], self.config))
     with self.assertRaises(InvalidVersionException):
-      combine_versions([2.0, None], [None, 3.0])
+      combine_versions([2.0, None], [None, 3.0], self.config)
     with self.assertRaises(InvalidVersionException):
-      combine_versions([None, 3.0], [2.0, None])
-    self.assertEqual([(0, 0), (3, 0)], combine_versions([0, 3.0], [0, 3.0]))
-    self.assertEqual([(2, 0), (3, 0)], combine_versions([0, 3.0], [2.0, 3.0]))
-    self.assertEqual([(2, 0), (3, 0)], combine_versions([2.0, 3.0], [0, 3.0]))
-    self.assertEqual([(2, 0), (3, 0)], combine_versions([2.0, 0], [2.0, 3.0]))
-    self.assertEqual([(2, 0), (3, 0)], combine_versions([2.0, 3.0], [2.0, 0]))
+      combine_versions([None, 3.0], [2.0, None], self.config)
+    self.assertEqual([(0, 0), (3, 0)], combine_versions([0, 3.0], [0, 3.0], self.config))
+    self.assertEqual([(2, 0), (3, 0)], combine_versions([0, 3.0], [2.0, 3.0], self.config))
+    self.assertEqual([(2, 0), (3, 0)], combine_versions([2.0, 3.0], [0, 3.0], self.config))
+    self.assertEqual([(2, 0), (3, 0)], combine_versions([2.0, 0], [2.0, 3.0], self.config))
+    self.assertEqual([(2, 0), (3, 0)], combine_versions([2.0, 3.0], [2.0, 0], self.config))
 
   def test_detect_min_version(self):
     self.assertEqual([(2, 6), (3, 0)], self.detect("import abc"))
@@ -534,7 +547,7 @@ urlopen(context=None)
     fp.close()
     paths = [fp.path()]
     processor = Processor()
-    (mins, incomp, unique_versions, backports) = processor.process(paths)
+    (mins, incomp, unique_versions, backports) = processor.process(paths, self.config)
     self.assertEqual(mins, [(0, 0), (0, 0)])
     self.assertFalse(incomp)
     self.assertEmpty(unique_versions)
@@ -547,7 +560,7 @@ urlopen(context=None)
     fp.close()
     paths = [fp.path()]
     processor = Processor()
-    (mins, incomp, unique_versions, backports) = processor.process(paths)
+    (mins, incomp, unique_versions, backports) = processor.process(paths, self.config)
     self.assertEqual(mins, [(0, 0), (0, 0)])
     self.assertTrue(incomp)
     self.assertEmpty(unique_versions)
@@ -566,7 +579,7 @@ urlopen(context=None)
       paths.append(fp.name)
 
     processor = Processor()
-    (mins, incomp, unique_versions, backports) = processor.process(paths)
+    (mins, incomp, unique_versions, backports) = processor.process(paths, self.config)
     self.assertEqual(mins, [(2, 0), None])  # Because the Queue file is analyzed first.
     self.assertTrue(incomp)
     self.assertEqual(unique_versions, [(2, 0), (3, 0)])
@@ -593,7 +606,7 @@ print('hello')     # print(expr) requires 2+ or 3+
     fp.close()
     paths = [fp.path()]
     processor = Processor()
-    (mins, incomp, unique_versions, backports) = processor.process(paths)
+    (mins, incomp, unique_versions, backports) = processor.process(paths, self.config)
 
     if current_version() >= 3.0:
       self.assertEqual(mins, [(2, 0), (3, 0)])
@@ -616,7 +629,7 @@ print('hello')     # print(expr) requires 2+ or 3+
     self.config.add_backport("argparse")  # -> 2.3, 3.1
     paths = [fp.path()]
     processor = Processor()
-    (mins, incomp, unique_versions, backports) = processor.process(paths)
+    (mins, incomp, unique_versions, backports) = processor.process(paths, self.config)
     self.assertEqual(mins, [(2, 3), (3, 1)])
     self.assertFalse(incomp)
     self.assertEqual(unique_versions, [(2, 3), (3, 1)])

@@ -2,8 +2,6 @@ import re
 from math import floor
 from functools import reduce
 
-from .config import Config
-
 def reverse_range(object):
   """Yields reverse range of object: list(reverse_range([1, 2, 3])) -> [2, 1, 0]."""
   return range(len(object) - 1, -1, -1)
@@ -55,10 +53,10 @@ def __handle_incomp_versions(list1, list2, version_refs=None):
   ref1, ref2 = get_ref(t1), get_ref(t2)
   raise InvalidVersionException("{} (requires {}) vs. {} (requires {})".format(ref1, v1, ref2, v2))
 
-def combine_versions(list1, list2, version_refs=None):
+def combine_versions(list1, list2, config, version_refs=None):
   assert len(list1) == len(list2)
   assert len(list1) == 2
-  if not Config.get().ignore_incomp() and\
+  if not config.ignore_incomp() and\
     ((list1[0] is None and list1[1] is not None and list2[0] is not None and list2[1] is None) or
      (list1[0] is not None and list1[1] is None and list2[0] is None and list2[1] is not None)):
     __handle_incomp_versions(list1, list2, version_refs)

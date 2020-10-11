@@ -3,7 +3,6 @@ import re
 from multiprocessing import cpu_count
 
 from .constants import VERSION
-from .config import Config
 from .backports import Backports
 from .features import Features
 
@@ -99,11 +98,12 @@ class Arguments:
             "        Some features are disabled by default due to being unstable:\n{}".
             format(Features.str(10)))
 
-  def parse(self):
+  def parse(self, config):
+    assert(config is not None)
+
     if len(self.__args) == 0:
       return {"code": 1, "usage": True, "full": False}
 
-    config = Config.get()
     path_pos = 0
     processes = cpu_count()
     targets = []

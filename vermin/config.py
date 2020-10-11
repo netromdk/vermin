@@ -2,22 +2,8 @@ from .backports import Backports
 from .features import Features
 
 class Config:
-  __instance = None
-
   def __init__(self):
-    if not Config.__instance:
-      self.reset()
-      Config.__instance = self
-
-  @staticmethod
-  def get():
-    if not Config.__instance:
-      Config()
-    return Config.__instance
-
-  @staticmethod
-  def set(config):
-    Config.__instance = config  # pragma: no cover
+    self.reset()
 
   def reset(self):
     self.__quiet = False

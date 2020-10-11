@@ -5,6 +5,7 @@ from multiprocessing import Pool, cpu_count
 
 from .parser import Parser
 from .source_visitor import SourceVisitor
+from .config import Config
 
 NOT_PY_CODE_EXTS = {
   "3dm",
@@ -504,26 +505,30 @@ def detect_paths(paths, hidden=False, processes=cpu_count()):
     pool.close()
   return accept_paths
 
-def detect(source, path=None):
+def detect(source, path=None, config=None):
   """Analyze and detect minimum versions from source code. If path is specified, it will occur in
-errors instead of the default '<unknown>'.
+errors instead of the default '<unknown>'. A default config will be used if it isn't specified.
   """
+  if config is None:
+    config = Config()
   parser = Parser(source, path)
-  (node, mins, novermin) = parser.detect()
+  (node, mins, novermin) = parser.detect(config)
   if node is None:
     return mins
-  visitor = SourceVisitor()
+  visitor = SourceVisitor(config=config)
   visitor.set_no_lines(novermin)
   visitor.tour(node)
   return visitor.minimum_versions()
 
-def visit(source):
+def visit(source, config=None):
   """Analyze source code and yield source code visitor instance which can be queried for further
-information.
+information. A default config will be used if it isn't specified.
   """
+  if config is None:
+    config = Config()
   parser = Parser(source)
   (node, novermin) = parser.parse()
-  visitor = SourceVisitor()
+  visitor = SourceVisitor(config=config)
   visitor.set_no_lines(novermin)
   visitor.tour(node)
   return visitor

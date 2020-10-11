@@ -57,8 +57,9 @@ class Parser:
       prev_newline = (typ == NEWLINE)
     return novermin
 
-  def detect(self):
+  def detect(self, config):
     """Parse python source into an AST and yield minimum versions."""
+    assert(config is not None)
     try:
       (node, novermin) = self.parse()
       return (node, [], novermin)
@@ -68,9 +69,9 @@ class Parser:
       # NOTE: This is only triggered when running a python 3 on v2 code!
       if err.msg.lower().find("missing parentheses in call to 'print'") != -1:
         vvprint("{}:{}:{}: info: `{}` requires 2.0".
-                format(err.filename, err.lineno, err.offset, text))
+                format(err.filename, err.lineno, err.offset, text), config)
         return (None, [(2, 0), None], set())
       else:
         vvprint("{}:{}:{}: error: {}: {}".
-                format(err.filename, err.lineno, err.offset, err.msg, text))
+                format(err.filename, err.lineno, err.offset, err.msg, text), config)
     return (None, [(0, 0), (0, 0)], set())

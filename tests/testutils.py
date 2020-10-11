@@ -18,16 +18,16 @@ class VerminTest(unittest.TestCase):
     # Allow test diffs of any size (instead of 640 char max).
     self.maxDiff = None
 
-    self.config = Config.get()
+    self.config = Config()
 
   def setUp(self):
     self.config.reset()
 
   def detect(self, source):
-    return detect(source)
+    return detect(source, config=self.config)
 
   def visit(self, source):
-    return visit(source)
+    return visit(source, self.config)
 
   """General test case class for all Vermin tests."""
   def assertOnlyIn(self, values, data):

@@ -1,7 +1,6 @@
 import multiprocessing as mp
 
 from .printing import nprint, vprint
-from .config import Config
 from .utility import combine_versions, InvalidVersionException, version_strings, sort_line_column
 from .parser import Parser
 from .source_visitor import SourceVisitor
@@ -28,24 +27,12 @@ class ProcessResult:
 #   Can't pickle <type 'instancemethod'>: attribute lookup __builtin__.instancemethod failed
 def process_individual(args):
   (path, config) = args
-
-  # When process_individual() is called via spawn(), it doensn't inherit as much as when fork() is
-  # used. That means that the static config instance is destroyed, so we set the instance to the
-  # config copied to this function.
-  #
-  # https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods:
-  # "The parent process starts a fresh python interpreter process. The child process will only
-  # inherit those resources necessary to run the process objects run() method. In particular,
-  # unnecessary file descriptors and handles from the parent process will not be inherited."
-  if hasattr(mp, "get_start_method") and mp.get_start_method() == "spawn":  # novm
-    Config.set(config)  # pragma: no cover
-
   res = ProcessResult(path)
 
   with open(path, mode="rb") as fp:
     try:
       parser = Parser(fp.read(), path)
-      (res.node, res.mins, res.novermin) = parser.detect()
+      (res.node, res.mins, res.novermin) = parser.detect(config)
     except KeyboardInterrupt:  # pragma: no cover
       return res
 
@@ -85,17 +72,18 @@ def process_individual(args):
   return res
 
 class Processor:
-  def process(self, paths, processes=mp.cpu_count()):
+  def process(self, paths, config, processes=mp.cpu_count()):
+    assert(config is not None)
+
     pool = mp.Pool(processes=processes) if processes > 1 else None
     mins = [(0, 0), (0, 0)]
     incomp = False
-    config = Config.get()
 
     def print_incomp(path, text):
       if not config.ignore_incomp():
         if len(text) > 0:
           text = "\n  " + text
-        nprint("File with incompatible versions: {}{}".format(path, text))
+        nprint("File with incompatible versions: {}{}".format(path, text), config)
 
     # Automatically don't use concurrency when only one process is specified to be used.
     def act():
@@ -138,9 +126,9 @@ class Processor:
         if not subtext.endswith("\n"):
           subtext += "\n"  # pragma: no cover
 
-      vprint("{:<12} {}{}".format(version_strings(proc_res.mins), proc_res.path, subtext))
+      vprint("{:<12} {}{}".format(version_strings(proc_res.mins), proc_res.path, subtext), config)
       try:
-        mins = combine_versions(mins, proc_res.mins)
+        mins = combine_versions(mins, proc_res.mins, config)
       except InvalidVersionException:
         incomp = True
         print_incomp(proc_res.path, proc_res.text)
