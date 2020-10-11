@@ -8,7 +8,7 @@ from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, BYTES_REQ
   CODECS_ENCODINGS_INDICES, BUILTIN_GENERIC_ANNOTATION_TYPES, DICT_UNION_SUPPORTED_TYPES,\
   DICT_UNION_MERGE_SUPPORTED_TYPES
 from .utility import dotted_name, reverse_range, combine_versions, version_strings,\
-  remove_whitespace
+  remove_whitespace, sort_line_column
 
 STRFTIME_DIRECTIVE_REGEX = re.compile(r"%(?:[-\.\d#\s\+])*(\w)")
 BYTES_DIRECTIVE_REGEX = STRFTIME_DIRECTIVE_REGEX
@@ -20,7 +20,6 @@ class SourceVisitor(ast.NodeVisitor):
     assert(config is not None)
     self.__config = config
 
-    self.__print_visits = self.__config.print_visits()
     self.__modules = []
     self.__members = []
     self.__printv2 = False
@@ -110,7 +109,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__fstring_self_doc_enabled = self.__config.has_feature("fstring-self-doc")
 
     # Used for incompatible versions texts.
-    self.__entity_versions = {}
+    self.__info_versions = {}
 
     self.__mod_rules = MOD_REQS(self.__config)
     self.__mod_mem_reqs_rules = MOD_MEM_REQS(self.__config)
@@ -244,16 +243,16 @@ class SourceVisitor(ast.NodeVisitor):
   def relaxed_decorators(self):
     return self.__relaxed_decorators
 
-  def __add_versions_entity(self, mins, versions, entity=None, vvprint=False):
-    if entity is not None:
-      if versions in self.__entity_versions:
-        self.__entity_versions[versions].append(entity)
+  def __add_versions_entity(self, mins, versions, info=None, vvprint=False, entity=None):
+    if info is not None:
+      if versions in self.__info_versions:
+        self.__info_versions[versions].append(info)
       else:
-        self.__entity_versions[versions] = [entity]
+        self.__info_versions[versions] = [info]
       if vvprint:
-        # TODO: if entity string ends with "s" maybe dno't put "s" in "requires"?
-        self.__vvprint("{} requires {}".format(entity, version_strings(versions)))
-    return combine_versions(mins, versions, self.__config, self.__entity_versions)
+        # TODO: if info string ends with "s" maybe dno't put "s" in "requires"?
+        self.__vvprint("{} requires {}".format(info, version_strings(versions)), entity)
+    return combine_versions(mins, versions, self.__config, self.__info_versions)
 
   def minimum_versions(self):
     mins = [(0, 0), (0, 0)]
@@ -379,55 +378,67 @@ class SourceVisitor(ast.NodeVisitor):
       if directive in STRFTIME_REQS:
         vers = STRFTIME_REQS[directive]
         mins = self.__add_versions_entity(mins, vers, "strftime directive '{}'".format(directive),
-                                          vvprint=True)
+                                          vvprint=True, entity=directive)
 
     for directive in self.bytes_directives():
       if directive in BYTES_REQS:
         vers = BYTES_REQS[directive]
         mins = self.__add_versions_entity(mins, vers, "bytes directive '{}'".format(directive),
-                                          vvprint=True)
+                                          vvprint=True, entity=directive)
 
     for typecode in self.array_typecodes():
       if typecode in ARRAY_TYPECODE_REQS:
         vers = ARRAY_TYPECODE_REQS[typecode]
         mins = self.__add_versions_entity(mins, vers, "array typecode '{}'".format(typecode),
-                                          vvprint=True)
+                                          vvprint=True, entity=typecode)
 
     for name in self.codecs_error_handlers():
       if name in CODECS_ERROR_HANDLERS:
         vers = CODECS_ERROR_HANDLERS[name]
         mins = self.__add_versions_entity(mins, vers, "codecs error handler name '{}'".format(name),
-                                          vvprint=True)
+                                          vvprint=True, entity=name)
 
     for encoding in self.codecs_encodings():
       for encs in CODECS_ENCODINGS:
         if encoding.lower() in encs:
           vers = CODECS_ENCODINGS[encs]
           mins = self.__add_versions_entity(mins, vers, "codecs encoding '{}'".format(encoding),
-                                            vvprint=True)
+                                            vvprint=True, entity=encoding)
 
     mods = self.modules()
     for mod in mods:
       if mod in self.__mod_rules:
         vers = self.__mod_rules[mod]
-        mins = self.__add_versions_entity(mins, vers, "'{}' module".format(mod), vvprint=True)
+        mins = self.__add_versions_entity(mins, vers, "'{}' module".format(mod), vvprint=True,
+                                          entity=mod)
 
     mems = self.members()
     for mem in mems:
       if mem in self.__mod_mem_reqs_rules:
         vers = self.__mod_mem_reqs_rules[mem]
-        mins = self.__add_versions_entity(mins, vers, "'{}' member".format(mem), vvprint=True)
+        mins = self.__add_versions_entity(mins, vers, "'{}' member".format(mem), vvprint=True,
+                                          entity=mem)
 
     kwargs = self.kwargs()
     for fn_kw in kwargs:
       if fn_kw in KWARGS_REQS:
         vers = KWARGS_REQS[fn_kw]
         mins = self.__add_versions_entity(mins, vers, "'{}({})'".format(fn_kw[0], fn_kw[1]),
-                                          vvprint=True)
+                                          vvprint=True, entity=fn_kw)
 
     return mins
 
   def output_text(self):
+    # Throw away dups.
+    self.__output_text = list(set(self.__output_text))
+
+    # Sort for line and column numbers, if present and when printing visits (dumps) isn't
+    # enabled. Otherwise, sort lexicographically.
+    if self.__config.verbose() > 2 and not self.__config.print_visits():
+      self.__output_text.sort(key=sort_line_column)  # pragma: no cover
+    else:
+      self.__output_text.sort()  # pragma: no cover
+
     text = "\n".join(self.__output_text)
     if len(text) > 0:
       text += "\n"  # pragma: no cover
@@ -760,7 +771,7 @@ class SourceVisitor(ast.NodeVisitor):
     if hasattr(node, "lineno"):
       self.__line = node.lineno
     self.__depth += 1
-    if self.__print_visits:
+    if self.__config.print_visits():
       self.__nprint("| " * self.__depth + ast.dump(node))  # pragma: no cover
     super(SourceVisitor, self).generic_visit(node)
     self.__depth -= 1

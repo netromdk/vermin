@@ -37,6 +37,23 @@ class VerminGeneralTests(VerminTest):
     visitor = self.visit("from abc import ABC")
     self.assertNotEmpty(visitor.output_text())
 
+  def test_visit_output_text_has_correct_lines(self):
+    self.config.set_verbose(3)  # Line numbers start at verbosity 3.
+    visitor = self.visit("""a = 1
+import abc
+b = 2
+if 1:
+  import zoneinfo
+  import argparse
+c = 3
+""")
+
+    # Output text is sorted for line numbers/columns when verbosity level is 3+.
+    self.assertEqual(visitor.output_text(), """L2 C7: 'abc' module requires 2.6, 3.0
+L5 C9: 'zoneinfo' module requires !2, 3.9
+L6 C9: 'argparse' module requires 2.7, 3.2
+""")
+
   def test_format(self):
     # Empty field name requires 2.7+
     visitor = self.visit("print('{}'.format(42))")
