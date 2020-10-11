@@ -1134,6 +1134,12 @@ collections.abc.Reversible[int]
       self.assertTrue(visitor.relaxed_decorators())
       self.assertOnlyIn((3, 9), visitor.minimum_versions())
 
+      visitor = self.visit("@[bax][0]  # novm\ndef foo(): pass")
+      self.assertFalse(visitor.relaxed_decorators())
+
+      visitor = self.visit("# novm\n@[bax][0]\ndef foo(): pass")
+      self.assertFalse(visitor.relaxed_decorators())
+
       visitor = self.visit("@x[0]()\ndef foo(): pass")
       self.assertTrue(visitor.relaxed_decorators())
       self.assertOnlyIn((3, 9), visitor.minimum_versions())
