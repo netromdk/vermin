@@ -29,6 +29,14 @@ class VerminGeneralTests(VerminTest):
     self.assertNotEqual(self.visit("from abc import ABC").minimum_versions(),
                         visit("from abc import ABC", config=None).minimum_versions())
 
+  def test_visit_has_output_text(self):
+    # Use level 2 since that triggers output text in SourceVisitor.
+    self.config.set_verbose(2)
+
+    # Earlier, it wouldn't have output text defined because `minimum_versions()` wasn't called.
+    visitor = self.visit("from abc import ABC")
+    self.assertNotEmpty(visitor.output_text())
+
   def test_format(self):
     # Empty field name requires 2.7+
     visitor = self.visit("print('{}'.format(42))")

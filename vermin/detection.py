@@ -505,30 +505,33 @@ def detect_paths(paths, hidden=False, processes=cpu_count()):
     pool.close()
   return accept_paths
 
-def detect(source, path=None, config=None):
-  """Analyze and detect minimum versions from source code. If path is specified, it will occur in
-errors instead of the default '<unknown>'. A default config will be used if it isn't specified.
+def visit(source, config=None, path=None):
+  """Analyze source code and yield source code visitor instance which can be queried for further
+information. A default config will be used if it isn't specified. If path is specified, it will
+occur in errors instead of the default '<unknown>'.
   """
   if config is None:
     config = Config()
+
   parser = Parser(source, path)
   (node, mins, novermin) = parser.detect(config)
   if node is None:
     return mins
-  visitor = SourceVisitor(config=config)
-  visitor.set_no_lines(novermin)
-  visitor.tour(node)
-  return visitor.minimum_versions()
 
-def visit(source, config=None):
-  """Analyze source code and yield source code visitor instance which can be queried for further
-information. A default config will be used if it isn't specified.
-  """
-  if config is None:
-    config = Config()
-  parser = Parser(source)
-  (node, novermin) = parser.parse()
   visitor = SourceVisitor(config=config)
   visitor.set_no_lines(novermin)
   visitor.tour(node)
+
+  # Ensure that minimum versions are calculatd such that `output_text()` invocations make sense.
+  visitor.minimum_versions()
+
+  return visitor
+
+def detect(source, config=None, path=None):
+  """Analyze and detect minimum versions from source code. A default config will be used if it isn't
+  specified. If path is specified, it will occur in errors instead of the default '<unknown>'.
+  """
+  visitor = visit(source, config, path)
+  if isinstance(visitor, SourceVisitor):
+    return visitor.minimum_versions()
   return visitor

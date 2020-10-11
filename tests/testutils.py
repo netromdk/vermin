@@ -61,6 +61,9 @@ class VerminTest(unittest.TestCase):
     self.assertTrue(len(data) == 0,
                     msg="Input not empty! size={}, '{}'".format(len(data), data))
 
+  def assertNotEmpty(self, data):
+    self.assertTrue(len(data) != 0, msg="Input empty!")
+
   def assertEqualItems(self, expected, actual):
     """Assert that two sequences contain the same elements, regardless of the ordering.
 `assertItemsEqual()` is a 2.7 unittest function. In 3.2 it's called `assertCountEqual()`. This
