@@ -71,6 +71,8 @@ class SourceVisitor(ast.NodeVisitor):
     self.__dict_union = False
     self.__dict_union_merge = False
     self.__builtin_generic_type_annotations = False
+    self.__function_decorators = False
+    self.__class_decorators = False
     self.__relaxed_decorators = False
     self.__builtin_types = {"dict", "set", "list", "unicode", "str", "int", "float", "long",
                             "bytes"}
@@ -240,6 +242,12 @@ class SourceVisitor(ast.NodeVisitor):
   def builtin_generic_type_annotations(self):
     return self.__builtin_generic_type_annotations
 
+  def function_decorators(self):
+    return self.__function_decorators
+
+  def class_decorators(self):
+    return self.__class_decorators
+
   def relaxed_decorators(self):
     return self.__relaxed_decorators
 
@@ -370,6 +378,12 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.builtin_generic_type_annotations():
       mins = self.__add_versions_entity(mins, (None, (3, 9)), "builtin generic type annotations")
+
+    if self.function_decorators():
+      mins = self.__add_versions_entity(mins, ((2, 4), (3, 0)), "function decorators")
+
+    if self.class_decorators():
+      mins = self.__add_versions_entity(mins, ((2, 6), (3, 0)), "class decorators")
 
     if self.relaxed_decorators():
       mins = self.__add_versions_entity(mins, (None, (3, 9)), "relaxed decorators")
@@ -1386,25 +1400,29 @@ ast.Call(func=ast.Name)."""
     # Checking for relaxed decorators, i.e. decorators that aren't a dotted name (name or attribute)
     # or a function call. `Load()` is also ignored since they occur all over the place for
     # non-relaxed decorators, too.
-    if hasattr(node, "decorator_list"):
-      for decorator in node.decorator_list:
-        if self.__is_no_line(decorator.lineno):
-          continue
-        # If decorator is a function call, then only look in the body branch, not arguments and
-        # such.
-        for n in ast.walk(decorator if not isinstance(decorator, ast.Call) else decorator.func):
-          if not (isinstance(n, ast.Name) or isinstance(n, ast.Attribute) or
-                  isinstance(n, ast.Load)):
-            self.__relaxed_decorators = True
-            self.__vvprint("relaxed decorators require 3.9+", line=decorator.lineno)
-            break
+    for decorator in node.decorator_list:
+      if self.__is_no_line(decorator.lineno):
+        continue
+      # If decorator is a function call, then only look in the body branch, not arguments and
+      # such.
+      for n in ast.walk(decorator if not isinstance(decorator, ast.Call) else decorator.func):
+        if not (isinstance(n, ast.Name) or isinstance(n, ast.Attribute) or
+                isinstance(n, ast.Load)):
+          self.__relaxed_decorators = True
+          self.__vvprint("relaxed decorators require 3.9+", line=decorator.lineno)
+          break
 
   def __handle_FunctionDef(self, node):
     if self.__is_no_line(node.lineno):
       return False
 
     self.__add_user_def(node.name)
-    self.__check_relaxed_decorators(node)
+
+    if getattr(node, "decorator_list", None):
+      self.__function_decorators = True
+      self.__vvprint("function decorators require 2.4+", line=node.lineno)
+      self.__check_relaxed_decorators(node)
+
     self.generic_visit(node)
 
     def has_ann():
@@ -1471,7 +1489,10 @@ ast.Call(func=ast.Name)."""
     if self.__is_no_line(node.lineno):
       return
     self.__add_user_def(node.name)
-    self.__check_relaxed_decorators(node)
+    if getattr(node, "decorator_list", None):
+      self.__class_decorators = True
+      self.__vvprint("class decorators require 2.6+", line=node.lineno)
+      self.__check_relaxed_decorators(node)
     self.generic_visit(node)
 
   def visit_NameConstant(self, node):

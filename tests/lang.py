@@ -1082,6 +1082,46 @@ collections.abc.Reversible[int]
     self.assertTrue(visitor.builtin_generic_type_annotations())
     self.assertOnlyIn((3, 9), visitor.minimum_versions())
 
+  def test_function_decorators(self):
+    visitor = self.visit("def foo(): pass")
+    self.assertFalse(visitor.function_decorators())
+
+    visitor = self.visit("@f\ndef foo(): pass")
+    self.assertTrue(visitor.function_decorators())
+    self.assertOnlyIn(((2, 4), (3, 0)), visitor.minimum_versions())
+
+    visitor = self.visit("@button_0.clicked.connect\ndef foo(): pass")
+    self.assertTrue(visitor.function_decorators())
+    self.assertOnlyIn(((2, 4), (3, 0)), visitor.minimum_versions())
+
+    visitor = self.visit("@eval('buttons[1].clicked.connect')\ndef foo(): pass")
+    self.assertTrue(visitor.function_decorators())
+    self.assertOnlyIn(((2, 4), (3, 0)), visitor.minimum_versions())
+
+    visitor = self.visit("@x.y(func)\ndef foo(): pass")
+    self.assertTrue(visitor.function_decorators())
+    self.assertOnlyIn(((2, 4), (3, 0)), visitor.minimum_versions())
+
+  def test_class_decorators(self):
+    visitor = self.visit("class A: pass")
+    self.assertFalse(visitor.class_decorators())
+
+    visitor = self.visit("@f\nclass A: pass")
+    self.assertTrue(visitor.class_decorators())
+    self.assertOnlyIn(((2, 6), (3, 0)), visitor.minimum_versions())
+
+    visitor = self.visit("@button_0.clicked.connect\nclass A: pass")
+    self.assertTrue(visitor.class_decorators())
+    self.assertOnlyIn(((2, 6), (3, 0)), visitor.minimum_versions())
+
+    visitor = self.visit("@eval('buttons[1].clicked.connect')\nclass A: pass")
+    self.assertTrue(visitor.class_decorators())
+    self.assertOnlyIn(((2, 6), (3, 0)), visitor.minimum_versions())
+
+    visitor = self.visit("@x.y(func)\nclass A: pass")
+    self.assertTrue(visitor.class_decorators())
+    self.assertOnlyIn(((2, 6), (3, 0)), visitor.minimum_versions())
+
   def test_relaxed_decorators(self):
     visitor = self.visit("@f\ndef foo(): pass")
     self.assertFalse(visitor.relaxed_decorators())
