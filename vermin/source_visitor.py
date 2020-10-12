@@ -1564,14 +1564,17 @@ ast.Call(func=ast.Name)."""
     self.generic_visit(node)
 
   def visit_Subscript(self, node):
-    if isinstance(node.value, ast.Name):
+    if isinstance(node.value, ast.Name) or isinstance(node.value, ast.Attribute):
       def match(name):
         if name in self.__user_defs:
           self.__vvvvprint("Ignoring type '{}' because it's user-defined!".format(name))
         else:
           self.__builtin_generic_type_annotations = True
           self.__vvprint("builtin generic type annotation ({}[..]) requires 3.9+".format(name))
-      coll_name = node.value.id
+      if isinstance(node.value, ast.Name):
+        coll_name = node.value.id
+      else:
+        coll_name = dotted_name(self.__get_attribute_name(node.value))
       if coll_name in BUILTIN_GENERIC_ANNOTATION_TYPES:
         match(coll_name)
       elif coll_name in self.__import_mem_mod:

@@ -1011,10 +1011,13 @@ class VerminLanguageTests(VerminTest):
       self.assertOnlyIn((3, 9), visitor.minimum_versions())
 
   def test_builtin_generic_type_annotation(self):
-    # For each type, either use directly if builtin or import and then use.
+    # For each type, either use directly if builtin or import and then use. And the fully-qualified
+    # variant.
     # Examples:
     # -  from re import Match
     #    Match[str]
+    # -  import re
+    #    re.Match[str]
     # -  tuple[str]
     for typ in BUILTIN_GENERIC_ANNOTATION_TYPES:
       names = [typ]
@@ -1026,6 +1029,12 @@ class VerminLanguageTests(VerminTest):
       visitor = visit(src)
       self.assertTrue(visitor.builtin_generic_type_annotations(), msg=src)
       self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+      if len(names) > 1:
+        src = "import {}\n{}[str]".format(dotted_name(names[:-1]), dotted_name(names))
+        visitor = visit(src)
+        self.assertTrue(visitor.builtin_generic_type_annotations(), msg=src)
+        self.assertOnlyIn((3, 9), visitor.minimum_versions())
 
     visitor = visit("class A: pass\nA[str]")
     self.assertFalse(visitor.builtin_generic_type_annotations())
@@ -1061,6 +1070,18 @@ class VerminLanguageTests(VerminTest):
     # Not a result because a list instance rather than list type is used.
     visitor = visit("l = [1,2,3]\nl[-1]")
     self.assertFalse(visitor.builtin_generic_type_annotations())
+
+    visitor = visit("""import collections
+collections.ChainMap[str]
+""")
+    self.assertTrue(visitor.builtin_generic_type_annotations())
+    self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+    visitor = visit("""import collections.abc
+collections.abc.Reversible[int]
+""")
+    self.assertTrue(visitor.builtin_generic_type_annotations())
+    self.assertOnlyIn((3, 9), visitor.minimum_versions())
 
   def test_relaxed_decorators(self):
     visitor = visit("@f\ndef foo(): pass")
