@@ -380,10 +380,10 @@ class SourceVisitor(ast.NodeVisitor):
       mins = self.__add_versions_entity(mins, (None, (3, 9)), "builtin generic type annotations")
 
     if self.function_decorators():
-      mins = add_versions_entity(mins, ((2, 4), (3, 0)), "function decorators")
+      mins = self.__add_versions_entity(mins, ((2, 4), (3, 0)), "function decorators")
 
     if self.class_decorators():
-      mins = add_versions_entity(mins, ((2, 6), (3, 0)), "class decorators")
+      mins = self.__add_versions_entity(mins, ((2, 6), (3, 0)), "class decorators")
 
     if self.relaxed_decorators():
       mins = self.__add_versions_entity(mins, (None, (3, 9)), "relaxed decorators")

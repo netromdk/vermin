@@ -1083,42 +1083,42 @@ collections.abc.Reversible[int]
     self.assertOnlyIn((3, 9), visitor.minimum_versions())
 
   def test_function_decorators(self):
-    visitor = visit("def foo(): pass")
+    visitor = self.visit("def foo(): pass")
     self.assertFalse(visitor.function_decorators())
 
-    visitor = visit("@f\ndef foo(): pass")
+    visitor = self.visit("@f\ndef foo(): pass")
     self.assertTrue(visitor.function_decorators())
     self.assertOnlyIn(((2, 4), (3, 0)), visitor.minimum_versions())
 
-    visitor = visit("@button_0.clicked.connect\ndef foo(): pass")
+    visitor = self.visit("@button_0.clicked.connect\ndef foo(): pass")
     self.assertTrue(visitor.function_decorators())
     self.assertOnlyIn(((2, 4), (3, 0)), visitor.minimum_versions())
 
-    visitor = visit("@eval('buttons[1].clicked.connect')\ndef foo(): pass")
+    visitor = self.visit("@eval('buttons[1].clicked.connect')\ndef foo(): pass")
     self.assertTrue(visitor.function_decorators())
     self.assertOnlyIn(((2, 4), (3, 0)), visitor.minimum_versions())
 
-    visitor = visit("@x.y(func)\ndef foo(): pass")
+    visitor = self.visit("@x.y(func)\ndef foo(): pass")
     self.assertTrue(visitor.function_decorators())
     self.assertOnlyIn(((2, 4), (3, 0)), visitor.minimum_versions())
 
   def test_class_decorators(self):
-    visitor = visit("class A: pass")
+    visitor = self.visit("class A: pass")
     self.assertFalse(visitor.class_decorators())
 
-    visitor = visit("@f\nclass A: pass")
+    visitor = self.visit("@f\nclass A: pass")
     self.assertTrue(visitor.class_decorators())
     self.assertOnlyIn(((2, 6), (3, 0)), visitor.minimum_versions())
 
-    visitor = visit("@button_0.clicked.connect\nclass A: pass")
+    visitor = self.visit("@button_0.clicked.connect\nclass A: pass")
     self.assertTrue(visitor.class_decorators())
     self.assertOnlyIn(((2, 6), (3, 0)), visitor.minimum_versions())
 
-    visitor = visit("@eval('buttons[1].clicked.connect')\nclass A: pass")
+    visitor = self.visit("@eval('buttons[1].clicked.connect')\nclass A: pass")
     self.assertTrue(visitor.class_decorators())
     self.assertOnlyIn(((2, 6), (3, 0)), visitor.minimum_versions())
 
-    visitor = visit("@x.y(func)\nclass A: pass")
+    visitor = self.visit("@x.y(func)\nclass A: pass")
     self.assertTrue(visitor.class_decorators())
     self.assertOnlyIn(((2, 6), (3, 0)), visitor.minimum_versions())
 
