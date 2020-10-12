@@ -3008,6 +3008,10 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_replace_from_os(self):
     self.assertOnlyIn((3, 3), detect("import os\nos.replace()"))
+    self.assertEqual([(0, 0), (0, 0)], detect("""import os
+s = "some string"
+s.replace()
+"""))
 
   def test_scandir_from_os(self):
     self.assertOnlyIn((3, 5), detect("import os\nos.scandir()"))

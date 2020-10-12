@@ -945,13 +945,13 @@ class SourceVisitor(ast.NodeVisitor):
     full_name = self.__get_attribute_name(node)
     line = node.lineno
     if len(full_name) > 0:
+      dotted = dotted_name(full_name)
       for mod in self.__modules:
         if full_name[0] == mod:
-          self.__add_module(dotted_name(full_name), line)
-        elif mod is not None and full_name[0] is not None and isinstance(mod, str)\
-             and mod.endswith(full_name[0]):
-          self.__add_member(dotted_name([mod, full_name[1:]]), line)
-      self.__add_member(dotted_name(full_name), line)
+          self.__add_module(dotted, line)
+        elif full_name[0] in self.__import_mem_mod:
+          self.__add_member(dotted_name([self.__import_mem_mod[full_name[0]], full_name]), line)
+      self.__add_member(dotted, line)
 
       if full_name[0] in self.__name_res:
         res = self.__name_res[full_name[0]]

@@ -2636,6 +2636,9 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_Final_of_typing(self):
     self.assertOnlyIn((3, 8), detect("from typing import Final"))
+    self.assertOnlyIn((3, 5), detect("""import typing
+something.Final
+"""))
 
   def test_Literal_of_typing(self):
     self.assertOnlyIn((3, 8), detect("from typing import Literal"))
