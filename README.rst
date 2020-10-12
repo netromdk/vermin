@@ -78,8 +78,9 @@ variable annotations (also ``Final`` and ``Literal``), ``continue`` in ``finally
 inverse ``pow()``, array typecodes, codecs error handler names, encodings, ``%`` formatting and
 directives for bytes and bytearray, generalized unpacking, dictionary union (``{..} | {..}``),
 dictionary union merge (``a = {..}; a |= {..}``), builtin generic type annotations (``list[str]``),
-and relaxed decorators. It tries to detect and ignore user-defined functions, classes, arguments,
-and variables with names that clash with library-defined symbols.
+function decorators, class decorators and relaxed decorators. It tries to detect and ignore
+user-defined functions, classes, arguments, and variables with names that clash with library-defined
+symbols.
 
 Caveats
 =======
