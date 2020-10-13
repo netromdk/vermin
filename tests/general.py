@@ -6,7 +6,8 @@ from shutil import rmtree
 
 from vermin import combine_versions, InvalidVersionException, detect_paths,\
   detect_paths_incremental, probably_python_file, Processor, process_individual, reverse_range,\
-  dotted_name, remove_whitespace, main, sort_line_column, version_strings
+  dotted_name, remove_whitespace, main, sort_line_column, sort_line_column_parsable, version_strings
+from vermin.formats import ParsableFormat
 
 from .testutils import VerminTest, current_version, ScopedTemporaryFile, detect, visit
 
@@ -53,6 +54,36 @@ c = 3
 L5 C9: 'zoneinfo' module requires !2, 3.9
 L6 C9: 'argparse' module requires 2.7, 3.2
 """)
+
+  def test_visit_output_text_has_correct_lines_parsable(self):
+    self.config.set_format(ParsableFormat())
+
+    src = """a = 1
+import abc
+b = 2
+if 1:
+  import zoneinfo
+  import argparse
+c = 3
+"""
+
+    visitor = self.visit(src)
+    self.assertEqual(visitor.output_text(), """<unknown>:2:7:2.6:3.0:'abc' module
+<unknown>:5:9:!2:3.9:'zoneinfo' module
+<unknown>:6:9:2.7:3.2:'argparse' module
+""")
+
+    visitor = self.visit(src, path="test.py")
+    self.assertEqual(visitor.output_text(), """test.py:2:7:2.6:3.0:'abc' module
+test.py:5:9:!2:3.9:'zoneinfo' module
+test.py:6:9:2.7:3.2:'argparse' module
+""")
+
+    # Paths with ":" or "\n" aren't allowed with parsable format.
+    with self.assertRaises(AssertionError):
+      self.visit(src, path="te:st.py")
+    with self.assertRaises(AssertionError):
+      self.visit(src, path="te\nst.py")
 
   def test_format(self):
     # Empty field name requires 2.7+
@@ -121,7 +152,7 @@ L6 C9: 'argparse' module requires 2.7, 3.2
 
   def test_detect_paths(self):
     paths = detect_paths([abspath("vermin")])
-    self.assertEqual(14, len(paths))
+    self.assertEqual(18, len(paths))
 
   def test_detect_hidden_paths(self):
     tmp_fld = mkdtemp()
@@ -144,15 +175,17 @@ L6 C9: 'argparse' module requires 2.7, 3.2
 
     depth = 0
     hidden = False
-    (accepted, further_args) = detect_paths_incremental(([tmp_fld], depth, hidden))
+    ignore_chars = []
+    (accepted, further_args) = detect_paths_incremental(([tmp_fld], depth, hidden, ignore_chars))
 
     self.assertEmpty(accepted)
     self.assertEqual(len(further_args), 1)
 
-    (paths, depth, hidden) = further_args[0]
+    (paths, depth, hidden, ignore_chars) = further_args[0]
     self.assertEqualItems(paths, [files[1], files[3]])
     self.assertEqual(depth, 1)
     self.assertFalse(hidden)
+    self.assertEmpty(ignore_chars)
 
     rmtree(tmp_fld)
 
@@ -163,15 +196,17 @@ L6 C9: 'argparse' module requires 2.7, 3.2
 
     depth = 0
     hidden = True
-    (accepted, further_args) = detect_paths_incremental(([tmp_fld], depth, hidden))
+    ignore_chars = []
+    (accepted, further_args) = detect_paths_incremental(([tmp_fld], depth, hidden, ignore_chars))
 
     self.assertEmpty(accepted)
     self.assertEqual(len(further_args), 1)
 
-    (paths, depth, hidden) = further_args[0]
+    (paths, depth, hidden, ignore_chars) = further_args[0]
     self.assertEqualItems(paths, [files[0], files[1], files[2], files[3]])
     self.assertEqual(depth, 1)
     self.assertTrue(hidden)
+    self.assertEmpty(ignore_chars)
 
     rmtree(tmp_fld)
 
@@ -184,7 +219,8 @@ L6 C9: 'argparse' module requires 2.7, 3.2
 
     depth = 0
     hidden = False
-    (accepted, further_args) = detect_paths_incremental((files, depth, hidden))
+    ignore_chars = []
+    (accepted, further_args) = detect_paths_incremental((files, depth, hidden, ignore_chars))
 
     self.assertEqualItems(accepted, files)
     self.assertEmpty(further_args)
@@ -194,14 +230,18 @@ L6 C9: 'argparse' module requires 2.7, 3.2
   def test_detect_nonexistent_paths_incrementally(self):
     depth = 0
     hidden = False
-    (accepted, further_args) = detect_paths_incremental((["i-do-not-exist"], depth, hidden))
+    ignore_chars = []
+    (accepted, further_args) = detect_paths_incremental((["i-do-not-exist"], depth, hidden,
+                                                        ignore_chars))
     self.assertEmpty(accepted)
     self.assertEmpty(further_args)
 
   def test_detect_nonexistent_paths_with_dot_incrementally(self):
     depth = 0
     hidden = False
-    (accepted, further_args) = detect_paths_incremental(([".i-start-with-dot"], depth, hidden))
+    ignore_chars = []
+    (accepted, further_args) = detect_paths_incremental(([".i-start-with-dot"], depth, hidden,
+                                                         ignore_chars))
     self.assertEmpty(accepted)
     self.assertEmpty(further_args)
 
@@ -267,6 +307,14 @@ L6 C9: 'argparse' module requires 2.7, 3.2
     self.assertOnlyIn(((2, 7), (3, 0)), mins)
     self.assertEmpty(backports)
 
+  def test_detect_vermin_min_versions_parsable(self):
+    paths = detect_paths([abspath("vermin")])
+    processor = Processor()
+    self.config.set_format(ParsableFormat())
+    (mins, incomp, unique_versions, backports) = processor.process(paths, self.config)
+    self.assertOnlyIn(((2, 7), (3, 0)), mins)
+    self.assertEmpty(backports)
+
   def test_combine_versions(self):
     with self.assertRaises(AssertionError):
       combine_versions([None], [None, None], self.config)
@@ -298,6 +346,10 @@ L6 C9: 'argparse' module requires 2.7, 3.2
     self.assertEqual("!2, 3.0", version_strings([None, 3.0]))
     self.assertEqual("2.0, !3", version_strings([2.0, None]))
     self.assertEqual("!2, !3", version_strings([None, None]))
+    self.assertEqual("~2:3.1", version_strings([0.0, 3.1], ":"))
+    self.assertEqual("!2:3.0", version_strings([None, 3.0], ":"))
+    self.assertEqual("2.0:!3", version_strings([2.0, None], ":"))
+    self.assertEqual("!2:!3", version_strings([None, None], ":"))
     self.assertEqual("2.3", version_strings([2.3]))
     self.assertEqual("3.4", version_strings([3.4]))
     with self.assertRaises(AssertionError):
@@ -381,6 +433,45 @@ L6 C9: 'argparse' module requires 2.7, 3.2
     # Repeated sortings yield the same.
     value2 = text
     value2.sort(key=sort_line_column)
+    self.assertEqual(value2, expected)
+
+  def test_sort_line_column_parsable(self):
+    text = [
+      "final_annotation.py:7::!2:3.6:variable annotations",
+      "final_annotation.py:1:5:!2:3.5:'typing' module",
+      "final_annotation.py:3::!2:3.8:final variable annotations",
+      "final_annotation.py:7::!2:3.8:final variable annotations",
+
+      # This line won't actually happen but it's handled anyway.
+      "weird line",
+
+      "final_annotation.py:4::!2:3.6:variable annotations",
+      "final_annotation.py:1::!2:3.5:'typing' module",
+      "final_annotation.py:3::!2:3.6:variable annotations",
+      "final_annotation.py:4::!2:3.8:final variable annotations",
+      "final_annotation.py:1:7:!2:3.8:'typing.Final' member",
+    ]
+
+    expected = [
+      "weird line",
+      "final_annotation.py:1::!2:3.5:'typing' module",
+      "final_annotation.py:1:5:!2:3.5:'typing' module",
+      "final_annotation.py:1:7:!2:3.8:'typing.Final' member",
+      "final_annotation.py:3::!2:3.6:variable annotations",
+      "final_annotation.py:3::!2:3.8:final variable annotations",
+      "final_annotation.py:4::!2:3.6:variable annotations",
+      "final_annotation.py:4::!2:3.8:final variable annotations",
+      "final_annotation.py:7::!2:3.6:variable annotations",
+      "final_annotation.py:7::!2:3.8:final variable annotations",
+    ]
+
+    value = text
+    value.sort(key=sort_line_column_parsable)
+    self.assertEqual(value, expected)
+
+    # Repeated sortings yield the same.
+    value2 = text
+    value2.sort(key=sort_line_column_parsable)
     self.assertEqual(value2, expected)
 
   def test_assign_rvalue_attribute(self):

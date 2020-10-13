@@ -455,10 +455,12 @@ def probably_python_file(path):
 # Called concurrently in an iterative fashion. Each invocation will return accepted paths and a list
 # of further arguments tuples, if any.
 def detect_paths_incremental(args):
-  (paths, depth, hidden) = args
+  (paths, depth, hidden, ignore_chars) = args
   accepted = []
   further_args = []
   for path in paths:
+    if any(ic in path for ic in ignore_chars):
+      continue  # pragma: no cover
     if not hidden and path != "." and path[0] == ".":
       continue
     path = abspath(path)
@@ -472,19 +474,20 @@ def detect_paths_incremental(args):
 
     if S_ISDIR(st.st_mode):
       files = [join(path, p) for p in listdir(path) if hidden or p[0] != "."]
-      further_args.append((files, depth + 1, hidden))
+      further_args.append((files, depth + 1, hidden, ignore_chars))
     elif S_ISREG(st.st_mode) and (depth == 0 or probably_python_file(path)):
       accepted.append(path)
   return (accepted, further_args)
 
 # Some detected paths might not be python code since not all files use extensions like ".py" and
 # ".pyw", for instance. But try directly specified files on CLI, on depth 0, in any case (non-pyhton
-# files will be ignored when trying to parse them).
-def detect_paths(paths, hidden=False, processes=cpu_count()):
+# files will be ignored when trying to parse them). Paths containing chars in `ignore_chars` will be
+# ignored.
+def detect_paths(paths, hidden=False, processes=cpu_count(), ignore_chars=[]):
   pool = Pool(processes=processes) if processes > 1 else None
   accept_paths = []
   depth = 0
-  args = [(paths, depth, hidden)]
+  args = [(paths, depth, hidden, ignore_chars)]
 
   # Automatically don't use concurrency when only one process is specified to be used.
   def act(args):
@@ -518,7 +521,7 @@ occur in errors instead of the default '<unknown>'.
   if node is None:
     return mins
 
-  visitor = SourceVisitor(config=config)
+  visitor = SourceVisitor(config=config, path=path)
   visitor.set_no_lines(novermin)
   visitor.tour(node)
 

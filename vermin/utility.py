@@ -80,7 +80,7 @@ def combine_versions(list1, list2, config, version_refs=None):
       res.append(max(v1, v2))
   return res
 
-def version_strings(versions):
+def version_strings(versions, separator=", "):
   """Yields version strings of versions. Must be either one or two version values."""
   amount = len(versions)
   assert(amount >= 1 and amount <= 2)
@@ -95,7 +95,7 @@ def version_strings(versions):
       res.append("!{}".format(i + 2))
     else:
       res.append(dotted_name(version))
-  return ", ".join(res)
+  return separator.join(res)
 
 def remove_whitespace(string, extras=[]):
   return re.sub("[ \t\n\r\f\v{}]".format("".join(extras)), "", string)
@@ -122,5 +122,20 @@ line number 0. This function can be used with `list.sort(key=sort_line_column)`.
   col = m.group(2)
   h = bounded_str_hash(m.group(3)) / 1000
   if col is None:
+    return line + h
+  return line + float(col) / 1000 + h
+
+LINE_COL_PARSABLE_REGEX = re.compile(r"(?:.*?):(\d+):(\d*):(.*)")
+
+def sort_line_column_parsable(key):
+  m = LINE_COL_PARSABLE_REGEX.match(key)
+  if not m:
+    return bounded_str_hash(key)
+  line = int(m.group(1))
+  col = m.group(2)
+  if len(col) == 0:
+    col = 0
+  h = bounded_str_hash(m.group(3)) / 1000
+  if col == 0:
     return line + h
   return line + float(col) / 1000 + h

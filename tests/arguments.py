@@ -2,6 +2,7 @@ import os
 from multiprocessing import cpu_count
 
 from vermin import Arguments, Backports, Features
+import vermin.formats
 
 from .testutils import VerminTest, ScopedTemporaryFile
 
@@ -219,3 +220,36 @@ aaa
       self.config.reset()
       self.assertContainsDict({"code": 0}, self.parse_args(["--feature", feature]))
       self.assertEqualItems([feature], self.config.features())
+
+  def test_format(self):
+    self.assertEqual("default", self.config.format().name())
+
+    # Needs <name> part.
+    self.assertContainsDict({"code": 1}, self.parse_args(["--format"]))
+    self.assertEqual("default", self.config.format().name())
+
+    # Unknown format.
+    self.assertContainsDict({"code": 1}, self.parse_args(["--format", "foobarbaz"]))
+    self.assertEqual("default", self.config.format().name())
+
+    # Known formats.
+    for fmt in vermin.formats.names():
+      self.config.reset()
+      self.assertContainsDict({"code": 0}, self.parse_args(["--format", fmt]))
+      self.assertEqual(fmt, self.config.format().name())
+
+    # Parsable verbose level 3, no tips, ignore incompatible versions, no `--versions`.
+    for args in (["--format", "parsable"], ["--format", "parsable", "--verbose"],
+                 ["--format", "parsable", "--versions"]):
+      self.config.reset()
+      self.assertContainsDict({"code": 0, "versions": False, "no-tips": True},
+                              self.parse_args(args))
+      self.assertEqual(3, self.config.verbose())
+      self.assertTrue(self.config.ignore_incomp())
+
+    # Verbosity can be higher for parsable.
+    self.config.reset()
+    self.assertContainsDict({"code": 0, "versions": False, "no-tips": True},
+                            self.parse_args(["--format", "parsable", "-vvvv"]))
+    self.assertEqual(4, self.config.verbose())
+    self.assertTrue(self.config.ignore_incomp())

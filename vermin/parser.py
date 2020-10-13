@@ -65,13 +65,18 @@ class Parser:
       return (node, [], novermin)
     except SyntaxError as err:
       text = err.text.strip() if err.text is not None else ""
+      parsable = (config.format().name() == "parsable")
+      if parsable:
+        text = text.replace("\n", "\\n")
       # `print expr` is a Python 2 construct, in v3 it's `print(expr)`.
       # NOTE: This is only triggered when running a python 3 on v2 code!
       if err.msg.lower().find("missing parentheses in call to 'print'") != -1:
-        vvprint("{}:{}:{}: info: `{}` requires 2.0".
-                format(err.filename, err.lineno, err.offset, text), config)
+        versions = "2.0:!3:" if parsable else ""
+        vvprint("{}:{}:{}:{}info: `{}` requires 2.0".
+                format(err.filename, err.lineno, err.offset, versions, text), config)
         return (None, [(2, 0), None], set())
       else:
-        vvprint("{}:{}:{}: error: {}: {}".
-                format(err.filename, err.lineno, err.offset, err.msg, text), config)
+        versions = "~2:~3:" if parsable else ""
+        vvprint("{}:{}:{}:{}error: {}: {}".
+                format(err.filename, err.lineno, err.offset, versions, err.msg, text), config)
     return (None, [(0, 0), (0, 0)], set())

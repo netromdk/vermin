@@ -1,7 +1,7 @@
 import multiprocessing as mp
 
-from .printing import nprint, vprint
-from .utility import combine_versions, InvalidVersionException, version_strings
+from .printing import nprint
+from .utility import combine_versions, InvalidVersionException
 from .parser import Parser
 from .source_visitor import SourceVisitor
 from .backports import Backports
@@ -51,7 +51,7 @@ def process_individual(args):
   if res.node is None:
     return res
 
-  visitor = SourceVisitor(config)
+  visitor = SourceVisitor(config, path)
   visitor.set_no_lines(res.novermin)
 
   try:
@@ -109,15 +109,8 @@ class Processor:
         if ver is not None and ver > (0, 0):
           unique_versions.add(ver)
 
-      # Indent subtext.
-      subtext = ""
-      if len(proc_res.text) > 0:
-        lines = proc_res.text.splitlines(True)
-        subtext = "\n  " + "  ".join(lines)
-        if not subtext.endswith("\n"):
-          subtext += "\n"  # pragma: no cover
+      config.format().output_result(proc_res)
 
-      vprint("{:<12} {}{}".format(version_strings(proc_res.mins), proc_res.path, subtext), config)
       try:
         mins = combine_versions(mins, proc_res.mins, config)
       except InvalidVersionException:

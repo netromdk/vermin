@@ -1,5 +1,6 @@
 from .backports import Backports
 from .features import Features
+from .formats import Format, DefaultFormat
 
 class Config:
   def __init__(self):
@@ -14,6 +15,7 @@ class Config:
     self.__exclusions = set()
     self.__backports = set()
     self.__features = set()
+    self.set_format(DefaultFormat())
 
   def quiet(self):
     return self.__quiet
@@ -93,3 +95,11 @@ class Config:
 
   def features(self):
     return self.__features
+
+  def set_format(self, fmt):
+    assert(isinstance(fmt, Format))
+    fmt.set_config(self)
+    self.__format = fmt
+
+  def format(self):
+    return self.__format

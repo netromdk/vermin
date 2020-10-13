@@ -9,9 +9,10 @@ from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, BYTES_REQ
 from .arguments import Arguments
 from .config import Config
 from .utility import reverse_range, dotted_name, combine_versions, InvalidVersionException,\
-  remove_whitespace, sort_line_column, version_strings
+  remove_whitespace, sort_line_column, sort_line_column_parsable, version_strings
 from .backports import Backports
 from .features import Features
+from . import formats
 
 __all__ = [
   "ARRAY_TYPECODE_REQS",
@@ -38,12 +39,14 @@ __all__ = [
   "detect_paths",
   "detect_paths_incremental",
   "dotted_name",
+  "formats",
   "main",
   "probably_python_file",
   "process_individual",
   "remove_whitespace",
   "reverse_range",
   "sort_line_column",
+  "sort_line_column_parsable",
   "version_strings",
   "visit",
 ]

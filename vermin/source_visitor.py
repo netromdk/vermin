@@ -7,18 +7,23 @@ from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, BYTES_REQ
   ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS, CODECS_ERRORS_INDICES, CODECS_ENCODINGS,\
   CODECS_ENCODINGS_INDICES, BUILTIN_GENERIC_ANNOTATION_TYPES, DICT_UNION_SUPPORTED_TYPES,\
   DICT_UNION_MERGE_SUPPORTED_TYPES
-from .utility import dotted_name, reverse_range, combine_versions, version_strings,\
-  remove_whitespace, sort_line_column
+from .utility import dotted_name, reverse_range, combine_versions, remove_whitespace
 
 STRFTIME_DIRECTIVE_REGEX = re.compile(r"%(?:[-\.\d#\s\+])*(\w)")
 BYTES_DIRECTIVE_REGEX = STRFTIME_DIRECTIVE_REGEX
 
 class SourceVisitor(ast.NodeVisitor):
-  def __init__(self, config):
+  def __init__(self, config, path=None):
     super(SourceVisitor, self).__init__()
 
     assert(config is not None)
     self.__config = config
+    self.__parsable = (self.__config.format().name() == "parsable")
+
+    self.__path = "<unknown>" if path is None else path
+    if self.__parsable:
+      assert(":" not in self.__path)
+      assert("\n" not in self.__path)
 
     self.__modules = []
     self.__members = []
@@ -258,8 +263,7 @@ class SourceVisitor(ast.NodeVisitor):
       else:
         self.__info_versions[versions] = [info]
       if vvprint:
-        # TODO: if info string ends with "s" maybe dno't put "s" in "requires"?
-        self.__vvprint("{} requires {}".format(info, version_strings(versions)), entity)
+        self.__vvprint(info, entity=entity, versions=versions)
     return combine_versions(mins, versions, self.__config, self.__info_versions)
 
   def minimum_versions(self):
@@ -275,7 +279,7 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.printv3():
       # print() is used so often that we only want to show it once, and with no line.
-      self.__vvprint("print(expr) requires 2+ or 3+", line=-1)
+      self.__vvprint("print(expr)", line=-1, versions=[(2, 0), (3, 0)])
       mins = self.__add_versions_entity(mins, ((2, 0), (3, 0)))
 
     if self.format27():
@@ -443,19 +447,12 @@ class SourceVisitor(ast.NodeVisitor):
     return mins
 
   def output_text(self):
-    # Throw away dups.
-    self.__output_text = list(set(self.__output_text))
-
-    # Sort for line and column numbers, if present and when printing visits (dumps) isn't
-    # enabled. Otherwise, sort lexicographically.
-    if self.__config.verbose() > 2 and not self.__config.print_visits():
-      self.__output_text.sort(key=sort_line_column)  # pragma: no cover
-    else:
-      self.__output_text.sort()  # pragma: no cover
+    # Throw away dups and sort.
+    self.__output_text = self.__config.format().sort_output_lines(list(set(self.__output_text)))
 
     text = "\n".join(self.__output_text)
     if len(text) > 0:
-      text += "\n"  # pragma: no cover
+      text += "\n"
     return text
 
   def set_no_lines(self, lines):
@@ -468,14 +465,15 @@ class SourceVisitor(ast.NodeVisitor):
     if not self.__config.quiet():  # pragma: no cover
       self.__output_text.append(msg)
 
-  def __verbose_print(self, msg, level, entity=None, line=None):  # pragma: no cover
+  def __verbose_print(self, msg, level, entity=None, line=None, versions=None):  # pragma: no cover
+    fmt = self.__config.format()
     config_level = self.__config.verbose()
-    if self.__config.quiet() or config_level < level:
+    if fmt.skip_output_line() or config_level < level:
       return
 
     col = None
 
-    # Line/column numbers start at level 3+.
+    # Line/column numbers start at level 3+ or for parsable format.
     entity = entity if config_level > 2 else None
     if entity is not None and entity in self.__line_col_entities:
       (line, col) = self.__line_col_entities[entity]
@@ -485,24 +483,20 @@ class SourceVisitor(ast.NodeVisitor):
     elif line is None and config_level > 2:
       line = self.__line
 
-    if line is not None:
-      if col is not None:
-        msg = "L{} C{}: ".format(line, col) + msg
-      else:
-        msg = "L{}: ".format(line) + msg
+    msg = fmt.format_output_line(msg, self.__path, line, col, versions)
     self.__output_text.append(msg)
 
   def __vprint(self, msg, entity=None):  # pragma: no cover
     self.__verbose_print(msg, 1, entity)
 
-  def __vvprint(self, msg, entity=None, line=None):  # pragma: no cover
-    self.__verbose_print(msg, 2, entity, line)
+  def __vvprint(self, msg, entity=None, line=None, versions=None):  # pragma: no cover
+    self.__verbose_print(msg, 2, entity, line, versions)
 
-  def __vvvprint(self, msg, entity=None, line=None):  # pragma: no cover
-    self.__verbose_print(msg, 3, entity, line)
+  def __vvvprint(self, msg, entity=None, line=None, versions=None):  # pragma: no cover
+    self.__verbose_print(msg, 3, entity, line, versions)
 
-  def __vvvvprint(self, msg, entity=None, line=None):  # pragma: no cover
-    self.__verbose_print(msg, 4, entity, line)
+  def __vvvvprint(self, msg, entity=None, line=None, versions=None):  # pragma: no cover
+    self.__verbose_print(msg, 4, entity, line, versions)
 
   def __add_module(self, module, line=None, col=None):
     if module in self.__user_defs:  # pragma: no cover
@@ -853,7 +847,7 @@ class SourceVisitor(ast.NodeVisitor):
   def __check_generalized_unpacking(self, node):
     def has_gen_unp():
       self.__generalized_unpacking = True
-      self.__vvprint("generalized unpacking requires 3.5+")
+      self.__vvprint("generalized unpacking", versions=[None, (3, 5)])
 
     # Call arguments and keywords: Check if more than one unpacking is used or if unpacking is used
     # before the end. This is so because in 3.4, unpacking in function call parameter list is only
@@ -936,12 +930,12 @@ class SourceVisitor(ast.NodeVisitor):
           if self.__is_int(node.args[0]) and self.__is_neg_int(node.args[1]) and \
              self.__is_int(node.args[2]):
             self.__mod_inverse_pow = True
-            self.__vvprint("modular inverse pow() requires 3.8+")
+            self.__vvprint("modular inverse pow()", versions=[None, (3, 8)])
       elif hasattr(func, "attr"):
         attr = func.attr
         if attr == "format" and hasattr(func, "value") and isinstance(func.value, ast.Str) and \
            "{}" in func.value.s:
-          self.__vvprint("`\"..{}..\".format(..)` requires 2.7, 3.0")
+          self.__vvprint("`\"..{}..\".format(..)`", versions=[(2, 7), (3, 0)])
           self.__format27 = True
         elif (attr == "strftime" or attr == "strptime") and hasattr(node, "args"):
           for arg in node.args:
@@ -1018,7 +1012,7 @@ class SourceVisitor(ast.NodeVisitor):
 
   def visit_Bytes(self, node):
     self.__bytesv3 = True
-    self.__vvprint("byte strings (b'..') require 3+ (or 2.6+ as `str` synonym)")
+    self.__vvprint("byte string (b'..') or `str` synonym", versions=[(2, 6), (3, 0)])
 
     if hasattr(node, "s"):
       for directive in BYTES_DIRECTIVE_REGEX.findall(str(node.s)):
@@ -1074,12 +1068,12 @@ ast.Call(func=ast.Name)."""
     if (hasattr(ast, "Bytes") and isinstance(node.left, ast.Bytes))\
        and isinstance(node.op, ast.Mod):
       self.__bytes_format = True
-      self.__vvprint("bytes `%` formatting requires 3.5+ (or 2.6+ as `str` synonym)")
+      self.__vvprint("bytes `%` formatting or `str` synonym", versions=[(2, 6), (3, 5)])
 
     if (isinstance(node.left, ast.Call) and isinstance(node.left.func, ast.Name) and
          node.left.func.id == "bytearray") and isinstance(node.op, ast.Mod):
       self.__bytearray_format = True
-      self.__vvprint("bytearray `%` formatting requires 3.5+")
+      self.__vvprint("bytearray `%` formatting", versions=[None, (3, 5)])
 
     # Example:
     # BinOp(left=Dict(keys=[Constant(value='a')], values=[Constant(value=1)]),
@@ -1088,7 +1082,7 @@ ast.Call(func=ast.Name)."""
     if isinstance(node.op, ast.BitOr):
       def has_du():
         self.__dict_union = True
-        self.__vvprint("dict union (dict | dict) requires 3.9+", line=node.lineno)
+        self.__vvprint("dict union (dict | dict)", line=node.lineno, versions=[None, (3, 9)])
 
       left_dict = self.__is_dict(node.left)
       right_dict = self.__is_dict(node.right)
@@ -1103,7 +1097,7 @@ ast.Call(func=ast.Name)."""
     # From 3.8, Bytes(s=b'%x') is represented as Constant(value=b'%x', kind=None) instead.
     if hasattr(node, "value") and isinstance(node.value, bytes):
       self.__bytesv3 = True
-      self.__vvprint("byte strings (b'..') require 3+ (or 2.6+ as `str` synonym)")
+      self.__vvprint("byte string (b'..') or `str` synonym", versions=[(2, 6), (3, 0)])
 
       for directive in BYTES_DIRECTIVE_REGEX.findall(str(node.value)):
         self.__add_bytes_directive(directive, node.lineno)
@@ -1331,7 +1325,7 @@ ast.Call(func=ast.Name)."""
 
   def visit_JoinedStr(self, node):
     self.__fstrings = True
-    self.__vvprint("f-strings require 3.6+")
+    self.__vvprint("f-strings", versions=[None, (3, 6)])
     if self.__fstring_self_doc_enabled and hasattr(node, "values"):  # pragma: no cover
       total = len(node.values)
       for i in range(total):
@@ -1348,7 +1342,7 @@ ast.Call(func=ast.Name)."""
               if len(fstring_value) > 0 and\
                 self.__trim_fstring_value(val.value).endswith(fstring_value + "="):
                   self.__fstrings_self_doc = True
-                  self.__vvprint("self-documenting fstrings require 3.8+")
+                  self.__vvprint("self-documenting fstrings", versions=[None, (3, 8)])
                   break
 
     self.generic_visit(node)
@@ -1372,7 +1366,8 @@ ast.Call(func=ast.Name)."""
       full_name = self.__resolve_full_name(node.target)
       if full_name in DICT_UNION_MERGE_SUPPORTED_TYPES or self.__is_dict(node.target):
         self.__dict_union_merge = True
-        self.__vvprint("dict union merge (dict var |= dict) requires 3.9+", line=node.lineno)
+        self.__vvprint("dict union merge (dict var |= dict)", line=node.lineno,
+                       versions=[None, (3, 9)])
 
     self.generic_visit(node)
 
@@ -1382,19 +1377,19 @@ ast.Call(func=ast.Name)."""
     self.generic_visit(node)
     self.__annotations = True
     self.__var_annotations = True
-    self.__vvprint("variable annotations require 3.6+")
+    self.__vvprint("variable annotations", versions=[None, (3, 6)])
     if hasattr(node, "annotation"):
       ann = node.annotation
       if (isinstance(ann, ast.Name) and ann.id == "Final") or \
          (isinstance(ann, ast.Subscript) and hasattr(ann.value, "id") and
            ann.value.id == "Final"):
         self.__final_annotations = True
-        self.__vvprint("final variable annotations require 3.8+")
+        self.__vvprint("final variable annotations", versions=[None, (3, 8)])
       elif (isinstance(ann, ast.Name) and ann.id == "Literal") or \
          (isinstance(ann, ast.Subscript) and hasattr(ann.value, "id") and
            ann.value.id == "Literal"):
         self.__literal_annotations = True
-        self.__vvprint("literal variable annotations require 3.8+")
+        self.__vvprint("literal variable annotations", versions=[None, (3, 8)])
 
   def __check_relaxed_decorators(self, node):
     # Checking for relaxed decorators, i.e. decorators that aren't a dotted name (name or attribute)
@@ -1409,7 +1404,7 @@ ast.Call(func=ast.Name)."""
         if not (isinstance(n, ast.Name) or isinstance(n, ast.Attribute) or
                 isinstance(n, ast.Load)):
           self.__relaxed_decorators = True
-          self.__vvprint("relaxed decorators require 3.9+", line=decorator.lineno)
+          self.__vvprint("relaxed decorators", line=decorator.lineno, versions=[None, (3, 9)])
           break
 
   def __handle_FunctionDef(self, node):
@@ -1420,14 +1415,14 @@ ast.Call(func=ast.Name)."""
 
     if getattr(node, "decorator_list", None):
       self.__function_decorators = True
-      self.__vvprint("function decorators require 2.4+", line=node.lineno)
+      self.__vvprint("function decorators", line=node.lineno, versions=[(2, 4), (3, 0)])
       self.__check_relaxed_decorators(node)
 
     self.generic_visit(node)
 
     def has_ann():
       self.__annotations = True
-      self.__vvprint("annotations require 3+", line=node.lineno)
+      self.__vvprint("annotations", line=node.lineno, versions=[None, (3, 0)])
 
     # Check if the return annotation is set
     if hasattr(node, "returns") and node.returns:
@@ -1436,7 +1431,7 @@ ast.Call(func=ast.Name)."""
 
     def has_lit_ann():
       self.__literal_annotations = True
-      self.__vvprint("literal variable annotations require 3.8+", line=node.lineno)
+      self.__vvprint("literal variable annotations", line=node.lineno, versions=[None, (3, 8)])
 
     for arg in node.args.args:
       if not hasattr(arg, "annotation") or not arg.annotation:
@@ -1469,11 +1464,11 @@ ast.Call(func=ast.Name)."""
     seen_yield = self.__seen_yield
     if self.__handle_FunctionDef(node):
       self.__coroutines = True
-      self.__vvprint("coroutines require 3.5+ (async)", line=node.lineno)
+      self.__vvprint("coroutines (async)", line=node.lineno, versions=[None, (3, 5)])
       if self.__seen_yield > seen_yield and self.__seen_await > seen_await:
         self.__async_generator = True
-        self.__vvprint("async generators require 3.6+ (await and yield in same func)",
-                       line=node.lineno)
+        self.__vvprint("async generators (await and yield in same func)",
+                       line=node.lineno, versions=[None, (3, 6)])
 
       # Reset to seen awaits/yields before async function.
       self.__seen_await = seen_await
@@ -1481,7 +1476,7 @@ ast.Call(func=ast.Name)."""
 
   def visit_Await(self, node):
     self.__coroutines = True
-    self.__vvprint("coroutines require 3.5+ (await)")
+    self.__vvprint("coroutines (await)", versions=[None, (3, 5)])
     self.__seen_await += 1
     self.generic_visit(node)
 
@@ -1491,32 +1486,32 @@ ast.Call(func=ast.Name)."""
     self.__add_user_def(node.name)
     if getattr(node, "decorator_list", None):
       self.__class_decorators = True
-      self.__vvprint("class decorators require 2.6+", line=node.lineno)
+      self.__vvprint("class decorators", line=node.lineno, versions=[(2, 6), (3, 0)])
       self.__check_relaxed_decorators(node)
     self.generic_visit(node)
 
   def visit_NameConstant(self, node):
     if node.value is True or node.value is False:  # pragma: no cover
       self.__bool_const = True
-      self.__vvvprint("True/False constant requires v2.2+.")
+      self.__vvvprint("True/False constant", versions=[(2, 2), (3, 0)])
 
   def visit_NamedExpr(self, node):
     self.__named_exprs = True
-    self.__vvprint("named expressions require 3.8+")
+    self.__vvprint("named expressions", versions=[None, (3, 8)])
     self.generic_visit(node)
 
   def visit_arguments(self, node):
     if hasattr(node, "kwonlyargs") and len(node.kwonlyargs) > 0:
       self.__kw_only_args = True
-      self.__vvprint("keyword-only parameters require 3+")
+      self.__vvprint("keyword-only parameters", versions=[None, (3, 0)])
     if hasattr(node, "posonlyargs") and len(node.posonlyargs) > 0:
       self.__pos_only_args = True
-      self.__vvprint("positional-only parameters require 3.8+")
+      self.__vvprint("positional-only parameters", versions=[None, (3, 8)])
     self.generic_visit(node)
 
   def visit_YieldFrom(self, node):
     self.__yield_from = True
-    self.__vvprint("`yield from` requires 3.3+")
+    self.__vvprint("`yield from`", versions=[None, (3, 3)])
     self.generic_visit(node)
 
   def visit_Yield(self, node):
@@ -1526,7 +1521,7 @@ ast.Call(func=ast.Name)."""
   def visit_Raise(self, node):
     if hasattr(node, "cause") and node.cause is not None:
       self.__raise_cause = True
-      self.__vvprint("exception cause requires 3.3+", line=node.lineno)
+      self.__vvprint("exception cause", line=node.lineno, versions=[None, (3, 3)])
     seen_raise = self.__seen_raise
     self.__seen_raise = True
     self.generic_visit(node)
@@ -1540,24 +1535,24 @@ ast.Call(func=ast.Name)."""
 
   def visit_DictComp(self, node):
     self.__dict_comp = True
-    self.__vvprint("dict comprehensions require (2.7, 3.0)")
+    self.__vvprint("dict comprehensions", versions=[(2, 7), (3, 0)])
     self.generic_visit(node)
 
   def visit_MatMult(self, node):
     self.__mat_mult = True
-    self.__vvprint("infix matrix multiplication requires 3.5+")
+    self.__vvprint("infix matrix multiplication", versions=[None, (3, 5)])
     self.generic_visit(node)
 
   def visit_comprehension(self, node):
     if hasattr(node, "is_async") and node.is_async == 1:
       self.__async_comprehension = True
-      self.__vvprint("async comprehensions require 3.7+")
+      self.__vvprint("async comprehensions", versions=[None, (3, 7)])
 
     seen_await = self.__seen_await
     self.generic_visit(node)
     if self.__seen_await > seen_await:
       self.__await_in_comprehension = True
-      self.__vvprint("await in comprehensions require 3.7+")
+      self.__vvprint("await in comprehensions", versions=[None, (3, 7)])
 
     # Reset to seen awaits before comprehension.
     self.__seen_await = seen_await
@@ -1568,11 +1563,11 @@ ast.Call(func=ast.Name)."""
       (seen_for, seen_while) = self.__try_finally[-1]
       if seen_for == self.__seen_for and seen_while == self.__seen_while:
         self.__continue_in_finally = True
-        self.__vvprint("continue in finally block requires 3.8+", line=node.lineno)
+        self.__vvprint("continue in finally block", line=node.lineno, versions=[None, (3, 8)])
 
   def visit_With(self, node):
     self.__with_statement = True
-    self.__vvprint("`with` requires 2.5+")
+    self.__vvprint("`with`", versions=[(2, 5), (3, 0)])
     self.generic_visit(node)
 
   def visit_Dict(self, node):
@@ -1598,7 +1593,8 @@ ast.Call(func=ast.Name)."""
           self.__vvvvprint("Ignoring type '{}' because it's user-defined!".format(name))
         else:
           self.__builtin_generic_type_annotations = True
-          self.__vvprint("builtin generic type annotation ({}[..]) requires 3.9+".format(name))
+          self.__vvprint("builtin generic type annotation ({}[..])".format(name),
+                         versions=[None, (3, 9)])
       if isinstance(node.value, ast.Name):
         coll_name = node.value.id
       else:
@@ -1648,7 +1644,7 @@ ast.Call(func=ast.Name)."""
 
   def visit_AsyncFor(self, node):
     self.__async_for = True
-    self.__vvprint("async for-loops require 3.6+", line=node.lineno)
+    self.__vvprint("async for-loops", line=node.lineno, versions=[None, (3, 6)])
     self.__handle_for(node)
 
   def visit_While(self, node):

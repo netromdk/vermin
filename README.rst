@@ -26,7 +26,7 @@ builtin dict union (``|``) types, and **7** builtin dict union merge (``|=``) ty
 
 Backports of the standard library, like ``typing``, can be enabled for better results.
 
-The project is fairly well-tested with **3414** unit and integration tests employing **4269**
+The project is fairly well-tested with **3422** unit and integration tests employing **4323**
 assertions.
 
 It is recommended to use the most recent Python version to run Vermin on projects since Python's own
@@ -140,6 +140,12 @@ Examples
 
   Minimum required versions: 3.4
   Incompatible versions:     2
+
+  % ./vermin.py -f parsable /path/to/examples/abc.py
+  /path/to/examples/abc.py:1:7:2.6:3.0:'abc' module
+  /path/to/examples/abc.py:2::!2:3.4:'abc.ABC' member
+  /path/to/examples/abc.py:::!2:3.4:
+  :::!2:3.4:
 
 API (experimental)
 ==================

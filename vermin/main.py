@@ -24,11 +24,21 @@ def main():
   no_tips = args["no-tips"]
   hidden = args["hidden"]
   paths = args["paths"]
+  parsable = (config.format().name() == "parsable")
 
   # Detect paths, remove duplicates, and sort for deterministic results.
-  vprint("Detecting python files..", config)
+  if not parsable:
+    vprint("Detecting python files..", config)
   paths = [abspath(p) for p in paths]
-  paths = list(set(detect_paths(paths, hidden=hidden, processes=processes)))
+
+  # Parsable format ignores paths with ":" in particular because it interferes with the format that
+  # uses ":" a lot.
+  ignore_chars = []
+  if parsable:
+    ignore_chars = [":", "\n"]
+
+  paths = list(set(detect_paths(paths, hidden=hidden, processes=processes,
+                                ignore_chars=ignore_chars)))
   paths.sort()
 
   amount = len(paths)
@@ -39,7 +49,8 @@ def main():
   msg = "Analyzing"
   if amount > 1:
     msg += " {} files".format(amount)
-  vprint("{} using {} processes..".format(msg, processes), config)
+  if not parsable:
+    vprint("{} using {} processes..".format(msg, processes), config)
 
   try:
     processor = Processor()
@@ -61,7 +72,7 @@ def main():
     elif ver is not None and ver != 0:
       reqs.append(ver)
 
-  if len(reqs) == 0 and len(incomps) == 0:  # pragma: no cover
+  if not parsable and (len(reqs) == 0 and len(incomps) == 0):  # pragma: no cover
     print("No known reason found that it will not work with 2+ and 3+.")
     print("Please report if it does not: https://github.com/netromdk/vermin/issues/")
     if config.lax_mode() and not no_tips:
@@ -74,7 +85,9 @@ def main():
     nprint("If so, try using the following for better results: {}\n".
            format("".join([" --backport {}".format(n) for n in unique_bps]).strip()), config)
 
-  if len(reqs) > 0:
+  if parsable:  # pragma: no cover
+    print(config.format().format_output_line(msg=None, path=None, versions=mins))
+  elif len(reqs) > 0:
     print("Minimum required versions: {}".format(version_strings(reqs)))
 
   # Don't show incompatible versions when -i is given, unless there are no non-incompatible versions
@@ -82,7 +95,7 @@ def main():
   # case is when both py2 and py3 incompatibilities were found - in which case `incomps = [2, 3]`
   # and `reqs = []`. But if `incomps = [2]` and `reqs = [3.4]`, for instance, then it makes sense
   # not to show incompatible versions with -i specified.
-  if len(incomps) > 0 and (not config.ignore_incomp() or len(reqs) == 0):
+  if len(incomps) > 0 and (not parsable and (not config.ignore_incomp() or len(reqs) == 0)):
     print("Incompatible versions:     {}".format(version_strings(incomps)))  # pragma: no cover
 
   if args["versions"] and len(unique_versions) > 0:
@@ -92,11 +105,12 @@ def main():
     if not (len(reqs) == len(targets) and
             all(((exact and target == req) or (not exact and target >= req)) for
                 ((exact, target), req) in zip(targets, reqs))):
-      vers = ["{}{}".format(dotted_name(t), "-" if not e else "") for (e, t) in targets]
-      print("Target versions not met:   {}".format(version_strings(vers)))
-      if len(targets) < len(reqs):
-        nprint("Note: Number of specified targets ({}) doesn't match number of detected minimum "
-               "versions ({}).".format(len(targets), len(reqs)), config)
+      if not parsable:
+        vers = ["{}{}".format(dotted_name(t), "-" if not e else "") for (e, t) in targets]
+        print("Target versions not met:   {}".format(version_strings(vers)))
+        if len(targets) < len(reqs):
+          nprint("Note: Number of specified targets ({}) doesn't match number of detected minimum "
+                 "versions ({}).".format(len(targets), len(reqs)), config)
       sys.exit(1)
 
   sys.exit(0)

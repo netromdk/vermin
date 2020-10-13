@@ -26,8 +26,8 @@ class VerminTest(unittest.TestCase):
   def detect(self, source):
     return detect(source, config=self.config)
 
-  def visit(self, source):
-    return visit(source, self.config)
+  def visit(self, source, path=None):
+    return visit(source, config=self.config, path=path)
 
   """General test case class for all Vermin tests."""
   def assertOnlyIn(self, values, data):

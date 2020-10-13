@@ -5,6 +5,7 @@ from multiprocessing import cpu_count
 from .constants import VERSION
 from .backports import Backports
 from .features import Features
+from . import formats
 
 TARGETS_SPLIT = re.compile("[\\.,]")
 
@@ -76,6 +77,9 @@ class Arguments:
       print("\n  --no-tips\n"
             "        Don't show any helpful tips at the end, like those relating to backports or\n"
             "        lax mode.")
+      print("\n  --format <name> | -f <name>\n"
+            "        Format to show results and output in.\n"
+            "        Supported formats:\n{}".format(formats.help_str(10)))
       print("\n  [--exclude <name>] ...\n"
             "        Exclude full names, like 'email.parser.FeedParser', from analysis. Useful to\n"
             "        ignore conditional logic that can trigger incompatible results. It's more\n"
@@ -110,6 +114,7 @@ class Arguments:
     hidden = False
     versions = False
     no_tips = False
+    fmt = None
     for i in range(len(self.__args)):
       arg = self.__args[i].lower()
       if arg == "-h" or arg == "--help":
@@ -189,6 +194,16 @@ class Arguments:
       elif arg == "--no-tips":
         no_tips = True
         path_pos += 1
+      elif arg == "--format" or arg == "-f":
+        if (i + 1) >= len(self.__args):
+          print("Format requires a name! Example: --format parsable")
+          return {"code": 1}
+        fmt_str = self.__args[i + 1].lower()
+        fmt = formats.from_name(fmt_str)
+        if fmt is None:
+          print("Unknown format: {}".format(fmt_str))
+          return {"code": 1}
+        path_pos += 2
       elif arg == "--exclude":
         if (i + 1) >= len(self.__args):
           print("Exclusion requires a name! Example: --exclude email.parser.FeedParser")
@@ -219,6 +234,13 @@ class Arguments:
           print("Unknown feature: {}".format(name))
           return {"code": 1}
         path_pos += 2
+
+    if fmt is not None:
+      config.set_format(fmt)
+
+    if config.format().name() == "parsable":
+      no_tips = True
+      versions = False
 
     if config.quiet() and config.verbose() > 0:
       print("Cannot use quiet and verbose modes together!")
