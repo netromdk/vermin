@@ -1,6 +1,7 @@
 import ast
 import re
 import sys
+import os
 from collections import deque
 
 from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, BYTES_REQS,\
@@ -24,6 +25,8 @@ class SourceVisitor(ast.NodeVisitor):
     if self.__parsable:
       assert(":" not in self.__path)
       assert("\n" not in self.__path)
+
+    self.__is_init_file = (os.path.basename(self.__path) == "__init__.py")
 
     self.__modules = []
     self.__members = []
@@ -79,6 +82,8 @@ class SourceVisitor(ast.NodeVisitor):
     self.__function_decorators = False
     self.__class_decorators = False
     self.__relaxed_decorators = False
+    self.__module_dir_func = False
+    self.__module_getattr_func = False
     self.__builtin_types = {"dict", "set", "list", "unicode", "str", "int", "float", "long",
                             "bytes"}
     self.__codecs_encodings_kwargs = ("encoding", "data_encoding", "file_encoding")
@@ -255,6 +260,12 @@ class SourceVisitor(ast.NodeVisitor):
 
   def relaxed_decorators(self):
     return self.__relaxed_decorators
+
+  def module_dir_func(self):
+    return self.__module_dir_func
+
+  def module_getattr_func(self):
+    return self.__module_getattr_func
 
   def __add_versions_entity(self, mins, versions, info=None, vvprint=False, entity=None):
     if info is not None:
@@ -1412,6 +1423,22 @@ ast.Call(func=ast.Name)."""
       return False
 
     self.__add_user_def(node.name)
+
+    # Module-level `__dir__()` is supported by `dir()` and `__getattr__(name)` through lookup since
+    # 3.7 but it isn't a version requirement because it has always been possible to define such
+    # functions.
+    args = node.args
+    if self.__depth == 1 and self.__is_init_file and\
+       (not hasattr(args, "posonlyargs") or len(args.posonlyargs) == 0) and\
+       (not hasattr(args, "kwonlyargs") or len(args.kwonlyargs) == 0) and\
+       (not hasattr(args, "kwarg") or args.kwarg is None):
+      if node.name == "__dir__" and len(args.args) == 0:
+        self.__module_dir_func = True
+        self.__vvprint("module `__dir__()` supported by `dir()` since 3.7", line=node.lineno)
+      elif node.name == "__getattr__" and len(args.args) == 1:
+        self.__module_getattr_func = True
+        self.__vvprint("module `__getattr__(name)` supported through lookup since 3.7",
+                       line=node.lineno)
 
     if getattr(node, "decorator_list", None):
       self.__function_decorators = True

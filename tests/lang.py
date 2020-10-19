@@ -1262,3 +1262,45 @@ collections.abc.Reversible[int]
         "@non_relaxed\n@buttons[1].clicked.connect\n@not_relaxed\nasync def foo(): pass")
       self.assertTrue(visitor.relaxed_decorators())
       self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+  def test_module_dir_func(self):
+    visitor = self.visit("def __dir__(): pass", path="__init__.py")
+    self.assertTrue(visitor.module_dir_func())
+
+    visitor = self.visit("def __dir__(): pass")
+    self.assertFalse(visitor.module_dir_func())
+
+    visitor = self.visit("def __dir__(a): pass", path="__init__.py")
+    self.assertFalse(visitor.module_dir_func())
+
+    visitor = self.visit("def __dir__(a, b=1): pass", path="__init__.py")
+    self.assertFalse(visitor.module_dir_func())
+
+    visitor = self.visit("def __dir__(b=1): pass", path="__init__.py")
+    self.assertFalse(visitor.module_dir_func())
+
+    visitor = self.visit("""def foo():
+  def __dir__(): pass
+""", path="__init__.py")
+    self.assertFalse(visitor.module_dir_func())
+
+  def test_module_getattr_func(self):
+    visitor = self.visit("def __getattr__(name): pass", path="__init__.py")
+    self.assertTrue(visitor.module_getattr_func())
+
+    visitor = self.visit("def __getattr__(a): pass", path="__init__.py")
+    self.assertTrue(visitor.module_getattr_func())
+
+    visitor = self.visit("def __getattr__(name): pass")
+    self.assertFalse(visitor.module_getattr_func())
+
+    visitor = self.visit("def __getattr__(n, b=2): pass", path="__init__.py")
+    self.assertFalse(visitor.module_getattr_func())
+
+    visitor = self.visit("def __getattr__(): pass", path="__init__.py")
+    self.assertFalse(visitor.module_getattr_func())
+
+    visitor = self.visit("""def foo():
+  def __getattr__(name): pass
+""", path="__init__.py")
+    self.assertFalse(visitor.module_getattr_func())
