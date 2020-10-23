@@ -546,8 +546,12 @@ test.py:6:9:2.7:3.2:'argparse' module
     with self.assertRaises(SystemExit) as ex:
       sys.argv = [sys.argv[0], "--version"]
       main()
-    sys.argv = [sys.argv[0]]
     self.assertEqual(ex.exception.code, 0)
+    with self.assertRaises(SystemExit) as ex:
+      sys.argv[1] = "-V"
+      main()
+    self.assertEqual(ex.exception.code, 0)
+    sys.argv = [sys.argv[0]]
 
   def test_main_print_versions_range(self):
     fp = ScopedTemporaryFile()

@@ -67,7 +67,7 @@ class Arguments:
       print("  -d    Dump AST node visits.")
       print("\n  --help | -h\n"
             "        Shows this information and exists.")
-      print("\n  --version\n"
+      print("\n  --version | -V\n"
             "        Shows version number and exits.")
       print("\n  --hidden\n"
             "        Analyze 'hidden' files and folders starting with '.' (ignored by default\n"
@@ -116,10 +116,10 @@ class Arguments:
     no_tips = False
     fmt = None
     for i in range(len(self.__args)):
-      arg = self.__args[i].lower()
+      arg = self.__args[i]
       if arg == "-h" or arg == "--help":
         return {"code": 0, "usage": True, "full": True}
-      if arg == "--version":
+      if arg == "--version" or arg == "-V":
         print(VERSION)
         exit(0)
       if arg == "-q" or arg == "--quiet":
