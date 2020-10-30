@@ -352,10 +352,26 @@ test.py:6:9:2.7:3.2:'argparse' module
     self.assertEqual("!2:!3", version_strings([None, None], ":"))
     self.assertEqual("2.3", version_strings([2.3]))
     self.assertEqual("3.4", version_strings([3.4]))
+    self.assertEqual("2.3, 2.7, 3.1", version_strings([2.3, 2.7, 3.1]))
+    self.assertEqual("2.0, 2.3, 2.4, 2.5, 2.6, 2.7, 3.0, 3.1, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9",
+                     version_strings([2.0, 2.3, 2.4, 2.5, 2.6, 2.7, 3.0, 3.1, 3.3, 3.4, 3.5, 3.6,
+                                      3.7, 3.8, 3.9]))
+
+    # Cannot be empty.
     with self.assertRaises(AssertionError):
       version_strings([])
+
+    # If there is at least one zero value, then there can only be one or two values!
     with self.assertRaises(AssertionError):
-      version_strings([1, 2, 3])
+      version_strings([1, 0.0, 2])
+    with self.assertRaises(AssertionError):
+      version_strings([1, 0, 2])
+    with self.assertRaises(AssertionError):
+      version_strings([1, (0, 0), 2])
+    with self.assertRaises(AssertionError):
+      version_strings([1, 2, 3, 0.0])
+    with self.assertRaises(AssertionError):
+      version_strings([(0, 0), 2, 3, 4])
 
   def test_detect_min_version(self):
     self.assertEqual([(2, 6), (3, 0)], self.detect("import abc"))

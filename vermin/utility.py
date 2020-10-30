@@ -81,9 +81,12 @@ def combine_versions(list1, list2, config, version_refs=None):
   return res
 
 def version_strings(versions, separator=", "):
-  """Yields version strings of versions. Must be either one or two version values."""
+  """Yields version strings of versions. If one value is 0, 0.0, or (0, 0) then either one or two
+values can be specified, otherwise any number is allowed."""
   amount = len(versions)
-  assert(amount >= 1 and amount <= 2)
+  assert(amount > 0)
+  if any(v == 0 or v == (0, 0) for v in versions):
+    assert(amount < 3)
   res = []
   for i in range(amount):
     version = versions[i]
