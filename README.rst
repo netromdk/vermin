@@ -3,8 +3,8 @@
 .. |PyPI version| image:: https://badge.fury.io/py/vermin.svg
    :target: https://pypi.python.org/pypi/vermin/
 
-.. |Build Status| image:: https://travis-ci.org/netromdk/vermin.svg?branch=master
-   :target: https://travis-ci.org/netromdk/vermin
+.. |Build Status| image:: https://github.com/netromdk/vermin/workflows/Test/badge.svg?branch=master
+   :target: https://github.com/netromdk/vermin/actions
 
 .. |Coverage| image:: https://coveralls.io/repos/github/netromdk/vermin/badge.svg?branch=master
    :target: https://coveralls.io/github/netromdk/vermin?branch=master
