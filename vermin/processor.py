@@ -72,7 +72,7 @@ def process_individual(args):
   return res
 
 class Processor:
-  def process(self, paths, config, processes=mp.cpu_count()):
+  def process(self, paths, config, processes=mp.cpu_count()):  # pylint: disable=no-self-use
     assert(config is not None)
 
     pool = mp.Pool(processes=processes) if processes > 1 else None

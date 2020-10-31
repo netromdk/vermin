@@ -13,6 +13,21 @@ from .utility import dotted_name, reverse_range, combine_versions, remove_whites
 STRFTIME_DIRECTIVE_REGEX = re.compile(r"%(?:[-\.\d#\s\+])*(\w)")
 BYTES_DIRECTIVE_REGEX = STRFTIME_DIRECTIVE_REGEX
 
+def is_int_node(node):
+  return (isinstance(node, ast.Num) and isinstance(node.n, int)) or \
+    (isinstance(node, ast.UnaryOp) and isinstance(node.operand, ast.Num) and
+     isinstance(node.operand.n, int))
+
+def is_neg_int_node(node):
+  return (isinstance(node, ast.Num) and isinstance(node.n, int) and node.n < 0) or \
+    (isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub) and
+     isinstance(node.operand, ast.Num) and isinstance(node.operand.n, int))
+
+def trim_fstring_value(value):  # pragma: no cover
+  # HACK: Since parentheses are stripped of the AST, we'll just remove all those deduced or directly
+  # available such that the self-doc f-strings can be compared.
+  return remove_whitespace(value, ["\\(", "\\)"])
+
 class SourceVisitor(ast.NodeVisitor):
   def __init__(self, config, path=None):
     super(SourceVisitor, self).__init__()
@@ -563,7 +578,7 @@ class SourceVisitor(ast.NodeVisitor):
       idx = CODECS_ERRORS_INDICES[func]
 
       # Check indexed arguments.
-      if idx >= 0 and idx < len(node.args):
+      if 0 <= idx < len(node.args):
         arg = node.args[idx]
         if hasattr(arg, "s"):
           name = arg.s
@@ -587,7 +602,7 @@ class SourceVisitor(ast.NodeVisitor):
     if func in CODECS_ENCODINGS_INDICES:
       for idx in CODECS_ENCODINGS_INDICES[func]:
         # Check indexed arguments.
-        if idx >= 0 and idx < len(node.args):
+        if 0 <= idx < len(node.args):
           arg = node.args[idx]
           if hasattr(arg, "s"):
             name = arg.s
@@ -661,6 +676,7 @@ class SourceVisitor(ast.NodeVisitor):
         if len(full_name) == 0 or (full_name[0] != "list" and len(full_name) == 1):
           full_name.append("list")
       elif not primi_type and isinstance(attr, ast.Str):
+        # pylint: disable=undefined-variable
         if sys.version_info.major == 2 and isinstance(attr.s, unicode):  # novm
           name = "unicode"  # pragma: no cover
         else:
@@ -674,7 +690,7 @@ class SourceVisitor(ast.NodeVisitor):
           name = "int"
         elif t == float:
           name = "float"
-        if sys.version_info.major == 2 and t == long:  # novm
+        if sys.version_info.major == 2 and t == long:  # novm # pylint: disable=undefined-variable
           name = "long"  # pragma: no cover
         if name is not None and len(full_name) == 0 or \
           (full_name[0] != name and len(full_name) == 1):
@@ -710,6 +726,7 @@ class SourceVisitor(ast.NodeVisitor):
     elif isinstance(node.value, ast.List):
       value_name = "list"
     elif isinstance(node.value, ast.Str):
+      # pylint: disable=undefined-variable
       if sys.version_info.major == 2 and isinstance(node.value.s, unicode):  # novm
         value_name = "unicode"  # pragma: no cover
       else:
@@ -718,7 +735,7 @@ class SourceVisitor(ast.NodeVisitor):
       t = type(node.value.n)
       if t == int:
         value_name = "int"
-      elif sys.version_info.major == 2 and t == long:  # novm
+      elif sys.version_info.major == 2 and t == long:  # novm # pylint: disable=undefined-variable
         value_name = "long"  # pragma: no cover
       elif t == float:
         value_name = "float"
@@ -756,16 +773,6 @@ class SourceVisitor(ast.NodeVisitor):
 
   def __is_no_line(self, line):
     return line in self.__no_lines
-
-  def __is_int(self, node):
-    return (isinstance(node, ast.Num) and isinstance(node.n, int)) or \
-      (isinstance(node, ast.UnaryOp) and isinstance(node.operand, ast.Num) and
-       isinstance(node.operand.n, int))
-
-  def __is_neg_int(self, node):
-    return (isinstance(node, ast.Num) and isinstance(node.n, int) and node.n < 0) or \
-      (isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub) and
-       isinstance(node.operand, ast.Num) and isinstance(node.operand.n, int))
 
   def __after_visit_all(self):
     # Remove any modules and members that were added before any known user-definitions. Do it in
@@ -890,8 +897,7 @@ class SourceVisitor(ast.NodeVisitor):
           return
 
     # Any unpacking in tuples, sets, or lists is generalized unpacking.
-    elif (isinstance(node, ast.Tuple) or isinstance(node, ast.Set) or isinstance(node, ast.List))\
-       and hasattr(ast, "Starred"):
+    elif isinstance(node, (ast.Tuple, ast.Set, ast.List)) and hasattr(ast, "Starred"):
       if any(isinstance(elt, ast.Starred) for elt in node.elts):
         has_gen_unp()
         return
@@ -938,8 +944,8 @@ class SourceVisitor(ast.NodeVisitor):
               self.__add_array_typecode(arg.s, node.lineno, node.col_offset + 6)
         elif func.id == "pow" and len(node.args) == 3:
           # Check if the second of three arguments of pow() is negative.
-          if self.__is_int(node.args[0]) and self.__is_neg_int(node.args[1]) and \
-             self.__is_int(node.args[2]):
+          if is_int_node(node.args[0]) and is_neg_int_node(node.args[1]) and \
+             is_int_node(node.args[2]):
             self.__mod_inverse_pow = True
             self.__vvprint("modular inverse pow()", versions=[None, (3, 8)])
       elif hasattr(func, "attr"):
@@ -948,7 +954,7 @@ class SourceVisitor(ast.NodeVisitor):
            "{}" in func.value.s:
           self.__vvprint("`\"..{}..\".format(..)`", versions=[(2, 7), (3, 0)])
           self.__format27 = True
-        elif (attr == "strftime" or attr == "strptime") and hasattr(node, "args"):
+        elif attr in ("strftime", "strptime") and hasattr(node, "args"):
           for arg in node.args:
             if hasattr(arg, "s"):
               for directive in STRFTIME_DIRECTIVE_REGEX.findall(arg.s):
@@ -1034,13 +1040,13 @@ class SourceVisitor(ast.NodeVisitor):
     or subscript index value."""
     if isinstance(node, ast.Dict):
       return True
-    elif isinstance(node, ast.Name) and\
+    if isinstance(node, ast.Name) and\
        node.id in self.__name_res and self.__name_res[node.id] == "dict":
       return True
-    elif isinstance(node, ast.Call):
+    if isinstance(node, ast.Call):
       if isinstance(node.func, ast.Name) and node.func.id == "dict":
         return True
-      elif isinstance(node.func, ast.Lambda) and self.__is_dict(node.func.body):
+      if isinstance(node.func, ast.Lambda) and self.__is_dict(node.func.body):
         return True
     elif isinstance(node, ast.Subscript):
       n = None
@@ -1067,7 +1073,7 @@ ast.Call(func=ast.Name)."""
     name = self.__name_res[name] if name in self.__name_res else name
     if name in self.__module_as_name:
       return self.__module_as_name[name]
-    elif name in self.__import_mem_mod:
+    if name in self.__import_mem_mod:
       return dotted_name([self.__import_mem_mod[name], name])
     return name
 
@@ -1215,8 +1221,8 @@ ast.Call(func=ast.Name)."""
 
       elif hasattr(ast, "comprehension") and isinstance(n, ast.comprehension):
         target = self.__extract_fstring_value(n.target)
-        iter = self.__extract_fstring_value(n.iter)
-        value.append("{} in {}".format(target, iter))
+        iter_ = self.__extract_fstring_value(n.iter)
+        value.append("{} in {}".format(target, iter_))
         break
 
       elif isinstance(n, ast.Attribute):
@@ -1321,18 +1327,13 @@ ast.Call(func=ast.Name)."""
 
       elif isinstance(n, ast.Subscript):
         val = self.__extract_fstring_value(n.value)
-        slice = self.__extract_fstring_value(n.slice)
-        value.append("{}[{}]".format(val, slice))
+        slice_ = self.__extract_fstring_value(n.slice)
+        value.append("{}[{}]".format(val, slice_))
         break
 
     if is_call:
       return "(".join(value) + ")" * (len(value) - 1)  # "a(b(c()))"
     return ".".join(value)  # "a" or "a.b"..
-
-  def __trim_fstring_value(self, value):  # pragma: no cover
-    # HACK: Since parentheses are stripped of the AST, we'll just remove all those deduced or
-    # directly available such that the self-doc f-strings can be compared.
-    return remove_whitespace(value, ["\\(", "\\)"])
 
   def visit_JoinedStr(self, node):
     self.__fstrings = True
@@ -1349,9 +1350,9 @@ ast.Call(func=ast.Name)."""
             next_val = node.values[i + 1]
             if isinstance(next_val, ast.FormattedValue):
               fstring_value =\
-                self.__trim_fstring_value(self.__extract_fstring_value(next_val.value))
+                trim_fstring_value(self.__extract_fstring_value(next_val.value))
               if len(fstring_value) > 0 and\
-                self.__trim_fstring_value(val.value).endswith(fstring_value + "="):
+                trim_fstring_value(val.value).endswith(fstring_value + "="):
                   self.__fstrings_self_doc = True
                   self.__vvprint("self-documenting fstrings", versions=[None, (3, 8)])
                   break
@@ -1412,8 +1413,7 @@ ast.Call(func=ast.Name)."""
       # If decorator is a function call, then only look in the body branch, not arguments and
       # such.
       for n in ast.walk(decorator if not isinstance(decorator, ast.Call) else decorator.func):
-        if not (isinstance(n, ast.Name) or isinstance(n, ast.Attribute) or
-                isinstance(n, ast.Load)):
+        if not isinstance(n, (ast.Name, ast.Attribute, ast.Load)):
           self.__relaxed_decorators = True
           self.__vvprint("relaxed decorators", line=decorator.lineno, versions=[None, (3, 9)])
           break
@@ -1474,7 +1474,7 @@ ast.Call(func=ast.Name)."""
         break
 
       attr_name = dotted_name(self.__get_attribute_name(ann))
-      if attr_name == "Literal" or attr_name == "typing.Literal":
+      if attr_name in ("Literal", "typing.Literal"):
         has_lit_ann()
         break
 
@@ -1614,7 +1614,7 @@ ast.Call(func=ast.Name)."""
     self.generic_visit(node)
 
   def visit_Subscript(self, node):
-    if isinstance(node.value, ast.Name) or isinstance(node.value, ast.Attribute):
+    if isinstance(node.value, (ast.Name, ast.Attribute)):
       def match(name):
         if name in self.__user_defs:
           self.__vvvvprint("Ignoring type '{}' because it's user-defined!".format(name))

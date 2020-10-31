@@ -117,12 +117,12 @@ class Arguments:
     fmt = None
     for i in range(len(self.__args)):
       arg = self.__args[i]
-      if arg == "-h" or arg == "--help":
+      if arg in ("--help", "-h"):
         return {"code": 0, "usage": True, "full": True}
-      if arg == "--version" or arg == "-V":
+      if arg in ("--version", "-V"):
         print(VERSION)
-        exit(0)
-      if arg == "-q" or arg == "--quiet":
+        sys.exit(0)
+      if arg in ("--quiet", "-q"):
         config.set_quiet(True)
         path_pos += 1
       elif arg.startswith("-v"):
@@ -142,13 +142,13 @@ class Arguments:
           print("Invalid target: {}".format(value))
           return {"code": 1}
 
-        for i in range(len(elms)):
+        for h in range(len(elms)):
           try:
-            n = int(elms[i])
+            n = int(elms[h])
             if n < 0:
               print("Invalid target: {}".format(value))
               return {"code": 1}
-            elms[i] = n
+            elms[h] = n
           except ValueError:
             print("Invalid target: {}".format(value))
             return {"code": 1}
@@ -158,13 +158,13 @@ class Arguments:
           elms.append(0)
 
         elms = tuple(elms)
-        if not (elms >= (2, 0) and elms < (4, 0)):
+        if not ((2, 0) <= elms < (4, 0)):
           print("Invalid target: {}".format(value))
           return {"code": 1}
 
         targets.append((exact, elms))
         path_pos += 1
-      elif arg == "-i" or arg == "--ignore":
+      elif arg in ("--ignore", "-i"):
         config.set_ignore_incomp(True)
         path_pos += 1
       elif arg.startswith("-p=") or arg.startswith("--processes="):
@@ -178,7 +178,7 @@ class Arguments:
           print("Non-positive number: {}".format(processes))
           return {"code": 1}
         path_pos += 1
-      elif arg == "-l" or arg == "--lax":
+      elif arg in ("--lax", "-l"):
         print("Running in lax mode!")
         config.set_lax_mode(True)
         path_pos += 1
@@ -194,7 +194,7 @@ class Arguments:
       elif arg == "--no-tips":
         no_tips = True
         path_pos += 1
-      elif arg == "--format" or arg == "-f":
+      elif arg in ("--format", "-f"):
         if (i + 1) >= len(self.__args):
           print("Format requires a name! Example: --format parsable")
           return {"code": 1}

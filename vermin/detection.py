@@ -441,7 +441,7 @@ def probably_python_file(path):
   # Try opening file for reading as a text device.
   try:
     with open(path, mode="rt") as fp:
-      for i in range(10):
+      for _i in range(10):
         # A script with a magic line might contain "python".
         line = fp.readline().lower()
         if "python" in line:
@@ -483,10 +483,11 @@ def detect_paths_incremental(args):
 # ".pyw", for instance. But try directly specified files on CLI, on depth 0, in any case (non-pyhton
 # files will be ignored when trying to parse them). Paths containing chars in `ignore_chars` will be
 # ignored.
-def detect_paths(paths, hidden=False, processes=cpu_count(), ignore_chars=[]):
+def detect_paths(paths, hidden=False, processes=cpu_count(), ignore_chars=None):
   pool = Pool(processes=processes) if processes > 1 else None
   accept_paths = []
   depth = 0
+  ignore_chars = ignore_chars or []
   args = [(paths, depth, hidden, ignore_chars)]
 
   # Automatically don't use concurrency when only one process is specified to be used.

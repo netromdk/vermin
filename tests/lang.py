@@ -11,12 +11,12 @@ class VerminLanguageTests(VerminTest):
 
     source = "print 'hello'"
     parser = Parser(source)
-    (node, mins, novermin) = parser.detect(self.config)
+    (node, mins, _novermin) = parser.detect(self.config)
     v = current_version()
     if v >= 3.4:
       self.assertEqual(node, None)
       self.assertOnlyIn((2, 0), mins)
-    elif v >= 3.0 and v < 3.4:  # pragma: no cover
+    elif 3.0 <= v < 3.4:  # pragma: no cover
       self.assertEqual(node, None)
       self.assertEqual(mins, [(0, 0), (0, 0)])
     # < 3.0
@@ -70,7 +70,7 @@ class VerminLanguageTests(VerminTest):
     v = current_version()
 
     # py2: type(b'hello') = <type 'str'>
-    if v >= 2.0 and v < 3.0:  # pragma: no cover
+    if 2.0 <= v < 3.0:  # pragma: no cover
       visitor = self.visit("s = b'hello'")
       self.assertFalse(visitor.bytesv3())
       self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())

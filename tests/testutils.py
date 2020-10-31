@@ -12,6 +12,8 @@ def current_version():
   return current_major_version() + float(sys.version_info.minor) / 10.0
 
 class VerminTest(unittest.TestCase):
+  """General test case class for all Vermin tests."""
+
   def __init__(self, methodName):
     super(VerminTest, self).__init__(methodName)
 
@@ -29,11 +31,10 @@ class VerminTest(unittest.TestCase):
   def visit(self, source, path=None):
     return visit(source, config=self.config, path=path)
 
-  """General test case class for all Vermin tests."""
   def assertOnlyIn(self, values, data):
     """Assert only value(s) is in data but ignores None and 0 values."""
     size = 1
-    multiple = isinstance(values, list) or isinstance(values, tuple)
+    multiple = isinstance(values, (list, tuple))
     if multiple:
       # Unless it's a tuple of ints, then it's a version and not a multiple.
       if all(isinstance(x, int) for x in values):
@@ -71,8 +72,8 @@ override is made to work for all versions, also 3.0-3.1."""
     v = current_version()
     if v >= 3.2:
       self.assertCountEqual(expected, actual)
-    if v >= 2.7 and v < 3.0:  # pragma: no cover
-      self.assertItemsEqual(expected, actual)
+    if 2.7 <= v < 3.0:  # pragma: no cover
+      self.assertItemsEqual(expected, actual)  # pylint: disable=no-member
     else:
       self.assertEqual(sorted(expected), sorted(actual))
 

@@ -2,9 +2,9 @@ import re
 from math import floor
 from functools import reduce
 
-def reverse_range(object):
-  """Yields reverse range of object: list(reverse_range([1, 2, 3])) -> [2, 1, 0]."""
-  return range(len(object) - 1, -1, -1)
+def reverse_range(values):
+  """Yields reverse range of values: list(reverse_range([1, 2, 3])) -> [2, 1, 0]."""
+  return range(len(values) - 1, -1, -1)
 
 def dotted_name(names):
   """Returns a dotted name of a list of strings, integers, lists, and tuples."""
@@ -12,7 +12,7 @@ def dotted_name(names):
   # It will just return the value instead of "b.a.d" if input was "bad"!
   if isinstance(names, str):
     return names
-  elif isinstance(names, int) or isinstance(names, float):
+  if isinstance(names, (int, float)):
     return str(names)
 
   resolved = []
@@ -21,7 +21,7 @@ def dotted_name(names):
       resolved.append(name)
     elif isinstance(name, int):
       resolved.append(str(name))
-    elif isinstance(name, list) or isinstance(name, tuple):
+    elif isinstance(name, (list, tuple)):
       resolved += filter(lambda x: x is not None, name)
     elif name is None:
       continue
@@ -67,7 +67,7 @@ def combine_versions(list1, list2, config, version_refs=None):
   def fixup(v):
     if isinstance(v, int):
       return (v, 0)
-    elif isinstance(v, float):
+    if isinstance(v, float):
       return float_version(v)
     return v
 
@@ -85,14 +85,14 @@ def version_strings(versions, separator=", "):
 values can be specified, otherwise any number is allowed."""
   amount = len(versions)
   assert(amount > 0)
-  if any(v == 0 or v == (0, 0) for v in versions):
+  if any(v in (0, (0, 0)) for v in versions):
     assert(amount < 3)
   res = []
   for i in range(amount):
     version = versions[i]
     # When versions aren't known, show something instead of nothing. It might run with any
     # version.
-    if version == 0 or version == (0, 0):
+    if version in (0, (0, 0)):
       res.append("~{}".format(i + 2))
     elif version is None:
       res.append("!{}".format(i + 2))
@@ -100,7 +100,8 @@ values can be specified, otherwise any number is allowed."""
       res.append(dotted_name(version))
   return separator.join(res)
 
-def remove_whitespace(string, extras=[]):
+def remove_whitespace(string, extras=None):
+  extras = extras or []
   return re.sub("[ \t\n\r\f\v{}]".format("".join(extras)), "", string)
 
 def bounded_str_hash(value):
@@ -142,3 +143,15 @@ def sort_line_column_parsable(key):
   if col == 0:
     return line + h
   return line + float(col) / 1000 + h
+
+def format_title_descs(pairs, titles, indent=0):
+  res = []
+  longest = len(max(titles, key=len))
+  for (name, desc) in pairs:
+    title = "{}{:{fill}} - ".format(" " * indent, name, fill=longest)
+    first_line = desc[0]
+    res.append("{}{}".format(title, first_line))
+    if len(desc) > 1:
+      for line in desc[1:]:
+        res.append("{}{}".format(" " * len(title), line))
+  return "\n".join(res)

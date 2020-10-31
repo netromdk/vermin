@@ -31,19 +31,15 @@ processing."""
   @abstractmethod
   def skip_output_line(self):
     """Whether or not to skip outputting a line."""
-    pass  # pragma: no cover
 
   @abstractmethod
   def format_output_line(self, msg, path=None, line=None, col=None, versions=None):
     """Yield formatted output line given file name, line, column, text, minimum versions."""
-    pass  # pragma: no cover
 
   @abstractmethod
   def output_result(self, proc_res):
     """Output processed result."""
-    pass  # pragma: no cover
 
   @abstractmethod
   def sort_output_lines(self, lines):
     """Sort and return output lines."""
-    pass  # pragma: no cover

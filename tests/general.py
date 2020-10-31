@@ -6,7 +6,8 @@ from shutil import rmtree
 
 from vermin import combine_versions, InvalidVersionException, detect_paths,\
   detect_paths_incremental, probably_python_file, Processor, process_individual, reverse_range,\
-  dotted_name, remove_whitespace, main, sort_line_column, sort_line_column_parsable, version_strings
+  dotted_name, remove_whitespace, main, sort_line_column, sort_line_column_parsable,\
+  version_strings, format_title_descs
 from vermin.formats import ParsableFormat
 
 from .testutils import VerminTest, current_version, ScopedTemporaryFile, detect, visit
@@ -303,7 +304,7 @@ test.py:6:9:2.7:3.2:'argparse' module
   def test_detect_vermin_min_versions(self):
     paths = detect_paths([abspath("vermin")])
     processor = Processor()
-    (mins, incomp, unique_versions, backports) = processor.process(paths, self.config)
+    (mins, _incomp, _unique_versions, backports) = processor.process(paths, self.config)
     self.assertOnlyIn(((2, 7), (3, 0)), mins)
     self.assertEmpty(backports)
 
@@ -311,7 +312,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     paths = detect_paths([abspath("vermin")])
     processor = Processor()
     self.config.set_format(ParsableFormat())
-    (mins, incomp, unique_versions, backports) = processor.process(paths, self.config)
+    (mins, _incomp, _unique_versions, backports) = processor.process(paths, self.config)
     self.assertOnlyIn(((2, 7), (3, 0)), mins)
     self.assertEmpty(backports)
 
@@ -785,3 +786,41 @@ print('hello')     # print(expr) requires 2+ or 3+
     self.assertFalse(incomp)
     self.assertEqual(unique_versions, [(2, 3), (3, 1)])
     self.assertEqual(backports, {"argparse"})
+
+  def test_format_title_descs(self):
+    descs = (
+      ("one", [
+        "one.one",
+        "one.two",
+        "one.three"
+      ]),
+      ("two", [
+        "two.one",
+        "two.two",
+        "two.three"
+      ]),
+      ("three", [
+        "three.one",
+        "three.two",
+        "three.three"
+      ]),
+    )
+    titles = ["one", "two", "three"]
+    self.assertEqual("""one   - one.one
+        one.two
+        one.three
+two   - two.one
+        two.two
+        two.three
+three - three.one
+        three.two
+        three.three""", format_title_descs(descs, titles))
+    self.assertEqual("""  one   - one.one
+          one.two
+          one.three
+  two   - two.one
+          two.two
+          two.three
+  three - three.one
+          three.two
+          three.three""", format_title_descs(descs, titles, indent=2))

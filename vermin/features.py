@@ -1,3 +1,5 @@
+from .utility import format_title_descs
+
 FEATURES = (
   ("fstring-self-doc", [
     "[Unstable] Detect self-documenting fstrings. Can in",
@@ -8,16 +10,7 @@ FEATURES = (
 class Features:
   @staticmethod
   def str(indent=0):
-    res = []
-    longest = len(max(Features.features(), key=lambda x: len(x)))
-    for (name, desc) in FEATURES:
-      title = "{}{:{fill}} - ".format(" " * indent, name, fill=longest)
-      first_line = desc[0]
-      res.append("{}{}".format(title, first_line))
-      if len(desc) > 1:
-        for line in desc[1:]:
-          res.append("{}{}".format(" " * len(title), line))
-    return "\n".join(res)
+    return format_title_descs(FEATURES, Features.features(), indent)
 
   @staticmethod
   def features():

@@ -29,7 +29,7 @@ builtin dict union (``|``) types, and **7** builtin dict union merge (``|=``) ty
 
 Backports of the standard library, like ``typing``, can be enabled for better results.
 
-The project is fairly well-tested with **3422** unit and integration tests employing **4334**
+The project is fairly well-tested with **3423** unit and integration tests employing **4336**
 assertions.
 
 It is recommended to use the most recent Python version to run Vermin on projects since Python's own
