@@ -1,4 +1,4 @@
-name: Test
+name: Analyze
 
 on:
   # On all pushes to branches and pull requests in general.
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [2.7, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9]
+        python-version: [3.9]
 
     steps:
     - uses: actions/checkout@v2
@@ -22,6 +22,6 @@ jobs:
     - name: Install dependencies
       run: |
         ./misc/actions/install.sh
-    - name: Test and coverage
+    - name: Analyze
       run: |
-        ./misc/actions/test.sh
+        ./misc/actions/analyze.sh

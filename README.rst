@@ -1,9 +1,12 @@
-|PyPI version| |Build Status| |Coverage| |Commits since last|
+|PyPI version| |Test Status| |Analyze Status| |Coverage| |Commits since last|
 
 .. |PyPI version| image:: https://badge.fury.io/py/vermin.svg
    :target: https://pypi.python.org/pypi/vermin/
 
-.. |Build Status| image:: https://github.com/netromdk/vermin/workflows/Test/badge.svg?branch=master
+.. |Test Status| image:: https://github.com/netromdk/vermin/workflows/Test/badge.svg?branch=master
+   :target: https://github.com/netromdk/vermin/actions
+
+.. |Analyze Status| image:: https://github.com/netromdk/vermin/workflows/Analyze/badge.svg?branch=master
    :target: https://github.com/netromdk/vermin/actions
 
 .. |Coverage| image:: https://coveralls.io/repos/github/netromdk/vermin/badge.svg?branch=master
