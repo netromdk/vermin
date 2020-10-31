@@ -3,6 +3,7 @@ TEST_FILES=runtests.py `find tests -iname '*.py'`
 OTHER_FILES=count.py
 ALL_FILES=${VERMIN_FILES} ${TEST_FILES} ${OTHER_FILES}
 MODULES=vermin tests
+TOP_LEVEL_FILES=${MODULES} vermin.py runtests.py ${OTHER_FILES}
 
 self-test:
 	./vermin.py -v -t=2.7 -t=3 ${VERMIN_FILES}
@@ -31,10 +32,10 @@ setup-misc: clean
 setup-coverage: clean
 	.venv/bin/pip install -r misc/.coverage-requirements.txt
 
-setup-bandit: clean
-	.venv/bin/pip install -r misc/.bandit-requirements.txt
+setup-analysis: clean
+	.venv/bin/pip install -r misc/.analysis-requirements.txt
 
-setup: setup-venv setup-misc setup-coverage setup-bandit
+setup: setup-venv setup-misc setup-coverage setup-analysis
 
 clean:
 	find . -iname __pycache__ | xargs rm -fr
@@ -57,12 +58,12 @@ update-misc-requirements: setup-venv setup-misc
 update-coverage-requirements: setup-venv setup-coverage
 	.venv/bin/pip freeze > misc/.coverage-requirements.txt
 
-update-bandit-requirements: setup-venv setup-bandit
-	.venv/bin/pip freeze > misc/.bandit-requirements.txt
+update-analysis-requirements: setup-venv setup-analysis
+	.venv/bin/pip freeze > misc/.analysis-requirements.txt
 
 check-style:
 	.venv/bin/flake8 --ignore E111,E114,E121,E126,E127,E302,E305,W504,F821\
-          --max-line-length 100 --count --show-source ${ALL_FILES}
+		--max-line-length 100 --count --show-source ${ALL_FILES}
 
 static-analysis:
 	.venv/bin/vulture --min-confidence 70 --sort-by-size ${ALL_FILES}
@@ -73,7 +74,11 @@ check-unused:
 security-check:
 	.venv/bin/bandit -r -s B101 ${MODULES}
 
-check: check-style static-analysis
+lint:
+	.venv/bin/pylint -j 0 --disable=C,W0201,W0311,W0703,R0902,R0903,R0904,R0911,R0913,R0914,R0915,R0916,R1702,R1725\
+		${TOP_LEVEL_FILES}
+
+check: check-style static-analysis lint
 
 # NOTE: `check` doesn't check all because bandit doesn't run on py37+ yet.
 check-all: check security-check
