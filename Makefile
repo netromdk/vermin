@@ -78,7 +78,10 @@ lint:
 	.venv/bin/pylint -j 0 --disable=C,W0201,W0311,W0703,R0902,R0903,R0904,R0911,R0913,R0914,R0915,R0916,R1702,R1725\
 		${TOP_LEVEL_FILES}
 
-check: check-style static-analysis lint
+check-pypi:
+	.venv/bin/pyroma --min=10 .
+
+check: check-style check-pypi static-analysis lint
 
 # NOTE: `check` doesn't check all because bandit doesn't run on py37+ yet.
 check-all: check security-check

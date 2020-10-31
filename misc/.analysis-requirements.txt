@@ -1,5 +1,6 @@
 astroid==2.4.2
 bandit==1.6.2
+docutils==0.16
 flake8==3.8.4
 gitdb==4.0.5
 GitPython==3.1.11
@@ -9,7 +10,9 @@ mccabe==0.6.1
 pbr==5.5.1
 pycodestyle==2.6.0
 pyflakes==2.2.0
+Pygments==2.7.2
 pylint==2.6.0
+pyroma==2.6
 PyYAML==5.3.1
 six==1.15.0
 smmap==3.0.4
