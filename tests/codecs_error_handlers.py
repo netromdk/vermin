@@ -1,38 +1,47 @@
 from .testutils import VerminTest
 
 class VerminCodecsErrorHandlerTests(VerminTest):
-  def test_handler_surrogateescape(self):
-    self.assertOnlyIn((3, 1),
-                      self.detect("import codecs\n"
-                                  "codecs.encode('test', 'utf-8', 'surrogateescape')"))
-    self.assertOnlyIn((3, 1),
-                      self.detect("import codecs\n"
-                                  "codecs.encode('test', 'utf-8', errors='surrogateescape')"))
-    self.assertOnlyIn((3, 1),
-                      self.detect("from codecs import encode\n"
-                                  "encode('test', 'utf-8', 'surrogateescape')"))
+  @VerminTest.parameterized_args([
+    ("""import codecs
+codecs.encode('test', 'utf-8', 'surrogateescape')
+""", (3, 1)),
+    ("""import codecs
+codecs.encode('test', 'utf-8', errors='surrogateescape')
+""", (3, 1)),
+    ("""from codecs import encode
+encode('test', 'utf-8', 'surrogateescape')
+""", (3, 1)),
+  ])
+  def test_handler_surrogateescape(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_handler_surrogatepass(self):
-    self.assertOnlyIn((3, 1),
-                      self.detect("import codecs\n"
-                                  "codecs.decode('test', 'utf-8', 'surrogatepass')"))
-    self.assertOnlyIn((3, 1),
-                      self.detect("import codecs\n"
-                                  "codecs.decode('test', 'utf-8', errors='surrogatepass')"))
-    self.assertOnlyIn((3, 1),
-                      self.detect("from codecs import decode\n"
-                                  "decode('test', 'utf-8', 'surrogatepass')"))
+  @VerminTest.parameterized_args([
+    ("""import codecs
+codecs.decode('test', 'utf-8', 'surrogatepass')
+""", (3, 1)),
+    ("""import codecs
+codecs.decode('test', 'utf-8', errors='surrogatepass')
+""", (3, 1)),
+    ("""from codecs import decode
+decode('test', 'utf-8', 'surrogatepass')
+""", (3, 1)),
+  ])
+  def test_handler_surrogatepass(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_handler_namereplace(self):
-    self.assertOnlyIn((3, 5),
-                      self.detect("import codecs\n"
-                                  "codecs.EncodedFile('test', 'utf-8', 'utf-8', 'namereplace')"))
-    self.assertOnlyIn((3, 5),
-                      self.detect("import codecs\n"
-                                  "codecs.EncodedFile('test', 'utf-8', errors='namereplace')"))
-    self.assertOnlyIn((3, 5),
-                      self.detect("from codecs import EncodedFile\n"
-                                  "EncodedFile('test', 'utf-8', 'utf-8', 'namereplace')"))
+  @VerminTest.parameterized_args([
+    ("""import codecs
+codecs.EncodedFile('test', 'utf-8', 'utf-8', 'namereplace')
+""", (3, 5)),
+    ("""import codecs
+codecs.EncodedFile('test', 'utf-8', errors='namereplace')
+""", (3, 5)),
+    ("""from codecs import EncodedFile
+EncodedFile('test', 'utf-8', 'utf-8', 'namereplace')
+""", (3, 5)),
+  ])
+  def test_handler_namereplace(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
   def test_function_encode(self):
     self.assertOnlyIn((3, 5),

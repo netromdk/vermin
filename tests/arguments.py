@@ -1,15 +1,12 @@
 import os
 from multiprocessing import cpu_count
 
-from vermin import Arguments, Backports, Features
+from vermin import Backports, Features
 import vermin.formats
 
 from .testutils import VerminTest, ScopedTemporaryFile
 
 class VerminArgumentsTests(VerminTest):
-  def parse_args(self, args):
-    return Arguments(args).parse(self.config)
-
   def test_not_enough_args(self):
     self.assertContainsDict({"code": 1, "usage": True, "full": False}, self.parse_args([]))
 
@@ -43,62 +40,62 @@ class VerminArgumentsTests(VerminTest):
   def test_cant_mix_quiet_and_verbose(self):
     self.assertContainsDict({"code": 1}, self.parse_args(["-q", "-v"]))
 
-  def test_targets(self):
+  @VerminTest.parameterized_args([
     # The boolean value means match target version exactly or not (equal or smaller).
-    self.assertContainsDict({"code": 0, "targets": [(True, (2, 8))], "paths": []},
-                            self.parse_args(["-t=2.8"]))
-    self.assertContainsDict({"code": 0, "targets": [(True, (2, 8))], "paths": []},
-                            self.parse_args(["--target=2.8"]))
-    self.assertContainsDict({"code": 0, "targets": [(True, (2, 8))], "paths": []},
-                            self.parse_args(["-t=2,8"]))
-    self.assertContainsDict({"code": 0, "targets": [(True, (2, 8))], "paths": []},
-                            self.parse_args(["--target=2,8"]))
-    self.assertContainsDict({"code": 0, "targets": [(False, (2, 8))], "paths": []},
-                            self.parse_args(["-t=2.8-"]))
-    self.assertContainsDict({"code": 0, "targets": [(False, (2, 8))], "paths": []},
-                            self.parse_args(["--target=2.8-"]))
-    self.assertContainsDict({"code": 0, "targets": [(False, (2, 8))], "paths": []},
-                            self.parse_args(["-t=2,8-"]))
-    self.assertContainsDict({"code": 0, "targets": [(False, (2, 8))], "paths": []},
-                            self.parse_args(["--target=2,8-"]))
-    self.assertContainsDict({"code": 0, "targets": [(True, (2, 8)), (False, (3, 0))], "paths": []},
-                            self.parse_args(["-t=3-", "-t=2.8"]))
-    self.assertContainsDict({"code": 0, "targets": [(True, (2, 8)), (False, (3, 0))], "paths": []},
-                            self.parse_args(["--target=3-", "--target=2.8"]))
-    self.assertContainsDict({"code": 0, "targets": [(True, (2, 8)), (False, (3, 0))], "paths": []},
-                            self.parse_args(["-t=3-", "--target=2.8"]))
-    self.assertContainsDict({"code": 0, "targets": [(True, (2, 8)), (False, (3, 0))], "paths": []},
-                            self.parse_args(["-t=3-", "-t=2,8"]))
-    self.assertContainsDict({"code": 0, "targets": [(True, (2, 8)), (False, (3, 0))], "paths": []},
-                            self.parse_args(["--target=3-", "--target=2,8"]))
-    self.assertContainsDict({"code": 0, "targets": [(True, (2, 8)), (False, (3, 0))], "paths": []},
-                            self.parse_args(["-t=3-", "--target=2,8"]))
+    (["-t=2.8"],
+     {"code": 0, "targets": [(True, (2, 8))], "paths": []}),
+    (["--target=2.8"],
+     {"code": 0, "targets": [(True, (2, 8))], "paths": []}),
+    (["-t=2,8"],
+     {"code": 0, "targets": [(True, (2, 8))], "paths": []}),
+    (["--target=2,8"],
+     {"code": 0, "targets": [(True, (2, 8))], "paths": []}),
+    (["-t=2.8-"],
+     {"code": 0, "targets": [(False, (2, 8))], "paths": []}),
+    (["--target=2.8-"],
+     {"code": 0, "targets": [(False, (2, 8))], "paths": []}),
+    (["-t=2,8-"],
+     {"code": 0, "targets": [(False, (2, 8))], "paths": []}),
+    (["--target=2,8-"],
+     {"code": 0, "targets": [(False, (2, 8))], "paths": []}),
+    (["-t=3-", "-t=2.8"],
+     {"code": 0, "targets": [(True, (2, 8)), (False, (3, 0))], "paths": []}),
+    (["--target=3-", "--target=2.8"],
+     {"code": 0, "targets": [(True, (2, 8)), (False, (3, 0))], "paths": []}),
+    (["-t=3-", "--target=2.8"],
+     {"code": 0, "targets": [(True, (2, 8)), (False, (3, 0))], "paths": []}),
+    (["-t=3-", "-t=2,8"],
+     {"code": 0, "targets": [(True, (2, 8)), (False, (3, 0))], "paths": []}),
+    (["--target=3-", "--target=2,8"],
+     {"code": 0, "targets": [(True, (2, 8)), (False, (3, 0))], "paths": []}),
+    (["-t=3-", "--target=2,8"],
+     {"code": 0, "targets": [(True, (2, 8)), (False, (3, 0))], "paths": []}),
 
     # Too many targets (>2).
-    self.assertContainsDict({"code": 1},
-                            self.parse_args(["-t=3.1", "-t=2.8", "-t=3"]))
-    self.assertContainsDict({"code": 1},
-                            self.parse_args(["--target=3.1", "--target=2.8", "--target=3"]))
-    self.assertContainsDict({"code": 1},
-                            self.parse_args(["--target=3.1", "-t=2.8", "--target=3"]))
+    (["-t=3.1", "-t=2.8", "-t=3"], {"code": 1}),
+    (["--target=3.1", "--target=2.8", "--target=3"], {"code": 1}),
+    (["--target=3.1", "-t=2.8", "--target=3"], {"code": 1}),
 
     # Invalid values.
-    self.assertContainsDict({"code": 1}, self.parse_args(["-t=a"]))            # NaN
-    self.assertContainsDict({"code": 1}, self.parse_args(["--target=a"]))
-    self.assertContainsDict({"code": 1}, self.parse_args(["-t=-1"]))           # < 2
-    self.assertContainsDict({"code": 1}, self.parse_args(["--target=-1"]))
-    self.assertContainsDict({"code": 1}, self.parse_args(["-t=1.8"]))          # < 2
-    self.assertContainsDict({"code": 1}, self.parse_args(["--target=1.8"]))
-    self.assertContainsDict({"code": 1}, self.parse_args(["-t=4"]))            # >= 4
-    self.assertContainsDict({"code": 1}, self.parse_args(["--target=4"]))
-    self.assertContainsDict({"code": 1}, self.parse_args(["-t=4,5"]))          # > 4
-    self.assertContainsDict({"code": 1}, self.parse_args(["--target=4,5"]))
-    self.assertContainsDict({"code": 1}, self.parse_args(["-t=2+"]))           # Only - allowed.
-    self.assertContainsDict({"code": 1}, self.parse_args(["--target=2+"]))
-    self.assertContainsDict({"code": 1}, self.parse_args(["-t=2,0.1"]))        # 3 vals disallowed.
-    self.assertContainsDict({"code": 1}, self.parse_args(["--target=2,0.1"]))
-    self.assertContainsDict({"code": 1}, self.parse_args(["-t=2.0,1"]))        # 3 vals disallowed.
-    self.assertContainsDict({"code": 1}, self.parse_args(["--target=2.0,1"]))
+    (["-t=a"], {"code": 1}),            # NaN
+    (["--target=a"], {"code": 1}),
+    (["-t=-1"], {"code": 1}),           # < 2
+    (["--target=-1"], {"code": 1}),
+    (["-t=1.8"], {"code": 1}),          # < 2
+    (["--target=1.8"], {"code": 1}),
+    (["-t=4"], {"code": 1}),            # >= 4
+    (["--target=4"], {"code": 1}),
+    (["-t=4,5"], {"code": 1}),          # > 4
+    (["--target=4,5"], {"code": 1}),
+    (["-t=2+"], {"code": 1}),           # Only - allowed.
+    (["--target=2+"], {"code": 1}),
+    (["-t=2,0.1"], {"code": 1}),        # 3 vals disallowed.
+    (["--target=2,0.1"], {"code": 1}),
+    (["-t=2.0,1"], {"code": 1}),        # 3 vals disallowed.
+    (["--target=2.0,1"], {"code": 1}),
+  ])
+  def test_targets(self, args, parsed_args):
+    self.assertParseArgs(args, parsed_args)
 
   def test_ignore_incomp(self):
     self.assertFalse(self.config.ignore_incomp())
@@ -108,28 +105,26 @@ class VerminArgumentsTests(VerminTest):
     self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--ignore"]))
     self.assertTrue(self.config.ignore_incomp())
 
-  def test_processes(self):
+  @VerminTest.parameterized_args([
     # Default value is cpu_count().
-    self.assertContainsDict({"code": 0, "processes": cpu_count(), "paths": []},
-                            self.parse_args(["-q"]))
+    (["-q"], {"code": 0, "processes": cpu_count(), "paths": []}),
 
     # Valid values.
-    self.assertContainsDict({"code": 0, "processes": 1, "paths": []},
-                            self.parse_args(["-p=1"]))
-    self.assertContainsDict({"code": 0, "processes": 1, "paths": []},
-                            self.parse_args(["--processes=1"]))
-    self.assertContainsDict({"code": 0, "processes": 9, "paths": []},
-                            self.parse_args(["-p=9"]))
-    self.assertContainsDict({"code": 0, "processes": 9, "paths": []},
-                            self.parse_args(["--processes=9"]))
+    (["-p=1"], {"code": 0, "processes": 1, "paths": []}),
+    (["--processes=1"], {"code": 0, "processes": 1, "paths": []}),
+    (["-p=9"], {"code": 0, "processes": 9, "paths": []}),
+    (["--processes=9"], {"code": 0, "processes": 9, "paths": []}),
 
     # Invalid values.
-    self.assertContainsDict({"code": 1}, self.parse_args(["-p=hello"]))
-    self.assertContainsDict({"code": 1}, self.parse_args(["--processes=hello"]))
-    self.assertContainsDict({"code": 1}, self.parse_args(["-p=-1"]))
-    self.assertContainsDict({"code": 1}, self.parse_args(["--processes=-1"]))
-    self.assertContainsDict({"code": 1}, self.parse_args(["-p=0"]))
-    self.assertContainsDict({"code": 1}, self.parse_args(["--processes=0"]))
+    (["-p=hello"], {"code": 1}),
+    (["--processes=hello"], {"code": 1}),
+    (["-p=-1"], {"code": 1}),
+    (["--processes=-1"], {"code": 1}),
+    (["-p=0"], {"code": 1}),
+    (["--processes=0"], {"code": 1}),
+  ])
+  def test_processes(self, args, parsed_args):
+    self.assertParseArgs(args, parsed_args)
 
   def test_print_visits(self):
     self.assertFalse(self.config.print_visits())

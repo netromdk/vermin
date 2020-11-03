@@ -61,195 +61,288 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
   def test_breakpoint(self):
     self.assertOnlyIn((3, 7), self.detect("breakpoint()"))
 
-  def test_has_key_of_dict(self):
-    self.assertOnlyIn((2, 2), self.detect("d={}\nd.has_key('a')"))
-    self.assertOnlyIn((2, 2), self.detect("{}.has_key('a')"))
-    self.assertOnlyIn((2, 2), self.detect("d=dict()\nd.has_key('a')"))
-    self.assertOnlyIn((2, 2), self.detect("dict().has_key('a')"))
+  @VerminTest.parameterized_args([
+    ("d={}\nd.has_key('a')", (2, 2)),
+    ("{}.has_key('a')", (2, 2)),
+    ("d=dict()\nd.has_key('a')", (2, 2)),
+    ("dict().has_key('a')", (2, 2)),
+  ])
+  def test_has_key_of_dict(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_iteritems_of_dict(self):
-    self.assertOnlyIn((2, 2), self.detect("d={}\nd.iteritems()"))
-    self.assertOnlyIn((2, 2), self.detect("{}.iteritems()"))
-    self.assertOnlyIn((2, 2), self.detect("d=dict()\nd.iteritems()"))
-    self.assertOnlyIn((2, 2), self.detect("dict().iteritems()"))
+  @VerminTest.parameterized_args([
+    ("d={}\nd.iteritems()", (2, 2)),
+    ("{}.iteritems()", (2, 2)),
+    ("d=dict()\nd.iteritems()", (2, 2)),
+    ("dict().iteritems()", (2, 2)),
+  ])
+  def test_iteritems_of_dict(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_iterkeys_of_dict(self):
-    self.assertOnlyIn((2, 2), self.detect("d={}\nd.iterkeys()"))
-    self.assertOnlyIn((2, 2), self.detect("{}.iterkeys()"))
-    self.assertOnlyIn((2, 2), self.detect("d=dict()\nd.iterkeys()"))
-    self.assertOnlyIn((2, 2), self.detect("dict().iterkeys()"))
+  @VerminTest.parameterized_args([
+    ("d={}\nd.iterkeys()", (2, 2)),
+    ("{}.iterkeys()", (2, 2)),
+    ("d=dict()\nd.iterkeys()", (2, 2)),
+    ("dict().iterkeys()", (2, 2)),
+  ])
+  def test_iterkeys_of_dict(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_itervalues_of_dict(self):
-    self.assertOnlyIn((2, 2), self.detect("d={}\nd.itervalues()"))
-    self.assertOnlyIn((2, 2), self.detect("{}.itervalues()"))
-    self.assertOnlyIn((2, 2), self.detect("d=dict()\nd.itervalues()"))
-    self.assertOnlyIn((2, 2), self.detect("dict().itervalues()"))
+  @VerminTest.parameterized_args([
+    ("d={}\nd.itervalues()", (2, 2)),
+    ("{}.itervalues()", (2, 2)),
+    ("d=dict()\nd.itervalues()", (2, 2)),
+    ("dict().itervalues()", (2, 2)),
+  ])
+  def test_itervalues_of_dict(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_viewitems_of_dict(self):
-    self.assertOnlyIn((2, 7), self.detect("d={}\nd.viewitems()"))
-    self.assertOnlyIn((2, 7), self.detect("{}.viewitems()"))
-    self.assertOnlyIn((2, 7), self.detect("d=dict()\nd.viewitems()"))
-    self.assertOnlyIn((2, 7), self.detect("dict().viewitems()"))
+  @VerminTest.parameterized_args([
+    ("d={}\nd.viewitems()", (2, 7)),
+    ("{}.viewitems()", (2, 7)),
+    ("d=dict()\nd.viewitems()", (2, 7)),
+    ("dict().viewitems()", (2, 7)),
+  ])
+  def test_viewitems_of_dict(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_viewkeys_of_dict(self):
-    self.assertOnlyIn((2, 7), self.detect("d={}\nd.viewkeys()"))
-    self.assertOnlyIn((2, 7), self.detect("{}.viewkeys()"))
-    self.assertOnlyIn((2, 7), self.detect("d=dict()\nd.viewkeys()"))
-    self.assertOnlyIn((2, 7), self.detect("dict().viewkeys()"))
+  @VerminTest.parameterized_args([
+    ("d={}\nd.viewkeys()", (2, 7)),
+    ("{}.viewkeys()", (2, 7)),
+    ("d=dict()\nd.viewkeys()", (2, 7)),
+    ("dict().viewkeys()", (2, 7)),
+  ])
+  def test_viewkeys_of_dict(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_viewvalues_of_dict(self):
-    self.assertOnlyIn((2, 7), self.detect("d={}\nd.viewvalues()"))
-    self.assertOnlyIn((2, 7), self.detect("{}.viewvalues()"))
-    self.assertOnlyIn((2, 7), self.detect("d=dict()\nd.viewvalues()"))
-    self.assertOnlyIn((2, 7), self.detect("dict().viewvalues()"))
+  @VerminTest.parameterized_args([
+    ("d={}\nd.viewvalues()", (2, 7)),
+    ("{}.viewvalues()", (2, 7)),
+    ("d=dict()\nd.viewvalues()", (2, 7)),
+    ("dict().viewvalues()", (2, 7)),
+  ])
+  def test_viewvalues_of_dict(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_fromkeys_of_dict(self):
-    self.assertOnlyIn(((2, 3), (3, 0)), self.detect("d={}\nd.fromkeys()"))
-    self.assertOnlyIn(((2, 3), (3, 0)), self.detect("{}.fromkeys()"))
-    self.assertOnlyIn(((2, 3), (3, 0)), self.detect("d=dict()\nd.fromkeys()"))
-    self.assertOnlyIn(((2, 3), (3, 0)), self.detect("dict().fromkeys()"))
+  @VerminTest.parameterized_args([
+    ("d={}\nd.fromkeys()", ((2, 3), (3, 0))),
+    ("{}.fromkeys()", ((2, 3), (3, 0))),
+    ("d=dict()\nd.fromkeys()", ((2, 3), (3, 0))),
+    ("dict().fromkeys()", ((2, 3), (3, 0))),
+  ])
+  def test_fromkeys_of_dict(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_pop_of_dict(self):
-    self.assertOnlyIn(((2, 3), (3, 0)), self.detect("d={1: 2}\nd.pop(1)"))
-    self.assertOnlyIn(((2, 3), (3, 0)), self.detect("{1: 2}.pop(1)"))
-    self.assertOnlyIn(((2, 3), (3, 0)), self.detect("d=dict({1: 2})\nd.pop(1)"))
-    self.assertOnlyIn(((2, 3), (3, 0)), self.detect("dict({1: 2}).pop(1)"))
+  @VerminTest.parameterized_args([
+    ("d={1: 2}\nd.pop(1)", ((2, 3), (3, 0))),
+    ("{1: 2}.pop(1)", ((2, 3), (3, 0))),
+    ("d=dict({1: 2})\nd.pop(1)", ((2, 3), (3, 0))),
+    ("dict({1: 2}).pop(1)", ((2, 3), (3, 0))),
+  ])
+  def test_pop_of_dict(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_isdisjoint_of_set(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("s={1,2}\ns.isdisjoint({3,4})"))
-    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("{1,2}.isdisjoint({3,4})"))
-    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("s=set()\ns.isdisjoint({3,4})"))
-    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("set().isdisjoint({3,4})"))
+  @VerminTest.parameterized_args([
+    ("s={1,2}\ns.isdisjoint({3,4})", ((2, 6), (3, 0))),
+    ("{1,2}.isdisjoint({3,4})", ((2, 6), (3, 0))),
+    ("s=set()\ns.isdisjoint({3,4})", ((2, 6), (3, 0))),
+    ("set().isdisjoint({3,4})", ((2, 6), (3, 0))),
+  ])
+  def test_isdisjoint_of_set(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_isdisjoint_of_frozenset(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("s=frozenset()\ns.isdisjoint({3,4})"))
-    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("frozenset().isdisjoint({3,4})"))
+  @VerminTest.parameterized_args([
+    ("s=frozenset()\ns.isdisjoint({3,4})", ((2, 6), (3, 0))),
+    ("frozenset().isdisjoint({3,4})", ((2, 6), (3, 0))),
+  ])
+  def test_isdisjoint_of_frozenset(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_clear_of_list(self):
-    self.assertOnlyIn((3, 0), self.detect("l=[]\nl.clear()"))
-    self.assertOnlyIn((3, 0), self.detect("[].clear()"))
-    self.assertOnlyIn((3, 0), self.detect("l=list()\nl.clear()"))
-    self.assertOnlyIn((3, 0), self.detect("list().clear()"))
+  @VerminTest.parameterized_args([
+    ("l=[]\nl.clear()", (3, 0)),
+    ("[].clear()", (3, 0)),
+    ("l=list()\nl.clear()", (3, 0)),
+    ("list().clear()", (3, 0)),
+  ])
+  def test_clear_of_list(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_copy_of_list(self):
-    self.assertOnlyIn((3, 0), self.detect("l=[]\nl.copy()"))
-    self.assertOnlyIn((3, 0), self.detect("[].copy()"))
-    self.assertOnlyIn((3, 0), self.detect("l=list()\nl.copy()"))
-    self.assertOnlyIn((3, 0), self.detect("list().copy()"))
+  @VerminTest.parameterized_args([
+    ("l=[]\nl.copy()", (3, 0)),
+    ("[].copy()", (3, 0)),
+    ("l=list()\nl.copy()", (3, 0)),
+    ("list().copy()", (3, 0)),
+  ])
+  def test_copy_of_list(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_decode_of_str(self):
-    self.assertOnlyIn((2, 2), self.detect("s=\"\"\ns.decode()"))
-    self.assertOnlyIn((2, 2), self.detect("\"\".decode()"))
-    self.assertOnlyIn((2, 2), self.detect("s=str()\ns.decode()"))
-    self.assertOnlyIn((2, 2), self.detect("str().decode()"))
+  @VerminTest.parameterized_args([
+    ("s=\"\"\ns.decode()", (2, 2)),
+    ("\"\".decode()", (2, 2)),
+    ("s=str()\ns.decode()", (2, 2)),
+    ("str().decode()", (2, 2)),
+  ])
+  def test_decode_of_str(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_casefold_of_str(self):
-    self.assertOnlyIn((3, 3), self.detect("s=\"\"\ns.casefold()"))
-    self.assertOnlyIn((3, 3), self.detect("\"\".casefold()"))
-    self.assertOnlyIn((3, 3), self.detect("s=str()\ns.casefold()"))
-    self.assertOnlyIn((3, 3), self.detect("str().casefold()"))
+  @VerminTest.parameterized_args([
+    ("s=\"\"\ns.casefold()", (3, 3)),
+    ("\"\".casefold()", (3, 3)),
+    ("s=str()\ns.casefold()", (3, 3)),
+    ("str().casefold()", (3, 3)),
+  ])
+  def test_casefold_of_str(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_format_of_str(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("s=\"\"\ns.format()"))
-    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("\"\".format()"))
-    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("s=str()\ns.format()"))
-    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("str().format()"))
+  @VerminTest.parameterized_args([
+    ("s=\"\"\ns.format()", ((2, 6), (3, 0))),
+    ("\"\".format()", ((2, 6), (3, 0))),
+    ("s=str()\ns.format()", ((2, 6), (3, 0))),
+    ("str().format()", ((2, 6), (3, 0))),
+  ])
+  def test_format_of_str(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_format_map_of_str(self):
-    self.assertOnlyIn((3, 2), self.detect("s=\"\"\ns.format_map()"))
-    self.assertOnlyIn((3, 2), self.detect("\"\".format_map()"))
-    self.assertOnlyIn((3, 2), self.detect("s=str()\ns.format_map()"))
-    self.assertOnlyIn((3, 2), self.detect("str().format_map()"))
+  @VerminTest.parameterized_args([
+    ("s=\"\"\ns.format_map()", (3, 2)),
+    ("\"\".format_map()", (3, 2)),
+    ("s=str()\ns.format_map()", (3, 2)),
+    ("str().format_map()", (3, 2)),
+  ])
+  def test_format_map_of_str(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_isascii_of_str(self):
-    self.assertOnlyIn((3, 7), self.detect("s=\"\"\ns.isascii()"))
-    self.assertOnlyIn((3, 7), self.detect("\"\".isascii()"))
-    self.assertOnlyIn((3, 7), self.detect("s=str()\ns.isascii()"))
-    self.assertOnlyIn((3, 7), self.detect("str().isascii()"))
+  @VerminTest.parameterized_args([
+    ("s=\"\"\ns.isascii()", (3, 7)),
+    ("\"\".isascii()", (3, 7)),
+    ("s=str()\ns.isascii()", (3, 7)),
+    ("str().isascii()", (3, 7)),
+  ])
+  def test_isascii_of_str(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_isidentifier_of_str(self):
-    self.assertOnlyIn((3, 0), self.detect("s=\"\"\ns.isidentifier()"))
-    self.assertOnlyIn((3, 0), self.detect("\"\".isidentifier()"))
-    self.assertOnlyIn((3, 0), self.detect("s=str()\ns.isidentifier()"))
-    self.assertOnlyIn((3, 0), self.detect("str().isidentifier()"))
+  @VerminTest.parameterized_args([
+    ("s=\"\"\ns.isidentifier()", (3, 0)),
+    ("\"\".isidentifier()", (3, 0)),
+    ("s=str()\ns.isidentifier()", (3, 0)),
+    ("str().isidentifier()", (3, 0)),
+  ])
+  def test_isidentifier_of_str(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_isprintable_of_str(self):
-    self.assertOnlyIn((3, 0), self.detect("s=\"\"\ns.isprintable()"))
-    self.assertOnlyIn((3, 0), self.detect("\"\".isprintable()"))
-    self.assertOnlyIn((3, 0), self.detect("s=str()\ns.isprintable()"))
-    self.assertOnlyIn((3, 0), self.detect("str().isprintable()"))
+  @VerminTest.parameterized_args([
+    ("s=\"\"\ns.isprintable()", (3, 0)),
+    ("\"\".isprintable()", (3, 0)),
+    ("s=str()\ns.isprintable()", (3, 0)),
+    ("str().isprintable()", (3, 0)),
+  ])
+  def test_isprintable_of_str(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
   # pragma: no cover
   @VerminTest.skipUnlessLowerVersion(3.0)
-  def test_isdecimal_of_unicode(self):
-    self.assertOnlyIn((2, 0), self.detect("s=u\"\"\ns.isdecimal()"))
-    self.assertOnlyIn((2, 0), self.detect("u\"\".isdecimal()"))
-    self.assertOnlyIn((2, 0), self.detect("s=unicode()\ns.isdecimal()"))
-    self.assertOnlyIn((2, 0), self.detect("unicode().isdecimal()"))
+  @VerminTest.parameterized_args([
+    ("s=u\"\"\ns.isdecimal()", (2, 0)),
+    ("u\"\".isdecimal()", (2, 0)),
+    ("s=unicode()\ns.isdecimal()", (2, 0)),
+    ("unicode().isdecimal()", (2, 0)),
+  ])
+  def test_isdecimal_of_unicode(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
   # pragma: no cover
   @VerminTest.skipUnlessLowerVersion(3.0)
-  def test_isnumeric_of_unicode(self):
-    self.assertOnlyIn((2, 0), self.detect("s=u\"\"\ns.isnumeric()"))
-    self.assertOnlyIn((2, 0), self.detect("u\"\".isnumeric()"))
-    self.assertOnlyIn((2, 0), self.detect("s=unicode()\ns.isnumeric()"))
-    self.assertOnlyIn((2, 0), self.detect("unicode().isnumeric()"))
+  @VerminTest.parameterized_args([
+    ("s=u\"\"\ns.isnumeric()", (2, 0)),
+    ("u\"\".isnumeric()", (2, 0)),
+    ("s=unicode()\ns.isnumeric()", (2, 0)),
+    ("unicode().isnumeric()", (2, 0)),
+  ])
+  def test_isnumeric_of_unicode(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
   @VerminTest.skipUnlessVersion(3.0)
-  def test_isdecimal_of_str(self):
-    self.assertOnlyIn((3, 0), self.detect("s=\"\"\ns.isdecimal()"))
-    self.assertOnlyIn((3, 0), self.detect("\"\".isdecimal()"))
-    self.assertOnlyIn((3, 0), self.detect("s=str()\ns.isdecimal()"))
-    self.assertOnlyIn((3, 0), self.detect("str().isdecimal()"))
+  @VerminTest.parameterized_args([
+    ("s=\"\"\ns.isdecimal()", (3, 0)),
+    ("\"\".isdecimal()", (3, 0)),
+    ("s=str()\ns.isdecimal()", (3, 0)),
+    ("str().isdecimal()", (3, 0)),
+  ])
+  def test_isdecimal_of_str(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
   @VerminTest.skipUnlessVersion(3.0)
-  def test_isnumeric_of_str(self):
-    self.assertOnlyIn((3, 0), self.detect("s=\"\"\ns.isnumeric()"))
-    self.assertOnlyIn((3, 0), self.detect("\"\".isnumeric()"))
-    self.assertOnlyIn((3, 0), self.detect("s=str()\ns.isnumeric()"))
-    self.assertOnlyIn((3, 0), self.detect("str().isnumeric()"))
+  @VerminTest.parameterized_args([
+    ("s=\"\"\ns.isnumeric()", (3, 0)),
+    ("\"\".isnumeric()", (3, 0)),
+    ("s=str()\ns.isnumeric()", (3, 0)),
+    ("str().isnumeric()", (3, 0)),
+  ])
+  def test_isnumeric_of_str(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_maketrans_of_str(self):
-    self.assertOnlyIn((3, 0), self.detect("s=\"\"\ns.maketrans()"))
-    self.assertOnlyIn((3, 0), self.detect("\"\".maketrans()"))
-    self.assertOnlyIn((3, 0), self.detect("s=str()\ns.maketrans()"))
-    self.assertOnlyIn((3, 0), self.detect("str().maketrans()"))
+  @VerminTest.parameterized_args([
+    ("s=\"\"\ns.maketrans()", (3, 0)),
+    ("\"\".maketrans()", (3, 0)),
+    ("s=str()\ns.maketrans()", (3, 0)),
+    ("str().maketrans()", (3, 0)),
+  ])
+  def test_maketrans_of_str(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_removeprefix_of_str(self):
-    self.assertOnlyIn((3, 9), self.detect("s=\"\"\ns.removeprefix()"))
-    self.assertOnlyIn((3, 9), self.detect("\"\".removeprefix()"))
-    self.assertOnlyIn((3, 9), self.detect("s=str()\ns.removeprefix()"))
-    self.assertOnlyIn((3, 9), self.detect("str().removeprefix()"))
+  @VerminTest.parameterized_args([
+    ("s=\"\"\ns.removeprefix()", (3, 9)),
+    ("\"\".removeprefix()", (3, 9)),
+    ("s=str()\ns.removeprefix()", (3, 9)),
+    ("str().removeprefix()", (3, 9)),
+  ])
+  def test_removeprefix_of_str(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_removesuffix_of_str(self):
-    self.assertOnlyIn((3, 9), self.detect("s=\"\"\ns.removesuffix()"))
-    self.assertOnlyIn((3, 9), self.detect("\"\".removesuffix()"))
-    self.assertOnlyIn((3, 9), self.detect("s=str()\ns.removesuffix()"))
-    self.assertOnlyIn((3, 9), self.detect("str().removesuffix()"))
+  @VerminTest.parameterized_args([
+    ("s=\"\"\ns.removesuffix()", (3, 9)),
+    ("\"\".removesuffix()", (3, 9)),
+    ("s=str()\ns.removesuffix()", (3, 9)),
+    ("str().removesuffix()", (3, 9)),
+  ])
+  def test_removesuffix_of_str(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_partition_of_str(self):
-    self.assertOnlyIn(((2, 5), (3, 0)), self.detect("s=\"\"\ns.partition('a')"))
-    self.assertOnlyIn(((2, 5), (3, 0)), self.detect("\"\".partition('a')"))
-    self.assertOnlyIn(((2, 5), (3, 0)), self.detect("s=str()\ns.partition('a')"))
-    self.assertOnlyIn(((2, 5), (3, 0)), self.detect("str().partition('a')"))
+  @VerminTest.parameterized_args([
+    ("s=\"\"\ns.partition('a')", ((2, 5), (3, 0))),
+    ("\"\".partition('a')", ((2, 5), (3, 0))),
+    ("s=str()\ns.partition('a')", ((2, 5), (3, 0))),
+    ("str().partition('a')", ((2, 5), (3, 0))),
+  ])
+  def test_partition_of_str(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_rpartition_of_str(self):
-    self.assertOnlyIn(((2, 5), (3, 0)), self.detect("s=\"\"\ns.rpartition('a')"))
-    self.assertOnlyIn(((2, 5), (3, 0)), self.detect("\"\".rpartition('a')"))
-    self.assertOnlyIn(((2, 5), (3, 0)), self.detect("s=str()\ns.rpartition('a')"))
-    self.assertOnlyIn(((2, 5), (3, 0)), self.detect("str().rpartition('a')"))
+  @VerminTest.parameterized_args([
+    ("s=\"\"\ns.rpartition('a')", ((2, 5), (3, 0))),
+    ("\"\".rpartition('a')", ((2, 5), (3, 0))),
+    ("s=str()\ns.rpartition('a')", ((2, 5), (3, 0))),
+    ("str().rpartition('a')", ((2, 5), (3, 0))),
+  ])
+  def test_rpartition_of_str(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_rsplit_of_str(self):
-    self.assertOnlyIn(((2, 4), (3, 0)), self.detect("s=\"\"\ns.rsplit('a')"))
-    self.assertOnlyIn(((2, 4), (3, 0)), self.detect("\"\".rsplit('a')"))
-    self.assertOnlyIn(((2, 4), (3, 0)), self.detect("s=str()\ns.rsplit('a')"))
-    self.assertOnlyIn(((2, 4), (3, 0)), self.detect("str().rsplit('a')"))
+  @VerminTest.parameterized_args([
+    ("s=\"\"\ns.rsplit('a')", ((2, 4), (3, 0))),
+    ("\"\".rsplit('a')", ((2, 4), (3, 0))),
+    ("s=str()\ns.rsplit('a')", ((2, 4), (3, 0))),
+    ("str().rsplit('a')", ((2, 4), (3, 0))),
+  ])
+  def test_rsplit_of_str(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_zfill_of_str(self):
-    self.assertOnlyIn(((2, 2), (3, 0)), self.detect("s=\"\"\ns.zfill(2)"))
-    self.assertOnlyIn(((2, 2), (3, 0)), self.detect("\"\".zfill(2)"))
-    self.assertOnlyIn(((2, 2), (3, 0)), self.detect("s=str()\ns.zfill(2)"))
-    self.assertOnlyIn(((2, 2), (3, 0)), self.detect("str().zfill(2)"))
+  @VerminTest.parameterized_args([
+    ("s=\"\"\ns.zfill(2)", ((2, 2), (3, 0))),
+    ("\"\".zfill(2)", ((2, 2), (3, 0))),
+    ("s=str()\ns.zfill(2)", ((2, 2), (3, 0))),
+    ("str().zfill(2)", ((2, 2), (3, 0))),
+  ])
+  def test_zfill_of_str(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
   def test_as_integer_ratio_of_int(self):
     self.assertOnlyIn((3, 8), self.detect("(42).as_integer_ratio()"))

@@ -17,9 +17,7 @@ test-all:
 
 count:
 	./count.py
-	@echo "Tests: `grep -ri 'def test_' tests | wc -l | xargs` (\
-`find tests -iname '*.py' | xargs cat | grep -iE 'self\..*assert.*?\(' |\
-wc -l | xargs` assertions)"
+	@echo "Tests: `grep -ri 'def test_' tests | wc -l | xargs`"
 	@echo "Vermin SLOC: `sloccount vermin/ vermin.py 2>/dev/null | grep 'python:' | xargs`"
 	@echo "Tests  SLOC: `sloccount tests/ runtests.py 2>/dev/null | grep 'python:' | xargs`"
 
@@ -75,7 +73,7 @@ security-check:
 	.venv/bin/bandit -r -s B101 ${MODULES}
 
 lint:
-	.venv/bin/pylint -j 0 --disable=C,W0201,W0311,W0621,W0703,R0902,R0903,R0904,R0911,R0913,R0914,R0915,R0916,R1702,R1725\
+	.venv/bin/pylint -j 0 --disable=C,W0201,W0311,W0621,W0703,W0707,R0902,R0903,R0904,R0911,R0913,R0914,R0915,R0916,R1702,R1725\
 		${TOP_LEVEL_FILES}
 
 check-pypi:

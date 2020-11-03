@@ -1,18 +1,24 @@
 from .testutils import VerminTest
 
 class VerminCodecsEncodingTests(VerminTest):
-  def test_encoding_german(self):
-    self.assertOnlyIn((3, 4), self.detect("import codecs\ncodecs.encode('test', 'cp273')"))
-    self.assertOnlyIn((3, 4), self.detect("import codecs\ncodecs.encode('test', '273')"))
-    self.assertOnlyIn((3, 4), self.detect("import codecs\ncodecs.encode('test', 'ibm273')"))
-    self.assertOnlyIn((3, 4), self.detect("import codecs\ncodecs.encode('test', 'csibm273')"))
+  @VerminTest.parameterized_args([
+    ("import codecs\ncodecs.encode('test', 'cp273')", (3, 4)),
+    ("import codecs\ncodecs.encode('test', '273')", (3, 4)),
+    ("import codecs\ncodecs.encode('test', 'ibm273')", (3, 4)),
+    ("import codecs\ncodecs.encode('test', 'csibm273')", (3, 4)),
+  ])
+  def test_encoding_german(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_encoding_ukrainian(self):
-    self.assertOnlyIn((3, 4), self.detect("import codecs\ncodecs.encode('test', 'cp1125')"))
-    self.assertOnlyIn((3, 4), self.detect("import codecs\ncodecs.encode('test', '1125')"))
-    self.assertOnlyIn((3, 4), self.detect("import codecs\ncodecs.encode('test', 'ibm1125')"))
-    self.assertOnlyIn((3, 4), self.detect("import codecs\ncodecs.encode('test', 'cp866u')"))
-    self.assertOnlyIn((3, 4), self.detect("import codecs\ncodecs.encode('test', 'ruscii')"))
+  @VerminTest.parameterized_args([
+    ("import codecs\ncodecs.encode('test', 'cp1125')", (3, 4)),
+    ("import codecs\ncodecs.encode('test', '1125')", (3, 4)),
+    ("import codecs\ncodecs.encode('test', 'ibm1125')", (3, 4)),
+    ("import codecs\ncodecs.encode('test', 'cp866u')", (3, 4)),
+    ("import codecs\ncodecs.encode('test', 'ruscii')", (3, 4)),
+  ])
+  def test_encoding_ukrainian(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
   def test_encoding_windows_cp_utf8(self):
     self.assertOnlyIn((3, 3), self.detect("import codecs\ncodecs.encode('test', 'cp65001')"))
@@ -20,62 +26,85 @@ class VerminCodecsEncodingTests(VerminTest):
   def test_encoding_tajik(self):
     self.assertOnlyIn((3, 5), self.detect("import codecs\ncodecs.encode('test', 'koi8_t')"))
 
-  def test_encoding_kazakh(self):
-    self.assertOnlyIn((3, 5), self.detect("import codecs\ncodecs.encode('test', 'kz1048')"))
-    self.assertOnlyIn((3, 5), self.detect("import codecs\ncodecs.encode('test', 'kz_1048')"))
-    self.assertOnlyIn((3, 5), self.detect("import codecs\ncodecs.encode('test', 'strk1048_2002')"))
-    self.assertOnlyIn((3, 5), self.detect("import codecs\ncodecs.encode('test', 'kz-1048')"))
-    self.assertOnlyIn((3, 5), self.detect("import codecs\ncodecs.encode('test', 'strk1048-2002')"))
-    self.assertOnlyIn((3, 5), self.detect("import codecs\ncodecs.encode('test', 'rk1048')"))
+  @VerminTest.parameterized_args([
+    ("import codecs\ncodecs.encode('test', 'kz1048')", (3, 5)),
+    ("import codecs\ncodecs.encode('test', 'kz_1048')", (3, 5)),
+    ("import codecs\ncodecs.encode('test', 'strk1048_2002')", (3, 5)),
+    ("import codecs\ncodecs.encode('test', 'kz-1048')", (3, 5)),
+    ("import codecs\ncodecs.encode('test', 'strk1048-2002')", (3, 5)),
+    ("import codecs\ncodecs.encode('test', 'rk1048')", (3, 5)),
+  ])
+  def test_encoding_kazakh(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
   def test_encoding_windows_owm(self):
     self.assertOnlyIn((3, 6), self.detect("import codecs\ncodecs.encode('test', 'oem')"))
 
-  def test_encoding_base64(self):
-    self.assertOnlyIn((3, 2), self.detect("import codecs\ncodecs.encode('test', 'base64_codec')"))
-    self.assertOnlyIn((3, 2), self.detect("import codecs\ncodecs.encode('test', 'base64-codec')"))
-    self.assertOnlyIn((3, 4), self.detect("import codecs\ncodecs.encode('test', 'base64')"))
-    self.assertOnlyIn((3, 4), self.detect("import codecs\ncodecs.encode('test', 'base_64')"))
-    self.assertOnlyIn((3, 4), self.detect("import codecs\ncodecs.encode('test', 'base-64')"))
+  @VerminTest.parameterized_args([
+    ("import codecs\ncodecs.encode('test', 'base64_codec')", (3, 2)),
+    ("import codecs\ncodecs.encode('test', 'base64-codec')", (3, 2)),
+    ("import codecs\ncodecs.encode('test', 'base64')", (3, 4)),
+    ("import codecs\ncodecs.encode('test', 'base_64')", (3, 4)),
+    ("import codecs\ncodecs.encode('test', 'base-64')", (3, 4)),
+  ])
+  def test_encoding_base64(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_encoding_bz2(self):
-    self.assertOnlyIn((3, 2), self.detect("import codecs\ncodecs.encode('test', 'bz2_codec')"))
-    self.assertOnlyIn((3, 2), self.detect("import codecs\ncodecs.encode('test', 'bz2-codec')"))
-    self.assertOnlyIn((3, 4), self.detect("import codecs\ncodecs.encode('test', 'bz2')"))
+  @VerminTest.parameterized_args([
+    ("import codecs\ncodecs.encode('test', 'bz2_codec')", (3, 2)),
+    ("import codecs\ncodecs.encode('test', 'bz2-codec')", (3, 2)),
+    ("import codecs\ncodecs.encode('test', 'bz2')", (3, 4)),
+  ])
+  def test_encoding_bz2(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_encoding_hex(self):
-    self.assertOnlyIn((3, 2), self.detect("import codecs\ncodecs.encode('test', 'hex_codec')"))
-    self.assertOnlyIn((3, 2), self.detect("import codecs\ncodecs.encode('test', 'hex-codec')"))
-    self.assertOnlyIn((3, 4), self.detect("import codecs\ncodecs.encode('test', 'hex')"))
+  @VerminTest.parameterized_args([
+    ("import codecs\ncodecs.encode('test', 'hex_codec')", (3, 2)),
+    ("import codecs\ncodecs.encode('test', 'hex-codec')", (3, 2)),
+    ("import codecs\ncodecs.encode('test', 'hex')", (3, 4)),
+  ])
+  def test_encoding_hex(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_encoding_quopri(self):
-    self.assertOnlyIn((3, 2), self.detect("import codecs\ncodecs.encode('test', 'quopri_codec')"))
-    self.assertOnlyIn((3, 2), self.detect("import codecs\ncodecs.encode('test', 'quopri-codec')"))
-    self.assertOnlyIn((3, 4), self.detect("import codecs\ncodecs.encode('test', 'quopri')"))
-    self.assertOnlyIn((3, 4), self.detect(
-      "import codecs\ncodecs.encode('test', 'quotedprintable')"))
-    self.assertOnlyIn((3, 4), self.detect("""import codecs
+  @VerminTest.parameterized_args([
+    ("import codecs\ncodecs.encode('test', 'quopri_codec')", (3, 2)),
+    ("import codecs\ncodecs.encode('test', 'quopri-codec')", (3, 2)),
+    ("import codecs\ncodecs.encode('test', 'quopri')", (3, 4)),
+    ("import codecs\ncodecs.encode('test', 'quotedprintable')", (3, 4)),
+    ("""import codecs
 codecs.encode('test', 'quoted_printable')
-"""))
-    self.assertOnlyIn((3, 4), self.detect("""import codecs
+""", (3, 4)),
+    ("""import codecs
 codecs.encode('test', 'quoted-printable')
-"""))
+""", (3, 4)),
+  ])
+  def test_encoding_quopri(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_encoding_uu(self):
-    self.assertOnlyIn((3, 2), self.detect("import codecs\ncodecs.encode('test', 'uu_codec')"))
-    self.assertOnlyIn((3, 2), self.detect("import codecs\ncodecs.encode('test', 'uu-codec')"))
-    self.assertOnlyIn((3, 4), self.detect("import codecs\ncodecs.encode('test', 'uu')"))
+  @VerminTest.parameterized_args([
+    ("import codecs\ncodecs.encode('test', 'uu_codec')", (3, 2)),
+    ("import codecs\ncodecs.encode('test', 'uu-codec')", (3, 2)),
+    ("import codecs\ncodecs.encode('test', 'uu')", (3, 4)),
+  ])
+  def test_encoding_uu(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_encoding_zip(self):
-    self.assertOnlyIn((3, 2), self.detect("import codecs\ncodecs.encode('test', 'zip_codec')"))
-    self.assertOnlyIn((3, 2), self.detect("import codecs\ncodecs.encode('test', 'zip-codec')"))
-    self.assertOnlyIn((3, 4), self.detect("import codecs\ncodecs.encode('test', 'zip')"))
-    self.assertOnlyIn((3, 4), self.detect("import codecs\ncodecs.encode('test', 'zlib')"))
+  @VerminTest.parameterized_args([
+    ("import codecs\ncodecs.encode('test', 'zip_codec')", (3, 2)),
+    ("import codecs\ncodecs.encode('test', 'zip-codec')", (3, 2)),
+    ("import codecs\ncodecs.encode('test', 'zip')", (3, 4)),
+    ("import codecs\ncodecs.encode('test', 'zlib')", (3, 4)),
+  ])
+  def test_encoding_zip(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
-  def test_encoding_rot13(self):
-    self.assertOnlyIn((3, 2), self.detect("import codecs\ncodecs.encode('test', 'rot_13')"))
-    self.assertOnlyIn((3, 2), self.detect("import codecs\ncodecs.encode('test', 'rot-13')"))
-    self.assertOnlyIn((3, 4), self.detect("import codecs\ncodecs.encode('test', 'rot13')"))
+  @VerminTest.parameterized_args([
+    ("import codecs\ncodecs.encode('test', 'rot_13')", (3, 2)),
+    ("import codecs\ncodecs.encode('test', 'rot-13')", (3, 2)),
+    ("import codecs\ncodecs.encode('test', 'rot13')", (3, 4)),
+  ])
+  def test_encoding_rot13(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
   def test_function_encode(self):
     self.assertOnlyIn((3, 5), self.detect("import codecs\ncodecs.encode('test', 'koi8_t')"))
@@ -123,15 +152,17 @@ codecs.decode('test', encoding='koi8_t')
     self.assertOnlyIn((3, 5), self.detect("import codecs\ncodecs.open('f.txt', 'r', 'koi8_t')"))
     self.assertOnlyIn((3, 5), self.detect("import codecs\ncodecs.open('f.txt', encoding='koi8_t')"))
 
-  def test_function_EncodedFile(self):
-    self.assertOnlyIn((3, 5), self.detect("import codecs\ncodecs.EncodedFile('f.txt', 'koi8_t')"))
-    self.assertOnlyIn((3, 5),
-                      self.detect("""import codecs
+  @VerminTest.parameterized_args([
+    ("import codecs\ncodecs.EncodedFile('f.txt', 'koi8_t')", (3, 5)),
+    ("""import codecs
 codecs.EncodedFile('f.txt', data_encoding='koi8_t')
-"""))
-    self.assertOnlyIn((3, 5),
-                      self.detect("import codecs\n"
-                                  "codecs.EncodedFile('f.txt', 'utf-8', file_encoding='koi8_t')"))
-    self.assertOnlyIn((3, 5),
-                      self.detect("from codecs import EncodedFile as EF\n"
-                                  "EF('f.txt', data_encoding='koi8_t', file_encoding='utf-8')"))
+""", (3, 5)),
+    ("""import codecs
+codecs.EncodedFile('f.txt', 'utf-8', file_encoding='koi8_t')
+""", (3, 5)),
+    ("""from codecs import EncodedFile as EF
+EF('f.txt', data_encoding='koi8_t', file_encoding='utf-8')
+""", (3, 5)),
+  ])
+  def test_function_EncodedFile(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)

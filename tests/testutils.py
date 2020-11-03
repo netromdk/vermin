@@ -3,7 +3,7 @@ import sys
 import os
 from tempfile import NamedTemporaryFile
 
-from vermin import Config, detect, visit
+from vermin import Config, Arguments, detect, visit
 
 def current_major_version():
   return float(sys.version_info.major)
@@ -30,6 +30,9 @@ class VerminTest(unittest.TestCase):
 
   def visit(self, source, path=None):
     return visit(source, config=self.config, path=path)
+
+  def parse_args(self, args):
+    return Arguments(args).parse(self.config)
 
   @staticmethod
   def skipUnlessVersion(version):
@@ -80,8 +83,9 @@ expected to be raised."""
       return wrapper
     return decorator
 
-  def assertOnlyIn(self, values, data):
+  def assertOnlyIn(self, values, data, msg=None):
     """Assert only value(s) is in data but ignores None and 0 values."""
+    msg = ", " + msg if msg is not None else ""
     size = 1
     multiple = isinstance(values, (list, tuple))
     if multiple:
@@ -91,21 +95,22 @@ expected to be raised."""
       else:
         size = len(values)
     self.assertEqual(len(data) - data.count(None) - data.count(0) - data.count((0, 0)), size,
-                     msg="ONLY looking for '{}' in '{}'".format(values, data))
+                     msg="ONLY looking for '{}' in '{}'{}".format(values, data, msg))
     if multiple:
       for value in values:
-        self.assertIn(value, data, msg="ONLY looking for '{}' in '{}'".format(value, data))
+        self.assertIn(value, data, msg="ONLY looking for '{}' in '{}'{}".format(value, data, msg))
     else:
-      self.assertIn(values, data, msg="ONLY looking for '{}' in '{}'".format(values, data))
+      self.assertIn(values, data, msg="ONLY looking for '{}' in '{}'{}".format(values, data, msg))
 
-  def assertContainsDict(self, dictionary, data):
+  def assertContainsDict(self, dictionary, data, msg=None):
     """Assert data contains all keys and values of dictionary input."""
+    msg = ", " + msg if msg is not None else ""
     for key in dictionary:
-      self.assertTrue(key in data, msg="Data doesn't have key '{}'".format(key))
+      self.assertTrue(key in data, msg="Data doesn't have key '{}'{}".format(key, msg))
       value = dictionary[key]
       value2 = data[key]
       self.assertEqual(value, value2,
-                       msg="key={}, value={} != target={}".format(key, value, value2))
+                       msg="key={}, value={} != target={}{}".format(key, value, value2, msg))
 
   def assertEmpty(self, data):
     self.assertTrue(len(data) == 0,
@@ -125,6 +130,19 @@ override is made to work for all versions, also 3.0-3.1."""
       self.assertItemsEqual(expected, actual)  # pylint: disable=no-member
     else:
       self.assertEqual(sorted(expected), sorted(actual))
+
+  def assertDetectMinVersions(self, source, min_versions):
+    """Assert the minimum versions of `source` is `min_versions`."""
+    res_versions = self.detect(source)
+    self.assertOnlyIn(min_versions, res_versions, msg="""Minimum versions: {}
+Expected: {}
+Source:
+{}""".format(res_versions, min_versions, source))
+
+  def assertParseArgs(self, args, parsed_args):
+    """Assert the parsed arguments from input arguments."""
+    self.assertContainsDict(parsed_args, self.parse_args(args),
+                            msg="args={}".format(args))
 
 class ScopedTemporaryFile:
   """Creates a temporary file that is automatically removed when this instance goes out of scope.

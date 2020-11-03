@@ -316,79 +316,90 @@ test.py:6:9:2.7:3.2:'argparse' module
     self.assertOnlyIn(((2, 7), (3, 0)), mins)
     self.assertEmpty(backports)
 
-  def test_combine_versions(self):
-    with self.assertRaises(AssertionError):
-      combine_versions([None], [None, None], self.config)
-    self.assertEqual([(2, 0), (3, 1)],
-                     combine_versions([(2, 0), (3, 0)], [(2, 0), (3, 1)], self.config))
-    self.assertEqual([(2, 0), (3, 1)], combine_versions([2, (3, 0)], [(2, 0), 3.1], self.config))
-    self.assertEqual([(2, 0), (3, 1)], combine_versions([(2, 0), 3], [2, 3.1], self.config))
-    self.assertEqual([(2, 0), (3, 1)], combine_versions([2.0, 3.0], [2.0, 3.1], self.config))
-    self.assertEqual([(2, 1), (3, 0)], combine_versions([2.1, 3.0], [2.0, 3.0], self.config))
-    self.assertEqual([None, (3, 0)], combine_versions([2.0, 3.0], [None, 3.0], self.config))
-    self.assertEqual([(2, 0), None], combine_versions([2.0, None], [2.0, 3.0], self.config))
-    self.assertEqual([None, None], combine_versions([2.0, 3.0], [None, None], self.config))
-    self.assertEqual([None, None], combine_versions([None, None], [2.0, 3.0], self.config))
-    with self.assertRaises(InvalidVersionException):
-      combine_versions([2.0, None], [None, 3.0], self.config)
-    with self.assertRaises(InvalidVersionException):
-      combine_versions([None, 3.0], [2.0, None], self.config)
-    self.assertEqual([(0, 0), (3, 0)], combine_versions([0, 3.0], [0, 3.0], self.config))
-    self.assertEqual([(2, 0), (3, 0)], combine_versions([0, 3.0], [2.0, 3.0], self.config))
-    self.assertEqual([(2, 0), (3, 0)], combine_versions([2.0, 3.0], [0, 3.0], self.config))
-    self.assertEqual([(2, 0), (3, 0)], combine_versions([2.0, 0], [2.0, 3.0], self.config))
-    self.assertEqual([(2, 0), (3, 0)], combine_versions([2.0, 3.0], [2.0, 0], self.config))
+  @VerminTest.parameterized_args([
+    ([(2, 0), (3, 0)], [(2, 0), (3, 1)], [(2, 0), (3, 1)]),
+    ([2, (3, 0)], [(2, 0), 3.1], [(2, 0), (3, 1)]),
+    ([(2, 0), 3], [2, 3.1], [(2, 0), (3, 1)]),
+    ([2.0, 3.0], [2.0, 3.1], [(2, 0), (3, 1)]),
+    ([2.1, 3.0], [2.0, 3.0], [(2, 1), (3, 0)]),
+    ([2.0, 3.0], [None, 3.0], [None, (3, 0)]),
+    ([2.0, None], [2.0, 3.0], [(2, 0), None]),
+    ([2.0, 3.0], [None, None], [None, None]),
+    ([None, None], [2.0, 3.0], [None, None]),
+    ([0, 3.0], [0, 3.0], [(0, 0), (3, 0)]),
+    ([0, 3.0], [2.0, 3.0], [(2, 0), (3, 0)]),
+    ([2.0, 3.0], [0, 3.0], [(2, 0), (3, 0)]),
+    ([2.0, 0], [2.0, 3.0], [(2, 0), (3, 0)]),
+    ([2.0, 3.0], [2.0, 0], [(2, 0), (3, 0)]),
+  ])
+  def test_combine_versions(self, lhs, rhs, expected):
+    self.assertEqual(combine_versions(lhs, rhs, self.config), expected)
 
-  def test_version_strings(self):
-    self.assertEqual("~2, ~3", version_strings([0.0, 0.0]))
-    self.assertEqual("2.0, ~3", version_strings([2.0, 0.0]))
-    self.assertEqual("2.0, 3.0", version_strings([2.0, 3.0]))
-    self.assertEqual("~2, 3.1", version_strings([0.0, 3.1]))
-    self.assertEqual("!2, 3.0", version_strings([None, 3.0]))
-    self.assertEqual("2.0, !3", version_strings([2.0, None]))
-    self.assertEqual("!2, !3", version_strings([None, None]))
-    self.assertEqual("~2:3.1", version_strings([0.0, 3.1], ":"))
-    self.assertEqual("!2:3.0", version_strings([None, 3.0], ":"))
-    self.assertEqual("2.0:!3", version_strings([2.0, None], ":"))
-    self.assertEqual("!2:!3", version_strings([None, None], ":"))
-    self.assertEqual("2.3", version_strings([2.3]))
-    self.assertEqual("3.4", version_strings([3.4]))
-    self.assertEqual("2.3, 2.7, 3.1", version_strings([2.3, 2.7, 3.1]))
-    self.assertEqual("2.0, 2.3, 2.4, 2.5, 2.6, 2.7, 3.0, 3.1, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9",
-                     version_strings([2.0, 2.3, 2.4, 2.5, 2.6, 2.7, 3.0, 3.1, 3.3, 3.4, 3.5, 3.6,
-                                      3.7, 3.8, 3.9]))
+  @VerminTest.parameterized_exceptions([
+    (AssertionError, [None], [None, None]),  # Not same size.
+    (AssertionError, [None, None], [None]),  # Not same size.
+    (InvalidVersionException, [2.0, None], [None, 3.0]),
+    (InvalidVersionException, [None, 3.0], [2.0, None]),
+  ])
+  def test_combine_versions_assert(self, lhs, rhs):
+    combine_versions(lhs, rhs, self.config)
 
-    # Cannot be empty.
-    with self.assertRaises(AssertionError):
-      version_strings([])
+  @VerminTest.parameterized_args([
+    ([0.0, 0.0], None, "~2, ~3"),
+    ([2.0, 0.0], None, "2.0, ~3"),
+    ([2.0, 3.0], None, "2.0, 3.0"),
+    ([0.0, 3.1], None, "~2, 3.1"),
+    ([None, 3.0], None, "!2, 3.0"),
+    ([2.0, None], None, "2.0, !3"),
+    ([None, None], None, "!2, !3"),
+    ([0.0, 3.1], ":", "~2:3.1"),
+    ([None, 3.0], ":", "!2:3.0"),
+    ([2.0, None], ":", "2.0:!3"),
+    ([None, None], ":", "!2:!3"),
+    ([2.3], None, "2.3"),
+    ([3.4], None, "3.4"),
+    ([2.3, 2.7, 3.1], None, "2.3, 2.7, 3.1"),
+    ([2.0, 2.3, 2.4, 2.5, 2.6, 2.7, 3.0, 3.1, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9],
+     None, "2.0, 2.3, 2.4, 2.5, 2.6, 2.7, 3.0, 3.1, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9"),
+  ])
+  def test_version_strings(self, versions, separator, expected):
+    self.assertEqual(version_strings(versions, separator), expected)
+
+  @VerminTest.parameterized_exceptions([
+    (AssertionError, []),  # Cannot be empty.
 
     # If there is at least one zero value, then there can only be one or two values!
-    with self.assertRaises(AssertionError):
-      version_strings([1, 0.0, 2])
-    with self.assertRaises(AssertionError):
-      version_strings([1, 0, 2])
-    with self.assertRaises(AssertionError):
-      version_strings([1, (0, 0), 2])
-    with self.assertRaises(AssertionError):
-      version_strings([1, 2, 3, 0.0])
-    with self.assertRaises(AssertionError):
-      version_strings([(0, 0), 2, 3, 4])
+    (AssertionError, [1, 0.0, 2]),
+    (AssertionError, [1, 0, 2]),
+    (AssertionError, [1, (0, 0), 2]),
+    (AssertionError, [1, 2, 3, 0.0]),
+    (AssertionError, [(0, 0), 2, 3, 4]),
+  ])
+  # pylint: disable=no-self-use
+  def test_version_strings_assert(self, versions):
+    version_strings(versions)
 
-  def test_detect_min_version(self):
-    self.assertEqual([(2, 6), (3, 0)], self.detect("import abc"))
+  @VerminTest.parameterized_args([
+    ("import abc", [(2, 6), (3, 0)]),
 
     # (2.6, 3.0) vs. (2.7, 3.2) = (2.7, 3.2)
-    self.assertEqual([(2, 7), (3, 2)], self.detect("import abc, argparse"))
+    ("import abc, argparse", [(2, 7), (3, 2)]),
 
     # (2.6, 3.0) vs. (None, 3.4) = (None, 3.4)
-    self.assertEqual([None, (3, 4)], self.detect("import abc\nfrom abc import ABC"))
+    ("import abc\nfrom abc import ABC", (3, 4)),
 
     # (2.0, None) vs. (2.0, 3.0) = (2.0, None)
-    self.assertEqual([(2, 0), None], self.detect("import repr\nfrom sys import getdefaultencoding"))
+    ("import repr\nfrom sys import getdefaultencoding", (2, 0)),
+  ])
+  def test_detect_min_version(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
 
+  @VerminTest.parameterized_exceptions([
     # (2.0, None) vs. (None, 3.0) = both exclude the other major version -> exception!
-    with self.assertRaises(InvalidVersionException):
-      self.detect("import copy_reg, http")
+    (InvalidVersionException, "import copy_reg, http"),
+  ])
+  def test_detect_min_version_assert(self, source):
+    self.detect(source)
 
   def test_ignore_non_top_level_imports(self):
     vers = [(0, 0), (0, 0)]
@@ -396,31 +407,44 @@ test.py:6:9:2.7:3.2:'argparse' module
     self.assertEqual(vers, self.detect("from .typing import Final"))    # Ignore
     self.assertEqual(vers, self.detect("from ..typing import Final"))   # Ignore
 
-  def test_reverse_range(self):
-    self.assertEqual(list(reverse_range([1, 2, 3])), [2, 1, 0])
-    self.assertEqual(list(reverse_range([1, 2])), [1, 0])
-    self.assertEqual(list(reverse_range([])), [])
+  @VerminTest.parameterized_args([
+    ([1, 2, 3], [2, 1, 0]),
+    ([1, 2], [1, 0]),
+    ([], []),
+  ])
+  def test_reverse_range(self, values, expected):
+    self.assertEqual(list(reverse_range(values)), expected)
 
-  def test_dotted_name(self):
-    self.assertEqual(dotted_name(["hello", "world"]), "hello.world")
-    self.assertEqual(dotted_name(["foo", ["bar", "baz"], "boom"]), "foo.bar.baz.boom")
-    self.assertEqual(dotted_name(["foo", ("bar", "baz"), "boom"]), "foo.bar.baz.boom")
-    self.assertEqual(dotted_name(1), "1")
-    self.assertEqual(dotted_name(4.2), "4.2")
-    self.assertEqual(dotted_name([1, 2, 3]), "1.2.3")
-    self.assertEqual(dotted_name("right"), "right")
-    self.assertEqual(dotted_name(["hello", None, "world"]), "hello.world")
-    self.assertEqual(dotted_name(["foo", (None, "baz"), None]), "foo.baz")
+  @VerminTest.parameterized_args([
+    (["hello", "world"], "hello.world"),
+    (["foo", ["bar", "baz"], "boom"], "foo.bar.baz.boom"),
+    (["foo", ("bar", "baz"), "boom"], "foo.bar.baz.boom"),
+    (1, "1"),
+    (4.2, "4.2"),
+    ([1, 2, 3], "1.2.3"),
+    ("right", "right"),
+    (["hello", None, "world"], "hello.world"),
+    (["foo", (None, "baz"), None], "foo.baz"),
+  ])
+  def test_dotted_name(self, names, expected):
+    self.assertEqual(dotted_name(names), expected)
 
+  @VerminTest.parameterized_exceptions([
     # Invalid values yield `assert False`.
-    with self.assertRaises(AssertionError):
-      dotted_name([4.2])
+    (AssertionError, [4.2]),
+  ])
+  # pylint: disable=no-self-use
+  def test_dotted_name_assert(self, names):
+    dotted_name(names)
 
-  def test_remove_whitespace(self):
-    self.assertEqual(remove_whitespace("abc"), "abc")
-    self.assertEqual(remove_whitespace("abc", ["a", "c"]), "b")
-    self.assertEqual(remove_whitespace(" \t\n\r\f\v"), "")
-    self.assertEqual(remove_whitespace(" \t1\n2\r3\f\v", ["1", "3"]), "2")
+  @VerminTest.parameterized_args([
+    ("abc", None, "abc"),
+    ("abc", ["a", "c"], "b"),
+    (" \t\n\r\f\v", None, ""),
+    (" \t1\n2\r3\f\v", ["1", "3"], "2"),
+  ])
+  def test_remove_whitespace(self, value, extras, expected):
+    self.assertEqual(remove_whitespace(value, extras), expected)
 
   def test_sort_line_column(self):
     text = [

@@ -80,9 +80,10 @@ def combine_versions(list1, list2, config, version_refs=None):
       res.append(max(v1, v2))
   return res
 
-def version_strings(versions, separator=", "):
+def version_strings(versions, separator=None):
   """Yields version strings of versions. If one value is 0, 0.0, or (0, 0) then either one or two
-values can be specified, otherwise any number is allowed."""
+values can be specified, otherwise any number is allowed. A None separator means ', '."""
+  separator = separator or ", "
   amount = len(versions)
   assert(amount > 0)
   if any(v in (0, (0, 0)) for v in versions):
