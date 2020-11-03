@@ -622,7 +622,7 @@ test.py:6:9:2.7:3.2:'argparse' module
   def test_process_runtests_py(self):
     proc_res = process_individual((sys.argv[0], self.config))
     self.assertEqual(basename(proc_res.path), "runtests.py")
-    self.assertEqual(proc_res.mins, [(2, 7), (3, 1)])
+    self.assertEqual(proc_res.mins, [(2, 7), (3, 2)])
     self.assertEmpty(proc_res.text)
     self.assertEmpty(proc_res.bps)
 
