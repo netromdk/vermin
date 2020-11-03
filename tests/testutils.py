@@ -31,6 +31,35 @@ class VerminTest(unittest.TestCase):
   def visit(self, source, path=None):
     return visit(source, config=self.config, path=path)
 
+  @staticmethod
+  def parameterized_args(tuple_args):
+    """Decorator accepting a list of tuples of arguments."""
+    def decorator(func):
+      def wrapper(self):
+        for args in tuple_args:
+          func(self, *args)
+      return wrapper
+    return decorator
+
+  @staticmethod
+  def parameterized_exceptions(tuple_args):
+    """Decorator accepting a list of tuples of arguments, where the first must be the exception type
+expected to be raised."""
+    def decorator(func):
+      def wrapper(self):
+        for args in tuple_args:
+          assert len(args) > 1, "Expected tuple: (exception type, test function args..)"
+          try:
+            func(self, *args[1:])
+          except args[0]:
+            continue
+          except Exception as ex:
+            raise AssertionError("Raised {} instead of {} for args: {}".
+                                 format(type(ex), args[0], args[1:]))
+          raise AssertionError("Didn't raise {} for args: {}".format(args[0], args[1:]))
+      return wrapper
+    return decorator
+
   def assertOnlyIn(self, values, data):
     """Assert only value(s) is in data but ignores None and 0 values."""
     size = 1
