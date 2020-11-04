@@ -1,4 +1,4 @@
-from .testutils import VerminTest, current_version
+from .testutils import VerminTest
 
 class VerminLaxModeTests(VerminTest):
   def setUp(self):
@@ -12,13 +12,13 @@ class VerminLaxModeTests(VerminTest):
     visitor = self.visit("if True:\n\tpass\nelif False:\n\timport ssl")
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3.6)
   def test_ifexp(self):
-    if current_version() >= 3.6:
-      visitor = self.visit("print('ok') if True else (lambda: print(f'no'))()")
-      self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
-      self.config.set_lax_mode(False)
-      visitor = self.visit("print('ok') if True else (lambda: print(f'no'))()")
-      self.assertEqual([None, (3, 6)], visitor.minimum_versions())
+    visitor = self.visit("print('ok') if True else (lambda: print(f'no'))()")
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+    self.config.set_lax_mode(False)
+    visitor = self.visit("print('ok') if True else (lambda: print(f'no'))()")
+    self.assertEqual([None, (3, 6)], visitor.minimum_versions())
 
   def test_for(self):
     visitor = self.visit("for a in []:\n\timport ssl")
@@ -32,9 +32,9 @@ class VerminLaxModeTests(VerminTest):
     visitor = self.visit("try:\n\tpass\nexcept:\n\timport ssl")
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3.6)
   def test_boolop(self):
-    if current_version() >= 3.6:
-      visitor = self.visit("True or (lambda: print(f'no'))()")
-      self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
-      visitor = self.visit("False and (lambda: print(f'no'))()")
-      self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+    visitor = self.visit("True or (lambda: print(f'no'))()")
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+    visitor = self.visit("False and (lambda: print(f'no'))()")
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())

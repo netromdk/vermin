@@ -36,11 +36,11 @@ class VerminLanguageTests(VerminTest):
       self.assertTrue(visitor.printv3())
     self.assertIn((current_major_version(), 0), visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3.4)
   def test_print_v2_v3_mixed(self):
     """When using both v2 and v3 style it must return v2 because v3 is allowed in v2."""
     # Before 3.4 it just said "invalid syntax" and didn't hint at missing parentheses.
-    if current_version() >= 3.4:
-      self.assertOnlyIn((2, 0), self.detect("print 'hello'\nprint('hello')"))
+    self.assertOnlyIn((2, 0), self.detect("print 'hello'\nprint('hello')"))
 
   def test_format(self):
     visitor = self.visit("'hello {}!'.format('world')")
@@ -84,19 +84,19 @@ class VerminLanguageTests(VerminTest):
       self.assertTrue(visitor.bytesv3())
       self.assertEqual([(2, 6), (3, 0)], visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3.6)
   def test_fstrings(self):
-    if current_version() >= 3.6:
-      visitor = self.visit("name = 'world'\nf'hello {name}'")
-      self.assertTrue(visitor.fstrings())
-      self.assertOnlyIn((3, 6), visitor.minimum_versions())
+    visitor = self.visit("name = 'world'\nf'hello {name}'")
+    self.assertTrue(visitor.fstrings())
+    self.assertOnlyIn((3, 6), visitor.minimum_versions())
 
-      visitor = self.visit("f'{f\"{3.1415:.1f}\":*^20}'")
-      self.assertTrue(visitor.fstrings())
-      self.assertOnlyIn((3, 6), visitor.minimum_versions())
+    visitor = self.visit("f'{f\"{3.1415:.1f}\":*^20}'")
+    self.assertTrue(visitor.fstrings())
+    self.assertOnlyIn((3, 6), visitor.minimum_versions())
 
-      visitor = self.visit("f'''{\n3\n}'''")
-      self.assertTrue(visitor.fstrings())
-      self.assertOnlyIn((3, 6), visitor.minimum_versions())
+    visitor = self.visit("f'''{\n3\n}'''")
+    self.assertTrue(visitor.fstrings())
+    self.assertOnlyIn((3, 6), visitor.minimum_versions())
 
   def test_fstrings_named_expr(self):
     if current_version() >= 3.8:
@@ -111,9 +111,10 @@ class VerminLanguageTests(VerminTest):
       self.assertFalse(visitor.named_expressions())
       self.assertOnlyIn((3, 6), visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3.8)
   def test_fstrings_self_doc(self):
     enabled = False
-    if enabled and current_version() >= 3.8:  # pragma: no cover
+    if enabled:  # pragma: no cover
       self.config.enable_feature("fstring-self-doc")
 
       # NOTE: The built-in AST cannot distinguish `f'{a=}'` from `f'a={a}'` because it optimizes
@@ -431,17 +432,17 @@ class VerminLanguageTests(VerminTest):
       self.assertTrue(visitor.fstrings_self_doc())
       self.assertOnlyIn((3, 8), visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3.5)
   def test_coroutines_async(self):
-    if current_version() >= 3.5:
-      visitor = self.visit("async def func():\n\tpass")
-      self.assertTrue(visitor.coroutines())
-      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+    visitor = self.visit("async def func():\n\tpass")
+    self.assertTrue(visitor.coroutines())
+    self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3.5)
   def test_coroutines_await(self):
-    if current_version() >= 3.5:
-      visitor = self.visit("async def func():\n\tawait something()")
-      self.assertTrue(visitor.coroutines())
-      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+    visitor = self.visit("async def func():\n\tawait something()")
+    self.assertTrue(visitor.coroutines())
+    self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
   def test_async_generator(self):
     if current_version() >= 3.6:
@@ -465,102 +466,102 @@ class VerminLanguageTests(VerminTest):
       self.assertFalse(visitor.async_generator())
       self.assertTrue(visitor.await_in_comprehension())
 
+  @VerminTest.skipUnlessVersion(3.7)
   def test_async_comprehension(self):
-    if current_version() >= 3.7:
-      self.assertOnlyIn((3, 7), self.detect("[i async for i in aiter() if i % 2]"))
+    self.assertOnlyIn((3, 7), self.detect("[i async for i in aiter() if i % 2]"))
 
+  @VerminTest.skipUnlessVersion(3.7)
   def test_await_in_comprehension(self):
-    if current_version() >= 3.7:
-      visitor = self.visit("[await fun() for fun in funcs if await condition()]")
-      self.assertTrue(visitor.await_in_comprehension())
-      self.assertOnlyIn((3, 7), visitor.minimum_versions())
+    visitor = self.visit("[await fun() for fun in funcs if await condition()]")
+    self.assertTrue(visitor.await_in_comprehension())
+    self.assertOnlyIn((3, 7), visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3.6)
   def test_async_for(self):
-    if current_version() >= 3.6:
-      self.assertOnlyIn((3, 6), self.detect("async def foo():\n\tasync for a in []:pass"))
+    self.assertOnlyIn((3, 6), self.detect("async def foo():\n\tasync for a in []:pass"))
 
+  @VerminTest.skipUnlessVersion(3.8)
   def test_continue_in_finally(self):
-    if current_version() >= 3.8:
-      visitor = self.visit("try: pass\nfinally: continue")
-      self.assertTrue(visitor.continue_in_finally())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+    visitor = self.visit("try: pass\nfinally: continue")
+    self.assertTrue(visitor.continue_in_finally())
+    self.assertOnlyIn((3, 8), visitor.minimum_versions())
 
-      visitor = self.visit("for i in range(3):\n"
-                           "  try:\n"
-                           "    pass\n"
-                           "  finally:\n"
-                           "    continue")
-      self.assertTrue(visitor.continue_in_finally())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+    visitor = self.visit("for i in range(3):\n"
+                         "  try:\n"
+                         "    pass\n"
+                         "  finally:\n"
+                         "    continue")
+    self.assertTrue(visitor.continue_in_finally())
+    self.assertOnlyIn((3, 8), visitor.minimum_versions())
 
-      visitor = self.visit("for i in range(3):\n"
-                           "  try:\n"
-                           "    pass\n"
-                           "  finally:\n"
-                           "    for j in []:\n"
-                           "      continue")  # Skip due to inline for-loop.
-      self.assertFalse(visitor.continue_in_finally())
+    visitor = self.visit("for i in range(3):\n"
+                         "  try:\n"
+                         "    pass\n"
+                         "  finally:\n"
+                         "    for j in []:\n"
+                         "      continue")  # Skip due to inline for-loop.
+    self.assertFalse(visitor.continue_in_finally())
 
-      visitor = self.visit("for i in range(3):\n"
-                           "  try:\n"
-                           "    pass\n"
-                           "  finally:\n"
-                           "    while i < 2:\n"
-                           "      continue")  # Skip due to inline while-loop.
-      self.assertFalse(visitor.continue_in_finally())
+    visitor = self.visit("for i in range(3):\n"
+                         "  try:\n"
+                         "    pass\n"
+                         "  finally:\n"
+                         "    while i < 2:\n"
+                         "      continue")  # Skip due to inline while-loop.
+    self.assertFalse(visitor.continue_in_finally())
 
-      visitor = self.visit("for i in range(3):\n"
-                           "  try:\n"
-                           "    pass\n"
-                           "  finally:\n"
-                           "    for j in []:\n"
-                           "      continue\n"  # Skip due to inline for-loop.
-                           "    while i < 2:\n"
-                           "      continue\n"  # Skip due to inline while-loop.
-                           "    continue")  # Accept this one.
-      self.assertTrue(visitor.continue_in_finally())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+    visitor = self.visit("for i in range(3):\n"
+                         "  try:\n"
+                         "    pass\n"
+                         "  finally:\n"
+                         "    for j in []:\n"
+                         "      continue\n"  # Skip due to inline for-loop.
+                         "    while i < 2:\n"
+                         "      continue\n"  # Skip due to inline while-loop.
+                         "    continue")  # Accept this one.
+    self.assertTrue(visitor.continue_in_finally())
+    self.assertOnlyIn((3, 8), visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3.8)
   def test_named_expressions(self):
-    if current_version() >= 3.8:
-      visitor = self.visit("a = 1\nif (b := a) == 1:\n\tprint(b)")
-      self.assertTrue(visitor.named_expressions())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+    visitor = self.visit("a = 1\nif (b := a) == 1:\n\tprint(b)")
+    self.assertTrue(visitor.named_expressions())
+    self.assertOnlyIn((3, 8), visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3.0)
   def test_kw_only_args(self):
-    if current_version() >= 3.0:
-      visitor = self.visit("def foo(a, *, b): return a + b")
-      self.assertTrue(visitor.kw_only_args())
-      self.assertOnlyIn((3, 0), visitor.minimum_versions())
+    visitor = self.visit("def foo(a, *, b): return a + b")
+    self.assertTrue(visitor.kw_only_args())
+    self.assertOnlyIn((3, 0), visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3.8)
   def test_pos_only_args(self):
-    if current_version() >= 3.8:
-      visitor = self.visit("def foo(a, /, b): return a + b")
-      self.assertTrue(visitor.pos_only_args())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+    visitor = self.visit("def foo(a, /, b): return a + b")
+    self.assertTrue(visitor.pos_only_args())
+    self.assertOnlyIn((3, 8), visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3.3)
   def test_yield_from(self):
-    if current_version() >= 3.3:
-      visitor = self.visit("def foo(x): yield from range(x)")
-      self.assertTrue(visitor.yield_from())
-      self.assertOnlyIn((3, 3), visitor.minimum_versions())
+    visitor = self.visit("def foo(x): yield from range(x)")
+    self.assertTrue(visitor.yield_from())
+    self.assertOnlyIn((3, 3), visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3.3)
   def test_raise_cause(self):
-    if current_version() >= 3.3:
-      visitor = self.visit("raise Exception() from None")
-      self.assertTrue(visitor.raise_cause())
-      self.assertOnlyIn((3, 3), visitor.minimum_versions())
+    visitor = self.visit("raise Exception() from None")
+    self.assertTrue(visitor.raise_cause())
+    self.assertOnlyIn((3, 3), visitor.minimum_versions())
 
   def test_dict_comprehension(self):
     visitor = self.visit("{key: value for ld in lod for key, value in ld.items()}")
     self.assertTrue(visitor.dict_comprehension())
     self.assertEqual([(2, 7), (3, 0)], visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3.5)
   def test_infix_matrix_multiplication(self):
-    if current_version() >= 3.5:
-      visitor = self.visit("M @ N")
-      self.assertTrue(visitor.infix_matrix_multiplication())
-      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+    visitor = self.visit("M @ N")
+    self.assertTrue(visitor.infix_matrix_multiplication())
+    self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
   def test_str_from_type(self):
     visitor = self.visit("\"\".zfill(1)")
@@ -568,12 +569,13 @@ class VerminLanguageTests(VerminTest):
     visitor = self.visit("str().zfill(1)")
     self.assertIn("str.zfill", visitor.members())
 
+  # pragma: no cover
+  @VerminTest.skipUnlessLowerVersion(3.0)
   def test_unicode_from_type(self):
-    if current_version() < 3.0:  # pragma: no cover
-      visitor = self.visit("u\"\".isdecimal()")
-      self.assertIn("unicode.isdecimal", visitor.members())
-      visitor = self.visit("unicode().isdecimal()")
-      self.assertIn("unicode.isdecimal", visitor.members())
+    visitor = self.visit("u\"\".isdecimal()")
+    self.assertIn("unicode.isdecimal", visitor.members())
+    visitor = self.visit("unicode().isdecimal()")
+    self.assertIn("unicode.isdecimal", visitor.members())
 
   def test_list_from_type(self):
     visitor = self.visit("[].clear()")
@@ -603,12 +605,13 @@ class VerminLanguageTests(VerminTest):
     visitor = self.visit("int().bit_length()")
     self.assertIn("int.bit_length", visitor.members())
 
+  # pragma: no cover
+  @VerminTest.skipUnlessLowerVersion(3.0)
   def test_long_from_type(self):
-    if current_version() < 3.0:  # pragma: no cover
-      visitor = self.visit("(1L).bit_length()")
-      self.assertIn("long.bit_length", visitor.members())
-      visitor = self.visit("long().bit_length()")
-      self.assertIn("long.bit_length", visitor.members())
+    visitor = self.visit("(1L).bit_length()")
+    self.assertIn("long.bit_length", visitor.members())
+    visitor = self.visit("long().bit_length()")
+    self.assertIn("long.bit_length", visitor.members())
 
   def test_float_from_type(self):
     visitor = self.visit("(4.2).hex()")
@@ -616,17 +619,17 @@ class VerminLanguageTests(VerminTest):
     visitor = self.visit("float().hex()")
     self.assertIn("float.hex", visitor.members())
 
+  @VerminTest.skipUnlessVersion(3.0)
   def test_bytes_from_type(self):
-    if current_version() >= 3.0:
-      visitor = self.visit("b'hello'.hex()")
-      self.assertIn("bytes.hex", visitor.members())
-      visitor = self.visit("bytes().hex()")
-      self.assertIn("bytes.hex", visitor.members())
+    visitor = self.visit("b'hello'.hex()")
+    self.assertIn("bytes.hex", visitor.members())
+    visitor = self.visit("bytes().hex()")
+    self.assertIn("bytes.hex", visitor.members())
 
   def test_with_statement(self):
-      visitor = self.visit("with func():\n  pass")
-      self.assertTrue(visitor.with_statement())
-      self.assertOnlyIn([(2, 5), (3, 0)], visitor.minimum_versions())
+    visitor = self.visit("with func():\n  pass")
+    self.assertTrue(visitor.with_statement())
+    self.assertOnlyIn([(2, 5), (3, 0)], visitor.minimum_versions())
 
   def test_generalized_unpacking(self):
     if current_version() >= 3.5:
@@ -845,38 +848,38 @@ class VerminLanguageTests(VerminTest):
     visitor = self.visit("d = {'a': 'b'}\ndict(**d)")
     self.assertFalse(visitor.generalized_unpacking())
 
+  @VerminTest.skipUnlessVersion(3.5)
   def test_bytes_format(self):
-    if current_version() >= 3.5:
-      visitor = self.visit("b'%x' % 10")
-      self.assertTrue(visitor.bytes_format())
-      self.assertOnlyIn(((2, 6), (3, 5)), visitor.minimum_versions())
+    visitor = self.visit("b'%x' % 10")
+    self.assertTrue(visitor.bytes_format())
+    self.assertOnlyIn(((2, 6), (3, 5)), visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3.5)
   def test_bytearray_format(self):
-    if current_version() >= 3.5:
-      visitor = self.visit("bytearray(b'%x') % 10")
-      self.assertTrue(visitor.bytearray_format())
-      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+    visitor = self.visit("bytearray(b'%x') % 10")
+    self.assertTrue(visitor.bytearray_format())
+    self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3.0)
   def test_bytes_directives(self):
-    if current_version() >= 3.0:
-      visitor = self.visit("b'%b %x'")
-      self.assertOnlyIn(("b", "x"), visitor.bytes_directives())
-      visitor = self.visit("b'%4b'")
-      self.assertOnlyIn(("b",), visitor.bytes_directives())
-      visitor = self.visit("b'%4b'")
-      self.assertOnlyIn(("b",), visitor.bytes_directives())
-      visitor = self.visit("b'%#4b'")
-      self.assertOnlyIn(("b",), visitor.bytes_directives())
-      visitor = self.visit("b'%04b'")
-      self.assertOnlyIn(("b",), visitor.bytes_directives())
-      visitor = self.visit("b'%.4f'")
-      self.assertOnlyIn(("f",), visitor.bytes_directives())
-      visitor = self.visit("b'%-4f'")
-      self.assertOnlyIn(("f",), visitor.bytes_directives())
-      visitor = self.visit("b'%  f'")
-      self.assertOnlyIn(("f",), visitor.bytes_directives())
-      visitor = self.visit("b'%+f'")
-      self.assertOnlyIn(("f",), visitor.bytes_directives())
+    visitor = self.visit("b'%b %x'")
+    self.assertOnlyIn(("b", "x"), visitor.bytes_directives())
+    visitor = self.visit("b'%4b'")
+    self.assertOnlyIn(("b",), visitor.bytes_directives())
+    visitor = self.visit("b'%4b'")
+    self.assertOnlyIn(("b",), visitor.bytes_directives())
+    visitor = self.visit("b'%#4b'")
+    self.assertOnlyIn(("b",), visitor.bytes_directives())
+    visitor = self.visit("b'%04b'")
+    self.assertOnlyIn(("b",), visitor.bytes_directives())
+    visitor = self.visit("b'%.4f'")
+    self.assertOnlyIn(("f",), visitor.bytes_directives())
+    visitor = self.visit("b'%-4f'")
+    self.assertOnlyIn(("f",), visitor.bytes_directives())
+    visitor = self.visit("b'%  f'")
+    self.assertOnlyIn(("f",), visitor.bytes_directives())
+    visitor = self.visit("b'%+f'")
+    self.assertOnlyIn(("f",), visitor.bytes_directives())
 
   def test_detect_raise_members(self):
     visitor = self.visit("raise ModuleNotFoundError")

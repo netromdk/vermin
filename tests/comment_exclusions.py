@@ -1,4 +1,4 @@
-from .testutils import VerminTest, current_version
+from .testutils import VerminTest
 
 class VerminCommentsExclusionsTests(VerminTest):
   def test_import(self):
@@ -97,14 +97,14 @@ class VerminCommentsExclusionsTests(VerminTest):
     self.assertIn(1, visitor.no_lines())
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3.5)
   def test_async_function(self):
-    if current_version() >= 3.5:
-      visitor = self.visit("# novm\nasync def foo():\n\tall([])")
-      self.assertIn(2, visitor.no_lines())
-      self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
-      visitor = self.visit("async def foo():  #novm\n\tall([])")
-      self.assertIn(1, visitor.no_lines())
-      self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+    visitor = self.visit("# novm\nasync def foo():\n\tall([])")
+    self.assertIn(2, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+    visitor = self.visit("async def foo():  #novm\n\tall([])")
+    self.assertIn(1, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
 
   def test_class(self):
     visitor = self.visit("# novm\nclass foo():\n\tdef __init__(self):\n\t\tall([])")

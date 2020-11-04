@@ -1,4 +1,4 @@
-from .testutils import VerminTest, current_major_version
+from .testutils import VerminTest
 
 class VerminKwargsTests(VerminTest):
   def test_name_of_ImportError(self):
@@ -642,10 +642,10 @@ class VerminKwargsTests(VerminTest):
   def test_opener_of_open(self):
     self.assertOnlyIn((3, 3), self.detect("open(opener=None)"))
 
+  @VerminTest.skipUnlessVersion(3.0)
   def test_flush_of_print(self):
     # `print()` is not a function in v2.
-    if current_major_version() >= 3:
-      self.assertOnlyIn((3, 3), self.detect("print(flush=None)"))
+    self.assertOnlyIn((3, 3), self.detect("print(flush=None)"))
 
   def test_policy_of_email_mime_base_MIMEBase(self):
     self.assertOnlyIn((3, 6), self.detect(
