@@ -32,6 +32,26 @@ class VerminTest(unittest.TestCase):
     return visit(source, config=self.config, path=path)
 
   @staticmethod
+  def skipUnlessVersion(version):
+    """Decorator that only runs test if at least Python `version` is being used."""
+    def decorator(func):
+      def wrapper(self, *args, **kwargs):
+        if current_version() >= version:
+          func(self, *args, **kwargs)
+      return wrapper
+    return decorator
+
+  @staticmethod
+  def skipUnlessLowerVersion(version):
+    """Decorator that only runs test if lower than Python `version` is being used."""
+    def decorator(func):
+      def wrapper(self, *args, **kwargs):
+        if current_version() < version:
+          func(self, *args, **kwargs)
+      return wrapper
+    return decorator
+
+  @staticmethod
   def parameterized_args(tuple_args):
     """Decorator accepting a list of tuples of arguments."""
     def decorator(func):
