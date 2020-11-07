@@ -1,9 +1,7 @@
 name: Test
 
-on:
-  # On all pushes to branches and pull requests in general.
-  push:
-  pull_request:
+# On all pushes to branches and pull requests in general.
+on: [push]
 
 jobs:
   build:
@@ -58,6 +56,31 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+
+    - uses: actions/cache@v2
+      if: startsWith(matrix.os, 'ubuntu-latest')
+      with:
+        path: ~/.cache/pip
+        key: ${{ matrix.os }}-pip-${{ hashFiles('**/.*-requirements.txt') }}
+        restore-keys: |
+          ${{ matrix.os }}-pip-
+
+    - uses: actions/cache@v2
+      if: startsWith(matrix.os, 'macos-latest')
+      with:
+        path: ~/Library/Caches/pip
+        key: ${{ matrix.os }}-pip-${{ hashFiles('**/.*-requirements.txt') }}
+        restore-keys: |
+          ${{ matrix.os }}-pip-
+
+    - uses: actions/cache@v2
+      if: startsWith(matrix.os, 'windows-latest')
+      with:
+        path: ~\AppData\Local\pip\Cache
+        key: ${{ matrix.os }}-pip-${{ hashFiles('**/.*-requirements.txt') }}
+        restore-keys: |
+          ${{ matrix.os }}-pip-
+
     - name: Install dependencies
       run: |
         pip install --upgrade pip
