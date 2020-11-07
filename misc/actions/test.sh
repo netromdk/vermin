@@ -8,7 +8,10 @@ if [[ $PYTHON_VERSION = 2.7 || $PYTHON_VERSION = 3.4 || $PYTHON_VERSION = 3.5 ]]
   exit 0
 fi
 
-make setup-venv setup-coverage
+if [[ ! -d .venv ]]; then
+  make install-deps setup-venv setup-coverage
+fi
+
 source .venv/bin/activate
 make test-coverage
 make coveralls

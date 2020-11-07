@@ -9,8 +9,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # Start Linux jobs last since they are fastest to start and complete, and start 3.9 first
-        # and 2.7+3.4+3.5 last since they only run tests and don't use venv.
+        # Start Linux jobs last since they are fastest to start and complete, and start 3.9 first,
+        # since it pairs wiht macOS+Windows jobs, and 2.7+3.4+3.5 last since they only run tests and
+        # don't use venv.
         python-version: [3.9, 3.6, 3.7, 3.8, 2.7, 3.4, 3.5]
         os: [windows-latest, macos-latest, ubuntu-latest]
 
@@ -81,9 +82,14 @@ jobs:
         restore-keys: |
           ${{ matrix.os }}-pip-
 
-    - name: Install dependencies
-      run: |
-        pip install --upgrade pip
-        pip install --upgrade virtualenv
+    - uses: actions/cache@v2
+      with:
+        path: .venv/
+        # Include the python version in the key because it's important since 2.7+3.4+3.5 do not have
+        # a .venv/ so their caches would be empty, and they are faster so they'd be saved first.
+        key: ${{ runner.os }}-venv${{ matrix.python-version }}-coverage3-${{ hashFiles('**/.*-requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-venv${{ matrix.python-version }}-coverage3-
+
     - name: Test and coverage
       run: ${{ matrix.test_script_name }}

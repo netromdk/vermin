@@ -1,6 +1,9 @@
 #!/bin/bash
 set -x
 
-make setup-venv setup-analysis
+if [[ ! -d .venv ]]; then
+  make install-deps setup-venv setup-analysis
+fi
+
 source .venv/bin/activate
 make check-all

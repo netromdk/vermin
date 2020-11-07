@@ -20,13 +20,14 @@ jobs:
     - uses: actions/cache@v2
       with:
         path: ~/.cache/pip
-        key: ubuntu-latest-pip-${{ hashFiles('**/.*-requirements.txt') }}
+        key: ${{ runner.os}}-pip-${{ hashFiles('**/.*-requirements.txt') }}
         restore-keys: |
-          ubuntu-latest-pip-
-    - name: Install dependencies
-      run: |
-        pip install --upgrade pip
-        pip install --upgrade virtualenv
+          ${{ runner.os}}-pip-
+    - uses: actions/cache@v2
+      with:
+        path: .venv/
+        key: ${{ runner.os }}-venv-analysis-${{ hashFiles('**/.*-requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-venv-analysis-
     - name: Analyze
-      run: |
-        ./misc/actions/analyze.sh
+      run: ./misc/actions/analyze.sh

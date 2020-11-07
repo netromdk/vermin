@@ -35,6 +35,9 @@ setup-analysis: clean
 
 setup: setup-venv setup-misc setup-coverage setup-analysis
 
+install-deps:
+	pip install --upgrade pip virtualenv
+
 clean:
 	find . -iname __pycache__ | xargs rm -fr
 	find . -iname '*.pyc' | xargs rm -f

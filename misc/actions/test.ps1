@@ -8,12 +8,14 @@ if ( $PYTHON_VERSION -eq "2.7" -or $PYTHON_VERSION -eq "3.4" -or $PYTHON_VERSION
 # Set policy that allows the execution of scripts and tests.
 Set-ExecutionPolicy Unrestricted -Force
 
-# Setup virtual env.
-make setup-venv
-. .venv\Scripts\activate.ps1
+# Setup virtual env and install deps if virtual env doesn't already exist.
+if (-not (Test-Path -LiteralPath ".venv")) {
+  make install-deps setup-venv
+  . .venv\Scripts\activate.ps1
+  pip install -r misc\.coverage-requirements.txt
+}
 
-# Install deps.
-pip install -r misc\.coverage-requirements.txt
+. .venv\Scripts\activate.ps1
 
 # Run tests and record coverage.
 coverage run --source=vermin,tests runtests.py
