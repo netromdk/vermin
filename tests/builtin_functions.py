@@ -240,7 +240,7 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
     self.assertDetectMinVersions(source, min_versions)
 
   # pragma: no cover
-  @VerminTest.skipUnlessLowerVersion(3.0)
+  @VerminTest.skipUnlessLowerVersion(3)
   @VerminTest.parameterized_args([
     ("s=u\"\"\ns.isdecimal()", (2, 0)),
     ("u\"\".isdecimal()", (2, 0)),
@@ -251,7 +251,7 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
     self.assertDetectMinVersions(source, min_versions)
 
   # pragma: no cover
-  @VerminTest.skipUnlessLowerVersion(3.0)
+  @VerminTest.skipUnlessLowerVersion(3)
   @VerminTest.parameterized_args([
     ("s=u\"\"\ns.isnumeric()", (2, 0)),
     ("u\"\".isnumeric()", (2, 0)),
@@ -261,7 +261,7 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
   def test_isnumeric_of_unicode(self, source, min_versions):
     self.assertDetectMinVersions(source, min_versions)
 
-  @VerminTest.skipUnlessVersion(3.0)
+  @VerminTest.skipUnlessVersion(3)
   @VerminTest.parameterized_args([
     ("s=\"\"\ns.isdecimal()", (3, 0)),
     ("\"\".isdecimal()", (3, 0)),
@@ -271,7 +271,7 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
   def test_isdecimal_of_str(self, source, min_versions):
     self.assertDetectMinVersions(source, min_versions)
 
-  @VerminTest.skipUnlessVersion(3.0)
+  @VerminTest.skipUnlessVersion(3)
   @VerminTest.parameterized_args([
     ("s=\"\"\ns.isnumeric()", (3, 0)),
     ("\"\".isnumeric()", (3, 0)),
@@ -360,7 +360,7 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
     self.assertOnlyIn((3, 2), self.detect("int.from_bytes([42])"))
 
   # pragma: no cover
-  @VerminTest.skipUnlessLowerVersion(3.0)
+  @VerminTest.skipUnlessLowerVersion(3)
   def test_bit_length_of_long(self):
     self.assertOnlyIn((2, 7), self.detect("(42L).bit_length()"))
     self.assertOnlyIn((2, 7), self.detect("n=42L\nn.bit_length()"))
@@ -387,7 +387,7 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("(42.0).fromhex()"))
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("n=42.0\nn.fromhex()"))
 
-  @VerminTest.skipUnlessVersion(3.0)
+  @VerminTest.skipUnlessVersion(3)
   def test_hex_of_bytes(self):
     self.assertOnlyIn((3, 5), self.detect("b'\x10'.hex()"))
     self.assertOnlyIn((3, 5), self.detect("b=b'\x10'\nb.hex()"))

@@ -97,7 +97,7 @@ class VerminCommentsExclusionsTests(VerminTest):
     self.assertIn(1, visitor.no_lines())
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
 
-  @VerminTest.skipUnlessVersion(3.5)
+  @VerminTest.skipUnlessVersion(3, 5)
   def test_async_function(self):
     visitor = self.visit("# novm\nasync def foo():\n\tall([])")
     self.assertIn(2, visitor.no_lines())

@@ -9,7 +9,7 @@ def current_major_version():
   return float(sys.version_info.major)
 
 def current_version():
-  return current_major_version() + float(sys.version_info.minor) / 10.0
+  return sys.version_info
 
 class VerminTest(unittest.TestCase):
   """General test case class for all Vermin tests."""
@@ -35,21 +35,21 @@ class VerminTest(unittest.TestCase):
     return Arguments(args).parse(self.config)
 
   @staticmethod
-  def skipUnlessVersion(version):
-    """Decorator that only runs test if at least Python `version` is being used."""
+  def skipUnlessVersion(major_version, minor_version=0):
+    """Decorator that only runs test if at least the specified Python version is being used."""
     def decorator(func):
       def wrapper(self, *args, **kwargs):
-        if current_version() >= version:
+        if current_version() >= (major_version, minor_version):
           func(self, *args, **kwargs)
       return wrapper
     return decorator
 
   @staticmethod
-  def skipUnlessLowerVersion(version):
-    """Decorator that only runs test if lower than Python `version` is being used."""
+  def skipUnlessLowerVersion(major_version, minor_version=0):
+    """Decorator that only runs test if lower than the specified Python version is being used."""
     def decorator(func):
       def wrapper(self, *args, **kwargs):
-        if current_version() < version:
+        if current_version() < (major_version, minor_version):
           func(self, *args, **kwargs)
       return wrapper
     return decorator
@@ -124,9 +124,9 @@ expected to be raised."""
 `assertItemsEqual()` is a 2.7 unittest function. In 3.2 it's called `assertCountEqual()`. This
 override is made to work for all versions, also 3.0-3.1."""
     v = current_version()
-    if v >= 3.2:
+    if v >= (3, 2):
       self.assertCountEqual(expected, actual)
-    if 2.7 <= v < 3.0:  # pragma: no cover
+    if (2, 7) <= v < (3, 0):  # pragma: no cover
       self.assertItemsEqual(expected, actual)  # pylint: disable=no-member
     else:
       self.assertEqual(sorted(expected), sorted(actual))

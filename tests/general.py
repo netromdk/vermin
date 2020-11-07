@@ -636,7 +636,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     self.assertEqual(ex.exception.code, 1)
 
   def test_process_file_not_Found(self):
-    if current_version() >= 3.0:
+    if current_version() >= (3, 0):
       exc = FileNotFoundError
     else:
       exc = Exception  # pragma: no cover
@@ -784,7 +784,7 @@ print('hello')     # print(expr) requires 2+ or 3+
     processor = Processor()
     (mins, incomp, unique_versions, backports) = processor.process(paths, self.config)
 
-    if current_version() >= 3.0:
+    if current_version() >= (3, 0):
       self.assertEqual(mins, [(2, 0), (3, 0)])
       self.assertEqual(unique_versions, [(2, 0), (3, 0)])
     else:  # pragma: no cover

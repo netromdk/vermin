@@ -12,7 +12,7 @@ class VerminLaxModeTests(VerminTest):
     visitor = self.visit("if True:\n\tpass\nelif False:\n\timport ssl")
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
 
-  @VerminTest.skipUnlessVersion(3.6)
+  @VerminTest.skipUnlessVersion(3, 6)
   def test_ifexp(self):
     visitor = self.visit("print('ok') if True else (lambda: print(f'no'))()")
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
@@ -32,7 +32,7 @@ class VerminLaxModeTests(VerminTest):
     visitor = self.visit("try:\n\tpass\nexcept:\n\timport ssl")
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
 
-  @VerminTest.skipUnlessVersion(3.6)
+  @VerminTest.skipUnlessVersion(3, 6)
   def test_boolop(self):
     visitor = self.visit("True or (lambda: print(f'no'))()")
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())

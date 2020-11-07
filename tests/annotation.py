@@ -1,25 +1,25 @@
 from .testutils import VerminTest
 
 class VerminModuleTests(VerminTest):
-  @VerminTest.skipUnlessVersion(3.0)
+  @VerminTest.skipUnlessVersion(3)
   def test_return_annotation(self):
     self.assertOnlyIn((3, 0), self.detect("def foo() -> str:\n\treturn ''"))
 
-  @VerminTest.skipUnlessVersion(3.0)
+  @VerminTest.skipUnlessVersion(3)
   def test_arg_annotation(self):
     self.assertOnlyIn((3, 0), self.detect("def foo(bar: int):\n\tpass"))
 
-  @VerminTest.skipUnlessVersion(3.6)
+  @VerminTest.skipUnlessVersion(3, 6)
   def test_var_annotation(self):
     self.assertOnlyIn((3, 6), self.detect("a: int = 5"))
 
-  @VerminTest.skipUnlessVersion(3.6)
+  @VerminTest.skipUnlessVersion(3, 6)
   def test_Final_annotation(self):
     self.assertOnlyIn((3, 8), self.detect("a: Final = 5"))
     self.assertOnlyIn((3, 8), self.detect("a: Final[int] = 5"))
     self.assertOnlyIn((3, 8), self.detect("a: typing.Final[int] = 5"))
 
-  @VerminTest.skipUnlessVersion(3.6)
+  @VerminTest.skipUnlessVersion(3, 6)
   def test_Literal_annotation(self):
     visitor = self.visit("a: Literal = 5")
     self.assertTrue(visitor.literal_annotations())
