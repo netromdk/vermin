@@ -21,7 +21,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        ./misc/actions/install.sh
+        pip install --upgrade pip
+        pip install --upgrade virtualenv
     - name: Analyze
       run: |
         ./misc/actions/analyze.sh
