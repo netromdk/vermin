@@ -80,11 +80,13 @@ test.py:5:9:!2:3.9:'zoneinfo' module
 test.py:6:9:2.7:3.2:'argparse' module
 """)
 
-    # Paths with ":" or "\n" aren't allowed with parsable format.
-    with self.assertRaises(AssertionError):
-      self.visit(src, path="te:st.py")
-    with self.assertRaises(AssertionError):
-      self.visit(src, path="te\nst.py")
+    # Paths with ":" or "\n" aren't allowed with parsable format. On Windows, paths cannot contain
+    # ":" except for the drive part so the test doesn't make sense.
+    if not sys.platform.startswith("win32"):
+      with self.assertRaises(AssertionError):
+        self.visit(src, path="te:st.py")
+      with self.assertRaises(AssertionError):
+        self.visit(src, path="te\nst.py")
 
   def test_format(self):
     # Empty field name requires 2.7+

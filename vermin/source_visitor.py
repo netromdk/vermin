@@ -32,14 +32,14 @@ class SourceVisitor(ast.NodeVisitor):
   def __init__(self, config, path=None):
     super(SourceVisitor, self).__init__()
 
-    assert(config is not None)
+    assert config is not None, "Config must be specified!"
     self.__config = config
     self.__parsable = (self.__config.format().name() == "parsable")
 
     self.__path = "<unknown>" if path is None else path
-    if self.__parsable:
-      assert(":" not in self.__path)
-      assert("\n" not in self.__path)
+    if self.__parsable and not sys.platform.startswith("win32"):
+      for c in (":", "\n"):
+        assert c not in self.__path, "Path '{}' cannot contain '{}'".format(self.__path, c)
 
     self.__is_init_file = (os.path.basename(self.__path) == "__init__.py")
 
