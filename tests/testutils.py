@@ -5,9 +5,6 @@ from tempfile import NamedTemporaryFile
 
 from vermin import Config, Arguments, detect, visit
 
-def current_major_version():
-  return float(sys.version_info.major)
-
 def current_version():
   return sys.version_info
 

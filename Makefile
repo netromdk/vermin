@@ -73,7 +73,7 @@ security-check:
 	.venv/bin/bandit -r -s B101 ${MODULES}
 
 lint:
-	.venv/bin/pylint -j 0 --disable=C,W0201,W0311,W0621,W0703,W0707,R0902,R0903,R0904,R0911,R0913,R0914,R0915,R0916,R1702,R1725\
+	.venv/bin/pylint -j 0 --disable=C,W0201,W0311,W0621,W0703,W0707,R0902,R0903,R0904,R0911,R0913,R0914,R0915,R0916,R1702,R1725,E0611\
 		${TOP_LEVEL_FILES}
 
 check-pypi:

@@ -1,7 +1,7 @@
 from vermin import BUILTIN_GENERIC_ANNOTATION_TYPES, DICT_UNION_SUPPORTED_TYPES,\
   DICT_UNION_MERGE_SUPPORTED_TYPES, dotted_name, Parser
 
-from .testutils import VerminTest, current_version, current_major_version
+from .testutils import VerminTest, current_version
 
 class VerminLanguageTests(VerminTest):
   def test_printv2(self):
@@ -28,13 +28,14 @@ class VerminLanguageTests(VerminTest):
   def test_printv3(self):
     """Allowed in both v2 and v3."""
     visitor = self.visit("print('hello')")
-    if current_version() < (3, 0):  # pragma: no cover
+    v = current_version()
+    if v < (3, 0):  # pragma: no cover
       self.assertTrue(visitor.printv2())
       self.assertFalse(visitor.printv3())
     else:
       self.assertFalse(visitor.printv2())
       self.assertTrue(visitor.printv3())
-    self.assertIn((current_major_version(), 0), visitor.minimum_versions())
+    self.assertIn((v.major, 0), visitor.minimum_versions())
 
   @VerminTest.skipUnlessVersion(3, 4)
   def test_print_v2_v3_mixed(self):
