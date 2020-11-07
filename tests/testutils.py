@@ -17,6 +17,10 @@ class VerminTest(unittest.TestCase):
     # Allow test diffs of any size (instead of 640 char max).
     self.maxDiff = None
 
+    # Append additional assertion message to the end of the normal failure message, instead of
+    # replacing it.
+    self.longMessage = True
+
     self.config = Config()
 
   def setUp(self):
@@ -82,7 +86,6 @@ expected to be raised."""
 
   def assertOnlyIn(self, values, data, msg=None):
     """Assert only value(s) is in data but ignores None and 0 values."""
-    msg = ", " + msg if msg is not None else ""
     size = 1
     multiple = isinstance(values, (list, tuple))
     if multiple:
@@ -91,13 +94,12 @@ expected to be raised."""
         multiple = False
       else:
         size = len(values)
-    self.assertEqual(len(data) - data.count(None) - data.count(0) - data.count((0, 0)), size,
-                     msg="ONLY looking for '{}' in '{}'{}".format(values, data, msg))
+    self.assertEqual(len(data) - data.count(None) - data.count(0) - data.count((0, 0)), size, msg)
     if multiple:
       for value in values:
-        self.assertIn(value, data, msg="ONLY looking for '{}' in '{}'{}".format(value, data, msg))
+        self.assertIn(value, data, msg)
     else:
-      self.assertIn(values, data, msg="ONLY looking for '{}' in '{}'{}".format(values, data, msg))
+      self.assertIn(values, data, msg)
 
   def assertContainsDict(self, dictionary, data, msg=None):
     """Assert data contains all keys and values of dictionary input."""
