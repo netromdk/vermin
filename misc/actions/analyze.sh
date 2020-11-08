@@ -2,8 +2,11 @@
 set -x
 
 if [[ ! -d .venv ]]; then
-  make install-deps setup-venv setup-analysis
+  make install-deps setup-venv
+  source .venv/bin/activate
+  make setup-analysis
+else
+  source .venv/bin/activate
 fi
 
-source .venv/bin/activate
 make check-all

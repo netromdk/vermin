@@ -25,13 +25,13 @@ setup-venv: clean-venv
 	virtualenv -p python3 .venv
 
 setup-misc: clean
-	.venv/bin/pip install -r misc/.misc-requirements.txt
+	pip install -r misc/.misc-requirements.txt
 
 setup-coverage: clean
-	.venv/bin/pip install -r misc/.coverage-requirements.txt
+	pip install -r misc/.coverage-requirements.txt
 
 setup-analysis: clean
-	.venv/bin/pip install -r misc/.analysis-requirements.txt
+	pip install -r misc/.analysis-requirements.txt
 
 setup: setup-venv setup-misc setup-coverage setup-analysis
 
@@ -54,33 +54,33 @@ pypi-dist: clean-pypi
 	python setup.py bdist_wheel --universal
 
 update-misc-requirements: setup-venv setup-misc
-	.venv/bin/pip freeze > misc/.misc-requirements.txt
+	pip freeze > misc/.misc-requirements.txt
 
 update-coverage-requirements: setup-venv setup-coverage
-	.venv/bin/pip freeze > misc/.coverage-requirements.txt
+	pip freeze > misc/.coverage-requirements.txt
 
 update-analysis-requirements: setup-venv setup-analysis
-	.venv/bin/pip freeze > misc/.analysis-requirements.txt
+	pip freeze > misc/.analysis-requirements.txt
 
 check-style:
-	.venv/bin/flake8 --ignore E111,E114,E121,E126,E127,E302,E305,W504,F821\
-		--max-line-length 100 --count --show-source ${ALL_FILES}
+	flake8 --ignore E111,E114,E121,E126,E127,E302,E305,W504,F821 --max-line-length 100 --count\
+		--show-source ${ALL_FILES}
 
 static-analysis:
-	.venv/bin/vulture --min-confidence 70 --sort-by-size ${ALL_FILES}
+	vulture --min-confidence 70 --sort-by-size ${ALL_FILES}
 
 check-unused:
-	.venv/bin/vulture --sort-by-size ${VERMIN_FILES}
+	vulture --sort-by-size ${VERMIN_FILES}
 
 security-check:
-	.venv/bin/bandit -r -s B101 ${MODULES}
+	bandit -r -s B101 ${MODULES}
 
 lint:
-	.venv/bin/pylint -j 0 --disable=C,W0201,W0311,W0621,W0703,W0707,R0902,R0903,R0904,R0911,R0913,R0914,R0915,R0916,R1702,R1725,E0611\
+	pylint -j 0 --disable=C,W0201,W0311,W0621,W0703,W0707,R0902,R0903,R0904,R0911,R0913,R0914,R0915,R0916,R1702,R1725,E0611\
 		${TOP_LEVEL_FILES}
 
 check-pypi:
-	.venv/bin/pyroma --min=10 .
+	pyroma --min=10 .
 
 check: check-style check-pypi static-analysis lint
 
@@ -88,11 +88,11 @@ check: check-style check-pypi static-analysis lint
 check-all: check security-check
 
 test-coverage:
-	.venv/bin/coverage run --source=vermin,tests runtests.py
-	.venv/bin/coverage run --append --source=vermin ./vermin.py -v -t=2.7 -t=3 ${VERMIN_FILES}
+	coverage run --source=vermin,tests runtests.py
+	coverage run --append --source=vermin ./vermin.py -v -t=2.7 -t=3 vermin.py vermin
 
 coverage-report:
-	.venv/bin/coverage report -m
+	coverage report -m
 
 coveralls:
-	@COVERALLS_REPO_TOKEN=twBSHlgE5AMFEQNmUK04LDcN7SVth3lDV .venv/bin/coveralls
+	@COVERALLS_REPO_TOKEN=twBSHlgE5AMFEQNmUK04LDcN7SVth3lDV coveralls

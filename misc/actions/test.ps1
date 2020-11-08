@@ -12,15 +12,21 @@ Set-ExecutionPolicy Unrestricted -Force
 if (-not (Test-Path -LiteralPath ".venv")) {
   make install-deps setup-venv
   . .venv\Scripts\activate.ps1
-  pip install -r misc\.coverage-requirements.txt
+  make setup-coverage
+}
+else {
+  . .venv\Scripts\activate.ps1
 }
 
-. .venv\Scripts\activate.ps1
-
-# Run tests and record coverage.
+# Run tests+program and record coverage.
 coverage run --source=vermin,tests runtests.py
 if (!$?) {
   $Host.SetShouldExit(1) # This is necessary in order to fail the GitHub job.
+  exit 1
+}
+coverage run --append --source=vermin ./vermin.py -v -t="2.7" -t=3 vermin.py vermin
+if (!$?) {
+  $Host.SetShouldExit(1)
   exit 1
 }
 
