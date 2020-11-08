@@ -93,6 +93,3 @@ test-coverage:
 
 coverage-report:
 	coverage report -m
-
-coveralls:
-	@COVERALLS_REPO_TOKEN=twBSHlgE5AMFEQNmUK04LDcN7SVth3lDV coveralls

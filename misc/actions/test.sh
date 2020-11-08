@@ -17,4 +17,6 @@ else
 fi
 
 make test-coverage
-make coveralls
+
+# Note that it requires COVERALLS_REPO_TOKEN to be set!
+coveralls

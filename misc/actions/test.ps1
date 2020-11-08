@@ -30,6 +30,5 @@ if (!$?) {
   exit 1
 }
 
-# Report coverage.
-$env:COVERALLS_REPO_TOKEN = "twBSHlgE5AMFEQNmUK04LDcN7SVth3lDV"
+# Report coverage. Note that it requires COVERALLS_REPO_TOKEN to be set!
 coveralls

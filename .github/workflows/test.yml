@@ -92,4 +92,6 @@ jobs:
           ${{ runner.os }}-venv${{ matrix.python-version }}-coverage3-
 
     - name: Test and coverage
+      env:
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
       run: ${{ matrix.test_script_name }}
