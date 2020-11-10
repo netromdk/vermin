@@ -637,6 +637,25 @@ test.py:6:9:2.7:3.2:'argparse' module
     sys.argv = [sys.argv[0]]
     self.assertEqual(ex.exception.code, 1)
 
+  @VerminTest.skipUnlessPlatform("win32")
+  def test_main_parsable_dont_ignore_paths_with_colon_in_drive_part(self):
+    # Tests that detection of paths works with ":" in them (due to parsable format) especially on
+    # Windows where the first part of an absolute path, the drive part, contains a ":".
+
+    # Detect newly created file path in parent folder even though using parsable format.
+    tmp_fld = mkdtemp()
+    touch(tmp_fld, "test.py")
+    with self.assertRaises(SystemExit) as ex:
+      sys.argv = [sys.argv[0], "--format", "parsable", tmp_fld]
+      main()
+
+    sys.argv = [sys.argv[0]]
+    rmtree(tmp_fld)
+
+    # Check for no error. It would incorrectly yield "No files specified to analyze!" before the
+    # fix.
+    self.assertEqual(ex.exception.code, 0)
+
   def test_process_file_not_Found(self):
     if current_version() >= (3, 0):
       exc = FileNotFoundError
