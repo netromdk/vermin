@@ -34,7 +34,7 @@ def main():
   # Parsable format ignores paths with ":" in particular because it interferes with the format that
   # uses ":" a lot.
   ignore_chars = []
-  if parsable:
+  if parsable and not sys.platform.startswith("win32"):
     ignore_chars = [":", "\n"]
 
   paths = list(set(detect_paths(paths, hidden=hidden, processes=processes,
