@@ -869,3 +869,10 @@ three - three.one
   three - three.one
           three.two
           three.three""", format_title_descs(descs, titles, indent=2))
+
+  def test_pessimistic_syntax_error(self):
+    expected = [(0, 0), (0, 0)]
+    self.assertEqual(expected, self.detect("if"))  # invalid syntax: if
+    self.config.set_pessimistic(True)
+    expected[current_version().major - 2] = None
+    self.assertEqual(expected, self.detect("if"))

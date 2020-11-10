@@ -77,6 +77,9 @@ class Arguments:
       print("\n  --no-tips\n"
             "        Don't show any helpful tips at the end, like those relating to backports or\n"
             "        lax mode.")
+      print("\n  --pessimistic\n"
+            "        Pessimistic mode: syntax errors are interpreted as the major Python version\n"
+            "        in use being incompatible.")
       print("\n  --format <name> | -f <name>\n"
             "        Format to show results and output in.\n"
             "        Supported formats:\n{}".format(formats.help_str(10)))
@@ -234,6 +237,9 @@ class Arguments:
           print("Unknown feature: {}".format(name))
           return {"code": 1}
         path_pos += 2
+      elif arg == "--pessimistic":
+        config.set_pessimistic(True)
+        path_pos += 1
 
     if fmt is not None:
       config.set_format(fmt)

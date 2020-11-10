@@ -248,3 +248,8 @@ aaa
                             self.parse_args(["--format", "parsable", "-vvvv"]))
     self.assertEqual(4, self.config.verbose())
     self.assertTrue(self.config.ignore_incomp())
+
+  def test_pessimistic(self):
+    self.assertFalse(self.config.pessimistic())
+    self.assertContainsDict({"code": 0}, self.parse_args(["--pessimistic"]))
+    self.assertTrue(self.config.pessimistic())

@@ -15,6 +15,7 @@ class Config:
     self.__exclusions = set()
     self.__backports = set()
     self.__features = set()
+    self.__pessimistic = False
     self.set_format(DefaultFormat())
 
   def quiet(self):
@@ -103,3 +104,9 @@ class Config:
 
   def format(self):
     return self.__format
+
+  def set_pessimistic(self, pessimistic):
+    self.__pessimistic = pessimistic
+
+  def pessimistic(self):
+    return self.__pessimistic

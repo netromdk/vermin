@@ -1,8 +1,10 @@
 import ast
 import io
+import sys
 from tokenize import generate_tokens, COMMENT, NEWLINE
 
 from .printing import vvprint
+from .utility import version_strings
 
 class Parser:
   def __init__(self, source, path=None):
@@ -78,7 +80,10 @@ class Parser:
                 format(err.filename, err.lineno, err.offset, versions, text), config)
         return (None, [(2, 0), None], set())
 
-      versions = "~2:~3:" if parsable else ""
+      min_versions = [(0, 0), (0, 0)]
+      if config.pessimistic():
+        min_versions[sys.version_info.major - 2] = None
+      versions = version_strings(min_versions) + ":" if parsable else ""
       vvprint("{}:{}:{}:{}error: {}: {}".
               format(err.filename, err.lineno, err.offset, versions, err.msg, text), config)
-    return (None, [(0, 0), (0, 0)], set())
+    return (None, min_versions, set())
