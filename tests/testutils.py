@@ -56,6 +56,17 @@ class VerminTest(unittest.TestCase):
     return decorator
 
   @staticmethod
+  def skipUnlessPlatform(platform):
+    """Decorator that only runs test if executing on specified platform. It checks that the platform
+starts with the provided value, like 'win32' or 'darwin'."""
+    def decorator(func):
+      def wrapper(self, *args, **kwargs):
+        if sys.platform.lower().startswith(platform.strip().lower()):
+          func(self, *args, **kwargs)
+      return wrapper
+    return decorator
+
+  @staticmethod
   def parameterized_args(tuple_args):
     """Decorator accepting a list of tuples of arguments."""
     def decorator(func):
