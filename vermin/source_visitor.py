@@ -1399,12 +1399,16 @@ ast.Call(func=ast.Name)."""
 
   # Mark variable names as aliases.
   def visit_Assign(self, node):
+    if self.__is_no_line(node.lineno):
+      return
     for target in node.targets:
       self.__add_user_def_node(target)
     self.__add_name_res_assign_node(node)
     self.generic_visit(node)
 
   def visit_AugAssign(self, node):
+    if self.__is_no_line(node.lineno):
+      return
     self.__add_user_def_node(node.target)
     self.__add_name_res_assign_node(node)
 
@@ -1422,6 +1426,8 @@ ast.Call(func=ast.Name)."""
     self.generic_visit(node)
 
   def visit_AnnAssign(self, node):
+    if self.__is_no_line(node.lineno):
+      return
     self.__add_user_def_node(node.target)
     self.__add_name_res_assign_node(node)
     self.generic_visit(node)
@@ -1479,9 +1485,14 @@ ast.Call(func=ast.Name)."""
                        line=node.lineno)
 
     if getattr(node, "decorator_list", None):
-      self.__function_decorators = True
-      self.__vvprint("function decorators", line=node.lineno, versions=[(2, 4), (3, 0)])
-      self.__check_relaxed_decorators(node)
+      decos = node.decorator_list
+      # Exclude only if all decorators are excluded, otherwise the function decorator version
+      # requirement should still be in effect.
+      if not all(self.__is_no_line(deco.lineno) for deco in decos):
+        deco_line = [deco.lineno for deco in decos if not self.__is_no_line(deco.lineno)][0]
+        self.__function_decorators = True
+        self.__vvprint("function decorators", line=deco_line, versions=[(2, 4), (3, 0)])
+        self.__check_relaxed_decorators(node)
 
     self.generic_visit(node)
 
@@ -1540,6 +1551,8 @@ ast.Call(func=ast.Name)."""
       self.__seen_yield = seen_yield
 
   def visit_Await(self, node):
+    if self.__is_no_line(node.lineno):
+      return
     self.__coroutines = True
     self.__vvprint("coroutines (await)", versions=[None, (3, 5)])
     self.__seen_await += 1
@@ -1550,9 +1563,14 @@ ast.Call(func=ast.Name)."""
       return
     self.__add_user_def(node.name)
     if getattr(node, "decorator_list", None):
-      self.__class_decorators = True
-      self.__vvprint("class decorators", line=node.lineno, versions=[(2, 6), (3, 0)])
-      self.__check_relaxed_decorators(node)
+      decos = node.decorator_list
+      # Exclude only if all decorators are excluded, otherwise the class decorator version
+      # requirement should still be in effect.
+      if not all(self.__is_no_line(deco.lineno) for deco in decos):
+        deco_line = [deco.lineno for deco in decos if not self.__is_no_line(deco.lineno)][0]
+        self.__class_decorators = True
+        self.__vvprint("class decorators", line=deco_line, versions=[(2, 6), (3, 0)])
+        self.__check_relaxed_decorators(node)
     self.generic_visit(node)
 
   def visit_NameConstant(self, node):
@@ -1561,6 +1579,8 @@ ast.Call(func=ast.Name)."""
       self.__vvvprint("True/False constant", versions=[(2, 2), (3, 0)])
 
   def visit_NamedExpr(self, node):
+    if self.__is_no_line(node.lineno):
+      return
     self.__named_exprs = True
     self.__vvprint("named expressions", versions=[None, (3, 8)])
     self.generic_visit(node)
@@ -1575,15 +1595,21 @@ ast.Call(func=ast.Name)."""
     self.generic_visit(node)
 
   def visit_YieldFrom(self, node):
+    if self.__is_no_line(node.lineno):
+      return
     self.__yield_from = True
     self.__vvprint("`yield from`", versions=[None, (3, 3)])
     self.generic_visit(node)
 
   def visit_Yield(self, node):
+    if self.__is_no_line(node.lineno):
+      return
     self.__seen_yield += 1
     self.generic_visit(node)
 
   def visit_Raise(self, node):
+    if self.__is_no_line(node.lineno):
+      return
     if hasattr(node, "cause") and node.cause is not None:
       self.__raise_cause = True
       self.__vvprint("exception cause", line=node.lineno, versions=[None, (3, 0)])
@@ -1596,6 +1622,8 @@ ast.Call(func=ast.Name)."""
     self.__seen_raise = seen_raise
 
   def visit_ExceptHandler(self, node):
+    if self.__is_no_line(node.lineno):
+      return
     seen_except = self.__seen_except_handler
     self.__seen_except_handler = True
     self.generic_visit(node)
@@ -1634,6 +1662,8 @@ ast.Call(func=ast.Name)."""
         self.__vvprint("continue in finally block", line=node.lineno, versions=[None, (3, 8)])
 
   def visit_With(self, node):
+    if self.__is_no_line(node.lineno):
+      return
     self.__with_statement = True
     self.__vvprint("`with`", versions=[(2, 5), (3, 0)])
     self.generic_visit(node)
@@ -1655,6 +1685,8 @@ ast.Call(func=ast.Name)."""
     self.generic_visit(node)
 
   def visit_Subscript(self, node):
+    if self.__is_no_line(node.lineno):
+      return
     if isinstance(node.value, (ast.Name, ast.Attribute)):
       def match(name):
         if name in self.__user_defs:
@@ -1711,6 +1743,8 @@ ast.Call(func=ast.Name)."""
     self.__handle_for(node)
 
   def visit_AsyncFor(self, node):
+    if self.__is_no_line(node.lineno):
+      return
     self.__async_for = True
     self.__vvprint("async for-loops", line=node.lineno, versions=[None, (3, 6)])
     self.__handle_for(node)
