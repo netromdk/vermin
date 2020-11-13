@@ -1621,7 +1621,7 @@ ast.Call(func=ast.Name)."""
         self.__vvprint("continue in finally block", line=node.lineno, versions=[None, (3, 8)])
 
   def visit_With(self, node):
-    if self.__is_no_line(node.lineno):
+    if self.__config.lax_mode() or self.__is_no_line(node.lineno):
       return
     self.__with_statement = True
     self.__vvprint("`with`", versions=[(2, 5), (3, 0)])
@@ -1702,7 +1702,7 @@ ast.Call(func=ast.Name)."""
     self.__handle_for(node)
 
   def visit_AsyncFor(self, node):
-    if self.__is_no_line(node.lineno):
+    if self.__config.lax_mode() or self.__is_no_line(node.lineno):
       return
     self.__async_for = True
     self.__vvprint("async for-loops", line=node.lineno, versions=[None, (3, 6)])
