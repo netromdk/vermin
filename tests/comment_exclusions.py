@@ -1,4 +1,4 @@
-from .testutils import VerminTest
+from .testutils import VerminTest, current_version
 
 class VerminCommentsExclusionsTests(VerminTest):
   def test_import(self):
@@ -130,6 +130,22 @@ class VerminCommentsExclusionsTests(VerminTest):
     self.assertIn(1, visitor.no_lines())
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3, 6)
+  def test_async_for(self):
+    visitor = self.visit("""async def foo():
+  # novm
+  async for a in [1,2,3]:
+    all([])
+""")
+    self.assertIn(3, visitor.no_lines())
+    self.assertOnlyIn((3, 5), visitor.minimum_versions())
+    visitor = self.visit("""async def foo():
+  async for a in [1,2,3]:  # novm
+    all([])
+""")
+    self.assertIn(2, visitor.no_lines())
+    self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
   def test_while(self):
     visitor = self.visit("# novm\nwhile True:\n\tall([])")
     self.assertIn(2, visitor.no_lines())
@@ -153,3 +169,180 @@ class VerminCommentsExclusionsTests(VerminTest):
     visitor = self.visit("all([])  # novm")
     self.assertIn(1, visitor.no_lines())
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+  def test_assign(self):
+    visitor = self.visit("""import ssl
+tls_version = ssl.PROTOCOL_TLSv1
+if hasattr(ssl, "PROTOCOL_TLS"):
+  tls_version = ssl.PROTOCOL_TLS  # novermin
+""")
+    self.assertIn(4, visitor.no_lines())
+    self.assertEqual([(2, 6), (3, 0)], visitor.minimum_versions())
+
+  def test_augassign(self):
+    visitor = self.visit("""import ssl
+tls_version = ssl.PROTOCOL_TLSv1
+if hasattr(ssl, "PROTOCOL_TLS"):
+  tls_version += ssl.PROTOCOL_TLS  # novermin
+""")
+    self.assertIn(4, visitor.no_lines())
+    self.assertEqual([(2, 6), (3, 0)], visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 6)
+  def test_annassign(self):
+    visitor = self.visit("""a : int = 1  # novermin
+""")
+    self.assertIn(1, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 5)
+  def test_coroutines_await(self):
+    self.config.set_verbose(2)
+    visitor = self.visit("""async def func():
+  await something()  # novermin
+""")
+    self.assertIn(2, visitor.no_lines())
+    # Since both `async def` and `await` require 3.5, and `await` must be in an `async def`, the
+    # verbose (2) output text is inspected.
+    self.assertTrue(visitor.coroutines())
+    self.assertOnlyIn((3, 5), visitor.minimum_versions())
+    self.assertNotIn("await", visitor.output_text())
+
+  @VerminTest.skipUnlessVersion(3, 8)
+  def test_namedexpr(self):
+    visitor = self.visit("""import ssl
+(a := ssl.PROTOCOL_TLS)  # novermin
+""")
+    self.assertIn(2, visitor.no_lines())
+    self.assertEqual([(2, 6), (3, 0)], visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 3)
+  def test_yield_from(self):
+    visitor = self.visit("""def foo(x):
+  yield from range(x)  # novermin
+""")
+    self.assertIn(2, visitor.no_lines())
+    self.assertFalse(visitor.yield_from())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+  def test_yield(self):
+    visitor = self.visit("""import ssl
+yield ssl.PROTOCOL_TLS  # novermin
+""")
+    self.assertIn(2, visitor.no_lines())
+    self.assertEqual([(2, 6), (3, 0)], visitor.minimum_versions())
+
+  def test_raise(self):
+    visitor = self.visit("""import ssl
+raise ssl.PROTOCOL_TLS  # novermin
+""")
+    self.assertIn(2, visitor.no_lines())
+    self.assertEqual([(2, 6), (3, 0)], visitor.minimum_versions())
+
+  def test_excepthandler(self):
+    visitor = self.visit("""import ssl
+try:
+  pass
+except TypeError:  # novermin
+  ssl.PROTOCOL_TLS
+""")
+    self.assertIn(4, visitor.no_lines())
+    self.assertEqual([(2, 6), (3, 0)], visitor.minimum_versions())
+
+  def test_with(self):
+    visitor = self.visit("""import ssl
+with 1 as a:  # novermin
+  ssl.PROTOCOL_TLS
+""")
+    self.assertIn(2, visitor.no_lines())
+    self.assertEqual([(2, 6), (3, 0)], visitor.minimum_versions())
+
+  def test_subscript(self):
+    visitor = self.visit("""import ssl
+l = [1, 2, 3]
+l[1:ssl.PROTOCOL_TLS.value]  # novermin
+""")
+    self.assertIn(3, visitor.no_lines())
+    self.assertEqual([(2, 6), (3, 0)], visitor.minimum_versions())
+
+  def test_function_decorator(self):
+    visitor = self.visit("""@staticmethod  # novm
+def foo(): pass
+""")
+    self.assertFalse(visitor.function_decorators())
+    self.assertIn(1, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    visitor = self.visit("""@staticmethod #novm
+@staticmethod #novm
+def foo(): pass
+""")
+    self.assertFalse(visitor.function_decorators())
+    self.assertEqual({1, 2}, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    # When not all function decorators are excluded, the function decorator version requirement is
+    # still in effect.
+    visitor = self.visit("""@staticmethod
+@staticmethod #novm
+def foo(): pass
+""")
+    self.assertTrue(visitor.function_decorators())
+    self.assertEqual({2}, visitor.no_lines())
+    self.assertEqual([(2, 4), (3, 0)], visitor.minimum_versions())
+
+    visitor = self.visit("""@staticmethod #novm
+@staticmethod
+def foo(): pass
+""")
+    self.assertEqual({1}, visitor.no_lines())
+
+    # The line numbers were not as precise before 3.8, so excluding the first decorator would
+    # exclude the whole function, too.
+    if current_version() < (3, 8):
+      self.assertFalse(visitor.function_decorators())
+      self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+    else:
+      self.assertTrue(visitor.function_decorators())
+      self.assertEqual([(2, 4), (3, 0)], visitor.minimum_versions())
+
+  def test_class_decorator(self):
+    visitor = self.visit("""@somedeco  # novm
+class Foo: pass
+""")
+    self.assertFalse(visitor.class_decorators())
+    self.assertIn(1, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    visitor = self.visit("""@somedeco #novm
+@somedeco #novm
+class Foo: pass
+""")
+    self.assertFalse(visitor.class_decorators())
+    self.assertEqual({1, 2}, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    # When not all class decorators are excluded, the class decorator version requirement is still
+    # in effect.
+    visitor = self.visit("""@somedeco
+@somedeco #novm
+class Foo: pass
+""")
+    self.assertTrue(visitor.class_decorators())
+    self.assertEqual({2}, visitor.no_lines())
+    self.assertEqual([(2, 6), (3, 0)], visitor.minimum_versions())
+
+    visitor = self.visit("""@somedeco #novm
+@somedeco
+class Foo: pass
+""")
+    self.assertEqual({1}, visitor.no_lines())
+
+    # The line numbers were not as precise before 3.8, so excluding the first decorator would
+    # exclude the whole class, too.
+    if current_version() < (3, 8):
+      self.assertFalse(visitor.class_decorators())
+      self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+    else:
+      self.assertTrue(visitor.class_decorators())
+      self.assertEqual([(2, 6), (3, 0)], visitor.minimum_versions())
