@@ -547,10 +547,18 @@ class VerminLanguageTests(VerminTest):
     self.assertTrue(visitor.yield_from())
     self.assertOnlyIn((3, 3), visitor.minimum_versions())
 
-  @VerminTest.skipUnlessVersion(3, 3)
+  @VerminTest.skipUnlessVersion(3, 0)
   def test_raise_cause(self):
+    visitor = self.visit("raise Exception() from ValueError")
+    self.assertTrue(visitor.raise_cause())
+    self.assertFalse(visitor.raise_from_none())
+    self.assertOnlyIn((3, 0), visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 3)
+  def test_raise_from_none(self):
     visitor = self.visit("raise Exception() from None")
     self.assertTrue(visitor.raise_cause())
+    self.assertTrue(visitor.raise_from_none())
     self.assertOnlyIn((3, 3), visitor.minimum_versions())
 
   def test_dict_comprehension(self):
