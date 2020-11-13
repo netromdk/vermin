@@ -1,7 +1,9 @@
 name: Test
 
 # On all pushes to branches and pull requests in general.
-on: [push]
+on:
+  push:
+  pull_request:
 
 jobs:
   build:
