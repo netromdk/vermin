@@ -24,6 +24,14 @@ class VerminLaxModeTests(VerminTest):
     visitor = self.visit("for a in []:\n\timport ssl")
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3, 6)
+  def test_async_for(self):
+    visitor = self.visit("""async def foo():
+  async for a in []:
+    import ssl
+""")
+    self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
   def test_while(self):
     visitor = self.visit("while False:\n\timport ssl")
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
@@ -37,4 +45,10 @@ class VerminLaxModeTests(VerminTest):
     visitor = self.visit("True or (lambda: print(f'no'))()")
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
     visitor = self.visit("False and (lambda: print(f'no'))()")
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+  def test_with(self):
+    visitor = self.visit("""with 1 as a:
+  import ssl
+""")
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())

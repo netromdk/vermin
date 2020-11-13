@@ -29,7 +29,7 @@ builtin dict union (``|``) types, and **7** builtin dict union merge (``|=``) ty
 
 Backports of the standard library, like ``typing``, can be enabled for better results.
 
-The project is fairly well-tested with **3442** unit and integration tests that are executed on
+The project is fairly well-tested with **3444** unit and integration tests that are executed on
 Linux, macOS, and Windows.
 
 It is recommended to use the most recent Python version to run Vermin on projects since Python's own
@@ -193,10 +193,10 @@ analysis of the following:
 
 Will yield "f-strings require 3.6+" even though the branch will not be evaluated at runtime.
 
-The lax mode, via argument ``-l``, was created to circumvent cases like this. *But it's not a
-perfect solution* since it will skip all ``if``, ternarys, ``for``, ``while``, ``try``, and boolean
-operations. Therefore it is recommended to run with and without lax mode to get a better
-understanding of individual cases.
+The lax mode, via argument ``--lax``, was created to circumvent cases like this. *But it's not a
+perfect solution* since it will skip all ``if``, ternarys, ``for``, ``async for``, ``while``,
+``with``, ``try``, and boolean operations. Therefore it is recommended to run with and without lax
+mode to get a better understanding of individual cases.
 
 Analysis Exclusions
 ===================
