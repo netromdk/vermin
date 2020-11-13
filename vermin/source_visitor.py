@@ -1552,20 +1552,22 @@ ast.Call(func=ast.Name)."""
     self.__seen_yield += 1
     self.generic_visit(node)
 
-  def __is_None_node(self, node):
-    if isinstance(node, ast.Name) and node.id == 'None':
-      return True
-    if hasattr(ast, 'NameConstant') and isinstance(node, ast.NameConstant) and node.value is None:
-      return True
-    if hasattr(ast, 'Constant') and isinstance(node, ast.Constant) and node.value is None:
-      return True
-    return False
-
   def visit_Raise(self, node):
     if hasattr(node, "cause") and node.cause is not None:
       self.__raise_cause = True
       self.__vvprint("exception cause", line=node.lineno, versions=[None, (3, 0)])
-      if self.__is_None_node(node.cause):
+
+      def is_None_node(node):
+        if isinstance(node, ast.Name) and node.id == 'None':
+          return True
+        if hasattr(ast, 'NameConstant') and isinstance(node, ast.NameConstant) and\
+           node.value is None:
+          return True
+        if hasattr(ast, 'Constant') and isinstance(node, ast.Constant) and node.value is None:
+          return True
+        return False
+
+      if is_None_node(node.cause):
         self.__raise_from_none = True
         self.__vvprint("raise ... from None", line=node.lineno, versions=[None, (3, 3)])
     seen_raise = self.__seen_raise
