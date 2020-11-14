@@ -23,6 +23,15 @@ def is_neg_int_node(node):
     (isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub) and
      isinstance(node.operand, ast.Num) and isinstance(node.operand.n, int))
 
+def is_none_node(node):
+  if isinstance(node, ast.Name) and node.id == 'None':
+    return True
+  if hasattr(ast, 'NameConstant') and isinstance(node, ast.NameConstant) and node.value is None:
+    return True
+  if hasattr(ast, 'Constant') and isinstance(node, ast.Constant) and node.value is None:
+    return True
+  return False
+
 def trim_fstring_value(value):  # pragma: no cover
   # HACK: Since parentheses are stripped of the AST, we'll just remove all those deduced or directly
   # available such that the self-doc f-strings can be compared.
@@ -69,6 +78,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__pos_only_args = False
     self.__yield_from = False
     self.__raise_cause = False
+    self.__raise_from_none = False
     self.__dict_comp = False
     self.__mat_mult = False
     self.__continue_in_finally = False
@@ -234,6 +244,9 @@ class SourceVisitor(ast.NodeVisitor):
   def raise_cause(self):
     return self.__raise_cause
 
+  def raise_from_none(self):
+    return self.__raise_from_none
+
   def dict_comprehension(self):
     return self.__dict_comp
 
@@ -373,7 +386,10 @@ class SourceVisitor(ast.NodeVisitor):
       mins = self.__add_versions_entity(mins, (None, (3, 3)), "yield from")
 
     if self.raise_cause():
-      mins = self.__add_versions_entity(mins, (None, (3, 3)), "raise clause")
+      mins = self.__add_versions_entity(mins, (None, (3, 0)), "exception cause")
+
+    if self.raise_from_none():
+      mins = self.__add_versions_entity(mins, (None, (3, 3)), "raise ... from None")
 
     if self.dict_comprehension():
       mins = self.__add_versions_entity(mins, ((2, 7), (3, 0)), "dict comprehension")
@@ -1548,7 +1564,10 @@ ast.Call(func=ast.Name)."""
   def visit_Raise(self, node):
     if hasattr(node, "cause") and node.cause is not None:
       self.__raise_cause = True
-      self.__vvprint("exception cause", line=node.lineno, versions=[None, (3, 3)])
+      self.__vvprint("exception cause", line=node.lineno, versions=[None, (3, 0)])
+      if is_none_node(node.cause):
+        self.__raise_from_none = True
+        self.__vvprint("raise ... from None", line=node.lineno, versions=[None, (3, 3)])
     seen_raise = self.__seen_raise
     self.__seen_raise = True
     self.generic_visit(node)
