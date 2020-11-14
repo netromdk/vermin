@@ -1,7 +1,7 @@
 import ast
 import io
 import sys
-from tokenize import generate_tokens, COMMENT, NEWLINE
+from tokenize import generate_tokens, COMMENT, NEWLINE, NL
 
 from .printing import vvprint
 from .utility import version_strings
@@ -56,7 +56,7 @@ class Parser:
         any(find_comment(segment.strip(), lineno, alone)
             for segment in comment[1:].strip().split("#"))
 
-      prev_newline = (typ == NEWLINE)
+      prev_newline = typ in (NEWLINE, NL)
     return novermin
 
   def detect(self, config):

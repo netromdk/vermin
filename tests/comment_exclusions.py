@@ -265,6 +265,19 @@ l[1:ssl.PROTOCOL_TLS.value]  # novermin
     self.assertIn(3, visitor.no_lines())
     self.assertEqual([(2, 6), (3, 0)], visitor.minimum_versions())
 
+  def test_newline_before_novm(self):
+    # Earlier, it wasn't checking for both `NL` and `NEWLINE` tokens to denote newlines, only the
+    # later.
+    visitor = self.visit("""import ssl
+l = [1, 2, 3]
+for a in l:
+
+  # novm
+  l[1:ssl.PROTOCOL_TLS.value]
+""")
+    self.assertIn(6, visitor.no_lines())
+    self.assertEqual([(2, 6), (3, 0)], visitor.minimum_versions())
+
   def test_function_decorator(self):
     visitor = self.visit("""@staticmethod  # novm
 def foo(): pass
