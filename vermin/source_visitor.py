@@ -1665,7 +1665,7 @@ ast.Call(func=ast.Name)."""
     if self.__config.lax_mode() or self.__is_no_line(node.lineno):
       return
     self.__with_statement = True
-    self.__vvprint("`with`", versions=[(2, 5), (3, 0)])
+    self.__vvprint("`with`", line=node.lineno, versions=[(2, 5), (3, 0)])
     self.generic_visit(node)
 
   def visit_Dict(self, node):
