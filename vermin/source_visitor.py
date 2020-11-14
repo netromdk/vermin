@@ -23,6 +23,15 @@ def is_neg_int_node(node):
     (isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub) and
      isinstance(node.operand, ast.Num) and isinstance(node.operand.n, int))
 
+def is_none_node(node):
+  if isinstance(node, ast.Name) and node.id == 'None':
+    return True
+  if hasattr(ast, 'NameConstant') and isinstance(node, ast.NameConstant) and node.value is None:
+    return True
+  if hasattr(ast, 'Constant') and isinstance(node, ast.Constant) and node.value is None:
+    return True
+  return False
+
 def trim_fstring_value(value):  # pragma: no cover
   # HACK: Since parentheses are stripped of the AST, we'll just remove all those deduced or directly
   # available such that the self-doc f-strings can be compared.
@@ -1556,18 +1565,7 @@ ast.Call(func=ast.Name)."""
     if hasattr(node, "cause") and node.cause is not None:
       self.__raise_cause = True
       self.__vvprint("exception cause", line=node.lineno, versions=[None, (3, 0)])
-
-      def is_None_node(node):
-        if isinstance(node, ast.Name) and node.id == 'None':
-          return True
-        if hasattr(ast, 'NameConstant') and isinstance(node, ast.NameConstant) and\
-           node.value is None:
-          return True
-        if hasattr(ast, 'Constant') and isinstance(node, ast.Constant) and node.value is None:
-          return True
-        return False
-
-      if is_None_node(node.cause):
+      if is_none_node(node.cause):
         self.__raise_from_none = True
         self.__vvprint("raise ... from None", line=node.lineno, versions=[None, (3, 3)])
     seen_raise = self.__seen_raise
