@@ -300,11 +300,6 @@ class VerminFunctionMemberTests(VerminTest):
   def test_timestamp_of_datetime_datetime(self):
     self.assertOnlyIn((3, 3), self.detect("from datetime import datetime\ndatetime.timestamp()"))
 
-  def test_NewType_of_typing(self):
-    self.assertOnlyIn((3, 5), self.detect("import typing\ntyping.NewType()"))
-    self.assertTrue(self.config.add_backport("typing"))
-    self.assertOnlyIn(((2, 7), (3, 5)), self.detect("import typing\ntyping.NewType()"))
-
   def test_pbkdf2_hmac_of_hashlib(self):
     self.assertOnlyIn(((2, 7), (3, 4)), self.detect("import hashlib\nhashlib.pbkdf2_hmac()"))
 
@@ -2582,9 +2577,17 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn((3, 7),
                       self.detect("from ipaddress import IPv4Network\n"
                                   "IPv4Network().subnet_of()"))
+    self.assertTrue(self.config.add_backport("ipaddress"))
+    self.assertOnlyIn(((2, 6), (3, 2)),
+                      self.detect("from ipaddress import IPv4Network\n"
+                                  "IPv4Network().subnet_of()"))
 
   def test_supernet_of_from_ipaddress_IPv4Network(self):
     self.assertOnlyIn((3, 7),
+                      self.detect("from ipaddress import IPv4Network\n"
+                                  "IPv4Network().supernet_of()"))
+    self.assertTrue(self.config.add_backport("ipaddress"))
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from ipaddress import IPv4Network\n"
                                   "IPv4Network().supernet_of()"))
 

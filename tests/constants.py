@@ -144,11 +144,6 @@ class VerminConstantMemberTests(VerminTest):
   def test_fold_of_datetime_time(self):
     self.assertOnlyIn((3, 6), self.detect("from datetime import time\np = time()\np.fold"))
 
-  def test_TYPE_CHECKING_of_typing(self):
-    self.assertOnlyIn((3, 5), self.detect("from typing import TYPE_CHECKING"))
-    self.assertTrue(self.config.add_backport("typing"))
-    self.assertOnlyIn(((2, 7), (3, 5)), self.detect("from typing import TYPE_CHECKING"))
-
   def test_algorithms_of_hashlib(self):
     self.assertOnlyIn((2, 7), self.detect("from hashlib import algorithms"))
 
@@ -163,15 +158,30 @@ class VerminConstantMemberTests(VerminTest):
                       self.detect("from ipaddress import IPv4Address\n"
                                   "addr = IPv4Address('127.0.0.1')\n"
                                   "addr.reverse_pointer"))
+    self.assertTrue(self.config.add_backport("ipaddress"))
+    self.assertOnlyIn(((2, 6), (3, 2)),
+                      self.detect("from ipaddress import IPv4Address\n"
+                                  "addr = IPv4Address('127.0.0.1')\n"
+                                  "addr.reverse_pointer"))
 
   def test_is_global_of_ipaddress_IPv4Address(self):
     self.assertOnlyIn((3, 4),
                       self.detect("from ipaddress import IPv4Address\n"
                                   "addr = IPv4Address('127.0.0.1')\n"
                                   "addr.is_global"))
+    self.assertTrue(self.config.add_backport("ipaddress"))
+    self.assertOnlyIn(((2, 6), (3, 2)),
+                      self.detect("from ipaddress import IPv4Address\n"
+                                  "addr = IPv4Address('127.0.0.1')\n"
+                                  "addr.is_global"))
 
   def test_is_global_of_ipaddress_IPv6Address(self):
     self.assertOnlyIn((3, 4),
+                      self.detect("from ipaddress import IPv6Address\n"
+                                  "addr = IPv6Address(':::1')\n"
+                                  "addr.is_global"))
+    self.assertTrue(self.config.add_backport("ipaddress"))
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from ipaddress import IPv6Address\n"
                                   "addr = IPv6Address(':::1')\n"
                                   "addr.is_global"))
@@ -441,9 +451,6 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_nan_of_math(self):
     self.assertOnlyIn((3, 5), self.detect("import math\nmath.nan"))
-
-  def test_name_of_contextvars_ContextVar(self):
-    self.assertOnlyIn((3, 7), self.detect("from contextvars import ContextVar\nContextVar.name"))
 
   def test_SOURCE_SUFFIXES_of_importlib_machinery(self):
     self.assertOnlyIn((3, 3), self.detect(
@@ -2640,9 +2647,6 @@ something.Final
 
   def test_Literal_of_typing(self):
     self.assertOnlyIn((3, 8), self.detect("from typing import Literal"))
-
-  def test_NoReturn_of_typing(self):
-    self.assertOnlyIn((3, 5), self.detect("from typing import NoReturn"))
 
   def test_Annotated_of_typing(self):
     self.assertOnlyIn((3, 9), self.detect("from typing import Annotated"))
