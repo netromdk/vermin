@@ -2,7 +2,7 @@ from .testutils import VerminTest
 
 class VerminLaxModeTests(VerminTest):
   def setUp(self):
-    self.config.set_lax_mode(True)
+    self.config.set_lax(True)
 
   def test_if(self):
     visitor = self.visit("if False:\n\timport ssl")
@@ -16,7 +16,7 @@ class VerminLaxModeTests(VerminTest):
   def test_ifexp(self):
     visitor = self.visit("print('ok') if True else (lambda: print(f'no'))()")
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
-    self.config.set_lax_mode(False)
+    self.config.set_lax(False)
     visitor = self.visit("print('ok') if True else (lambda: print(f'no'))()")
     self.assertEqual([None, (3, 6)], visitor.minimum_versions())
 

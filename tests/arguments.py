@@ -131,13 +131,13 @@ class VerminArgumentsTests(VerminTest):
     self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["-d"]))
     self.assertTrue(self.config.print_visits())
 
-  def test_lax_mode(self):
-    self.assertFalse(self.config.lax_mode())
+  def test_lax(self):
+    self.assertFalse(self.config.lax())
     self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["-l"]))
-    self.assertTrue(self.config.lax_mode())
-    self.config.set_lax_mode(False)
+    self.assertTrue(self.config.lax())
+    self.config.set_lax(False)
     self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--lax"]))
-    self.assertTrue(self.config.lax_mode())
+    self.assertTrue(self.config.lax())
 
   def test_hidden(self):
     self.assertContainsDict({"hidden": True}, self.parse_args(["--hidden"]))

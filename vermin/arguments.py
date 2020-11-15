@@ -61,9 +61,9 @@ class Arguments:
             "        versions are found then incompatible versions will be shown in the end to\n"
             "        not have an absence of results.\n")
       print("  --lax | -l\n"
-            "        Lax mode: ignores conditionals (if, ternary, for, while, try, bool op) on\n"
-            "        AST traversal, which can be useful when minimum versions are detected in\n"
-            "        conditionals that it is known does not affect the results.\n")
+            "        Lax mode: ignores conditionals (if, ternary, for, async for, while, with,\n"
+            "        try, bool op) on AST traversal, which can be useful when minimum versions\n"
+            "        are detected in conditionals that it is known does not affect the results.\n")
       print("  -d    Dump AST node visits.")
       print("\n  --help | -h\n"
             "        Shows this information and exists.")
@@ -183,7 +183,7 @@ class Arguments:
         path_pos += 1
       elif arg in ("--lax", "-l"):
         print("Running in lax mode!")
-        config.set_lax_mode(True)
+        config.set_lax(True)
         path_pos += 1
       elif arg == "-d":
         config.set_print_visits(True)

@@ -75,7 +75,7 @@ def main():
   if not parsable and (len(reqs) == 0 and len(incomps) == 0):  # pragma: no cover
     print("No known reason found that it will not work with 2+ and 3+.")
     print("Please report if it does not: https://github.com/netromdk/vermin/issues/")
-    if config.lax_mode() and not no_tips:
+    if config.lax() and not no_tips:
       nprint("Tip: Try without using lax mode for more thorough analysis.", config)
 
   unique_bps = sorted(backports - config.backports())

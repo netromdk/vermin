@@ -1662,7 +1662,7 @@ ast.Call(func=ast.Name)."""
         self.__vvprint("continue in finally block", line=node.lineno, versions=[None, (3, 8)])
 
   def visit_With(self, node):
-    if self.__config.lax_mode() or self.__is_no_line(node.lineno):
+    if self.__config.lax() or self.__is_no_line(node.lineno):
       return
     self.__with_statement = True
     self.__vvprint("`with`", line=node.lineno, versions=[(2, 5), (3, 0)])
@@ -1713,15 +1713,15 @@ ast.Call(func=ast.Name)."""
   # Lax mode and comment-excluded lines skip conditional blocks if enabled.
 
   def visit_If(self, node):
-    if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
+    if not self.__config.lax() and not self.__is_no_line(node.lineno):
       self.generic_visit(node)
 
   def visit_IfExp(self, node):
-    if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
+    if not self.__config.lax() and not self.__is_no_line(node.lineno):
       self.generic_visit(node)
 
   def __handle_for(self, node):
-    if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
+    if not self.__config.lax() and not self.__is_no_line(node.lineno):
       self.__seen_for += 1
 
       # Check if any value of the for-iterable is a dictionary, then associate for-target variable
@@ -1743,20 +1743,20 @@ ast.Call(func=ast.Name)."""
     self.__handle_for(node)
 
   def visit_AsyncFor(self, node):
-    if self.__config.lax_mode() or self.__is_no_line(node.lineno):
+    if self.__config.lax() or self.__is_no_line(node.lineno):
       return
     self.__async_for = True
     self.__vvprint("async for-loops", line=node.lineno, versions=[None, (3, 6)])
     self.__handle_for(node)
 
   def visit_While(self, node):
-    if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
+    if not self.__config.lax() and not self.__is_no_line(node.lineno):
       self.__seen_while += 1
       self.generic_visit(node)
       self.__seen_while -= 1
 
   def __handle_Try(self, node):
-    if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
+    if not self.__config.lax() and not self.__is_no_line(node.lineno):
       if hasattr(node, "finalbody"):
         self.__try_finally.append((self.__seen_for, self.__seen_while))
         for stm in node.finalbody:
@@ -1775,7 +1775,7 @@ ast.Call(func=ast.Name)."""
     self.__handle_Try(node)  # pragma: no cover
 
   def visit_BoolOp(self, node):
-    if not self.__config.lax_mode() and not self.__is_no_line(node.lineno):
+    if not self.__config.lax() and not self.__is_no_line(node.lineno):
       self.generic_visit(node)
 
   # Ignore unused nodes as a speed optimization.
