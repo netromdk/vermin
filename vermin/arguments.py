@@ -1,10 +1,12 @@
 import sys
 import re
+import os
 from multiprocessing import cpu_count
 
 from .constants import VERSION
 from .backports import Backports
 from .features import Features
+from .config import Config
 from . import formats
 
 TARGETS_SPLIT = re.compile("[\\.,]")
@@ -69,6 +71,9 @@ class Arguments:
             "        Shows this information and exists.")
       print("\n  --version | -V\n"
             "        Shows version number and exits.")
+      print("\n  --config-file <path> | -c <path>\n"
+            "        Loads config from file path. Any additional arguments supplied are applied\n"
+            "        on top of that config. See configuration section for more information.")
       print("\n  --hidden\n"
             "        Analyze 'hidden' files and folders starting with '.' (ignored by default\n"
             "        when not specified directly).")
@@ -118,6 +123,9 @@ class Arguments:
     versions = False
     no_tips = False
     fmt = None
+
+    # Preparsing step. Help and version arguments quit immediately and config file parsing must be
+    # done first such that other arguments can override its settings.
     for i in range(len(self.__args)):
       arg = self.__args[i]
       if arg in ("--help", "-h"):
@@ -125,7 +133,24 @@ class Arguments:
       if arg in ("--version", "-V"):
         print(VERSION)
         sys.exit(0)
-      if arg in ("--quiet", "-q"):
+      if arg in ("--config-file", "-c"):
+        if (i + 1) >= len(self.__args):
+          print("Requires config file path! Example: --config-file /path/to/vermin.ini")
+          return {"code": 1}
+        path = os.path.abspath(self.__args[i + 1])
+        c = Config.parse_file(path)
+        if c is None:
+          return {"code": 1}
+        config.override_from(c)
+
+    # Main parsing step.
+    for i in range(len(self.__args)):
+      arg = self.__args[i]
+      if arg in ("--config-file", "-c"):
+        # Config file parsed again only to ensure path position is correctly increased: reaching
+        # this point means a well-formed config file was specified and parsed.
+        path_pos += 2
+      elif arg in ("--quiet", "-q"):
         config.set_quiet(True)
         path_pos += 1
       elif arg.startswith("-v"):

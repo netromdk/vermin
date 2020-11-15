@@ -253,3 +253,45 @@ aaa
     self.assertFalse(self.config.pessimistic())
     self.assertContainsDict({"code": 0}, self.parse_args(["--pessimistic"]))
     self.assertTrue(self.config.pessimistic())
+
+  def test_config_file(self):
+    fp = ScopedTemporaryFile()
+    fp.write(b"""[vermin]
+verbose = 3
+pessimistic = on
+""")
+    fp.close()
+
+    self.assertContainsDict({"code": 0}, self.parse_args(["--config-file", fp.path()]))
+    self.assertEqual(3, self.config.verbose())
+    self.assertTrue(self.config.pessimistic())
+    self.config.reset()
+    self.assertContainsDict({"code": 0}, self.parse_args(["-c", fp.path()]))
+    self.assertEqual(3, self.config.verbose())
+    self.assertTrue(self.config.pessimistic())
+
+    # Unspecified config file.
+    self.assertContainsDict({"code": 1}, self.parse_args(["--config-file"]))
+    self.assertContainsDict({"code": 1}, self.parse_args(["-c"]))
+
+    # Nonexistent config file.
+    self.assertContainsDict({"code": 1}, self.parse_args(["--config-file", "doesnotexist"]))
+    self.assertContainsDict({"code": 1}, self.parse_args(["-c", "doesnotexist"]))
+
+    # Other arguments must override any loaded config file, which means the config file must be
+    # loaded first no matter the order of arguments passed on CLI.
+    self.config.reset()
+    self.assertContainsDict({"code": 0}, self.parse_args(["-v", "-c", fp.path()]))
+    self.assertEqual(1, self.config.verbose())
+    self.assertTrue(self.config.pessimistic())
+    self.config.reset()
+    self.assertContainsDict({"code": 0}, self.parse_args(["-c", fp.path(), "-v"]))
+    self.assertEqual(1, self.config.verbose())
+    self.assertTrue(self.config.pessimistic())
+
+    # Can't use quiet and verbose modes together, even across CLI arguments and config file
+    # settings.
+    self.config.reset()
+    self.assertContainsDict({"code": 1}, self.parse_args(["-c", fp.path(), "-q"]))
+    self.config.reset()
+    self.assertContainsDict({"code": 1}, self.parse_args(["-q", "-c", fp.path()]))

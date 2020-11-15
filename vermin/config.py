@@ -28,6 +28,18 @@ class Config:
     self.__features = set()
     self.set_format(DefaultFormat())
 
+  def override_from(self, other_config):
+    self.__quiet = other_config.quiet()
+    self.__verbose = other_config.verbose()
+    self.__print_visits = other_config.print_visits()
+    self.__ignore_incomp = other_config.ignore_incomp()
+    self.__lax = other_config.lax()
+    self.__pessimistic = other_config.pessimistic()
+    self.__exclusions = other_config.exclusions()
+    self.__backports = other_config.backports()
+    self.__features = other_config.features()
+    self.set_format(other_config.format())
+
   def __repr__(self):
     return """{}(
   quiet = {}

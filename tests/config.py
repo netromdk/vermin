@@ -14,6 +14,32 @@ class VerminConfigTests(VerminTest):
     self.assertEmpty(self.config.exclusions())
     self.assertEmpty(self.config.backports())
     self.assertEmpty(self.config.features())
+    self.assertEqual("default", self.config.format().name())
+
+  def test_override_from(self):
+    other = Config()
+    other.set_quiet(True)
+    other.set_verbose(3)
+    other.set_print_visits(True)
+    other.set_ignore_incomp(True)
+    other.set_lax(True)
+    other.set_pessimistic(True)
+    other.add_exclusion("foo.bar.baz")
+    self.assertTrue(other.add_backport("typing"))
+    self.assertTrue(other.enable_feature("fstring-self-doc"))
+    other.set_format(vermin.formats.ParsableFormat())
+
+    self.config.override_from(other)
+    self.assertEqual(other.quiet(), self.config.quiet())
+    self.assertEqual(other.verbose(), self.config.verbose())
+    self.assertEqual(other.print_visits(), self.config.print_visits())
+    self.assertEqual(other.ignore_incomp(), self.config.ignore_incomp())
+    self.assertEqual(other.lax(), self.config.lax())
+    self.assertEqual(other.pessimistic(), self.config.pessimistic())
+    self.assertEqual(other.exclusions(), self.config.exclusions())
+    self.assertEqual(other.backports(), self.config.backports())
+    self.assertEqual(other.features(), self.config.features())
+    self.assertEqual(other.format(), self.config.format())
 
   def test_repr(self):
     self.assertEqual(str(self.config), """{}(
