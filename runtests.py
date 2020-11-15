@@ -5,6 +5,7 @@ from time import time
 
 SUITES = (
   "general",
+  "config",
   "arguments",
   "lax_mode",
   "lang",
