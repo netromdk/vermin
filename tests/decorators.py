@@ -36,9 +36,13 @@ class VerminDecoratorMemberTests(VerminTest):
 
   def test_final_of_typing(self):
     self.assertOnlyIn((3, 8), self.detect("from typing import final"))
+    self.assertTrue(self.config.add_backport("typing"))
+    self.assertOnlyIn(((2, 7), (3, 8)), self.detect("from typing import final"))
 
   def test_runtime_checkable_of_typing(self):
     self.assertOnlyIn((3, 8), self.detect("from typing import runtime_checkable"))
+    self.assertTrue(self.config.add_backport("typing"))
+    self.assertOnlyIn(((2, 7), (3, 8)), self.detect("from typing import runtime_checkable"))
 
   def test_expectedFailure_of_unittest(self):
     self.assertOnlyIn(((2, 7), (3, 1)), self.detect("from unittest import expectedFailure"))

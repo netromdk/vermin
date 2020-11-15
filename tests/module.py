@@ -147,7 +147,7 @@ class VerminModuleTests(VerminTest):
   def test_typing(self):
     self.assertOnlyIn((3, 5), self.detect("import typing"))
     self.assertTrue(self.config.add_backport("typing"))
-    self.assertOnlyIn(((2, 7), (3, 4)), self.detect("import typing"))
+    self.assertOnlyIn(((2, 7), (3, 2)), self.detect("import typing"))
 
   def test_tracemalloc(self):
     self.assertOnlyIn((3, 4), self.detect("import tracemalloc"))

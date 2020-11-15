@@ -124,7 +124,10 @@ def MOD_REQS(config):
     "timeit": ((2, 3), (3, 0)),
     "tkinter": (None, (3, 0)),
     "tracemalloc": (None, (3, 4)),
-    "typing": (None, (3, 5)) if not bp("typing", config) else ((2, 7), (3, 4)),
+    # Notes:
+    #  Although `typing` backport now requires 2.7 or 3.4+, it originally supported 3.2 and 3.3.
+    #  See: https://github.com/python/typing/blob/02c9d79eb7/prototyping/setup.py
+    "typing": (None, (3, 5)) if not bp("typing", config) else ((2, 7), (3, 2)),
     "unittest": ((2, 1), (3, 0)),
     "unittest.mock": (None, (3, 3)),
     "urllib2": ((2, 0), None),
@@ -302,18 +305,24 @@ def MOD_MEM_REQS(config):
     "tracemalloc.DomainFilter": (None, (3, 6)),
     "types.MappingProxyType": (None, (3, 3)),
     "types.SimpleNamespace": (None, (3, 3)),
-    "typing.AsyncContextManager": (None, (3, 6)),
+    "typing.AsyncContextManager": (None, (3, 5)),
     "typing.AsyncGenerator": (None, (3, 6)),
     "typing.AsyncIterable": (None, (3, 5)),
     "typing.AsyncIterator": (None, (3, 5)),
     "typing.Awaitable": (None, (3, 5)),
-    "typing.ChainMap": (None, (3, 5) if not bp("typing", config) else (3, 4)),
+    # Notes: `typing.ChainMap` relies on `collections.ChainMap`, which is 3.3+.
+    "typing.ChainMap": (None, (3, 5) if not bp("typing", config) else (3, 3)),
     "typing.Collection": (None, (3, 6)),
     "typing.Coroutine": (None, (3, 5)),
-    "typing.OrderedDict": (None if not bp("typing", config) else (2, 7), (3, 7)),
-    "typing.Protocol": (None, (3, 8)),
+    "typing.OrderedDict": (None, (3, 7)),
+    # Notes:
+    #  `typing.Protocol` is backported to Python 2.7. For Python 3 it goes to `typing_extensions`.
+    #  The same applies for some other rules below.
+    "typing.Protocol": (None, (3, 8)) if not bp("typing", config) else ((2, 7), (3, 8)),
+    # Notes:
+    #  `typing.SupportsIndex` was added in `typing` backport 3.7.4 (which requires 2.7 or 3.4+).
     "typing.SupportsIndex": (None, (3, 8)) if not bp("typing", config) else ((2, 7), (3, 4)),
-    "typing.TypedDict": (None, (3, 8)),
+    "typing.TypedDict": (None, (3, 8)) if not bp("typing", config) else ((2, 7), (3, 8)),
     "unittest.IsolatedAsyncioTestCase": (None, (3, 8)),
     "unittest.TextTestResult": ((2, 7), (3, 2)),
     "unittest.mock.AsyncMock": (None, (3, 8)),
@@ -2320,8 +2329,8 @@ def MOD_MEM_REQS(config):
     "types.StringTypes": ((2, 2), None),
     "types.WrapperDescriptorType": (None, (3, 7)),
     "typing.Annotated": (None, (3, 9)),
-    "typing.Final": (None, (3, 8)),
-    "typing.Literal": (None, (3, 8)),
+    "typing.Final": (None, (3, 8)) if not bp("typing", config) else ((2, 7), (3, 8)),
+    "typing.Literal": (None, (3, 8)) if not bp("typing", config) else ((2, 7), (3, 8)),
     "unicodedata.ucd_3_2_0": ((2, 3), (3, 0)),
     "unicodedata.unidata_version": ((2, 3), (3, 0)),
     "unittest.TestCase.longMessage": ((2, 7), (3, 1)),
@@ -2411,8 +2420,8 @@ def MOD_MEM_REQS(config):
     "functools.singledispatchmethod": (None, (3, 8)),
     "functools.total_ordering": ((2, 7), (3, 2)),
     "reprlib.recursive_repr": (None, (3, 2)),
-    "typing.final": (None, (3, 8)),
-    "typing.runtime_checkable": (None, (3, 8)),
+    "typing.final": (None, (3, 8)) if not bp("typing", config) else ((2, 7), (3, 8)),
+    "typing.runtime_checkable": (None, (3, 8)) if not bp("typing", config) else ((2, 7), (3, 8)),
     "unittest.expectedFailure": ((2, 7), (3, 1)),
     "unittest.skip": ((2, 7), (3, 1)),
     "unittest.skipIf": ((2, 7), (3, 1)),

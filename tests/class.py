@@ -139,22 +139,22 @@ class VerminClassMemberTests(VerminTest):
 
   def test_OrderedDict_of_typing(self):
     self.assertOnlyIn((3, 7), self.detect("from typing import OrderedDict"))
-    self.assertTrue(self.config.add_backport("typing"))
-    self.assertOnlyIn(((2, 7), (3, 7)), self.detect("from typing import OrderedDict"))
 
   def test_AsyncContextManager_of_typing(self):
-    self.assertOnlyIn((3, 6), self.detect("from typing import AsyncContextManager"))
+    self.assertOnlyIn((3, 5), self.detect("from typing import AsyncContextManager"))
 
   def test_ChainMap_of_typing(self):
     self.assertOnlyIn((3, 5), self.detect("from typing import ChainMap"))
     self.assertTrue(self.config.add_backport("typing"))
-    self.assertOnlyIn((3, 4), self.detect("from typing import ChainMap"))
+    self.assertOnlyIn((3, 3), self.detect("from typing import ChainMap"))
 
   def test_AsyncGenerator_of_typing(self):
     self.assertOnlyIn((3, 6), self.detect("from typing import AsyncGenerator"))
 
   def test_Protocol_of_typing(self):
     self.assertOnlyIn((3, 8), self.detect("from typing import Protocol"))
+    self.assertTrue(self.config.add_backport("typing"))
+    self.assertOnlyIn(((2, 7), (3, 8)), self.detect("from typing import Protocol"))
 
   def test_SupportsIndex_of_typing(self):
     self.assertOnlyIn((3, 8), self.detect("from typing import SupportsIndex"))
@@ -515,6 +515,8 @@ class VerminClassMemberTests(VerminTest):
 
   def test_TypedDict_of_typing(self):
     self.assertOnlyIn((3, 8), self.detect("from typing import TypedDict"))
+    self.assertTrue(self.config.add_backport("typing"))
+    self.assertOnlyIn(((2, 7), (3, 8)), self.detect("from typing import TypedDict"))
 
   def test_SMTP_SSL_of_smtplib(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from smtplib import SMTP_SSL"))

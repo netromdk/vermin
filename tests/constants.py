@@ -2644,9 +2644,13 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn((3, 5), self.detect("""import typing
 something.Final
 """))
+    self.assertTrue(self.config.add_backport("typing"))
+    self.assertOnlyIn(((2, 7), (3, 8)), self.detect("from typing import Final"))
 
   def test_Literal_of_typing(self):
     self.assertOnlyIn((3, 8), self.detect("from typing import Literal"))
+    self.assertTrue(self.config.add_backport("typing"))
+    self.assertOnlyIn(((2, 7), (3, 8)), self.detect("from typing import Literal"))
 
   def test_Annotated_of_typing(self):
     self.assertOnlyIn((3, 9), self.detect("from typing import Annotated"))
