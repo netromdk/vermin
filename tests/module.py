@@ -141,11 +141,13 @@ class VerminModuleTests(VerminTest):
 
   def test_asyncio(self):
     self.assertOnlyIn((3, 4), self.detect("import asyncio"))
+    self.assertTrue(self.config.add_backport("asyncio"))
+    self.assertOnlyIn((3, 3), self.detect("import asyncio"))
 
   def test_typing(self):
     self.assertOnlyIn((3, 5), self.detect("import typing"))
     self.assertTrue(self.config.add_backport("typing"))
-    self.assertOnlyIn(((2, 7), (3, 4)), self.detect("import typing"))
+    self.assertOnlyIn(((2, 7), (3, 2)), self.detect("import typing"))
 
   def test_tracemalloc(self):
     self.assertOnlyIn((3, 4), self.detect("import tracemalloc"))
@@ -160,6 +162,8 @@ class VerminModuleTests(VerminTest):
 
   def test_ipaddress(self):
     self.assertOnlyIn((3, 3), self.detect("import ipaddress"))
+    self.assertTrue(self.config.add_backport("ipaddress"))
+    self.assertOnlyIn(((2, 6), (3, 2)), self.detect("import ipaddress"))
 
   def test___future__(self):
     self.assertOnlyIn(((2, 1), (3, 0)), self.detect("import __future__"))
@@ -268,6 +272,8 @@ class VerminModuleTests(VerminTest):
 
   def test_importlib(self):
     self.assertOnlyIn(((2, 7), (3, 1)), self.detect("import importlib"))
+    self.assertTrue(self.config.add_backport("importlib"))
+    self.assertOnlyIn(((2, 3), (3, 0)), self.detect("import importlib"))
 
   def test_inspect(self):
     self.assertOnlyIn(((2, 1), (3, 0)), self.detect("import inspect"))
@@ -382,9 +388,13 @@ class VerminModuleTests(VerminTest):
 
   def test_contextvars(self):
     self.assertOnlyIn((3, 7), self.detect("import contextvars"))
+    self.assertTrue(self.config.add_backport("contextvars"))
+    self.assertOnlyIn((3, 5), self.detect("import contextvars"))
 
   def test_dataclasses(self):
     self.assertOnlyIn((3, 7), self.detect("import dataclasses"))
+    self.assertTrue(self.config.add_backport("dataclasses"))
+    self.assertOnlyIn((3, 6), self.detect("import dataclasses"))
 
   def test_importlib_resources(self):
     self.assertOnlyIn((3, 7), self.detect("import importlib.resources"))
@@ -400,6 +410,8 @@ class VerminModuleTests(VerminTest):
 
   def test_statistics(self):
     self.assertOnlyIn((3, 4), self.detect("import statistics"))
+    self.assertTrue(self.config.add_backport("statistics"))
+    self.assertOnlyIn(((2, 6), (3, 4)), self.detect("import statistics"))
 
   def test_ensurepip(self):
     self.assertOnlyIn(((2, 7), (3, 4)), self.detect("import ensurepip"))
