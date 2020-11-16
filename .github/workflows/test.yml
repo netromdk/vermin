@@ -95,5 +95,6 @@ jobs:
 
     - name: Test and coverage
       env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This is needed especially for fork PRs.
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
       run: ${{ matrix.test_script_name }}
