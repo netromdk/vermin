@@ -134,8 +134,23 @@ class VerminClassMemberTests(VerminTest):
   def test_Collection_of_typing(self):
     self.assertOnlyIn((3, 6), self.detect("from typing import Collection"))
 
+  def test_ContextManager_of_typing(self):
+    self.assertOnlyIn((3, 5), self.detect("from typing import ContextManager"))
+    self.assertTrue(self.config.add_backport("typing"))
+    self.assertOnlyIn(((2, 7), (3, 3)), self.detect("from typing import ContextManager"))
+
   def test_Coroutine_of_typing(self):
     self.assertOnlyIn((3, 5), self.detect("from typing import Coroutine"))
+
+  def test_Counter_of_typing(self):
+    self.assertOnlyIn((3, 5), self.detect("from typing import Counter"))
+    self.assertTrue(self.config.add_backport("typing"))
+    self.assertOnlyIn(((2, 7), (3, 3)), self.detect("from typing import Counter"))
+
+  def test_Deque_of_typing(self):
+    self.assertOnlyIn((3, 5), self.detect("from typing import Deque"))
+    self.assertTrue(self.config.add_backport("typing"))
+    self.assertOnlyIn(((2, 7), (3, 3)), self.detect("from typing import Deque"))
 
   def test_OrderedDict_of_typing(self):
     self.assertOnlyIn((3, 7), self.detect("from typing import OrderedDict"))
@@ -156,10 +171,20 @@ class VerminClassMemberTests(VerminTest):
     self.assertTrue(self.config.add_backport("typing"))
     self.assertOnlyIn(((2, 7), (3, 8)), self.detect("from typing import Protocol"))
 
+  def test_SupportsBytes_of_typing(self):
+    self.assertOnlyIn((3, 5), self.detect("from typing import SupportsBytes"))
+    self.assertTrue(self.config.add_backport("typing"))
+    self.assertOnlyIn((3, 2), self.detect("from typing import SupportsBytes"))
+
   def test_SupportsIndex_of_typing(self):
     self.assertOnlyIn((3, 8), self.detect("from typing import SupportsIndex"))
     self.assertTrue(self.config.add_backport("typing"))
     self.assertOnlyIn(((2, 7), (3, 4)), self.detect("from typing import SupportsIndex"))
+
+  def test_SupportsRound_of_typing(self):
+    self.assertOnlyIn((3, 5), self.detect("from typing import SupportsRound"))
+    self.assertTrue(self.config.add_backport("typing"))
+    self.assertOnlyIn((3, 2), self.detect("from typing import SupportsRound"))
 
   def test_Awaitable_of_typing(self):
     self.assertOnlyIn((3, 5), self.detect("from typing import Awaitable"))
