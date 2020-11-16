@@ -119,7 +119,6 @@ class Arguments:
     path_pos = 0
     processes = cpu_count()
     targets = []
-    hidden = False
     versions = False
     fmt = None
 
@@ -213,7 +212,7 @@ class Arguments:
         config.set_print_visits(True)
         path_pos += 1
       elif arg == "--hidden":
-        hidden = True
+        config.set_analyze_hidden(True)
         path_pos += 1
       elif arg == "--versions":
         versions = True
@@ -287,5 +286,4 @@ class Arguments:
             "paths": paths,
             "processes": processes,
             "targets": targets,
-            "hidden": hidden,
             "versions": versions}

@@ -140,7 +140,8 @@ class VerminArgumentsTests(VerminTest):
     self.assertTrue(self.config.lax())
 
   def test_hidden(self):
-    self.assertContainsDict({"hidden": True}, self.parse_args(["--hidden"]))
+    self.assertContainsDict({"code": 0}, self.parse_args(["--hidden"]))
+    self.assertTrue(self.config.analyze_hidden())
 
   def test_versions(self):
     self.assertContainsDict({"versions": True}, self.parse_args(["--versions"]))

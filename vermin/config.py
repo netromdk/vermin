@@ -24,6 +24,7 @@ class Config:
     self.__lax = False
     self.__pessimistic = False
     self.__show_tips = True
+    self.__analyze_hidden = False
     self.__exclusions = set()
     self.__backports = set()
     self.__features = set()
@@ -37,6 +38,7 @@ class Config:
     self.__lax = other_config.lax()
     self.__pessimistic = other_config.pessimistic()
     self.__show_tips = other_config.show_tips()
+    self.__analyze_hidden = other_config.analyze_hidden()
     self.__exclusions = other_config.exclusions()
     self.__backports = other_config.backports()
     self.__features = other_config.features()
@@ -51,13 +53,15 @@ class Config:
   lax = {}
   pessimistic = {}
   show_tips = {}
+  analyze_hidden = {}
   exclusions = {}
   backports = {}
   features = {}
   format = {}
 )""".format(self.__class__.__name__, self.quiet(), self.verbose(), self.print_visits(),
             self.ignore_incomp(), self.lax(), self.pessimistic(), self.show_tips(),
-            self.exclusions(), list(self.backports()), list(self.features()), self.format().name())
+            self.analyze_hidden(), self.exclusions(), list(self.backports()),
+            list(self.features()), self.format().name())
 
   @staticmethod
   def parse_file(path):
@@ -94,6 +98,7 @@ class Config:
       "lax": str(config.lax()),
       "pessimistic": str(config.pessimistic()),
       "show_tips": str(config.show_tips()),
+      "analyze_hidden": str(config.analyze_hidden()),
       "exclusions": encode_list(config.exclusions()),
       "backports": encode_list(config.backports()),
       "features": encode_list(config.features()),
@@ -147,6 +152,7 @@ class Config:
     config.set_lax(getbool("lax"))
     config.set_pessimistic(getbool("pessimistic"))
     config.set_show_tips(getbool("show_tips"))
+    config.set_analyze_hidden(getbool("analyze_hidden"))
 
     for exclusion in getstringlist("exclusions"):
       config.add_exclusion(exclusion)
@@ -268,3 +274,9 @@ class Config:
 
   def show_tips(self):
     return self.__show_tips
+
+  def set_analyze_hidden(self, analyze_hidden):
+    self.__analyze_hidden = analyze_hidden
+
+  def analyze_hidden(self):
+    return self.__analyze_hidden

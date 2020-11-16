@@ -21,7 +21,6 @@ def main():
 
   processes = args["processes"]
   targets = args["targets"]
-  hidden = args["hidden"]
   paths = args["paths"]
   parsable = (config.format().name() == "parsable")
 
@@ -36,7 +35,7 @@ def main():
   if parsable and not sys.platform.startswith("win32"):
     ignore_chars = [":", "\n"]
 
-  paths = list(set(detect_paths(paths, hidden=hidden, processes=processes,
+  paths = list(set(detect_paths(paths, hidden=config.analyze_hidden(), processes=processes,
                                 ignore_chars=ignore_chars)))
   paths.sort()
 

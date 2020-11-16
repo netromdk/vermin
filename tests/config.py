@@ -12,6 +12,7 @@ class VerminConfigTests(VerminTest):
     self.assertFalse(self.config.lax())
     self.assertFalse(self.config.pessimistic())
     self.assertTrue(self.config.show_tips())
+    self.assertFalse(self.config.analyze_hidden())
     self.assertEmpty(self.config.exclusions())
     self.assertEmpty(self.config.backports())
     self.assertEmpty(self.config.features())
@@ -26,6 +27,7 @@ class VerminConfigTests(VerminTest):
     other.set_lax(True)
     other.set_pessimistic(True)
     other.set_show_tips(False)
+    other.set_analyze_hidden(True)
     other.add_exclusion("foo.bar.baz")
     self.assertTrue(other.add_backport("typing"))
     self.assertTrue(other.enable_feature("fstring-self-doc"))
@@ -39,6 +41,7 @@ class VerminConfigTests(VerminTest):
     self.assertEqual(other.lax(), self.config.lax())
     self.assertEqual(other.pessimistic(), self.config.pessimistic())
     self.assertEqual(other.show_tips(), self.config.show_tips())
+    self.assertEqual(other.analyze_hidden(), self.config.analyze_hidden())
     self.assertEqual(other.exclusions(), self.config.exclusions())
     self.assertEqual(other.backports(), self.config.backports())
     self.assertEqual(other.features(), self.config.features())
@@ -53,14 +56,15 @@ class VerminConfigTests(VerminTest):
   lax = {}
   pessimistic = {}
   show_tips = {}
+  analyze_hidden = {}
   exclusions = {}
   backports = {}
   features = {}
   format = {}
 )""".format(self.config.__class__.__name__, self.config.quiet(), self.config.verbose(),
             self.config.print_visits(), self.config.ignore_incomp(), self.config.lax(),
-            self.config.pessimistic(), self.config.show_tips(), self.config.exclusions(),
-            list(self.config.backports()), list(self.config.features()),
+            self.config.pessimistic(), self.config.show_tips(), self.config.analyze_hidden(),
+            self.config.exclusions(), list(self.config.backports()), list(self.config.features()),
             self.config.format().name()))
 
   @VerminTest.parameterized_args([
