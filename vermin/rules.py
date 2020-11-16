@@ -313,15 +313,26 @@ def MOD_MEM_REQS(config):
     # Notes: `typing.ChainMap` relies on `collections.ChainMap`, which is 3.3+.
     "typing.ChainMap": (None, (3, 5) if not bp("typing", config) else (3, 3)),
     "typing.Collection": (None, (3, 6)),
+    # Notes:
+    #  `typing.ContextManager` was added in `typing` backport 3.6.2 (which requires 2.7 or 3.3+).
+    "typing.ContextManager": (None, (3, 5)) if not bp("typing", config) else ((2, 7), (3, 3)),
     "typing.Coroutine": (None, (3, 5)),
+    # Notes: `typing.Counter` was added in `typing` backport 3.6.1 (which requires 2.7 or 3.3+).
+    "typing.Counter": (None, (3, 5)) if not bp("typing", config) else ((2, 7), (3, 3)),
+    # Notes: `typing.Deque` was added in `typing` backport 3.6.1 (which requires 2.7 or 3.3+).
+    "typing.Deque": (None, (3, 5)) if not bp("typing", config) else ((2, 7), (3, 3)),
     "typing.OrderedDict": (None, (3, 7)),
     # Notes:
     #  `typing.Protocol` is backported to Python 2.7. For Python 3 it goes to `typing_extensions`.
     #  The same applies for some other rules below.
     "typing.Protocol": (None, (3, 8)) if not bp("typing", config) else ((2, 7), (3, 8)),
+    # Notes: `object.__bytes__` is 3.2+
+    "typing.SupportsBytes": (None, (3, 5)) if not bp("typing", config) else (None, (3, 2)),
     # Notes:
     #  `typing.SupportsIndex` was added in `typing` backport 3.7.4 (which requires 2.7 or 3.4+).
     "typing.SupportsIndex": (None, (3, 8)) if not bp("typing", config) else ((2, 7), (3, 4)),
+    # Notes: `object.__round__` is 3.0+
+    "typing.SupportsRound": (None, (3, 5)) if not bp("typing", config) else (None, (3, 2)),
     "typing.TypedDict": (None, (3, 8)) if not bp("typing", config) else ((2, 7), (3, 8)),
     "unittest.IsolatedAsyncioTestCase": (None, (3, 8)),
     "unittest.TextTestResult": ((2, 7), (3, 2)),
@@ -2329,6 +2340,8 @@ def MOD_MEM_REQS(config):
     "types.StringTypes": ((2, 2), None),
     "types.WrapperDescriptorType": (None, (3, 7)),
     "typing.Annotated": (None, (3, 9)),
+    # Notes: `typing.NoReturn` was added in `typing` backport 3.6.2 (which requires 2.7 or 3.3+).
+    "typing.NoReturn": (None, (3, 5)) if not bp("typing", config) else ((2, 7), (3, 3)),
     "typing.Final": (None, (3, 8)) if not bp("typing", config) else ((2, 7), (3, 8)),
     "typing.Literal": (None, (3, 8)) if not bp("typing", config) else ((2, 7), (3, 8)),
     "unicodedata.ucd_3_2_0": ((2, 3), (3, 0)),

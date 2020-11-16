@@ -2639,6 +2639,11 @@ class VerminConstantMemberTests(VerminTest):
   def test_WrapperDescriptorType_of_types(self):
     self.assertOnlyIn((3, 7), self.detect("from types import WrapperDescriptorType"))
 
+  def test_NoReturn_of_typing(self):
+    self.assertOnlyIn((3, 5), self.detect("from typing import NoReturn"))
+    self.assertTrue(self.config.add_backport("typing"))
+    self.assertOnlyIn(((2, 7), (3, 3)), self.detect("from typing import NoReturn"))
+
   def test_Final_of_typing(self):
     self.assertOnlyIn((3, 8), self.detect("from typing import Final"))
     self.assertOnlyIn((3, 5), self.detect("""import typing
