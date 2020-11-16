@@ -10,6 +10,7 @@ class ParsableFormat(Format):
   def set_config(self, config):
     config.set_verbose(max(3, config.verbose()))
     config.set_ignore_incomp(True)
+    config.set_show_tips(False)
     super(ParsableFormat, self).set_config(config)
 
   def skip_output_line(self):

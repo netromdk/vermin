@@ -23,6 +23,7 @@ class Config:
     self.__ignore_incomp = False
     self.__lax = False
     self.__pessimistic = False
+    self.__show_tips = True
     self.__exclusions = set()
     self.__backports = set()
     self.__features = set()
@@ -35,6 +36,7 @@ class Config:
     self.__ignore_incomp = other_config.ignore_incomp()
     self.__lax = other_config.lax()
     self.__pessimistic = other_config.pessimistic()
+    self.__show_tips = other_config.show_tips()
     self.__exclusions = other_config.exclusions()
     self.__backports = other_config.backports()
     self.__features = other_config.features()
@@ -48,13 +50,14 @@ class Config:
   ignore_incomp = {}
   lax = {}
   pessimistic = {}
+  show_tips = {}
   exclusions = {}
   backports = {}
   features = {}
   format = {}
 )""".format(self.__class__.__name__, self.quiet(), self.verbose(), self.print_visits(),
-            self.ignore_incomp(), self.lax(), self.pessimistic(), self.exclusions(),
-            list(self.backports()), list(self.features()), self.format().name())
+            self.ignore_incomp(), self.lax(), self.pessimistic(), self.show_tips(),
+            self.exclusions(), list(self.backports()), list(self.features()), self.format().name())
 
   @staticmethod
   def parse_file(path):
@@ -84,12 +87,13 @@ class Config:
 
     # Parser with default values from initial instance.
     parser = ConfigParser({
-      "quiet": config.quiet(),
+      "quiet": str(config.quiet()),
       "verbose": config.verbose(),
-      "print_visits": config.print_visits(),
-      "ignore_incomp": config.ignore_incomp(),
-      "lax": config.lax(),
-      "pessimistic": config.pessimistic(),
+      "print_visits": str(config.print_visits()),
+      "ignore_incomp": str(config.ignore_incomp()),
+      "lax": str(config.lax()),
+      "pessimistic": str(config.pessimistic()),
+      "show_tips": str(config.show_tips()),
       "exclusions": encode_list(config.exclusions()),
       "backports": encode_list(config.backports()),
       "features": encode_list(config.features()),
@@ -142,6 +146,7 @@ class Config:
     config.set_ignore_incomp(getbool("ignore_incomp"))
     config.set_lax(getbool("lax"))
     config.set_pessimistic(getbool("pessimistic"))
+    config.set_show_tips(getbool("show_tips"))
 
     for exclusion in getstringlist("exclusions"):
       config.add_exclusion(exclusion)
@@ -257,3 +262,9 @@ class Config:
 
   def pessimistic(self):
     return self.__pessimistic
+
+  def set_show_tips(self, show_tips):
+    self.__show_tips = show_tips
+
+  def show_tips(self):
+    return self.__show_tips

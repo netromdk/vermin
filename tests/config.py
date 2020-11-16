@@ -11,6 +11,7 @@ class VerminConfigTests(VerminTest):
     self.assertFalse(self.config.ignore_incomp())
     self.assertFalse(self.config.lax())
     self.assertFalse(self.config.pessimistic())
+    self.assertTrue(self.config.show_tips())
     self.assertEmpty(self.config.exclusions())
     self.assertEmpty(self.config.backports())
     self.assertEmpty(self.config.features())
@@ -24,6 +25,7 @@ class VerminConfigTests(VerminTest):
     other.set_ignore_incomp(True)
     other.set_lax(True)
     other.set_pessimistic(True)
+    other.set_show_tips(False)
     other.add_exclusion("foo.bar.baz")
     self.assertTrue(other.add_backport("typing"))
     self.assertTrue(other.enable_feature("fstring-self-doc"))
@@ -36,6 +38,7 @@ class VerminConfigTests(VerminTest):
     self.assertEqual(other.ignore_incomp(), self.config.ignore_incomp())
     self.assertEqual(other.lax(), self.config.lax())
     self.assertEqual(other.pessimistic(), self.config.pessimistic())
+    self.assertEqual(other.show_tips(), self.config.show_tips())
     self.assertEqual(other.exclusions(), self.config.exclusions())
     self.assertEqual(other.backports(), self.config.backports())
     self.assertEqual(other.features(), self.config.features())
@@ -49,14 +52,16 @@ class VerminConfigTests(VerminTest):
   ignore_incomp = {}
   lax = {}
   pessimistic = {}
+  show_tips = {}
   exclusions = {}
   backports = {}
   features = {}
   format = {}
 )""".format(self.config.__class__.__name__, self.config.quiet(), self.config.verbose(),
             self.config.print_visits(), self.config.ignore_incomp(), self.config.lax(),
-            self.config.pessimistic(), self.config.exclusions(), list(self.config.backports()),
-            list(self.config.features()), self.config.format().name()))
+            self.config.pessimistic(), self.config.show_tips(), self.config.exclusions(),
+            list(self.config.backports()), list(self.config.features()),
+            self.config.format().name()))
 
   @VerminTest.parameterized_args([
     [u""],
@@ -219,6 +224,25 @@ pessimistic = False
     config = Config.parse_data(data)
     self.assertIsNotNone(config)
     self.assertEqual(config.pessimistic(), expected)
+
+  @VerminTest.parameterized_args([
+    [u"""[vermin]
+show_tips =
+""", True],
+    [u"""[vermin]
+#show_tips = False
+""", True],
+    [u"""[vermin]
+show_tips = False
+""", False],
+    [u"""[vermin]
+show_tips = True
+""", True],
+  ])
+  def test_parse_show_tips(self, data, expected):
+    config = Config.parse_data(data)
+    self.assertIsNotNone(config)
+    self.assertEqual(config.show_tips(), expected)
 
   @VerminTest.parameterized_args([
     [u"""[vermin]

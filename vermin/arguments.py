@@ -121,7 +121,6 @@ class Arguments:
     targets = []
     hidden = False
     versions = False
-    no_tips = False
     fmt = None
 
     # Preparsing step. Help and version arguments quit immediately and config file parsing must be
@@ -220,7 +219,7 @@ class Arguments:
         versions = True
         path_pos += 1
       elif arg == "--no-tips":
-        no_tips = True
+        config.set_show_tips(False)
         path_pos += 1
       elif arg in ("--format", "-f"):
         if (i + 1) >= len(self.__args):
@@ -270,7 +269,6 @@ class Arguments:
       config.set_format(fmt)
 
     if config.format().name() == "parsable":
-      no_tips = True
       versions = False
 
     if config.quiet() and config.verbose() > 0:
@@ -290,5 +288,4 @@ class Arguments:
             "processes": processes,
             "targets": targets,
             "hidden": hidden,
-            "versions": versions,
-            "no-tips": no_tips}
+            "versions": versions}

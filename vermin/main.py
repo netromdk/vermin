@@ -21,7 +21,6 @@ def main():
 
   processes = args["processes"]
   targets = args["targets"]
-  no_tips = args["no-tips"]
   hidden = args["hidden"]
   paths = args["paths"]
   parsable = (config.format().name() == "parsable")
@@ -75,11 +74,11 @@ def main():
   if not parsable and (len(reqs) == 0 and len(incomps) == 0):  # pragma: no cover
     print("No known reason found that it will not work with 2+ and 3+.")
     print("Please report if it does not: https://github.com/netromdk/vermin/issues/")
-    if config.lax() and not no_tips:
+    if config.lax() and config.show_tips():
       nprint("Tip: Try without using lax mode for more thorough analysis.", config)
 
   unique_bps = sorted(backports - config.backports())
-  if len(unique_bps) > 0 and not no_tips:  # pragma: no cover
+  if len(unique_bps) > 0 and config.show_tips():  # pragma: no cover
     nprint("Tip: You're using potentially backported modules: {}".format(", ".join(unique_bps)),
            config)
     nprint("If so, try using the following for better results: {}\n".

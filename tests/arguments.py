@@ -19,9 +19,9 @@ class VerminArgumentsTests(VerminTest):
                             self.parse_args(["file.py", "file2.py", "folder/folder2"]))
 
   def test_mix_options_and_files(self):
-    self.assertContainsDict({"code": 0, "paths": ["file.py"], "targets": [(True, (2, 7))],
-                             "no-tips": False},
+    self.assertContainsDict({"code": 0, "paths": ["file.py"], "targets": [(True, (2, 7))]},
                             self.parse_args(["-q", "-t=2.7", "file.py"]))
+    self.assertTrue(self.config.show_tips())
 
   def test_quiet(self):
     self.assertFalse(self.config.quiet())
@@ -199,7 +199,8 @@ aaa
       self.assertEqualItems([mod], self.config.backports())
 
   def test_no_tips(self):
-    self.assertContainsDict({"no-tips": True}, self.parse_args(["--no-tips"]))
+    self.assertContainsDict({"code": 0}, self.parse_args(["--no-tips"]))
+    self.assertFalse(self.config.show_tips())
 
   def test_feature(self):
     # Needs <name> part.
@@ -237,17 +238,18 @@ aaa
     for args in (["--format", "parsable"], ["--format", "parsable", "--verbose"],
                  ["--format", "parsable", "--versions"]):
       self.config.reset()
-      self.assertContainsDict({"code": 0, "versions": False, "no-tips": True},
-                              self.parse_args(args))
+      self.assertContainsDict({"code": 0, "versions": False}, self.parse_args(args))
       self.assertEqual(3, self.config.verbose())
       self.assertTrue(self.config.ignore_incomp())
+      self.assertFalse(self.config.show_tips())
 
     # Verbosity can be higher for parsable.
     self.config.reset()
-    self.assertContainsDict({"code": 0, "versions": False, "no-tips": True},
+    self.assertContainsDict({"code": 0, "versions": False},
                             self.parse_args(["--format", "parsable", "-vvvv"]))
     self.assertEqual(4, self.config.verbose())
     self.assertTrue(self.config.ignore_incomp())
+    self.assertFalse(self.config.show_tips())
 
   def test_pessimistic(self):
     self.assertFalse(self.config.pessimistic())
