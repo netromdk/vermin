@@ -3,11 +3,12 @@ import os
 from os.path import abspath, basename, join, splitext
 from tempfile import NamedTemporaryFile, mkdtemp
 from shutil import rmtree
+from multiprocessing import cpu_count
 
 from vermin import combine_versions, InvalidVersionException, detect_paths,\
   detect_paths_incremental, probably_python_file, Processor, process_individual, reverse_range,\
   dotted_name, remove_whitespace, main, sort_line_column, sort_line_column_parsable,\
-  version_strings, format_title_descs
+  version_strings, format_title_descs, DEFAULT_PROCESSES
 from vermin.formats import ParsableFormat
 
 from .testutils import VerminTest, current_version, ScopedTemporaryFile, detect, visit
@@ -876,3 +877,6 @@ three - three.one
     self.config.set_pessimistic(True)
     expected[current_version().major - 2] = None
     self.assertEqual(expected, self.detect("if"))
+
+  def test_default_processes(self):
+    self.assertEqual(cpu_count(), DEFAULT_PROCESSES)

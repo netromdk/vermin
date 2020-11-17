@@ -1,4 +1,4 @@
-from vermin import Backports, Features, Config
+from vermin import Backports, Features, Config, DEFAULT_PROCESSES
 import vermin.formats
 
 from .testutils import VerminTest, ScopedTemporaryFile
@@ -8,6 +8,7 @@ class VerminConfigTests(VerminTest):
     self.assertFalse(self.config.quiet())
     self.assertEqual(0, self.config.verbose())
     self.assertFalse(self.config.print_visits())
+    self.assertEqual(DEFAULT_PROCESSES, self.config.processes())
     self.assertFalse(self.config.ignore_incomp())
     self.assertFalse(self.config.lax())
     self.assertFalse(self.config.pessimistic())
@@ -23,6 +24,7 @@ class VerminConfigTests(VerminTest):
     other.set_quiet(True)
     other.set_verbose(3)
     other.set_print_visits(True)
+    other.set_processes(DEFAULT_PROCESSES + 1)
     other.set_ignore_incomp(True)
     other.set_lax(True)
     other.set_pessimistic(True)
@@ -37,6 +39,7 @@ class VerminConfigTests(VerminTest):
     self.assertEqual(other.quiet(), self.config.quiet())
     self.assertEqual(other.verbose(), self.config.verbose())
     self.assertEqual(other.print_visits(), self.config.print_visits())
+    self.assertEqual(other.processes(), self.config.processes())
     self.assertEqual(other.ignore_incomp(), self.config.ignore_incomp())
     self.assertEqual(other.lax(), self.config.lax())
     self.assertEqual(other.pessimistic(), self.config.pessimistic())
@@ -52,6 +55,7 @@ class VerminConfigTests(VerminTest):
   quiet = {}
   verbose = {}
   print_visits = {}
+  processes = {}
   ignore_incomp = {}
   lax = {}
   pessimistic = {}
@@ -62,10 +66,10 @@ class VerminConfigTests(VerminTest):
   features = {}
   format = {}
 )""".format(self.config.__class__.__name__, self.config.quiet(), self.config.verbose(),
-            self.config.print_visits(), self.config.ignore_incomp(), self.config.lax(),
-            self.config.pessimistic(), self.config.show_tips(), self.config.analyze_hidden(),
-            self.config.exclusions(), list(self.config.backports()), list(self.config.features()),
-            self.config.format().name()))
+            self.config.print_visits(), self.config.processes(), self.config.ignore_incomp(),
+            self.config.lax(), self.config.pessimistic(), self.config.show_tips(),
+            self.config.analyze_hidden(), self.config.exclusions(), list(self.config.backports()),
+            list(self.config.features()), self.config.format().name()))
 
   @VerminTest.parameterized_args([
     [u""],
@@ -171,6 +175,33 @@ print_visits = False
     config = Config.parse_data(data)
     self.assertIsNotNone(config)
     self.assertEqual(config.print_visits(), expected)
+
+  @VerminTest.parameterized_args([
+    [u"""[vermin]
+processes =
+""", DEFAULT_PROCESSES],
+    [u"""[vermin]
+#processes = 1
+""", DEFAULT_PROCESSES],
+    [u"""[vermin]
+processes = 0
+""", DEFAULT_PROCESSES],
+    [u"""[vermin]
+processes = 10
+""", 10],
+    [u"""[vermin]
+processes = 2
+""", 2],
+  ])
+  def test_parse_processes(self, data, expected):
+    config = Config.parse_data(data)
+    self.assertIsNotNone(config)
+    self.assertEqual(config.processes(), expected)
+
+  def test_parse_invalid_processes(self):
+    self.assertIsNone(Config.parse_data(u"""[vermin]
+processes = -1
+"""))
 
   @VerminTest.parameterized_args([
     [u"""[vermin]

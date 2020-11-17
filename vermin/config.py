@@ -10,6 +10,7 @@ except ImportError:
 from .backports import Backports
 from .features import Features
 from .formats import Format, DefaultFormat
+from .constants import DEFAULT_PROCESSES
 from . import formats
 
 class Config:
@@ -20,6 +21,7 @@ class Config:
     self.__quiet = False
     self.__verbose = 0
     self.__print_visits = False
+    self.__processes = DEFAULT_PROCESSES
     self.__ignore_incomp = False
     self.__lax = False
     self.__pessimistic = False
@@ -34,6 +36,7 @@ class Config:
     self.__quiet = other_config.quiet()
     self.__verbose = other_config.verbose()
     self.__print_visits = other_config.print_visits()
+    self.__processes = other_config.processes()
     self.__ignore_incomp = other_config.ignore_incomp()
     self.__lax = other_config.lax()
     self.__pessimistic = other_config.pessimistic()
@@ -49,6 +52,7 @@ class Config:
   quiet = {}
   verbose = {}
   print_visits = {}
+  processes = {}
   ignore_incomp = {}
   lax = {}
   pessimistic = {}
@@ -59,8 +63,8 @@ class Config:
   features = {}
   format = {}
 )""".format(self.__class__.__name__, self.quiet(), self.verbose(), self.print_visits(),
-            self.ignore_incomp(), self.lax(), self.pessimistic(), self.show_tips(),
-            self.analyze_hidden(), self.exclusions(), list(self.backports()),
+            self.processes(), self.ignore_incomp(), self.lax(), self.pessimistic(),
+            self.show_tips(), self.analyze_hidden(), self.exclusions(), list(self.backports()),
             list(self.features()), self.format().name())
 
   @staticmethod
@@ -92,8 +96,9 @@ class Config:
     # Parser with default values from initial instance.
     parser = ConfigParser({
       "quiet": str(config.quiet()),
-      "verbose": config.verbose(),
+      "verbose": str(config.verbose()),
       "print_visits": str(config.print_visits()),
+      "processes": str(config.processes()),
       "ignore_incomp": str(config.ignore_incomp()),
       "lax": str(config.lax()),
       "pessimistic": str(config.pessimistic()),
@@ -130,7 +135,7 @@ class Config:
       try:
         return parser.getboolean(section, option)
       except ValueError:
-        return "True" == parser.defaults()[option]
+        return str(True) == parser.defaults()[option]
 
     def getuint(option):
       value = parser.get(section, option)
@@ -148,6 +153,7 @@ class Config:
     config.set_quiet(getbool("quiet"))
     config.set_verbose(getuint("verbose"))
     config.set_print_visits(getbool("print_visits"))
+    config.set_processes(getuint("processes"))
     config.set_ignore_incomp(getbool("ignore_incomp"))
     config.set_lax(getbool("lax"))
     config.set_pessimistic(getbool("pessimistic"))
@@ -193,6 +199,12 @@ class Config:
 
   def set_print_visits(self, enable):
     self.__print_visits = enable
+
+  def processes(self):
+    return self.__processes
+
+  def set_processes(self, processes):
+    self.__processes = processes if processes > 0 else DEFAULT_PROCESSES
 
   def ignore_incomp(self):
     return self.__ignore_incomp

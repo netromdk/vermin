@@ -1,9 +1,8 @@
 import sys
 import re
 import os
-from multiprocessing import cpu_count
 
-from .constants import VERSION
+from .constants import VERSION, DEFAULT_PROCESSES
 from .backports import Backports
 from .features import Features
 from .config import Config
@@ -57,7 +56,7 @@ class Arguments:
             "        versions must match the amount of minimum required versions detected.\n")
       print("  --processes=N | -p=N\n"
             "        Use N concurrent processes to detect and analyze files. Defaults to all\n"
-            "        cores ({}).\n".format(cpu_count()))
+            "        cores ({}).\n".format(DEFAULT_PROCESSES))
       print("  --ignore | -i\n"
             "        Ignore incompatible versions and warnings. However, if no compatible\n"
             "        versions are found then incompatible versions will be shown in the end to\n"
@@ -117,7 +116,6 @@ class Arguments:
       return {"code": 1, "usage": True, "full": False}
 
     path_pos = 0
-    processes = cpu_count()
     targets = []
     versions = False
     fmt = None
@@ -197,11 +195,12 @@ class Arguments:
         value = arg.split("=")[1]
         try:
           processes = int(value)
+          if processes <= 0:
+            print("Non-positive number: {}".format(processes))
+            return {"code": 1}
+          config.set_processes(processes)
         except ValueError:
           print("Invalid value: {}".format(value))
-          return {"code": 1}
-        if processes <= 0:
-          print("Non-positive number: {}".format(processes))
           return {"code": 1}
         path_pos += 1
       elif arg in ("--lax", "-l"):
@@ -284,6 +283,5 @@ class Arguments:
     paths = self.__args[path_pos:]
     return {"code": 0,
             "paths": paths,
-            "processes": processes,
             "targets": targets,
             "versions": versions}

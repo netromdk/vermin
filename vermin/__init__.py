@@ -13,6 +13,7 @@ from .utility import reverse_range, dotted_name, combine_versions, InvalidVersio
   format_title_descs
 from .backports import Backports
 from .features import Features
+from .constants import DEFAULT_PROCESSES
 from . import formats
 
 __all__ = [
@@ -24,6 +25,7 @@ __all__ = [
   "CODECS_ENCODINGS",
   "CODECS_ERROR_HANDLERS",
   "Config",
+  "DEFAULT_PROCESSES",
   "DICT_UNION_MERGE_SUPPORTED_TYPES",
   "DICT_UNION_SUPPORTED_TYPES",
   "Features",

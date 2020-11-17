@@ -19,7 +19,6 @@ def main():
   if args["code"] != 0:
     sys.exit(args["code"])  # pragma: no cover
 
-  processes = args["processes"]
   targets = args["targets"]
   paths = args["paths"]
   parsable = (config.format().name() == "parsable")
@@ -35,8 +34,8 @@ def main():
   if parsable and not sys.platform.startswith("win32"):
     ignore_chars = [":", "\n"]
 
-  paths = list(set(detect_paths(paths, hidden=config.analyze_hidden(), processes=processes,
-                                ignore_chars=ignore_chars)))
+  paths = list(set(detect_paths(paths, hidden=config.analyze_hidden(),
+                                processes=config.processes(), ignore_chars=ignore_chars)))
   paths.sort()
 
   amount = len(paths)
@@ -48,11 +47,12 @@ def main():
   if amount > 1:
     msg += " {} files".format(amount)
   if not parsable:
-    vprint("{} using {} processes..".format(msg, processes), config)
+    vprint("{} using {} processes..".format(msg, config.processes()), config)
 
   try:
     processor = Processor()
-    (mins, incomp, unique_versions, backports) = processor.process(paths, config, processes)
+    (mins, incomp, unique_versions, backports) =\
+      processor.process(paths, config, config.processes())
   except KeyboardInterrupt:  # pragma: no cover
     print("Aborting..")
     sys.exit(1)

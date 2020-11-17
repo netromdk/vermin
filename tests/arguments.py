@@ -1,7 +1,6 @@
 import os
-from multiprocessing import cpu_count
 
-from vermin import Backports, Features
+from vermin import Backports, Features, DEFAULT_PROCESSES
 import vermin.formats
 
 from .testutils import VerminTest, ScopedTemporaryFile
@@ -106,25 +105,26 @@ class VerminArgumentsTests(VerminTest):
     self.assertTrue(self.config.ignore_incomp())
 
   @VerminTest.parameterized_args([
-    # Default value is cpu_count().
-    (["-q"], {"code": 0, "processes": cpu_count(), "paths": []}),
+    (["-q"], {"code": 0, "paths": []}, DEFAULT_PROCESSES),
 
     # Valid values.
-    (["-p=1"], {"code": 0, "processes": 1, "paths": []}),
-    (["--processes=1"], {"code": 0, "processes": 1, "paths": []}),
-    (["-p=9"], {"code": 0, "processes": 9, "paths": []}),
-    (["--processes=9"], {"code": 0, "processes": 9, "paths": []}),
+    (["-p=1"], {"code": 0, "paths": []}, 1),
+    (["--processes=1"], {"code": 0, "paths": []}, 1),
+    (["-p=9"], {"code": 0, "paths": []}, 9),
+    (["--processes=9"], {"code": 0, "paths": []}, 9),
 
     # Invalid values.
-    (["-p=hello"], {"code": 1}),
-    (["--processes=hello"], {"code": 1}),
-    (["-p=-1"], {"code": 1}),
-    (["--processes=-1"], {"code": 1}),
-    (["-p=0"], {"code": 1}),
-    (["--processes=0"], {"code": 1}),
+    (["-p=hello"], {"code": 1}, DEFAULT_PROCESSES),
+    (["--processes=hello"], {"code": 1}, DEFAULT_PROCESSES),
+    (["-p=-1"], {"code": 1}, DEFAULT_PROCESSES),
+    (["--processes=-1"], {"code": 1}, DEFAULT_PROCESSES),
+    (["-p=0"], {"code": 1}, DEFAULT_PROCESSES),
+    (["--processes=0"], {"code": 1}, DEFAULT_PROCESSES),
   ])
-  def test_processes(self, args, parsed_args):
+  def test_processes(self, args, parsed_args, expected):
+    self.config.reset()
     self.assertParseArgs(args, parsed_args)
+    self.assertEqual(self.config.processes(), expected)
 
   def test_print_visits(self):
     self.assertFalse(self.config.print_visits())
