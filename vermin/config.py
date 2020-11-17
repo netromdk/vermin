@@ -11,6 +11,7 @@ from .backports import Backports
 from .features import Features
 from .formats import Format, DefaultFormat
 from .constants import DEFAULT_PROCESSES
+from .utility import parse_target
 from . import formats
 
 class Config:
@@ -30,6 +31,7 @@ class Config:
     self.__exclusions = set()
     self.__backports = set()
     self.__features = set()
+    self.__targets = []
     self.set_format(DefaultFormat())
 
   def override_from(self, other_config):
@@ -45,6 +47,7 @@ class Config:
     self.__exclusions = other_config.exclusions()
     self.__backports = other_config.backports()
     self.__features = other_config.features()
+    self.__targets = other_config.targets()
     self.set_format(other_config.format())
 
   def __repr__(self):
@@ -61,11 +64,12 @@ class Config:
   exclusions = {}
   backports = {}
   features = {}
+  targets = {}
   format = {}
 )""".format(self.__class__.__name__, self.quiet(), self.verbose(), self.print_visits(),
             self.processes(), self.ignore_incomp(), self.lax(), self.pessimistic(),
             self.show_tips(), self.analyze_hidden(), self.exclusions(), list(self.backports()),
-            list(self.features()), self.format().name())
+            list(self.features()), self.targets(), self.format().name())
 
   @staticmethod
   def parse_file(path):
@@ -107,6 +111,7 @@ class Config:
       "exclusions": encode_list(config.exclusions()),
       "backports": encode_list(config.backports()),
       "features": encode_list(config.features()),
+      "targets": encode_list(config.targets()),
       "format": config.format().name(),
     }, allow_no_value=True)
 
@@ -171,6 +176,12 @@ class Config:
     for feature in getstringlist("features"):
       if not config.enable_feature(feature):
         print("Unknown feature: {}".format(feature))
+        return None
+
+    targets = getstringlist("targets")
+    for target in targets:
+      if not config.add_target(target):
+        print("Invalid target: {}".format(target))
         return None
 
     fmt_str = parser.get(section, "format").strip()
@@ -292,3 +303,27 @@ class Config:
 
   def analyze_hidden(self):
     return self.__analyze_hidden
+
+  def add_target(self, target):
+    if len(self.targets()) == 2:
+      print("A maximum of two targets can be specified!")
+      return False
+
+    # pylint: disable=undefined-variable
+    if isinstance(target, str) or\
+       (sys.version_info.major == 2 and isinstance(target, unicode)):  # novm
+      target = parse_target(target)
+      if target is None:
+        return None
+
+    if len(target) != 2 or not isinstance(target[0], bool) or not isinstance(target[1], tuple) or\
+       len(target[1]) != 2:
+      return False
+
+    # Add target and sort for target versions, not boolean values.
+    self.__targets.append(target)
+    self.__targets.sort(key=lambda t: t[1])
+    return True
+
+  def targets(self):
+    return self.__targets

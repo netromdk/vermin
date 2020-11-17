@@ -17,6 +17,7 @@ class VerminConfigTests(VerminTest):
     self.assertEmpty(self.config.exclusions())
     self.assertEmpty(self.config.backports())
     self.assertEmpty(self.config.features())
+    self.assertEmpty(self.config.targets())
     self.assertEqual("default", self.config.format().name())
 
   def test_override_from(self):
@@ -33,6 +34,7 @@ class VerminConfigTests(VerminTest):
     other.add_exclusion("foo.bar.baz")
     self.assertTrue(other.add_backport("typing"))
     self.assertTrue(other.enable_feature("fstring-self-doc"))
+    self.assertTrue(other.add_target("2.3"))
     other.set_format(vermin.formats.ParsableFormat())
 
     self.config.override_from(other)
@@ -48,6 +50,7 @@ class VerminConfigTests(VerminTest):
     self.assertEqual(other.exclusions(), self.config.exclusions())
     self.assertEqual(other.backports(), self.config.backports())
     self.assertEqual(other.features(), self.config.features())
+    self.assertEqual(other.targets(), self.config.targets())
     self.assertEqual(other.format(), self.config.format())
 
   def test_repr(self):
@@ -64,12 +67,13 @@ class VerminConfigTests(VerminTest):
   exclusions = {}
   backports = {}
   features = {}
+  targets = {}
   format = {}
 )""".format(self.config.__class__.__name__, self.config.quiet(), self.config.verbose(),
             self.config.print_visits(), self.config.processes(), self.config.ignore_incomp(),
             self.config.lax(), self.config.pessimistic(), self.config.show_tips(),
             self.config.analyze_hidden(), self.config.exclusions(), list(self.config.backports()),
-            list(self.config.features()), self.config.format().name()))
+            list(self.config.features()), self.config.targets(), self.config.format().name()))
 
   @VerminTest.parameterized_args([
     [u""],
@@ -349,6 +353,59 @@ format = {}
     self.assertIsNone(Config.parse_data(u"""[vermin]
 format = unknown
 """))
+
+  @VerminTest.parameterized_args([
+    [u"""[vermin]
+targets =
+""", []],
+    [u"""[vermin]
+#targets = 2.0
+""", []],
+    [u"""[vermin]
+targets = 2.0
+""", [(True, (2, 0))]],
+    [u"""[vermin]
+targets = 2.0-
+""", [(False, (2, 0))]],
+    [u"""[vermin]
+targets = 2.0
+  3.0
+""", [(True, (2, 0)), (True, (3, 0))]],
+    [u"""[vermin]
+targets = 2.0
+  3.0-
+""", [(True, (2, 0)), (False, (3, 0))]],
+    [u"""[vermin]
+targets = 2,1
+  3,2-
+""", [(True, (2, 1)), (False, (3, 2))]],
+  ])
+  def test_parse_targets(self, data, expected):
+    config = Config.parse_data(data)
+    self.assertIsNotNone(config)
+    self.assertEqual(config.targets(), expected)
+
+  @VerminTest.parameterized_args([
+    [u"""[vermin]
+targets = invalid
+"""],
+    [u"""[vermin]
+targets = 2.0 3.0
+"""],
+    [u"""[vermin]
+targets = 2.0
+  3.0
+  3.1
+"""],
+    [u"""[vermin]
+targets = 1.0
+"""],
+    [u"""[vermin]
+targets = 4.0
+"""],
+  ])
+  def test_parse_invalid_targets(self, data):
+    self.assertIsNone(Config.parse_data(data))
 
   def test_parse_file(self):
     fp = ScopedTemporaryFile()

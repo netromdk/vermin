@@ -156,3 +156,36 @@ def format_title_descs(pairs, titles, indent=0):
       for line in desc[1:]:
         res.append("{}{}".format(" " * len(title), line))
   return "\n".join(res)
+
+TARGETS_SPLIT = re.compile("[\\.,]")
+
+def parse_target(target):
+  exact = True
+  if target.endswith("-"):
+    exact = False
+    target = target[:-1]
+
+  # Parse target as a tuple separated by either commas or dots, which preserves support for old
+  # float-number inputs.
+  elms = TARGETS_SPLIT.split(target)
+  if len(elms) != 1 and len(elms) != 2:
+    return None
+
+  for h in range(len(elms)):
+    try:
+      n = int(elms[h])
+      if n < 0:
+        return None
+      elms[h] = n
+    except ValueError:
+      return None
+
+  # When only specifying major version, use zero as minor.
+  if len(elms) == 1:
+    elms.append(0)
+
+  elms = tuple(elms)
+  if not ((2, 0) <= elms < (4, 0)):
+    return None
+
+  return (exact, elms)

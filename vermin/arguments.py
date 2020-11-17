@@ -1,5 +1,4 @@
 import sys
-import re
 import os
 
 from .constants import VERSION, DEFAULT_PROCESSES
@@ -7,8 +6,6 @@ from .backports import Backports
 from .features import Features
 from .config import Config
 from . import formats
-
-TARGETS_SPLIT = re.compile("[\\.,]")
 
 class Arguments:
   def __init__(self, args):
@@ -116,7 +113,6 @@ class Arguments:
       return {"code": 1, "usage": True, "full": False}
 
     path_pos = 0
-    targets = []
     versions = False
     fmt = None
 
@@ -154,39 +150,9 @@ class Arguments:
         path_pos += 1
       elif arg.startswith("-t=") or arg.startswith("--target="):
         value = arg.split("=")[1]
-        exact = True
-        if value.endswith("-"):
-          exact = False
-          value = value[:-1]
-
-        # Parse target as a tuple separated by either commas or dots, which preserves support for
-        # old float-number inputs.
-        elms = TARGETS_SPLIT.split(value)
-        if len(elms) != 1 and len(elms) != 2:
+        if not config.add_target(value):
           print("Invalid target: {}".format(value))
           return {"code": 1}
-
-        for h in range(len(elms)):
-          try:
-            n = int(elms[h])
-            if n < 0:
-              print("Invalid target: {}".format(value))
-              return {"code": 1}
-            elms[h] = n
-          except ValueError:
-            print("Invalid target: {}".format(value))
-            return {"code": 1}
-
-        # When only specifying major version, use zero as minor.
-        if len(elms) == 1:
-          elms.append(0)
-
-        elms = tuple(elms)
-        if not ((2, 0) <= elms < (4, 0)):
-          print("Invalid target: {}".format(value))
-          return {"code": 1}
-
-        targets.append((exact, elms))
         path_pos += 1
       elif arg in ("--ignore", "-i"):
         config.set_ignore_incomp(True)
@@ -273,15 +239,7 @@ class Arguments:
       print("Cannot use quiet and verbose modes together!")
       return {"code": 1}
 
-    if len(targets) > 2:
-      print("A maximum of two targets can be specified!")
-      return {"code": 1}
-
-    # Sort target versions, not boolean values.
-    targets.sort(key=lambda t: t[1])
-
     paths = self.__args[path_pos:]
     return {"code": 0,
             "paths": paths,
-            "targets": targets,
             "versions": versions}

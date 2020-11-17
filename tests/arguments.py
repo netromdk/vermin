@@ -18,9 +18,10 @@ class VerminArgumentsTests(VerminTest):
                             self.parse_args(["file.py", "file2.py", "folder/folder2"]))
 
   def test_mix_options_and_files(self):
-    self.assertContainsDict({"code": 0, "paths": ["file.py"], "targets": [(True, (2, 7))]},
+    self.assertContainsDict({"code": 0, "paths": ["file.py"]},
                             self.parse_args(["-q", "-t=2.7", "file.py"]))
     self.assertTrue(self.config.show_tips())
+    self.assertEqual([(True, (2, 7))], self.config.targets())
 
   def test_quiet(self):
     self.assertFalse(self.config.quiet())
@@ -42,59 +43,61 @@ class VerminArgumentsTests(VerminTest):
   @VerminTest.parameterized_args([
     # The boolean value means match target version exactly or not (equal or smaller).
     (["-t=2.8"],
-     {"code": 0, "targets": [(True, (2, 8))], "paths": []}),
+     {"code": 0, "paths": []}, [(True, (2, 8))]),
     (["--target=2.8"],
-     {"code": 0, "targets": [(True, (2, 8))], "paths": []}),
+     {"code": 0, "paths": []}, [(True, (2, 8))]),
     (["-t=2,8"],
-     {"code": 0, "targets": [(True, (2, 8))], "paths": []}),
+     {"code": 0, "paths": []}, [(True, (2, 8))]),
     (["--target=2,8"],
-     {"code": 0, "targets": [(True, (2, 8))], "paths": []}),
+     {"code": 0, "paths": []}, [(True, (2, 8))]),
     (["-t=2.8-"],
-     {"code": 0, "targets": [(False, (2, 8))], "paths": []}),
+     {"code": 0, "paths": []}, [(False, (2, 8))]),
     (["--target=2.8-"],
-     {"code": 0, "targets": [(False, (2, 8))], "paths": []}),
+     {"code": 0, "paths": []}, [(False, (2, 8))]),
     (["-t=2,8-"],
-     {"code": 0, "targets": [(False, (2, 8))], "paths": []}),
+     {"code": 0, "paths": []}, [(False, (2, 8))]),
     (["--target=2,8-"],
-     {"code": 0, "targets": [(False, (2, 8))], "paths": []}),
+     {"code": 0, "paths": []}, [(False, (2, 8))]),
     (["-t=3-", "-t=2.8"],
-     {"code": 0, "targets": [(True, (2, 8)), (False, (3, 0))], "paths": []}),
+     {"code": 0, "paths": []}, [(True, (2, 8)), (False, (3, 0))]),
     (["--target=3-", "--target=2.8"],
-     {"code": 0, "targets": [(True, (2, 8)), (False, (3, 0))], "paths": []}),
+     {"code": 0, "paths": []}, [(True, (2, 8)), (False, (3, 0))]),
     (["-t=3-", "--target=2.8"],
-     {"code": 0, "targets": [(True, (2, 8)), (False, (3, 0))], "paths": []}),
+     {"code": 0, "paths": []}, [(True, (2, 8)), (False, (3, 0))]),
     (["-t=3-", "-t=2,8"],
-     {"code": 0, "targets": [(True, (2, 8)), (False, (3, 0))], "paths": []}),
+     {"code": 0, "paths": []}, [(True, (2, 8)), (False, (3, 0))]),
     (["--target=3-", "--target=2,8"],
-     {"code": 0, "targets": [(True, (2, 8)), (False, (3, 0))], "paths": []}),
+     {"code": 0, "paths": []}, [(True, (2, 8)), (False, (3, 0))]),
     (["-t=3-", "--target=2,8"],
-     {"code": 0, "targets": [(True, (2, 8)), (False, (3, 0))], "paths": []}),
+     {"code": 0, "paths": []}, [(True, (2, 8)), (False, (3, 0))]),
 
-    # Too many targets (>2).
-    (["-t=3.1", "-t=2.8", "-t=3"], {"code": 1}),
-    (["--target=3.1", "--target=2.8", "--target=3"], {"code": 1}),
-    (["--target=3.1", "-t=2.8", "--target=3"], {"code": 1}),
+    # Too many targets (>2). It still adds up to two targets.
+    (["-t=3.1", "-t=2.8", "-t=3"], {"code": 1}, [(True, (2, 8)), (True, (3, 1))]),
+    (["--target=3.1", "--target=2.8", "--target=3"], {"code": 1}, [(True, (2, 8)), (True, (3, 1))]),
+    (["--target=3.1", "-t=2.8", "--target=3"], {"code": 1}, [(True, (2, 8)), (True, (3, 1))]),
 
     # Invalid values.
-    (["-t=a"], {"code": 1}),            # NaN
-    (["--target=a"], {"code": 1}),
-    (["-t=-1"], {"code": 1}),           # < 2
-    (["--target=-1"], {"code": 1}),
-    (["-t=1.8"], {"code": 1}),          # < 2
-    (["--target=1.8"], {"code": 1}),
-    (["-t=4"], {"code": 1}),            # >= 4
-    (["--target=4"], {"code": 1}),
-    (["-t=4,5"], {"code": 1}),          # > 4
-    (["--target=4,5"], {"code": 1}),
-    (["-t=2+"], {"code": 1}),           # Only - allowed.
-    (["--target=2+"], {"code": 1}),
-    (["-t=2,0.1"], {"code": 1}),        # 3 vals disallowed.
-    (["--target=2,0.1"], {"code": 1}),
-    (["-t=2.0,1"], {"code": 1}),        # 3 vals disallowed.
-    (["--target=2.0,1"], {"code": 1}),
+    (["-t=a"], {"code": 1}, []),            # NaN
+    (["--target=a"], {"code": 1}, []),
+    (["-t=-1"], {"code": 1}, []),           # < 2
+    (["--target=-1"], {"code": 1}, []),
+    (["-t=1.8"], {"code": 1}, []),          # < 2
+    (["--target=1.8"], {"code": 1}, []),
+    (["-t=4"], {"code": 1}, []),            # >= 4
+    (["--target=4"], {"code": 1}, []),
+    (["-t=4,5"], {"code": 1}, []),          # > 4
+    (["--target=4,5"], {"code": 1}, []),
+    (["-t=2+"], {"code": 1}, []),           # Only - allowed.
+    (["--target=2+"], {"code": 1}, []),
+    (["-t=2,0.1"], {"code": 1}, []),        # 3 vals disallowed.
+    (["--target=2,0.1"], {"code": 1}, []),
+    (["-t=2.0,1"], {"code": 1}, []),        # 3 vals disallowed.
+    (["--target=2.0,1"], {"code": 1}, []),
   ])
-  def test_targets(self, args, parsed_args):
+  def test_targets(self, args, parsed_args, expected):
+    self.config.reset()
     self.assertParseArgs(args, parsed_args)
+    self.assertEqual(self.config.targets(), expected)
 
   def test_ignore_incomp(self):
     self.assertFalse(self.config.ignore_incomp())

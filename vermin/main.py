@@ -19,7 +19,6 @@ def main():
   if args["code"] != 0:
     sys.exit(args["code"])  # pragma: no cover
 
-  targets = args["targets"]
   paths = args["paths"]
   parsable = (config.format().name() == "parsable")
 
@@ -99,6 +98,7 @@ def main():
   if args["versions"] and len(unique_versions) > 0:
     print("Version range:             {}".format(version_strings(unique_versions)))
 
+  targets = config.targets()
   if len(targets) > 0:
     if not (len(reqs) == len(targets) and
             all(((exact and target == req) or (not exact and target >= req)) for
