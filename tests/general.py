@@ -11,13 +11,7 @@ from vermin import combine_versions, InvalidVersionException, detect_paths,\
   version_strings, format_title_descs, DEFAULT_PROCESSES
 from vermin.formats import ParsableFormat
 
-from .testutils import VerminTest, current_version, ScopedTemporaryFile, detect, visit
-
-def touch(fld, name):
-  filename = join(fld, name)
-  fp = open(filename, mode="w")
-  fp.close()
-  return filename
+from .testutils import VerminTest, current_version, ScopedTemporaryFile, detect, visit, touch
 
 class VerminGeneralTests(VerminTest):
   def test_detect_without_config(self):

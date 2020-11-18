@@ -1,5 +1,6 @@
 import io
 import sys
+import os
 
 # novm
 try:
@@ -10,7 +11,7 @@ except ImportError:
 from .backports import Backports
 from .features import Features
 from .formats import Format, DefaultFormat
-from .constants import DEFAULT_PROCESSES
+from .constants import DEFAULT_PROCESSES, CONFIG_FILE_NAMES, PROJECT_BOUNDARIES
 from .utility import parse_target
 from . import formats
 
@@ -192,6 +193,34 @@ class Config:
     config.set_format(fmt)
 
     return config
+
+  @staticmethod
+  def detect_config_file(init_folder=None):
+    folder = init_folder or os.getcwd()
+    while True:
+      for candidate in CONFIG_FILE_NAMES:
+        look_for = os.path.join(folder, candidate)
+        if os.path.exists(look_for):
+          return look_for
+
+      # Stop if didn't find config and is at project boundary, which means it has ".git/" or
+      # similar.
+      stop = False
+      for boundary in PROJECT_BOUNDARIES:
+        path = os.path.join(folder, boundary)
+        if os.path.exists(path):
+          stop = True
+          break
+      if stop:
+        break
+
+      # Go up one level and stop at root.
+      old_folder = folder
+      folder = os.path.abspath(os.path.join(folder, ".."))
+      if folder == old_folder:
+        break
+
+    return None
 
   def quiet(self):
     return self.__quiet

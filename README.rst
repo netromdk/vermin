@@ -94,6 +94,19 @@ distinguish ``f'{a=}'`` from ``f'a={a}'``, for instance, since it optimizes some
 code as using fstring self-doc when only using general fstring. To enable (unstable) fstring
 self-doc detection, use ``--feature fstring-self-doc``.
 
+Configuration file
+==================
+
+Vermin automatically tries to detect a config file, starting in the current working directory where
+it is run, following parent folders until either the root or project boundary files/folders are
+reached. However, if ``--config-file`` is specified, no config is auto-detected and loaded.
+
+Config file names being looked for: ``vermin.ini``, ``vermin.conf``
+
+Project boundary files/folders: ``.git``, ``.svn``, ``.hg``, ``.bzr``, ``_darcs``, ``.fslckout``
+
+A sample config file can be found `here <sample.vermin.ini>`__.
+
 Examples
 ========
 

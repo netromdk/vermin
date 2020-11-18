@@ -1,12 +1,19 @@
 import unittest
 import sys
 import os
+from os.path import join
 from tempfile import NamedTemporaryFile
 
 from vermin import Config, Arguments, detect, visit
 
 def current_version():
   return sys.version_info
+
+def touch(fld, name):
+  filename = join(fld, name)
+  fp = open(filename, mode="w")
+  fp.close()
+  return filename
 
 class VerminTest(unittest.TestCase):
   """General test case class for all Vermin tests."""

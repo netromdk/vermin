@@ -13,7 +13,7 @@ from .utility import reverse_range, dotted_name, combine_versions, InvalidVersio
   format_title_descs
 from .backports import Backports
 from .features import Features
-from .constants import DEFAULT_PROCESSES
+from .constants import DEFAULT_PROCESSES, CONFIG_FILE_NAMES, PROJECT_BOUNDARIES
 from . import formats
 
 __all__ = [
@@ -24,6 +24,7 @@ __all__ = [
   "Backports",
   "CODECS_ENCODINGS",
   "CODECS_ERROR_HANDLERS",
+  "CONFIG_FILE_NAMES",
   "Config",
   "DEFAULT_PROCESSES",
   "DICT_UNION_MERGE_SUPPORTED_TYPES",
@@ -33,6 +34,7 @@ __all__ = [
   "KWARGS_REQS",
   "MOD_MEM_REQS",
   "MOD_REQS",
+  "PROJECT_BOUNDARIES",
   "Parser",
   "Processor",
   "STRFTIME_REQS",

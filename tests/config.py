@@ -1,7 +1,12 @@
-from vermin import Backports, Features, Config, DEFAULT_PROCESSES
+import os
+from tempfile import mkdtemp
+from shutil import rmtree
+
+from vermin import Backports, Features, Config, DEFAULT_PROCESSES, CONFIG_FILE_NAMES,\
+  PROJECT_BOUNDARIES
 import vermin.formats
 
-from .testutils import VerminTest, ScopedTemporaryFile
+from .testutils import VerminTest, ScopedTemporaryFile, touch
 
 class VerminConfigTests(VerminTest):
   def test_defaults(self):
@@ -426,3 +431,49 @@ pessimistic = TrUe
     self.assertTrue(config.ignore_incomp())
     self.assertTrue(config.lax())
     self.assertTrue(config.pessimistic())
+
+  def test_detect_config_file_same_level(self):
+    tmp_fld = mkdtemp()
+    for candidate in CONFIG_FILE_NAMES:
+      path = touch(tmp_fld, candidate)
+      self.assertEqual(path, Config.detect_config_file(tmp_fld))
+      os.remove(path)
+    rmtree(tmp_fld)
+
+  def test_detect_config_file_one_level_depth(self):
+    tmp_fld = mkdtemp()
+    depth_fld = os.path.join(tmp_fld, "depth1")
+    os.makedirs(depth_fld)
+    for candidate in CONFIG_FILE_NAMES:
+      path = touch(tmp_fld, candidate)
+      self.assertEqual(path, Config.detect_config_file(depth_fld))
+      os.remove(path)
+    rmtree(tmp_fld)
+
+  def test_detect_config_file_two_level_depth(self):
+    tmp_fld = mkdtemp()
+    depth_fld = os.path.join(os.path.join(tmp_fld, "depth1"), "depth2")
+    os.makedirs(depth_fld)
+    for candidate in CONFIG_FILE_NAMES:
+      path = touch(tmp_fld, candidate)
+      self.assertEqual(path, Config.detect_config_file(depth_fld))
+      os.remove(path)
+    rmtree(tmp_fld)
+
+  def test_detect_config_file_project_boundary(self):
+    tmp_fld = mkdtemp()
+    depth1_fld = os.path.join(tmp_fld, "depth1")
+    depth2_fld = os.path.join(depth1_fld, "depth2")
+    os.makedirs(depth2_fld)
+
+    # Create config at top level.
+    touch(tmp_fld, CONFIG_FILE_NAMES[0])
+
+    # Create project boundary at depth one to stop further detection.
+    for candidate in PROJECT_BOUNDARIES:
+      boundary_fld = os.path.join(depth1_fld, candidate)
+      os.makedirs(boundary_fld)
+      self.assertIsNone(Config.detect_config_file(depth2_fld))
+      rmtree(boundary_fld)
+
+    rmtree(tmp_fld)

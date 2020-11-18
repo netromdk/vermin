@@ -1,10 +1,11 @@
 import sys
 import os
 
-from .constants import VERSION, DEFAULT_PROCESSES
+from .constants import VERSION, DEFAULT_PROCESSES, CONFIG_FILE_NAMES, PROJECT_BOUNDARIES
 from .backports import Backports
 from .features import Features
 from .config import Config
+from .printing import nprint
 from . import formats
 
 class Arguments:
@@ -34,8 +35,17 @@ class Arguments:
     print("  ~2, 3.4  No known reason it won't work with py2, works with 3.4+")
     print("\nIncompatible versions notices mean that several files were detected incompatible\n"
           "with py2 and py3 simultaneously. In such cases the results might be inconclusive.")
+    print("\nA config file is automatically tried detected from the current working directory\n"
+          "where Vermin is run, following parent folders until either the root or project\n"
+          "boundary files/folders are reached. However, if --config-file is specified, no config\n"
+          "is auto-detected and loaded.")
 
     if full:
+      print("\nConfig file names being looked for: {}\n"
+            "Project boundary files/folders: {}".
+            format(", ".join(["'{}'".format(fn) for fn in CONFIG_FILE_NAMES]),
+                   ", ".join(["'{}'".format(pb) for pb in PROJECT_BOUNDARIES])))
+
       print("\nOptions:")
       print("  --quiet | -q\n"
             "        Quiet mode. It only prints the final versions verdict.\n")
@@ -115,6 +125,8 @@ class Arguments:
     path_pos = 0
     versions = False
     fmt = None
+    detected_config = Config.detect_config_file()
+    argument_config = None
 
     # Preparsing step. Help and version arguments quit immediately and config file parsing must be
     # done first such that other arguments can override its settings.
@@ -129,11 +141,18 @@ class Arguments:
         if (i + 1) >= len(self.__args):
           print("Requires config file path! Example: --config-file /path/to/vermin.ini")
           return {"code": 1}
-        path = os.path.abspath(self.__args[i + 1])
-        c = Config.parse_file(path)
-        if c is None:
-          return {"code": 1}
-        config.override_from(c)
+        argument_config = os.path.abspath(self.__args[i + 1])
+
+    # Load potential config file if detected or specified as argument, but prefer config by
+    # argument.
+    config_candidate = argument_config or detected_config
+    loaded_config = False
+    if config_candidate:
+      c = Config.parse_file(config_candidate)
+      if c is None:
+        return {"code": 1}
+      loaded_config = True
+      config.override_from(c)
 
     # Main parsing step.
     for i in range(len(self.__args)):
@@ -232,12 +251,16 @@ class Arguments:
     if fmt is not None:
       config.set_format(fmt)
 
-    if config.format().name() == "parsable":
-      versions = False
-
     if config.quiet() and config.verbose() > 0:
       print("Cannot use quiet and verbose modes together!")
       return {"code": 1}
+
+    parsable = config.format().name() == "parsable"
+    if parsable:
+      versions = False
+
+    if loaded_config and detected_config and not argument_config and not parsable:
+      nprint("Using detected config: {}".format(detected_config), config)
 
     paths = self.__args[path_pos:]
     return {"code": 0,
