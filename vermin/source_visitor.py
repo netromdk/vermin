@@ -32,6 +32,13 @@ def is_none_node(node):
     return True
   return False
 
+# Generalized unpacking, or starred expressions, are allowed when used with assignment targets prior
+# to 3.5. That means that generalized unpacking expressions are only on the right-hand side of the
+# assignment, they're ctx=ast.Load for 3.5+ but ctx=ast.Store are allowed prior to 3.5.
+def is_valid_star_unpack(node):
+  return hasattr(ast, "Starred") and isinstance(node, ast.Starred) and\
+    isinstance(node.ctx, ast.Load)
+
 def trim_fstring_value(value):  # pragma: no cover
   # HACK: Since parentheses are stripped of the AST, we'll just remove all those deduced or directly
   # available such that the self-doc f-strings can be compared.
@@ -878,6 +885,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__printv2 = True
     self.generic_visit(node)
 
+
   def __check_generalized_unpacking(self, node):
     def has_gen_unp():
       self.__generalized_unpacking = True
@@ -897,7 +905,7 @@ class SourceVisitor(ast.NodeVisitor):
         total = len(node.args)
         pos = []
         for i in range(total):
-          if isinstance(node.args[i], ast.Starred):
+          if is_valid_star_unpack(node.args[i]):
             pos.append(i)
         if check_gen_unp(pos, total):
           return
@@ -914,7 +922,7 @@ class SourceVisitor(ast.NodeVisitor):
 
     # Any unpacking in tuples, sets, or lists is generalized unpacking.
     elif isinstance(node, (ast.Tuple, ast.Set, ast.List)) and hasattr(ast, "Starred"):
-      if any(isinstance(elt, ast.Starred) for elt in node.elts):
+      if any(is_valid_star_unpack(elt) for elt in node.elts):
         has_gen_unp()
         return
 

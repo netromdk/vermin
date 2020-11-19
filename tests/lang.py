@@ -839,6 +839,14 @@ class VerminLanguageTests(VerminTest):
       self.assertTrue(visitor.generalized_unpacking())
       self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
+      visitor = self.visit("z = *x, y")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+      visitor = self.visit("*x, y = *u, *v")
+      self.assertTrue(visitor.generalized_unpacking())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
     visitor = self.visit("dict(**{'b': 1})")
     self.assertFalse(visitor.generalized_unpacking())
 
@@ -856,6 +864,26 @@ class VerminLanguageTests(VerminTest):
 
     visitor = self.visit("d = {'a': 'b'}\ndict(**d)")
     self.assertFalse(visitor.generalized_unpacking())
+
+    if current_version() >= (3, 0):
+      # Starred expressions are allowed as assignments targets prior to 3.5.
+      visitor = self.visit("*x, y = [1, 2, 3]")
+      self.assertFalse(visitor.generalized_unpacking())
+
+      visitor = self.visit("([x, *y], z) = ((1, 2), 3)")
+      self.assertFalse(visitor.generalized_unpacking())
+
+      visitor = self.visit("for *x, in [[1]]: pass")
+      self.assertFalse(visitor.generalized_unpacking())
+
+      visitor = self.visit("[x for *x, in [[1]]]")
+      self.assertFalse(visitor.generalized_unpacking())
+
+      visitor = self.visit("{x for *x, in [[1]]}")
+      self.assertFalse(visitor.generalized_unpacking())
+
+      visitor = self.visit("(x for *x, in [[1]])")
+      self.assertFalse(visitor.generalized_unpacking())
 
   @VerminTest.skipUnlessVersion(3, 5)
   def test_bytes_format(self):
