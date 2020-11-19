@@ -78,8 +78,11 @@ class Arguments:
       print("\n  --version | -V\n"
             "        Shows version number and exits.")
       print("\n  --config-file <path> | -c <path>\n"
-            "        Loads config from file path. Any additional arguments supplied are applied\n"
-            "        on top of that config. See configuration section for more information.")
+            "        Loads config file unless --no-config-file is specified. Any additional\n"
+            "        arguments supplied are applied on top of that config. See configuration\n"
+            "        section above for more information.")
+      print("\n  --no-config-file\n"
+            "        No automatic config file detection and --config-file argument is disallowed.")
       print("\n  --hidden\n"
             "        Analyze 'hidden' files and folders starting with '.' (ignored by default\n"
             "        when not specified directly).")
@@ -116,7 +119,7 @@ class Arguments:
             "        Some features are disabled by default due to being unstable:\n{}".
             format(Features.str(10)))
 
-  def parse(self, config):
+  def parse(self, config, detect_folder=None):
     assert(config is not None)
 
     if len(self.__args) == 0:
@@ -125,8 +128,9 @@ class Arguments:
     path_pos = 0
     versions = False
     fmt = None
-    detected_config = Config.detect_config_file()
+    detected_config = Config.detect_config_file(detect_folder)
     argument_config = None
+    no_config_file = False
 
     # Preparsing step. Help and version arguments quit immediately and config file parsing must be
     # done first such that other arguments can override its settings.
@@ -137,11 +141,18 @@ class Arguments:
       if arg in ("--version", "-V"):
         print(VERSION)
         sys.exit(0)
+      if arg == "--no-config-file":
+        no_config_file = True
+        detected_config = None
       if arg in ("--config-file", "-c"):
         if (i + 1) >= len(self.__args):
           print("Requires config file path! Example: --config-file /path/to/vermin.ini")
           return {"code": 1}
         argument_config = os.path.abspath(self.__args[i + 1])
+
+    if no_config_file and argument_config:
+      print("--config-file cannot be used together with --no-config-file!")
+      return {"code": 1}
 
     # Load potential config file if detected or specified as argument, but prefer config by
     # argument.

@@ -39,8 +39,8 @@ class VerminTest(unittest.TestCase):
   def visit(self, source, path=None):
     return visit(source, config=self.config, path=path)
 
-  def parse_args(self, args):
-    return Arguments(args).parse(self.config)
+  def parse_args(self, args, detect_path=None):
+    return Arguments(args).parse(self.config, detect_path)
 
   @staticmethod
   def skipUnlessVersion(major_version, minor_version=0):

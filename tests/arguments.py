@@ -1,6 +1,8 @@
 import os
+from tempfile import mkdtemp
+from shutil import rmtree
 
-from vermin import Backports, Features, DEFAULT_PROCESSES
+from vermin import Backports, Features, DEFAULT_PROCESSES, CONFIG_FILE_NAMES
 import vermin.formats
 
 from .testutils import VerminTest, ScopedTemporaryFile
@@ -284,6 +286,14 @@ pessimistic = on
     self.assertContainsDict({"code": 1}, self.parse_args(["--config-file", "doesnotexist"]))
     self.assertContainsDict({"code": 1}, self.parse_args(["-c", "doesnotexist"]))
 
+    # Cannot be mixed with --no-config-file.
+    self.assertContainsDict({"code": 1},
+                            self.parse_args(["--no-config-file", "--config-file", fp.path()]))
+    self.assertContainsDict({"code": 1},
+                            self.parse_args(["--config-file", fp.path(), "--no-config-file"]))
+    self.assertContainsDict({"code": 1}, self.parse_args(["--no-config-file", "-c", fp.path()]))
+    self.assertContainsDict({"code": 1}, self.parse_args(["-c", fp.path(), "--no-config-file"]))
+
     # Other arguments must override any loaded config file, which means the config file must be
     # loaded first no matter the order of arguments passed on CLI.
     self.config.reset()
@@ -301,3 +311,19 @@ pessimistic = on
     self.assertContainsDict({"code": 1}, self.parse_args(["-c", fp.path(), "-q"]))
     self.config.reset()
     self.assertContainsDict({"code": 1}, self.parse_args(["-q", "-c", fp.path()]))
+
+  def test_no_config_file(self):
+    tmp_fld = mkdtemp()
+    path = os.path.join(tmp_fld, CONFIG_FILE_NAMES[0])
+    with open(path, mode="w+") as fp:
+      fp.write("""[vermin]
+pessimistic = yes
+""")
+    self.assertFalse(self.config.pessimistic())
+
+    # Don't use auto-detected config if --no-config-file is specified.
+    self.assertContainsDict({"code": 0},
+                            self.parse_args(["--no-config-file"], os.path.dirname(path)))
+    self.assertFalse(self.config.pessimistic())
+
+    rmtree(tmp_fld)
