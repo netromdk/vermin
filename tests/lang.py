@@ -865,25 +865,24 @@ class VerminLanguageTests(VerminTest):
     visitor = self.visit("d = {'a': 'b'}\ndict(**d)")
     self.assertFalse(visitor.generalized_unpacking())
 
-    if current_version() >= (3, 0):
-      # Starred expressions are allowed as assignments targets prior to 3.5.
-      visitor = self.visit("*x, y = [1, 2, 3]")
-      self.assertFalse(visitor.generalized_unpacking())
-
-      visitor = self.visit("([x, *y], z) = ((1, 2), 3)")
-      self.assertFalse(visitor.generalized_unpacking())
-
-      visitor = self.visit("for *x, in [[1]]: pass")
-      self.assertFalse(visitor.generalized_unpacking())
-
-      visitor = self.visit("[x for *x, in [[1]]]")
-      self.assertFalse(visitor.generalized_unpacking())
-
-      visitor = self.visit("{x for *x, in [[1]]}")
-      self.assertFalse(visitor.generalized_unpacking())
-
-      visitor = self.visit("(x for *x, in [[1]])")
-      self.assertFalse(visitor.generalized_unpacking())
+  @VerminTest.skipUnlessVersion(3)
+  @VerminTest.parameterized_args([
+    ["*x, y = [1, 2, 3]"],
+    ["a, *b = 'hello'"],
+    ["([x, *y], z) = ((1, 2), 3)"],
+    ["for *x, in [[1]]: pass"],
+    ["for a, *b in [(1, 2, 3), (4, 5, 6, 7)]: pass"],
+    ["[x for *x, in [[1]]]"],
+    ["{x for *x, in [[1]]}"],
+    ["(x for *x, in [[1]])"],
+  ])
+  def test_unpacking_assignment(self, source):
+    # Starred expressions are allowed as assignments targets 3.0+, but generalized unpacking from
+    # 3.5+.
+    visitor = self.visit(source)
+    self.assertTrue(visitor.unpacking_assignment(), msg=source)
+    self.assertFalse(visitor.generalized_unpacking(), msg=source)
+    self.assertOnlyIn((3, 0), visitor.minimum_versions(), msg=source)
 
   @VerminTest.skipUnlessVersion(3, 5)
   def test_bytes_format(self):

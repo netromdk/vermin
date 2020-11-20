@@ -104,6 +104,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__codecs_encodings = []
     self.__with_statement = False
     self.__generalized_unpacking = False
+    self.__unpacking_assignment = False
     self.__bytes_format = False
     self.__bytearray_format = False
     self.__seen_except_handler = False
@@ -272,6 +273,9 @@ class SourceVisitor(ast.NodeVisitor):
   def generalized_unpacking(self):
     return self.__generalized_unpacking
 
+  def unpacking_assignment(self):
+    return self.__unpacking_assignment
+
   def bytes_format(self):
     return self.__bytes_format
 
@@ -415,6 +419,9 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.generalized_unpacking():
       mins = self.__add_versions_entity(mins, (None, (3, 5)), "generalized unpacking")
+
+    if self.unpacking_assignment():
+      mins = self.__add_versions_entity(mins, (None, (3, 0)), "unpacking assignment")
 
     if self.bytes_format():
       # Since byte strings are a `str` synonym as of 2.6+, and thus also supports `%` formatting,
@@ -885,6 +892,13 @@ class SourceVisitor(ast.NodeVisitor):
     self.__printv2 = True
     self.generic_visit(node)
 
+  def visit_Starred(self, node):
+    # Unpacking assignment is when a starred expression `*` is used on the left-hand side of an
+    # assignment, like `*a, b = [1, 2, 3]`.
+    if isinstance(node.ctx, ast.Store):
+      self.__unpacking_assignment = True
+      self.__vvprint("unpacking assignment", versions=[None, (3, 0)])
+    self.generic_visit(node)
 
   def __check_generalized_unpacking(self, node):
     def has_gen_unp():
