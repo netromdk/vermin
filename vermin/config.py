@@ -269,6 +269,9 @@ class Config:
     except Exception as ex:
       print(ex)
 
+  def clear_exclusions(self):
+    self.__exclusions.clear()
+
   def exclusions(self):
     res = list(self.__exclusions)
     res.sort()
@@ -292,6 +295,9 @@ class Config:
     self.__backports.add(name)
     return True
 
+  def clear_backports(self):
+    self.__backports.clear()
+
   def backports(self):
     return self.__backports
 
@@ -303,6 +309,9 @@ class Config:
 
   def has_feature(self, name):
     return name in self.__features
+
+  def clear_features(self):
+    self.__features.clear()
 
   def features(self):
     return self.__features
@@ -353,6 +362,9 @@ class Config:
     self.__targets.append(target)
     self.__targets.sort(key=lambda t: t[1])
     return True
+
+  def clear_targets(self):
+    self.__targets = []
 
   def targets(self):
     return self.__targets

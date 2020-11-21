@@ -33,6 +33,11 @@ class VerminArgumentsTests(VerminTest):
     self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--quiet"]))
     self.assertTrue(self.config.quiet())
 
+  def test_no_quiet(self):
+    self.config.set_quiet(True)
+    self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--no-quiet"]))
+    self.assertFalse(self.config.quiet())
+
   def test_verbose(self):
     self.assertEqual(0, self.config.verbose())
     for n in range(1, 10):
@@ -101,6 +106,15 @@ class VerminArgumentsTests(VerminTest):
     self.assertParseArgs(args, parsed_args)
     self.assertEqual(self.config.targets(), expected)
 
+  def test_no_target(self):
+    self.assertTrue(self.config.add_target((True, (2, 7))))
+    self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--no-target"]))
+    self.assertEmpty(self.config.targets())
+    self.assertTrue(self.config.add_target((True, (3, 4))))
+    self.assertTrue(self.config.add_target((True, (2, 2))))
+    self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--no-target"]))
+    self.assertEmpty(self.config.targets())
+
   def test_ignore_incomp(self):
     self.assertFalse(self.config.ignore_incomp())
     self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["-i"]))
@@ -108,6 +122,11 @@ class VerminArgumentsTests(VerminTest):
     self.config.set_ignore_incomp(False)
     self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--ignore"]))
     self.assertTrue(self.config.ignore_incomp())
+
+  def test_no_ignore(self):
+    self.config.set_ignore_incomp(True)
+    self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--no-ignore"]))
+    self.assertFalse(self.config.ignore_incomp())
 
   @VerminTest.parameterized_args([
     (["-q"], {"code": 0, "paths": []}, DEFAULT_PROCESSES),
@@ -131,10 +150,19 @@ class VerminArgumentsTests(VerminTest):
     self.assertParseArgs(args, parsed_args)
     self.assertEqual(self.config.processes(), expected)
 
-  def test_print_visits(self):
+  def test_dump(self):
     self.assertFalse(self.config.print_visits())
     self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["-d"]))
     self.assertTrue(self.config.print_visits())
+    self.config.reset()
+    self.assertFalse(self.config.print_visits())
+    self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--dump"]))
+    self.assertTrue(self.config.print_visits())
+
+  def test_no_dump(self):
+    self.config.set_print_visits(True)
+    self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--no-dump"]))
+    self.assertFalse(self.config.print_visits())
 
   def test_lax(self):
     self.assertFalse(self.config.lax())
@@ -144,9 +172,19 @@ class VerminArgumentsTests(VerminTest):
     self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--lax"]))
     self.assertTrue(self.config.lax())
 
+  def test_no_lax(self):
+    self.config.set_lax(True)
+    self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--no-lax"]))
+    self.assertFalse(self.config.lax())
+
   def test_hidden(self):
     self.assertContainsDict({"code": 0}, self.parse_args(["--hidden"]))
     self.assertTrue(self.config.analyze_hidden())
+
+  def test_no_hidden(self):
+    self.config.set_analyze_hidden(True)
+    self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--no-hidden"]))
+    self.assertFalse(self.config.analyze_hidden())
 
   def test_versions(self):
     self.assertContainsDict({"versions": True}, self.parse_args(["--versions"]))
@@ -170,6 +208,9 @@ class VerminArgumentsTests(VerminTest):
     self.assertTrue(self.config.is_excluded_codecs_error_handler("surrogateescape"))
     self.assertTrue(self.config.is_excluded_codecs_encoding("utf-8"))
 
+    self.assertContainsDict({"code": 0}, self.parse_args(["--no-exclude"]))
+    self.assertEmpty(self.config.exclusions())
+
   def test_exclude_file(self):
     self.assertContainsDict({"code": 1}, self.parse_args(["--exclude-file"]))  # Needs <file> part.
     self.assertEmpty(self.config.exclusions())
@@ -181,6 +222,9 @@ aaa
     fp.close()
     self.assertContainsDict({"code": 0}, self.parse_args(["--exclude-file", fp.path()]))
     self.assertEqual(["aaa", "bbb"], self.config.exclusions())  # Expect it sorted.
+
+    self.assertContainsDict({"code": 0}, self.parse_args(["--no-exclude"]))
+    self.assertEmpty(self.config.exclusions())
 
     # Nonexistent file is ignored.
     fn = "nonexistentfile"
@@ -203,6 +247,13 @@ aaa
       self.config.reset()
       self.assertContainsDict({"code": 0}, self.parse_args(["--backport", mod]))
       self.assertEqualItems([mod], self.config.backports())
+      self.assertContainsDict({"code": 0}, self.parse_args(["--no-backport"]))
+      self.assertEmpty(self.config.backports())
+
+  def test_show_tips(self):
+    self.config.set_show_tips(False)
+    self.assertContainsDict({"code": 0}, self.parse_args(["--show-tips"]))
+    self.assertTrue(self.config.show_tips())
 
   def test_no_tips(self):
     self.assertContainsDict({"code": 0}, self.parse_args(["--no-tips"]))
@@ -222,6 +273,8 @@ aaa
       self.config.reset()
       self.assertContainsDict({"code": 0}, self.parse_args(["--feature", feature]))
       self.assertEqualItems([feature], self.config.features())
+      self.assertContainsDict({"code": 0}, self.parse_args(["--no-feature"]))
+      self.assertEmpty(self.config.features())
 
   def test_format(self):
     self.assertEqual("default", self.config.format().name())
@@ -261,6 +314,11 @@ aaa
     self.assertFalse(self.config.pessimistic())
     self.assertContainsDict({"code": 0}, self.parse_args(["--pessimistic"]))
     self.assertTrue(self.config.pessimistic())
+
+  def test_no_pessimistic(self):
+    self.config.set_pessimistic(True)
+    self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--no-pessimistic"]))
+    self.assertFalse(self.config.pessimistic())
 
   def test_config_file(self):
     fp = ScopedTemporaryFile()

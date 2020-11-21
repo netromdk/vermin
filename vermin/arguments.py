@@ -49,6 +49,8 @@ class Arguments:
       print("\nOptions:")
       print("  --quiet | -q\n"
             "        Quiet mode. It only prints the final versions verdict.\n")
+      print("  --no-quiet (default)\n"
+            "        Disable quiet mode.\n")
       print("  -v..  Verbosity level 1 to 4. -v, -vv, -vvv, and -vvvv shows increasingly more\n"
             "        information.\n"
             "        -v     will show the individual versions required per file.\n"
@@ -61,6 +63,8 @@ class Arguments:
             "        A '-' can be appended to match target version or smaller, like '-t=3.5-'.\n"
             "        If not met Vermin will exit with code 1. Note that the amount of target\n"
             "        versions must match the amount of minimum required versions detected.\n")
+      print("  --no-target (default)\n"
+            "        Don't expect certain target version(s).\n")
       print("  --processes=N | -p=N\n"
             "        Use N concurrent processes to detect and analyze files. Defaults to all\n"
             "        cores ({}).\n".format(DEFAULT_PROCESSES))
@@ -68,11 +72,18 @@ class Arguments:
             "        Ignore incompatible versions and warnings. However, if no compatible\n"
             "        versions are found then incompatible versions will be shown in the end to\n"
             "        not have an absence of results.\n")
+      print("  --no-ignore (default)\n"
+            "        Don't ignore incompatible versions and warnings.\n")
       print("  --lax | -l\n"
             "        Lax mode: ignores conditionals (if, ternary, for, async for, while, with,\n"
             "        try, bool op) on AST traversal, which can be useful when minimum versions\n"
             "        are detected in conditionals that it is known does not affect the results.\n")
-      print("  -d    Dump AST node visits.")
+      print("  --no-lax (default)\n"
+            "        Disable lax mode.\n")
+      print("  --dump | -d\n"
+            "        Dump AST node visits.\n")
+      print("  --no-dump (default)\n"
+            "        Don't dump AST node visits.")
       print("\n  --help | -h\n"
             "        Shows this information and exists.")
       print("\n  --version | -V\n"
@@ -84,16 +95,20 @@ class Arguments:
       print("\n  --no-config-file\n"
             "        No automatic config file detection and --config-file argument is disallowed.")
       print("\n  --hidden\n"
-            "        Analyze 'hidden' files and folders starting with '.' (ignored by default\n"
-            "        when not specified directly).")
+            "        Analyze 'hidden' files and folders starting with '.'.")
+      print("\n  --no-hidden (default)\n"
+            "        Don't analyze hidden files and folders unless specified directly.")
       print("\n  --versions\n"
             "        In the end, print all unique versions required by the analysed code.")
+      print("\n  --show-tips (default)\n"
+            "        Show helpful tips at the end, like those relating to backports or lax mode.")
       print("\n  --no-tips\n"
-            "        Don't show any helpful tips at the end, like those relating to backports or\n"
-            "        lax mode.")
+            "        Don't show tips.")
       print("\n  --pessimistic\n"
             "        Pessimistic mode: syntax errors are interpreted as the major Python version\n"
             "        in use being incompatible.")
+      print("\n  --no-pessimistic (default)\n"
+            "        Disable pessimistic mode.")
       print("\n  --format <name> | -f <name>\n"
             "        Format to show results and output in.\n"
             "        Supported formats:\n{}".format(formats.help_str(10)))
@@ -109,15 +124,21 @@ class Arguments:
       print("\n  [--exclude-file <file name>] ...\n"
             "        Exclude full names like --exclude but from a specified file instead. Each\n"
             "        line constitutes an exclusion with the same format as with --exclude.")
+      print("\n  --no-exclude (default)\n"
+            "        Use no excludes. Clears any excludes specified before this.")
       print("\n  [--backport <name>] ...\n"
             "        Some features are sometimes backported into packages, in repositories such\n"
             "        as PyPi, that are widely used but aren't in the standard language. If such a\n"
             "        backport is specified as being used, the results will reflect that instead."
             "\n\n"
             "        Supported backports:\n{}".format(Backports.str(10)))
+      print("\n  --no-backport (default)\n"
+            "        Use no backports. Clears any backports specified before this.")
       print("\n  [--feature <name>] ...\n"
             "        Some features are disabled by default due to being unstable:\n{}".
             format(Features.str(10)))
+      print("\n  --no-feature (default)\n"
+            "        Use no features. Clears any features specified before this.")
 
   def parse(self, config, detect_folder=None):
     assert(config is not None)
@@ -175,6 +196,9 @@ class Arguments:
       elif arg in ("--quiet", "-q"):
         config.set_quiet(True)
         path_pos += 1
+      elif arg == "--no-quiet":
+        config.set_quiet(False)
+        path_pos += 1
       elif arg.startswith("-v"):
         config.set_verbose(arg.count("v"))
         path_pos += 1
@@ -184,8 +208,14 @@ class Arguments:
           print("Invalid target: {}".format(value))
           return {"code": 1}
         path_pos += 1
+      elif arg == "--no-target":
+        config.clear_targets()
+        path_pos += 1
       elif arg in ("--ignore", "-i"):
         config.set_ignore_incomp(True)
+        path_pos += 1
+      elif arg == "--no-ignore":
+        config.set_ignore_incomp(False)
         path_pos += 1
       elif arg.startswith("-p=") or arg.startswith("--processes="):
         value = arg.split("=")[1]
@@ -203,14 +233,26 @@ class Arguments:
         print("Running in lax mode!")
         config.set_lax(True)
         path_pos += 1
-      elif arg == "-d":
+      elif arg == "--no-lax":
+        config.set_lax(False)
+        path_pos += 1
+      elif arg == "--no-dump":
+        config.set_print_visits(False)
+        path_pos += 1
+      elif arg in ("--dump", "-d"):
         config.set_print_visits(True)
         path_pos += 1
       elif arg == "--hidden":
         config.set_analyze_hidden(True)
         path_pos += 1
+      elif arg == "--no-hidden":
+        config.set_analyze_hidden(False)
+        path_pos += 1
       elif arg == "--versions":
         versions = True
+        path_pos += 1
+      elif arg == "--show-tips":
+        config.set_show_tips(True)
         path_pos += 1
       elif arg == "--no-tips":
         config.set_show_tips(False)
@@ -237,6 +279,9 @@ class Arguments:
           return {"code": 1}
         config.add_exclusion_file(self.__args[i + 1])
         path_pos += 2
+      elif arg == "--no-exclude":
+        config.clear_exclusions()
+        path_pos += 1
       elif arg == "--backport":
         if (i + 1) >= len(self.__args):
           print("Requires a backport name! Example: --backport typing")
@@ -246,6 +291,9 @@ class Arguments:
           print("Unknown backport: {}".format(name))
           return {"code": 1}
         path_pos += 2
+      elif arg == "--no-backport":
+        config.clear_backports()
+        path_pos += 1
       elif arg == "--feature":
         if (i + 1) >= len(self.__args):
           print("Requires a feature name! Example: --feature fstring-self-doc")
@@ -255,8 +303,14 @@ class Arguments:
           print("Unknown feature: {}".format(name))
           return {"code": 1}
         path_pos += 2
+      elif arg == "--no-feature":
+        config.clear_features()
+        path_pos += 1
       elif arg == "--pessimistic":
         config.set_pessimistic(True)
+        path_pos += 1
+      elif arg == "--no-pessimistic":
+        config.set_pessimistic(False)
         path_pos += 1
 
     if fmt is not None:
