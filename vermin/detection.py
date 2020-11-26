@@ -444,8 +444,8 @@ def probably_python_file(path):
     with open(path, mode="rt") as fp:
       for _i in range(10):
         # A script with a magic line might contain "python".
-        line = fp.readline().lower()
-        if "python" in line:
+        line = fp.readline().lower().strip()
+        if line.startswith("#!") and "python" in line:
           return True
   except Exception:
     # Not python if not readable text file.
