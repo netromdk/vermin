@@ -357,6 +357,7 @@ NOT_PY_CODE_EXTS = {
   "tlz",
   "ttc",
   "ttf",
+  "txt",
   "txz",
   "udf",
   "ui",
