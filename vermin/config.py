@@ -4,14 +4,14 @@ import os
 
 # novm
 try:
-  from configparser import ConfigParser
+  from configparser import ConfigParser, ParsingError
 except ImportError:
-  from ConfigParser import SafeConfigParser as ConfigParser
+  from ConfigParser import SafeConfigParser as ConfigParser, ParsingError
 
 from .backports import Backports
 from .features import Features
 from .formats import Format, DefaultFormat
-from .constants import DEFAULT_PROCESSES, CONFIG_FILE_NAMES, PROJECT_BOUNDARIES
+from .constants import DEFAULT_PROCESSES, CONFIG_FILE_NAMES, CONFIG_SECTION, PROJECT_BOUNDARIES
 from .utility import parse_target
 from . import formats
 
@@ -132,19 +132,18 @@ class Config:
       print(ex)
       return None
 
-    section = "vermin"
-    if not parser.has_section(section):
-      print("Missing `[{}]` section in config: {}".format(section, filename))
+    if not parser.has_section(CONFIG_SECTION):
+      print("Missing `[{}]` section in config: {}".format(CONFIG_SECTION, filename))
       return None
 
     def getbool(option):
       try:
-        return parser.getboolean(section, option)
+        return parser.getboolean(CONFIG_SECTION, option)
       except ValueError:
         return str(True) == parser.defaults()[option]
 
     def getuint(option):
-      value = parser.get(section, option)
+      value = parser.get(CONFIG_SECTION, option)
       if len(value) == 0:
         return int(parser.defaults()[option])
       value = int(value)
@@ -154,7 +153,7 @@ class Config:
 
     def getstringlist(option):
       keepends = False
-      return parser.get(section, option).strip().splitlines(keepends)
+      return parser.get(CONFIG_SECTION, option).strip().splitlines(keepends)
 
     config.set_quiet(getbool("quiet"))
     config.set_verbose(getuint("verbose"))
@@ -185,7 +184,7 @@ class Config:
         print("Invalid target: {}".format(target))
         return None
 
-    fmt_str = parser.get(section, "format").strip()
+    fmt_str = parser.get(CONFIG_SECTION, "format").strip()
     fmt = formats.from_name(fmt_str)
     if fmt is None:
       print("Unknown format: {}".format(fmt_str))
@@ -196,12 +195,20 @@ class Config:
 
   @staticmethod
   def detect_config_file(init_folder=None):
+    """Detects Vermin config file starting from `init_folder` or CWD. It proceeds through parent
+folders until root or project boundaries are reached. Each candidate is checked to be an INI with a
+`[vermin]` section in it."""
     folder = init_folder or os.getcwd()
     while True:
       for candidate in CONFIG_FILE_NAMES:
         look_for = os.path.join(folder, candidate)
         if os.path.exists(look_for):
-          return look_for
+          try:
+            cp = ConfigParser()
+            if look_for in cp.read(look_for) and cp.has_section(CONFIG_SECTION):
+              return look_for
+          except ParsingError:
+            pass
 
       # Stop if didn't find config and is at project boundary, which means it has ".git/" or
       # similar.

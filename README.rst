@@ -101,11 +101,23 @@ Vermin automatically tries to detect a config file, starting in the current work
 it is run, following parent folders until either the root or project boundary files/folders are
 reached. However, if ``--config-file`` is specified, no config is auto-detected and loaded.
 
-Config file names being looked for: ``vermin.ini``, ``vermin.conf``
+Config file names being looked for: ``vermin.ini``, ``vermin.conf``, ``.vermin``, ``setup.cfg``
 
 Project boundary files/folders: ``.git``, ``.svn``, ``.hg``, ``.bzr``, ``_darcs``, ``.fslckout``
 
 A sample config file can be found `here <sample.vermin.ini>`__.
+
+Note that Vermin config can be in the same INI file as other configs, like the commonly used
+``setup.cfg``:
+
+.. code-block:: ini
+
+  [vermin]
+  verbose = 1
+  processes = 4
+
+  [flake8]
+  ignore = E111,F821
 
 Examples
 ========

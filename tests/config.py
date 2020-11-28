@@ -435,7 +435,7 @@ pessimistic = TrUe
   def test_detect_config_file_same_level(self):
     tmp_fld = mkdtemp()
     for candidate in CONFIG_FILE_NAMES:
-      path = touch(tmp_fld, candidate)
+      path = touch(tmp_fld, candidate, "[vermin]")
       self.assertEqual(path, Config.detect_config_file(tmp_fld))
       os.remove(path)
     rmtree(tmp_fld)
@@ -445,7 +445,7 @@ pessimistic = TrUe
     depth_fld = os.path.join(tmp_fld, "depth1")
     os.makedirs(depth_fld)
     for candidate in CONFIG_FILE_NAMES:
-      path = touch(tmp_fld, candidate)
+      path = touch(tmp_fld, candidate, "[vermin]")
       self.assertEqual(path, Config.detect_config_file(depth_fld))
       os.remove(path)
     rmtree(tmp_fld)
@@ -455,7 +455,7 @@ pessimistic = TrUe
     depth_fld = os.path.join(os.path.join(tmp_fld, "depth1"), "depth2")
     os.makedirs(depth_fld)
     for candidate in CONFIG_FILE_NAMES:
-      path = touch(tmp_fld, candidate)
+      path = touch(tmp_fld, candidate, "[vermin]")
       self.assertEqual(path, Config.detect_config_file(depth_fld))
       os.remove(path)
     rmtree(tmp_fld)
@@ -467,7 +467,7 @@ pessimistic = TrUe
     os.makedirs(depth2_fld)
 
     # Create config at top level.
-    touch(tmp_fld, CONFIG_FILE_NAMES[0])
+    touch(tmp_fld, CONFIG_FILE_NAMES[0], "[vermin]")
 
     # Create project boundary at depth one to stop further detection.
     for candidate in PROJECT_BOUNDARIES:

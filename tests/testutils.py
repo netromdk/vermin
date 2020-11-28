@@ -9,9 +9,11 @@ from vermin import Config, Arguments, detect, visit
 def current_version():
   return sys.version_info
 
-def touch(fld, name):
+def touch(fld, name, contents=None):
   filename = join(fld, name)
   fp = open(filename, mode="w")
+  if contents is not None:
+    fp.write(contents)
   fp.close()
   return filename
 
