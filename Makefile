@@ -63,7 +63,7 @@ update-analysis-requirements: setup-venv setup-analysis
 	pip freeze > misc/.analysis-requirements.txt
 
 check-style:
-	flake8 --count --show-source ${ALL_FILES}
+	flake8 --count --show-source ${TOP_LEVEL_FILES}
 
 static-analysis:
 	vulture --min-confidence 70 --sort-by-size ${ALL_FILES}
