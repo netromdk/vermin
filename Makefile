@@ -1,7 +1,6 @@
-VERMIN_FILES=vermin.py `find vermin -iname '*.py'`
-TEST_FILES=runtests.py `find tests -iname '*.py'`
+VERMIN_FILES=vermin vermin.py
+TEST_FILES=tests runtests.py
 OTHER_FILES=count.py
-ALL_FILES=${VERMIN_FILES} ${TEST_FILES} ${OTHER_FILES}
 MODULES=vermin tests
 TOP_LEVEL_FILES=${MODULES} vermin.py runtests.py ${OTHER_FILES}
 
@@ -11,8 +10,8 @@ self-test:
 test: self-test
 	./runtests.py
 
-test-all:
-	python2.7 ./runtests.py
+test-all: self-test
+	python2 ./runtests.py
 	python3 ./runtests.py
 
 count:
@@ -66,7 +65,7 @@ check-style:
 	flake8 --count --show-source ${TOP_LEVEL_FILES}
 
 static-analysis:
-	vulture --min-confidence 70 --sort-by-size ${ALL_FILES}
+	vulture --min-confidence 70 --sort-by-size ${TOP_LEVEL_FILES}
 
 check-unused:
 	vulture --sort-by-size ${VERMIN_FILES}
