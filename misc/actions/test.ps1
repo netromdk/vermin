@@ -10,7 +10,7 @@ Set-ExecutionPolicy Unrestricted -Force
 
 # Setup virtual env and install deps if virtual env doesn't already exist.
 if (-not (Test-Path -LiteralPath ".venv")) {
-  make install-deps setup-venv
+  make install-deps-user setup-venv
   . .venv\Scripts\activate.ps1
   make setup-coverage
 }
