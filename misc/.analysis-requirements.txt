@@ -13,7 +13,7 @@ pyflakes==2.2.0
 Pygments==2.7.4
 pylint==2.6.0
 pyroma==2.6
-PyYAML==5.3.1
+PyYAML==5.4
 six==1.15.0
 smmap==3.0.4
 stevedore==3.2.2
