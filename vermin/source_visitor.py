@@ -7,7 +7,7 @@ from collections import deque
 from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, BYTES_REQS,\
   ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS, CODECS_ERRORS_INDICES, CODECS_ENCODINGS,\
   CODECS_ENCODINGS_INDICES, BUILTIN_GENERIC_ANNOTATION_TYPES, DICT_UNION_SUPPORTED_TYPES,\
-  DICT_UNION_MERGE_SUPPORTED_TYPES
+  DICT_UNION_MERGE_SUPPORTED_TYPES, DECORATOR_USER_FUNCTIONS
 from .utility import dotted_name, reverse_range, combine_versions, remove_whitespace
 
 STRFTIME_DIRECTIVE_REGEX = re.compile(r"%(?:[-\.\d#\s\+])*(\w)")
@@ -96,6 +96,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__function_name = None
     self.__function_name_stack = deque()
     self.__kwargs = []
+    self.__user_func_decorators = []
     self.__depth = 0
     self.__line = 1
     self.__strftime_directives = []
@@ -194,6 +195,9 @@ class SourceVisitor(ast.NodeVisitor):
 
   def kwargs(self):
     return self.__kwargs
+
+  def user_function_decorators(self):
+    return self.__user_func_decorators
 
   def annotations(self):
     return self.__annotations
@@ -500,6 +504,12 @@ class SourceVisitor(ast.NodeVisitor):
         mins = self.__add_versions_entity(mins, vers, "'{}({})'".format(fn_kw[0], fn_kw[1]),
                                           vvprint=True, entity=fn_kw)
 
+    for user_func_deco in self.user_function_decorators():
+      if user_func_deco in DECORATOR_USER_FUNCTIONS:
+        vers = DECORATOR_USER_FUNCTIONS[user_func_deco]
+        mins = self.__add_versions_entity(mins, vers, "'{}' user function decorator".
+                                          format(user_func_deco), vvprint=True,
+                                          entity=user_func_deco)
     return mins
 
   def output_text(self):
@@ -594,6 +604,20 @@ class SourceVisitor(ast.NodeVisitor):
     if fn_kw not in self.__kwargs:
       self.__kwargs.append(fn_kw)
       self.__add_line_col(fn_kw, line, col)
+
+  def __add_user_func_deco(self, ufd, line=None, col=None):
+    if ufd in self.__user_defs:
+      self.__vvvvprint("Ignoring user function decorator '{}' because it's user-defined!".
+                       format(ufd))
+      return
+
+    if self.__config.is_excluded(ufd):
+      self.__vvprint("Excluding user function decorator: {}".format(ufd))
+      return
+
+    if ufd in DECORATOR_USER_FUNCTIONS:
+      self.__user_func_decorators.append(ufd)
+      self.__add_line_col(ufd, line, col)
 
   def __add_strftime_directive(self, group, line=None, col=None):
     self.__strftime_directives.append(group)
@@ -1462,6 +1486,24 @@ ast.Call(func=ast.Name)."""
           self.__vvprint("relaxed decorators", line=decorator.lineno, versions=[None, (3, 9)])
           break
 
+  def __check_user_func_decorators(self, node):
+    # Checking for user function decorators, i.e. decorators that aren't used as function calls but
+    # names, and they take the docorated function as argument in the decorator.
+    for decorator in node.decorator_list:
+      if self.__is_no_line(decorator.lineno):
+        continue
+      # Not ast.Call.
+      if isinstance(decorator, (ast.Name, ast.Attribute)):
+        if isinstance(decorator, ast.Name):
+          name = decorator.id
+        elif isinstance(decorator, ast.Attribute):
+          name = dotted_name(self.__get_attribute_name(decorator))
+        if name in self.__import_mem_mod:
+          name = dotted_name([self.__import_mem_mod[name], name])
+        elif name in self.__module_as_name:
+          name = self.__module_as_name[name]
+        self.__add_user_func_deco(name, line=decorator.lineno)
+
   def __handle_FunctionDef(self, node):
     if self.__is_no_line(node.lineno):
       return False
@@ -1493,6 +1535,7 @@ ast.Call(func=ast.Name)."""
         self.__function_decorators = True
         self.__vvprint("function decorators", line=deco_line, versions=[(2, 4), (3, 0)])
         self.__check_relaxed_decorators(node)
+        self.__check_user_func_decorators(node)
 
     self.generic_visit(node)
 

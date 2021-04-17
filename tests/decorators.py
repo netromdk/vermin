@@ -31,6 +31,15 @@ class VerminDecoratorMemberTests(VerminTest):
   def test_cache_of_functools(self):
     self.assertOnlyIn((3, 9), self.detect("from functools import cache"))
 
+    # As user function.
+    # NOTE: It is not supported to use `functools.cache` without being a user function!
+    visitor = self.visit("""
+from functools import cache
+@cache
+def foo(): pass""")
+    self.assertEqual(["functools.cache"], visitor.user_function_decorators())
+    self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
   def test_recursive_repr_of_reprlib(self):
     self.assertOnlyIn((3, 2), self.detect("from reprlib import recursive_repr"))
 
@@ -55,3 +64,36 @@ class VerminDecoratorMemberTests(VerminTest):
 
   def test_skipUnless_of_unittest(self):
     self.assertOnlyIn(((2, 7), (3, 1)), self.detect("from unittest import skipUnless"))
+
+  def test_user_function_lru_cache_of_functools(self):
+    # As user function.
+    visitor = self.visit("""
+from functools import lru_cache
+@lru_cache
+def foo(): pass""")
+    self.assertEqual(["functools.lru_cache"], visitor.user_function_decorators())
+    self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+    # User function as-name.
+    visitor = self.visit("""
+from functools import lru_cache as lc
+@lc
+def foo(): pass""")
+    self.assertEqual(["functools.lru_cache"], visitor.user_function_decorators())
+    self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+    # User function FQN.
+    visitor = self.visit("""
+import functools
+@functools.lru_cache
+def foo(): pass""")
+    self.assertEqual(["functools.lru_cache"], visitor.user_function_decorators())
+    self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+    # Not as user function.
+    visitor = self.visit("""
+from functools import lru_cache
+@lru_cache()
+def foo(): pass""")
+    self.assertEmpty(visitor.user_function_decorators())
+    self.assertOnlyIn((3, 2), visitor.minimum_versions())

@@ -2674,7 +2674,7 @@ KWARGS_REQS = {
   ("ftplib.FTP_TLS", "encoding"): (None, (3, 9)),
   ("ftplib.FTP_TLS", "source_address"): (None, (3, 3)),
   ("functools.lru_cache", "typed"): (None, (3, 3)),
-  ("functools.lru_cache", "user_function"): (None, (3, 8)),
+  # ("functools.lru_cache", "user_function"): (None, (3, 8)), # See DECORATOR_USER_FUNCTIONS
   ("gc.collect", "generation"): ((2, 5), (3, 0)),
   ("gc.get_objects", "generation"): (None, (3, 8)),
   ("getpass.getpass", "stream"): ((2, 5), (3, 0)),
@@ -3382,3 +3382,11 @@ DICT_UNION_MERGE_SUPPORTED_TYPES = (
   "weakref.WeakKeyDictionary",
   "weakref.WeakValueDictionary",
 )
+
+# Certan decorators allow being used not as function calls, where they instead apply directly to the
+# "user function".
+# Ref: https://docs.python.org/3/library/functools.html#functools.lru_cache
+DECORATOR_USER_FUNCTIONS = {
+  "functools.lru_cache": (None, (3, 8)),
+  "functools.cache": (None, (3, 9)),
+}

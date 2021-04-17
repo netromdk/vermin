@@ -1296,11 +1296,6 @@ class VerminKwargsTests(VerminTest):
                       self.detect("from ftplib import FTP_TLS\n"
                                   "FTP_TLS(source_address=None)"))
 
-  def test_user_function_of_lru_cache_from_functools(self):
-    self.assertOnlyIn((3, 8),
-                      self.detect("from functools import lru_cache\n"
-                                  "lru_cache(user_function=None)"))
-
   def test_generation_of_collect_from_gc(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
                       self.detect("from gc import collect\n"
