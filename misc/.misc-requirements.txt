@@ -7,7 +7,7 @@ idna==2.10
 keyring==21.4.0
 packaging==20.4
 pkginfo==1.6.1
-Pygments==2.7.2
+Pygments==2.7.4
 pyparsing==2.4.7
 readme-renderer==28.0
 requests==2.24.0
