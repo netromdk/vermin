@@ -24,6 +24,7 @@ class VerminConfigTests(VerminTest):
     self.assertEmpty(self.config.features())
     self.assertEmpty(self.config.targets())
     self.assertEqual("default", self.config.format().name())
+    self.assertFalse(self.config.eval_annotations())
 
   def test_override_from(self):
     other = Config()
@@ -41,6 +42,7 @@ class VerminConfigTests(VerminTest):
     self.assertTrue(other.enable_feature("fstring-self-doc"))
     self.assertTrue(other.add_target("2.3"))
     other.set_format(vermin.formats.ParsableFormat())
+    other.set_eval_annotations(False)
 
     self.config.override_from(other)
     self.assertEqual(other.quiet(), self.config.quiet())
@@ -57,6 +59,7 @@ class VerminConfigTests(VerminTest):
     self.assertEqual(other.features(), self.config.features())
     self.assertEqual(other.targets(), self.config.targets())
     self.assertEqual(other.format(), self.config.format())
+    self.assertEqual(other.eval_annotations(), self.config.eval_annotations())
 
   def test_repr(self):
     self.assertEqual(str(self.config), """{}(
@@ -73,12 +76,14 @@ class VerminConfigTests(VerminTest):
   backports = {}
   features = {}
   targets = {}
+  eval_annotations = {}
   format = {}
 )""".format(self.config.__class__.__name__, self.config.quiet(), self.config.verbose(),
             self.config.print_visits(), self.config.processes(), self.config.ignore_incomp(),
             self.config.lax(), self.config.pessimistic(), self.config.show_tips(),
             self.config.analyze_hidden(), self.config.exclusions(), list(self.config.backports()),
-            list(self.config.features()), self.config.targets(), self.config.format().name()))
+            list(self.config.features()), self.config.targets(), self.config.eval_annotations(),
+            self.config.format().name()))
 
   @VerminTest.parameterized_args([
     [u""],
@@ -477,3 +482,22 @@ pessimistic = TrUe
       rmtree(boundary_fld)
 
     rmtree(tmp_fld)
+
+  @VerminTest.parameterized_args([
+    [u"""[vermin]
+eval_annotations =
+""", False],
+    [u"""[vermin]
+#eval_annotations = True
+""", False],
+    [u"""[vermin]
+eval_annotations = True
+""", True],
+    [u"""[vermin]
+eval_annotations = False
+""", False],
+  ])
+  def test_parse_eval_annotations(self, data, expected):
+    config = Config.parse_data(data)
+    self.assertIsNotNone(config)
+    self.assertEqual(config.eval_annotations(), expected)

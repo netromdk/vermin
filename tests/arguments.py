@@ -385,3 +385,13 @@ pessimistic = yes
     self.assertFalse(self.config.pessimistic())
 
     rmtree(tmp_fld)
+
+  def test_eval_annotations(self):
+    self.config.set_eval_annotations(False)
+    self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--eval-annotations"]))
+    self.assertTrue(self.config.eval_annotations())
+
+  def test_no_eval_annotations(self):
+    self.config.set_eval_annotations(True)
+    self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--no-eval-annotations"]))
+    self.assertFalse(self.config.eval_annotations())

@@ -60,6 +60,7 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
 
   def test_breakpoint(self):
     self.assertOnlyIn((3, 7), self.detect("breakpoint()"))
+    self.assertOnlyIn((3, 7), self.detect("x=[]\nx[breakpoint()]"))
 
   @VerminTest.parameterized_args([
     ("d={}\nd.has_key('a')", (2, 2)),

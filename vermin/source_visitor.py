@@ -1454,7 +1454,8 @@ ast.Call(func=ast.Name)."""
       return
     self.__add_user_def_node(node.target)
     self.__add_name_res_assign_node(node)
-    self.generic_visit(node)
+    if self.__config.eval_annotations():
+      self.generic_visit(node)
     self.__annotations = True
     self.__var_annotations = True
     self.__vvprint("variable annotations", versions=[None, (3, 6)])
@@ -1549,8 +1550,9 @@ ast.Call(func=ast.Name)."""
       return True
 
     def has_lit_ann():
-      self.__literal_annotations = True
-      self.__vvprint("literal variable annotations", line=node.lineno, versions=[None, (3, 8)])
+      if self.__config.eval_annotations():
+        self.__literal_annotations = True
+        self.__vvprint("literal variable annotations", line=node.lineno, versions=[None, (3, 8)])
 
     for arg in node.args.args:
       if not hasattr(arg, "annotation") or not arg.annotation:
@@ -1732,12 +1734,13 @@ ast.Call(func=ast.Name)."""
       return
     if isinstance(node.value, (ast.Name, ast.Attribute)):
       def match(name):
-        if name in self.__user_defs:
-          self.__vvvvprint("Ignoring type '{}' because it's user-defined!".format(name))
-        else:
-          self.__builtin_generic_type_annotations = True
-          self.__vvprint("builtin generic type annotation ({}[..])".format(name),
-                         versions=[None, (3, 9)])
+        if self.__config.eval_annotations():
+          if name in self.__user_defs:
+            self.__vvvvprint("Ignoring type '{}' because it's user-defined!".format(name))
+          else:
+            self.__builtin_generic_type_annotations = True
+            self.__vvprint("builtin generic type annotation ({}[..])".format(name),
+                           versions=[None, (3, 9)])
       if isinstance(node.value, ast.Name):
         coll_name = node.value.id
       else:

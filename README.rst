@@ -26,7 +26,7 @@ into **139** modules, **2247** classes/functions/constants members of modules, *
 functions, **4** strftime directives, **3** bytes format directives, **2** array typecodes, **3**
 codecs error handler names, **20** codecs encodings, **75** builtin generic annotation types, **8**
 builtin dict union (``|``) types, **7** builtin dict union merge (``|=``) types, and **2** user
-function decorator.
+function decorators.
 
 Backports of the standard library, like ``typing``, can be enabled for better results.
 
@@ -94,6 +94,13 @@ distinguish ``f'{a=}'`` from ``f'a={a}'``, for instance, since it optimizes some
 (`#39 <https://github.com/netromdk/vermin/issues/39>`__). And this incorrectly marks some source
 code as using fstring self-doc when only using general fstring. To enable (unstable) fstring
 self-doc detection, use ``--feature fstring-self-doc``.
+
+Function and variable annotations aren't evaluated at definition time when ``from __future__ import
+annotations`` is used (`PEP 563 <https://www.python.org/dev/peps/pep-0563/>`__). This is why
+``--no-eval-annotations`` is on by default (since v1.1.1, `#66
+<https://github.com/netromdk/vermin/issues/66>`__). If annotations are being evaluated at runtime,
+like using ``typing.get_type_hints`` or evaluating ``__annotations__`` of an object,
+``--eval-annotations`` should be used for best results.
 
 Configuration file
 ==================

@@ -33,6 +33,7 @@ class Config:
     self.__backports = set()
     self.__features = set()
     self.__targets = []
+    self.__eval_annotations = False
     self.set_format(DefaultFormat())
 
   def override_from(self, other_config):
@@ -49,6 +50,7 @@ class Config:
     self.__backports = other_config.backports()
     self.__features = other_config.features()
     self.__targets = other_config.targets()
+    self.__eval_annotations = other_config.eval_annotations()
     self.set_format(other_config.format())
 
   def __repr__(self):
@@ -66,11 +68,12 @@ class Config:
   backports = {}
   features = {}
   targets = {}
+  eval_annotations = {}
   format = {}
 )""".format(self.__class__.__name__, self.quiet(), self.verbose(), self.print_visits(),
             self.processes(), self.ignore_incomp(), self.lax(), self.pessimistic(),
             self.show_tips(), self.analyze_hidden(), self.exclusions(), list(self.backports()),
-            list(self.features()), self.targets(), self.format().name())
+            list(self.features()), self.targets(), self.eval_annotations(), self.format().name())
 
   @staticmethod
   def parse_file(path):
@@ -113,6 +116,7 @@ class Config:
       "backports": encode_list(config.backports()),
       "features": encode_list(config.features()),
       "targets": encode_list(config.targets()),
+      "eval_annotations": str(config.eval_annotations()),
       "format": config.format().name(),
     }, allow_no_value=True)
 
@@ -164,6 +168,7 @@ class Config:
     config.set_pessimistic(getbool("pessimistic"))
     config.set_show_tips(getbool("show_tips"))
     config.set_analyze_hidden(getbool("analyze_hidden"))
+    config.set_eval_annotations(getbool("eval_annotations"))
 
     for exclusion in getstringlist("exclusions"):
       config.add_exclusion(exclusion)
@@ -375,3 +380,9 @@ folders until root or project boundaries are reached. Each candidate is checked 
 
   def targets(self):
     return self.__targets
+
+  def eval_annotations(self):
+    return self.__eval_annotations
+
+  def set_eval_annotations(self, eval_ann):
+    self.__eval_annotations = eval_ann

@@ -15,12 +15,15 @@ class VerminModuleTests(VerminTest):
 
   @VerminTest.skipUnlessVersion(3, 6)
   def test_Final_annotation(self):
+    self.config.set_eval_annotations(True)
     self.assertOnlyIn((3, 8), self.detect("a: Final = 5"))
     self.assertOnlyIn((3, 8), self.detect("a: Final[int] = 5"))
     self.assertOnlyIn((3, 8), self.detect("a: typing.Final[int] = 5"))
 
   @VerminTest.skipUnlessVersion(3, 6)
   def test_Literal_annotation(self):
+    self.config.set_eval_annotations(True)
+
     visitor = self.visit("a: Literal = 5")
     self.assertTrue(visitor.literal_annotations())
     self.assertOnlyIn((3, 8), visitor.minimum_versions())

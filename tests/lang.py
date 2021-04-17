@@ -1057,6 +1057,20 @@ class VerminLanguageTests(VerminTest):
     # -  import re
     #    re.Match[str]
     # -  tuple[str]
+
+    # The following annotations are only requiring 3.9 when evaluated, which doesn't happen at
+    # definition time.
+
+    # Spot test without annotations evaluation enabled first.
+    self.config.set_eval_annotations(False)
+    visitor = self.visit("dict[str, list[int]]")
+    self.assertFalse(visitor.builtin_generic_type_annotations())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    # Instruct to eval annotations even though they aren't directly since that is
+    # what this test is about.
+    self.config.set_eval_annotations(True)
+
     for typ in BUILTIN_GENERIC_ANNOTATION_TYPES:
       names = [typ]
       src = ""
@@ -1120,6 +1134,26 @@ collections.abc.Reversible[int]
 """)
     self.assertTrue(visitor.builtin_generic_type_annotations())
     self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3)
+  def test_issue_66_annotations(self):
+    self.assertOnlyIn((3, 7), self.detect("""
+from __future__ import annotations
+
+def foo() -> list[int]:
+    return [0]
+
+foo()"""))
+
+    self.config.set_eval_annotations(True)
+    self.assertOnlyIn((3, 9), self.detect("""
+from __future__ import annotations
+import typing
+
+def foo() -> list[int]:
+    return [0]
+
+typing.get_type_hints(foo)"""))
 
   def test_function_decorators(self):
     visitor = self.visit("def foo(): pass")

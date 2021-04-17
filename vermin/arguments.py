@@ -109,6 +109,14 @@ class Arguments:
             "        in use being incompatible.")
       print("\n  --no-pessimistic (default)\n"
             "        Disable pessimistic mode.")
+      print("\n  --eval-annotations\n"
+            "        Instructs parser that annotations will be manually evaluated in code, which\n"
+            "        changes minimum versions in certain cases. Otherwise, function and variable\n"
+            "        annotations are not evaluated at definition time. Apply this argument if\n"
+            "        code uses `typing.get_type_hints` or `eval(obj.__annotations__)` or\n"
+            "        otherwise forces evaluation of annotations.")
+      print("\n  --no-eval-annotations (default)\n"
+            "        Disable annotations evaluation.")
       print("\n  --format <name> | -f <name>\n"
             "        Format to show results and output in.\n"
             "        Supported formats:\n{}".format(formats.help_str(10)))
@@ -311,6 +319,12 @@ class Arguments:
         path_pos += 1
       elif arg == "--no-pessimistic":
         config.set_pessimistic(False)
+        path_pos += 1
+      elif arg == "--eval-annotations":
+        config.set_eval_annotations(True)
+        path_pos += 1
+      elif arg == "--no-eval-annotations":
+        config.set_eval_annotations(False)
         path_pos += 1
 
     if fmt is not None:
