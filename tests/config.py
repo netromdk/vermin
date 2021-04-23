@@ -25,6 +25,7 @@ class VerminConfigTests(VerminTest):
     self.assertEmpty(self.config.targets())
     self.assertEqual("default", self.config.format().name())
     self.assertFalse(self.config.eval_annotations())
+    self.assertFalse(self.config.only_show_violations())
 
   def test_override_from(self):
     other = Config()
@@ -42,7 +43,8 @@ class VerminConfigTests(VerminTest):
     self.assertTrue(other.enable_feature("fstring-self-doc"))
     self.assertTrue(other.add_target("2.3"))
     other.set_format(vermin.formats.ParsableFormat())
-    other.set_eval_annotations(False)
+    other.set_eval_annotations(True)
+    other.set_only_show_violations(True)
 
     self.config.override_from(other)
     self.assertEqual(other.quiet(), self.config.quiet())
@@ -60,6 +62,7 @@ class VerminConfigTests(VerminTest):
     self.assertEqual(other.targets(), self.config.targets())
     self.assertEqual(other.format(), self.config.format())
     self.assertEqual(other.eval_annotations(), self.config.eval_annotations())
+    self.assertEqual(other.only_show_violations(), self.config.only_show_violations())
 
   def test_repr(self):
     self.assertEqual(str(self.config), """{}(
@@ -77,13 +80,14 @@ class VerminConfigTests(VerminTest):
   features = {}
   targets = {}
   eval_annotations = {}
+  only_show_violations = {}
   format = {}
 )""".format(self.config.__class__.__name__, self.config.quiet(), self.config.verbose(),
             self.config.print_visits(), self.config.processes(), self.config.ignore_incomp(),
             self.config.lax(), self.config.pessimistic(), self.config.show_tips(),
             self.config.analyze_hidden(), self.config.exclusions(), list(self.config.backports()),
             list(self.config.features()), self.config.targets(), self.config.eval_annotations(),
-            self.config.format().name()))
+            self.config.only_show_violations(), self.config.format().name()))
 
   @VerminTest.parameterized_args([
     [u""],
@@ -516,3 +520,22 @@ eval_annotations = False
     config = Config.parse_data(data)
     self.assertIsNotNone(config)
     self.assertEqual(config.eval_annotations(), expected)
+
+  @VerminTest.parameterized_args([
+    [u"""[vermin]
+only_show_violations =
+""", False],
+    [u"""[vermin]
+#only_show_violations = True
+""", False],
+    [u"""[vermin]
+only_show_violations = True
+""", True],
+    [u"""[vermin]
+only_show_violations = False
+""", False],
+  ])
+  def test_parse_only_show_violations(self, data, expected):
+    config = Config.parse_data(data)
+    self.assertIsNotNone(config)
+    self.assertEqual(config.only_show_violations(), expected)

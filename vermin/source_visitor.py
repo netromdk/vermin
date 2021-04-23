@@ -310,8 +310,30 @@ class SourceVisitor(ast.NodeVisitor):
   def module_getattr_func(self):
     return self.__module_getattr_func
 
+  def __violates_target_versions(self, versions):
+    # If only violations isn't turned on then fake violations because it means it will show the
+    # rule.
+    if versions is None or not self.__config.only_show_violations():
+      return True
+
+    targets = [t for (e, t) in self.__config.targets()]
+    if len(targets) == 1:
+      if targets[0][0] < 3:
+        targets.append(None)
+      else:
+        targets = [None, targets[0]]
+
+    for i in (0, 1):
+      if targets[i] is not None and (versions[i] is None or versions[i] > targets[i]):
+        return True
+    return False
+
   def __add_versions_entity(self, mins, versions, info=None, vvprint=False, entity=None):
-    if info is not None:
+    # Whether to show verbose print/version info. If there are violations in show-only-violations
+    # mode, then show results. Otherwise, if it isn't that mode, it will fake being "violated" to
+    # ensure the rules are shown.
+    show = self.__violates_target_versions(versions)
+    if show and info is not None:
       if versions in self.__info_versions:
         self.__info_versions[versions].append(info)
       else:
@@ -532,6 +554,11 @@ class SourceVisitor(ast.NodeVisitor):
       self.__output_text.append(msg)
 
   def __verbose_print(self, msg, level, entity=None, line=None, versions=None):  # pragma: no cover
+    # If there aren't any violations in show-only-violations mode, then return. Note that if it
+    # isn't that mode, it will fake being "violated" to ensure the rules are shown.
+    if not self.__violates_target_versions(versions):
+      return
+
     fmt = self.__config.format()
     config_level = self.__config.verbose()
     if fmt.skip_output_line() or config_level < level:

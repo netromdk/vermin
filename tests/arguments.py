@@ -395,3 +395,47 @@ pessimistic = yes
     self.config.set_eval_annotations(True)
     self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--no-eval-annotations"]))
     self.assertFalse(self.config.eval_annotations())
+
+  def test_violations(self):
+    self.config.set_only_show_violations(False)
+
+    # Targets are required to be specified.
+    self.assertContainsDict({"code": 1}, self.parse_args(["--violations"]))
+
+    # One target.
+    self.config.set_only_show_violations(False)
+    self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--violations", "-t=2.5"]))
+    self.assertTrue(self.config.only_show_violations())
+    self.assertEqual(2, self.config.verbose())  # Auto verbose 2.
+
+    # Two targets.
+    self.config.set_verbose(0)
+    self.config.clear_targets()
+    self.config.set_only_show_violations(False)
+    self.assertContainsDict({"code": 0, "paths": []},
+                            self.parse_args(["--violations", "-t=2.5", "-t=3.1"]))
+    self.assertTrue(self.config.only_show_violations())
+    self.assertEqual(2, self.config.verbose())  # Auto verbose 2.
+
+    # Force verbosity 2+.
+    self.config.set_verbose(0)
+    self.config.clear_targets()
+    self.config.set_only_show_violations(False)
+    self.assertContainsDict({"code": 0, "paths": []},
+                            self.parse_args(["--violations", "-t=2.5", "-v"]))
+    self.assertTrue(self.config.only_show_violations())
+    self.assertEqual(2, self.config.verbose())
+
+    # Allow larger verbosity.
+    self.config.set_verbose(0)
+    self.config.clear_targets()
+    self.config.set_only_show_violations(False)
+    self.assertContainsDict({"code": 0, "paths": []},
+                            self.parse_args(["--violations", "-t=2.5", "-vvv"]))
+    self.assertTrue(self.config.only_show_violations())
+    self.assertEqual(3, self.config.verbose())
+
+  def test_no_violations(self):
+    self.config.set_only_show_violations(True)
+    self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--no-violations"]))
+    self.assertFalse(self.config.only_show_violations())

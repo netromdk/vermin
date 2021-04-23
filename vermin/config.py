@@ -34,6 +34,7 @@ class Config:
     self.__features = set()
     self.__targets = []
     self.__eval_annotations = False
+    self.__only_show_violations = False
     self.set_format(DefaultFormat())
 
   def override_from(self, other_config):
@@ -51,6 +52,7 @@ class Config:
     self.__features = other_config.features()
     self.__targets = other_config.targets()
     self.__eval_annotations = other_config.eval_annotations()
+    self.__only_show_violations = other_config.only_show_violations()
     self.set_format(other_config.format())
 
   def __repr__(self):
@@ -69,11 +71,13 @@ class Config:
   features = {}
   targets = {}
   eval_annotations = {}
+  only_show_violations = {}
   format = {}
 )""".format(self.__class__.__name__, self.quiet(), self.verbose(), self.print_visits(),
             self.processes(), self.ignore_incomp(), self.lax(), self.pessimistic(),
             self.show_tips(), self.analyze_hidden(), self.exclusions(), list(self.backports()),
-            list(self.features()), self.targets(), self.eval_annotations(), self.format().name())
+            list(self.features()), self.targets(), self.eval_annotations(),
+            self.only_show_violations(), self.format().name())
 
   @staticmethod
   def parse_file(path):
@@ -117,6 +121,7 @@ class Config:
       "features": encode_list(config.features()),
       "targets": encode_list(config.targets()),
       "eval_annotations": str(config.eval_annotations()),
+      "only_show_violations": str(config.only_show_violations()),
       "format": config.format().name(),
     }, allow_no_value=True)
 
@@ -169,6 +174,7 @@ class Config:
     config.set_show_tips(getbool("show_tips"))
     config.set_analyze_hidden(getbool("analyze_hidden"))
     config.set_eval_annotations(getbool("eval_annotations"))
+    config.set_only_show_violations(getbool("only_show_violations"))
 
     for exclusion in getstringlist("exclusions"):
       config.add_exclusion(exclusion)
@@ -395,3 +401,9 @@ and a version tuple: [exact, (x, y)]. But it can also be a version tuple (x, y) 
 
   def set_eval_annotations(self, eval_ann):
     self.__eval_annotations = eval_ann
+
+  def only_show_violations(self):
+    return self.__only_show_violations
+
+  def set_only_show_violations(self, violations):
+    self.__only_show_violations = violations

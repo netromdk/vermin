@@ -130,7 +130,7 @@ Note that Vermin config can be in the same INI file as other configs, like the c
 Examples
 ========
 
-::
+.. code-block:: console
 
   % ./vermin.py -q vermin
   Minimum required versions: 2.7, 3.0
@@ -182,6 +182,36 @@ Examples
   /path/to/examples/abc.py:2::!2:3.4:'abc.ABC' member
   /path/to/examples/abc.py:::!2:3.4:
   :::!2:3.4:
+
+Linting: Showing only target versions violations
+================================================
+
+Vermin shows lots of useful minimum version results when run normally, but it can also be used as a
+linter to show only rules violating specified target versions by using ``--violations`` and one or
+two ``--target`` values. Verbosity level 2 is automatically set when showing only violations, but
+can be increased if necessary. The final versions verdict is still calculated and printed at the end
+and the program exit code signifies whether the specified targets were met (``0``) or violated
+(``1``).
+
+.. code-block:: console
+
+  % cat test.py
+  import argparse  # 2.7, 3.2
+  all()            # 2.5, 3.0
+  enumerate()      # 2.3, 3.0
+
+  % ./vermin.py -t=2.4- -t=3 --violations test.py ; echo $?
+  Detecting python files..
+  Analyzing using 8 processes..
+  2.7, 3.2     test.py
+    'all' member requires 2.5, 3.0
+    'argparse' module requires 2.7, 3.2
+
+  Minimum required versions: 2.7, 3.2
+  Target versions not met:   2.4-, 3.0
+  1
+
+The two first lines violate the targets but the third line matches and is therefore not shown.
 
 API (experimental)
 ==================

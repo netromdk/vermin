@@ -104,6 +104,13 @@ class Arguments:
             "        Show helpful tips at the end, like those relating to backports or lax mode.")
       print("\n  --no-tips\n"
             "        Don't show tips.")
+      print("\n  --violations\n"
+            "        Show only results that violate versions described by --target arguments,\n"
+            "        which are required to be specified. Verbosity mode is automatically set to\n"
+            "        at least 2 in order to show violations in output text, but can be increased\n"
+            "        if necessary.")
+      print("\n  --no-violations (default)\n"
+            "        Show regular results.")
       print("\n  --pessimistic\n"
             "        Pessimistic mode: syntax errors are interpreted as the major Python version\n"
             "        in use being incompatible.")
@@ -326,9 +333,24 @@ class Arguments:
       elif arg == "--no-eval-annotations":
         config.set_eval_annotations(False)
         path_pos += 1
+      elif arg == "--violations":
+        config.set_only_show_violations(True)
+        path_pos += 1
+      elif arg == "--no-violations":
+        config.set_only_show_violations(False)
+        path_pos += 1
 
     if fmt is not None:
       config.set_format(fmt)
+
+    if config.only_show_violations():
+      if len(config.targets()) == 0:
+        print("Showing violations requires target(s) to be specified!")
+        return {"code": 1}
+
+      # Automatically set minimum verbosity mode 2 for violations mode.
+      if config.verbose() < 2:
+        config.set_verbose(2)
 
     if config.quiet() and config.verbose() > 0:
       print("Cannot use quiet and verbose modes together!")

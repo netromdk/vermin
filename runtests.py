@@ -28,6 +28,7 @@ SUITES = (
   "comment_exclusions",
   "backports",
   "bytes_directive",
+  "violations",
 )
 
 def runsuite(suite):
