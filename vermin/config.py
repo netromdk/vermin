@@ -354,10 +354,19 @@ folders until root or project boundaries are reached. Each candidate is checked 
   def analyze_hidden(self):
     return self.__analyze_hidden
 
-  def add_target(self, target):
+  def add_target(self, target, exact=True):
+    """Adds a target. If target is a string it is parsed, otherwise it is required to be exactness bool
+and a version tuple: [exact, (x, y)]. But it can also be a version tuple (x, y) in which case the
+`exact` argument is supplied for exactness."""
     if len(self.targets()) == 2:
       print("A maximum of two targets can be specified!")
       return False
+
+    # Bundle exactness with version for call site convenience especially if exactness is unchanged
+    # (stays True):
+    #   add_target((x, y)) vs. add_target([exact, (x, y)])
+    if isinstance(target, tuple) and len(target) == 2:
+      target = [exact, target]
 
     # pylint: disable=undefined-variable
     if isinstance(target, str) or\

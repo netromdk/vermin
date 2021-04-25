@@ -417,6 +417,21 @@ targets = 4.0
   def test_parse_invalid_targets(self, data):
     self.assertIsNone(Config.parse_data(data))
 
+  def test_target_exactness_overload(self):
+    self.assertEmpty(self.config.targets())
+    self.assertFalse(self.config.add_target((2,)))
+    self.assertFalse(self.config.add_target((2,), exact=False))
+    self.assertFalse(self.config.add_target((2,), exact=True))
+    self.assertEmpty(self.config.targets())
+
+    self.assertTrue(self.config.add_target((2, 3)))
+    self.assertTrue(self.config.add_target((2, 5), exact=False))
+    self.assertEqual([[True, (2, 3)], [False, (2, 5)]], self.config.targets())
+
+    self.config.clear_targets()
+    self.assertTrue(self.config.add_target((2, 7), exact=True))
+    self.assertEqual([[True, (2, 7)]], self.config.targets())
+
   def test_parse_file(self):
     fp = ScopedTemporaryFile()
     fp.write(b"""[vermin]
