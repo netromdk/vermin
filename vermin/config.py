@@ -47,7 +47,7 @@ class Config:
     self.__pessimistic = other_config.pessimistic()
     self.__show_tips = other_config.show_tips()
     self.__analyze_hidden = other_config.analyze_hidden()
-    self.__exclusions = other_config.exclusions()
+    self.__exclusions = set(other_config.exclusions())
     self.__backports = other_config.backports()
     self.__features = other_config.features()
     self.__targets = other_config.targets()
