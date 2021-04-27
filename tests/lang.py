@@ -541,6 +541,12 @@ class VerminLanguageTests(VerminTest):
     self.assertTrue(visitor.pos_only_args())
     self.assertOnlyIn((3, 8), visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3)
+  def test_nonlocal_stmt(self):
+    visitor = self.visit("def foo():\n\tlong = 1\n\tdef bar():\n\t\tnonlocal long")
+    self.assertTrue(visitor.nonlocal_stmt())
+    self.assertOnlyIn((3, 0), visitor.minimum_versions())
+
   @VerminTest.skipUnlessVersion(3, 3)
   def test_yield_from(self):
     visitor = self.visit("def foo(x): yield from range(x)")

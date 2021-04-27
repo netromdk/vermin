@@ -83,6 +83,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__named_exprs = False
     self.__kw_only_args = False
     self.__pos_only_args = False
+    self.__nonlocal_stmt = False
     self.__yield_from = False
     self.__raise_cause = False
     self.__raise_from_none = False
@@ -231,6 +232,9 @@ class SourceVisitor(ast.NodeVisitor):
 
   def pos_only_args(self):
     return self.__pos_only_args
+
+  def nonlocal_stmt(self):
+    return self.__nonlocal_stmt
 
   def strftime_directives(self):
     return self.__strftime_directives
@@ -418,6 +422,9 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.pos_only_args():
       mins = self.__add_versions_entity(mins, (None, (3, 8)), "position only arguments")
+
+    if self.nonlocal_stmt():
+      mins = self.__add_versions_entity(mins, (None, (3, 0)), "'nonlocal' statement")
 
     if self.yield_from():
       mins = self.__add_versions_entity(mins, (None, (3, 3)), "yield from")
@@ -931,6 +938,8 @@ class SourceVisitor(ast.NodeVisitor):
     if node.id == "long":
       if self.__config.is_excluded("long"):
         self.__vvprint("Excluding long type")
+      elif "long" in self.__user_defs:
+        self.__vvvvprint("Ignoring member 'long' because it's user-defined!")
       else:
         self.__longv2 = True
         self.__vvprint("long is a v2 feature")
@@ -1664,6 +1673,13 @@ ast.Call(func=ast.Name)."""
     if hasattr(node, "posonlyargs") and len(node.posonlyargs) > 0:
       self.__pos_only_args = True
       self.__vvprint("positional-only parameters", versions=[None, (3, 8)])
+    self.generic_visit(node)
+
+  def visit_Nonlocal(self, node):
+    if self.__is_no_line(node.lineno):
+      return
+    self.__nonlocal_stmt = True
+    self.__vvprint("`nonlocal`", versions=[None, (3, 0)])
     self.generic_visit(node)
 
   def visit_YieldFrom(self, node):
