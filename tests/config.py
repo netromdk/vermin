@@ -539,3 +539,14 @@ only_show_violations = False
     config = Config.parse_data(data)
     self.assertIsNotNone(config)
     self.assertEqual(config.only_show_violations(), expected)
+
+  def test_issue_68_override_from_add_exclusion(self):
+    other = Config()
+    self.config.override_from(other)
+
+    # Calling `add_exclusion()` will call `set.add()` but `Config.__exclusions` has become a list
+    # after `override_from()` and it would therefore crash.
+    try:
+      self.config.add_exclusion("x")
+    except AttributeError:
+      self.fail("Crashed while adding exclusion.")
