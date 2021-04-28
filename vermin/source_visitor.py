@@ -109,8 +109,6 @@ class SourceVisitor(ast.NodeVisitor):
     self.__unpacking_assignment = False
     self.__bytes_format = False
     self.__bytearray_format = False
-    self.__seen_except_handler = False
-    self.__seen_raise = False
     self.__dict_union = False
     self.__dict_union_merge = False
     self.__builtin_generic_type_annotations = False
@@ -944,10 +942,6 @@ class SourceVisitor(ast.NodeVisitor):
         self.__longv2 = True
         self.__vvprint("long is a v2 feature")
 
-    # Names used within `except ..:` or `raise ..` should be detected as members being used.
-    if self.__seen_except_handler or self.__seen_raise:
-      self.__add_member(node.id, node.lineno, node.col_offset)
-
   def visit_Print(self, node):  # pragma: no cover
     self.__printv2 = True
     self.generic_visit(node)
@@ -1704,18 +1698,33 @@ ast.Call(func=ast.Name)."""
       if is_none_node(node.cause):
         self.__raise_from_none = True
         self.__vvprint("raise ... from None", line=node.lineno, versions=[None, (3, 3)])
-    seen_raise = self.__seen_raise
-    self.__seen_raise = True
+
+    # Names used within `raise ..` should be detected as members being used.
+    branches = []
+    if hasattr(node, "exc"):
+      branches.append(node.exc)
+    if hasattr(node, "cause"):
+      branches.append(node.cause)
+    if hasattr(node, "type"):
+      branches.append(node.type)
+    for branch in branches:
+      if branch is not None:
+        for n in ast.walk(branch):
+          if isinstance(n, ast.Name):
+            self.__add_member(n.id, n.lineno, n.col_offset)
+
     self.generic_visit(node)
-    self.__seen_raise = seen_raise
 
   def visit_ExceptHandler(self, node):
     if self.__is_no_line(node.lineno):
       return
-    seen_except = self.__seen_except_handler
-    self.__seen_except_handler = True
+
+    # Names used within `except ..:` should be detected as members being used.
+    for n in ast.walk(node.type):
+      if isinstance(n, ast.Name):
+        self.__add_member(n.id, n.lineno, n.col_offset)
+
     self.generic_visit(node)
-    self.__seen_except_handler = seen_except
 
   def visit_DictComp(self, node):
     self.__dict_comp = True

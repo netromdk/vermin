@@ -933,6 +933,18 @@ class VerminLanguageTests(VerminTest):
     self.assertOnlyIn("ModuleNotFoundError", visitor.members())
     self.assertOnlyIn((3, 6), visitor.minimum_versions())
 
+    # Issue 69 example where `file` would get incorrectly seen as Python 2's builtin function
+    # instead of a name defined in the for-loop. The fix is to only look for members in the type
+    # branch of exception handlers.
+    visitor = self.visit("""
+for file in ['foo']:
+  try:
+    1 / 0
+  except ZeroDivisionError:
+    print(file)
+""")
+    self.assertNotIn("file", visitor.members())
+
   def test_dict_union(self):
     visitor = self.visit("{'a':1} | {'b':2}")
     self.assertTrue(visitor.dict_union())
