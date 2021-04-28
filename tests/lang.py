@@ -1,5 +1,5 @@
 from vermin import BUILTIN_GENERIC_ANNOTATION_TYPES, DICT_UNION_SUPPORTED_TYPES,\
-  DICT_UNION_MERGE_SUPPORTED_TYPES, dotted_name, Parser
+  DICT_UNION_MERGE_SUPPORTED_TYPES, dotted_name, Parser, InvalidVersionException
 
 from .testutils import VerminTest, current_version
 
@@ -1395,3 +1395,225 @@ typing.get_type_hints(foo)"""))
   def __getattr__(name): pass
 """, path="__init__.py")
     self.assertFalse(visitor.module_getattr_func())
+
+  def test_for_target_ignore_user_def(self):
+    # If `file` was not ignored as user-def the minimum version would have been 2.0, !3 due to
+    # `file`.
+    if current_version() >= (3,):
+      # unpacking assignment requires !2, 3.0
+      self.assertEqual([None, (3, 0)], self.detect("""
+for a, (*file, c[d+e::f(g)], h.i) in []:
+  file()
+"""))
+    else:
+      self.assertEqual([(0, 0), (0, 0)], self.detect("""
+for a, file, b in []:
+  file()
+"""))
+
+    # The user-def passed out of scope, so match `file` as 2, !3.
+    self.assertEqual([(2, 0), None], self.detect("""
+for a, file, b in []:
+  pass
+file()
+"""))
+
+  def test_with_items_ignore_user_def(self):
+    # `with` is 2.5, 3.0.
+    self.assertEqual([(2, 5), (3, 0)], self.detect("""
+with False as a, True as file, 42 as b:
+  file()
+"""))
+
+    self.assertEqual([(2, 5), (3, 0)], self.detect("""
+with ctx() as (file,):
+  file()
+"""))
+
+    # The user-def passed out of scope, so match `file` as 2, !3 -> 2.5, !3 due to `with`.
+    self.assertEqual([(2, 5), None], self.detect("""
+with False as a, True as file, 42 as b:
+  pass
+file()
+"""))
+
+  def test_except_handler_ignore_user_def(self):
+    self.assertEqual([(0, 0), (0, 0)], self.detect("""
+try:
+  1 / 0
+except ZeroDivisionError as file:
+  file()
+"""))
+
+    # The user-def passed out of scope, so match `file` as 2, !3.
+    self.assertEqual([(2, 0), None], self.detect("""
+try:
+  1 / 0
+except ZeroDivisionError as file:
+  pass
+file()
+"""))
+
+  def test_func_name_ignore_user_def(self):
+    self.assertEqual([(0, 0), (0, 0)], self.detect("""
+def file():
+  file()
+"""))
+
+  def test_func_arg_ignore_user_def(self):
+    self.assertEqual([(0, 0), (0, 0)], self.detect("""
+def foo(a, file, b):
+  file()
+"""))
+
+    # The user-def passed out of scope, so match `file` as 2, !3.
+    self.assertEqual([(2, 0), None], self.detect("""
+def foo(a, file, b):
+  pass
+file()
+"""))
+
+  @VerminTest.skipUnlessVersion(3, 8)
+  def test_func_posonlyarg_ignore_user_def(self):
+    self.assertEqual([None, (3, 8)], self.detect("""
+def foo(file, /, a="Hello"):
+  file()
+"""))
+
+    # The user-def passed out of scope, and exception because `file` requries 2, !3 and posonlyargs
+    # requires !2, 3.8.
+    with self.assertRaises(InvalidVersionException):
+      self.visit("""
+def foo(file, /, a="Hello"):
+  pass
+file()
+""")
+
+  @VerminTest.skipUnlessVersion(3)
+  def test_func_kwonlyarg_ignore_user_def(self):
+    self.assertEqual([None, (3, 0)], self.detect("""
+def foo(a, *, file="Hello"):
+  file()
+"""))
+
+    # The user-def passed out of scope, and exception because `file` requries 2, !3 and kwonlyargs
+    # requires !2, 3.
+    with self.assertRaises(InvalidVersionException):
+      self.visit("""
+def foo(a, *, file="Hello"):
+  pass
+file()
+""")
+
+  def test_func_vararg_ignore_user_def(self):
+    self.assertEqual([(0, 0), (0, 0)], self.detect("""
+def foo(*file):
+  file()
+"""))
+
+  def test_func_kwarg_ignore_user_def(self):
+    self.assertEqual([(0, 0), (0, 0)], self.detect("""
+def foo(**file):
+  file()
+"""))
+
+  def test_lambda_arg_ignore_user_def(self):
+    self.assertEqual([(0, 0), (0, 0)], self.detect("""
+(lambda file: file())(print)
+"""))
+
+  def test_class_name_ignore_user_def(self):
+    self.assertEqual([(0, 0), (0, 0)], self.detect("""
+class file:
+  def __init__(self):
+    file()
+"""))
+
+  def test_assign_target_ignore_user_def(self):
+    self.assertEqual([(0, 0), (0, 0)], self.detect("""
+file = None
+file()
+"""))
+
+    # unpacking assignment requires !2, 3.0
+    if current_version() >= (3,):
+      self.assertEqual([None, (3, 0)], self.detect("""
+a, (*file, c[d+e::f(g)], h.i) = [], []
+file()
+"""))
+
+  def test_aug_assign_target_ignore_user_def(self):
+    # Semantically, this AugAssign cannot be without an initial Assign but this tests that AugAssign
+    # adds the user-def and not the Assign.
+    self.assertEqual([(0, 0), (0, 0)], self.detect("""
+file += 1
+file()
+"""))
+
+  @VerminTest.skipUnlessVersion(3, 6)
+  def test_ann_assign_target_ignore_user_def(self):
+    # variable annotations requires !2, 3.6
+    self.assertEqual([None, (3, 6)], self.detect("""
+file: int = 42
+file()
+"""))
+
+  def test_import_as_target_ignore_user_def(self):
+    self.assertEqual([(0, 0), (0, 0)], self.detect("""
+import sys as file
+file()
+"""))
+
+  def test_import_from_as_target_ignore_user_def(self):
+    self.assertEqual([(0, 0), (0, 0)], self.detect("""
+from sys import exit as file
+file()
+"""))
+
+  @VerminTest.skipUnlessVersion(3, 8)
+  def test_named_expr_assign_target_ignore_user_def(self):
+    # named expressions requires !2, 3.8
+    self.assertEqual([None, (3, 8)], self.detect("""
+(file := 42)
+file()
+"""))
+
+  def test_comprehension_assign_target_ignore_user_def(self):
+    self.assertEqual([(0, 0), (0, 0)], self.detect("""
+[file() for file in [lambda: None]]
+"""))
+
+    self.assertEqual([(0, 0), (0, 0)], self.detect("""
+{file() for file in [lambda: None]}
+"""))
+
+    self.assertEqual([(0, 0), (0, 0)], self.detect("""
+(file() for file in [lambda: None])
+"""))
+
+    self.assertEqual([(0, 0), (0, 0)], self.detect("""
+[file() for a, file in [1]]
+"""))
+
+    if current_version() >= (3,):
+      self.assertEqual([None, (3, 0)], self.detect("""
+[file() for a, *file in [1]]
+"""))
+
+    # After comprehension, `file` rules apply.
+    self.assertEqual([(2, 0), None], self.detect("""
+[file() for a, file in [1]], file()
+"""))
+
+    # After comprehension, `file` rules apply but unpacking assignment requires !2, 3.
+    if current_version() >= (3,):
+      with self.assertRaises(InvalidVersionException):
+        self.visit("""
+[file() for a, *file in [1]], file()
+""")
+
+    # `file` rules apply because the target is bound in the inner-most comprehension and not the
+    # outer-most one.
+    self.assertEqual([(2, 0), None], self.detect("""
+[file() for w, x[[file for file in [1]][0]] in [(1, 1)]]
+"""))

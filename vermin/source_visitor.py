@@ -44,6 +44,17 @@ def trim_fstring_value(value):  # pragma: no cover
   # available such that the self-doc f-strings can be compared.
   return remove_whitespace(value, ["\\(", "\\)"])
 
+def assign_target_walk(node):
+  """Walker used for determining assignment target nodes. It ignores all `ast.Subscript` and
+`ast.Attribute` nodes.
+  """
+  todo = deque([node])
+  while todo:
+    node = todo.popleft()
+    if not isinstance(node, (ast.Subscript, ast.Attribute)):
+      todo.extend(ast.iter_child_nodes(node))
+      yield node
+
 class SourceVisitor(ast.NodeVisitor):
   def __init__(self, config, path=None):
     super(SourceVisitor, self).__init__()
@@ -716,8 +727,10 @@ class SourceVisitor(ast.NodeVisitor):
     self.__user_defs.add(name)
 
   def __add_user_def_node(self, node):
-    if isinstance(node, ast.Name) and hasattr(node, "id"):
+    if isinstance(node, ast.Name) and isinstance(node.ctx, (ast.Store, ast.Param)):
       self.__add_user_def(node.id)
+    elif isinstance(node, str):
+      self.__add_user_def(node)
 
   def __add_name_res(self, source, target):
     self.__name_res[source] = target
@@ -899,6 +912,7 @@ class SourceVisitor(ast.NodeVisitor):
       self.__add_member(name.name, line, col)
       if hasattr(name, "asname") and name.asname is not None:
         self.__module_as_name[name.asname] = name.name
+        self.__add_user_def(name.asname)
 
   def visit_ImportFrom(self, node):
     if node.module is None:
@@ -931,6 +945,7 @@ class SourceVisitor(ast.NodeVisitor):
         self.__add_member(name.name, line, col)
       if hasattr(name, "asname") and name.asname is not None:
         self.__module_as_name[name.asname] = node.module + "." + name.name
+        self.__add_user_def(name.asname)
 
   def visit_Name(self, node):
     if node.id == "long":
@@ -1456,7 +1471,8 @@ ast.Call(func=ast.Name)."""
     if self.__is_no_line(node.lineno):
       return
     for target in node.targets:
-      self.__add_user_def_node(target)
+      for n in assign_target_walk(target):
+        self.__add_user_def_node(n)
     self.__add_name_res_assign_node(node)
     self.generic_visit(node)
 
@@ -1539,6 +1555,7 @@ ast.Call(func=ast.Name)."""
     if self.__is_no_line(node.lineno):
       return False
 
+    # Add function name and argument names as user-defs.
     self.__add_user_def(node.name)
 
     # Module-level `__dir__()` is supported by `dir()` and `__getattr__(name)` through lookup since
@@ -1568,7 +1585,9 @@ ast.Call(func=ast.Name)."""
         self.__check_relaxed_decorators(node)
         self.__check_user_func_decorators(node)
 
+    user_defs_copy = self.__user_defs.copy()
     self.generic_visit(node)
+    self.__user_defs = user_defs_copy
 
     def has_ann():
       self.__annotations = True
@@ -1625,6 +1644,11 @@ ast.Call(func=ast.Name)."""
       self.__seen_await = seen_await
       self.__seen_yield = seen_yield
 
+  def visit_Lambda(self, node):
+    user_defs_copy = self.__user_defs.copy()
+    self.generic_visit(node)
+    self.__user_defs = user_defs_copy
+
   def visit_Await(self, node):
     if self.__is_no_line(node.lineno):
       return
@@ -1656,17 +1680,36 @@ ast.Call(func=ast.Name)."""
   def visit_NamedExpr(self, node):
     if self.__is_no_line(node.lineno):
       return
+    self.__add_user_def_node(node.target)
     self.__named_exprs = True
     self.__vvprint("named expressions", versions=[None, (3, 8)])
     self.generic_visit(node)
 
   def visit_arguments(self, node):
-    if hasattr(node, "kwonlyargs") and len(node.kwonlyargs) > 0:
-      self.__kw_only_args = True
-      self.__vvprint("keyword-only parameters", versions=[None, (3, 0)])
+    all_args = []
+    if hasattr(node, "args"):
+      all_args += node.args
+
     if hasattr(node, "posonlyargs") and len(node.posonlyargs) > 0:
       self.__pos_only_args = True
       self.__vvprint("positional-only parameters", versions=[None, (3, 8)])
+      all_args += node.posonlyargs
+
+    if hasattr(node, "kwonlyargs") and len(node.kwonlyargs) > 0:
+      self.__kw_only_args = True
+      self.__vvprint("keyword-only parameters", versions=[None, (3, 0)])
+      all_args += node.kwonlyargs
+
+    if hasattr(node, "vararg"):
+      all_args.append(node.vararg)
+    if hasattr(node, "kwarg"):
+      all_args.append(node.kwarg)
+
+    for arg in all_args:
+      self.__add_user_def_node(arg)
+      if hasattr(arg, "arg"):
+        self.__add_user_def_node(arg.arg)
+
     self.generic_visit(node)
 
   def visit_Nonlocal(self, node):
@@ -1719,22 +1762,56 @@ ast.Call(func=ast.Name)."""
     if self.__is_no_line(node.lineno):
       return
 
+    # Copy current user-defs and add scoped ones. Note that except handler name is an `ast.Name` in
+    # py2 and `str` in py3.
+    user_defs_copy = self.__user_defs.copy()
+    if hasattr(node, "name"):
+      self.__add_user_def_node(node.name)
+
     # Names used within `except ..:` should be detected as members being used.
     for n in ast.walk(node.type):
       if isinstance(n, ast.Name):
         self.__add_member(n.id, n.lineno, n.col_offset)
 
     self.generic_visit(node)
+    self.__user_defs = user_defs_copy
+
+  # Comprehensions:
+  #
+  # Target assignments must be handled first because elements of comprehensions will be visited
+  # first! But they aren't handled in `visit_comprehension()` because they'd be evaluated twice
+  # then.
+
+  def __handle_comprehensions(self, comps):
+    """Expects a list of `ast.comprehension` nodes. Returns previous user-defs."""
+    user_defs_copy = self.__user_defs.copy()
+    for comp in comps:
+      for target in assign_target_walk(comp.target):
+        self.__add_user_def_node(target)
+    return user_defs_copy
+
+  def visit_ListComp(self, node):
+    user_defs_copy = self.__handle_comprehensions(node.generators)
+    self.generic_visit(node)
+    self.__user_defs = user_defs_copy
+
+  def visit_SetComp(self, node):
+    user_defs_copy = self.__handle_comprehensions(node.generators)
+    self.generic_visit(node)
+    self.__user_defs = user_defs_copy
+
+  def visit_GeneratorExp(self, node):
+    user_defs_copy = self.__handle_comprehensions(node.generators)
+    self.generic_visit(node)
+    self.__user_defs = user_defs_copy
 
   def visit_DictComp(self, node):
     self.__dict_comp = True
     self.__vvprint("dict comprehensions", versions=[(2, 7), (3, 0)])
-    self.generic_visit(node)
 
-  def visit_MatMult(self, node):
-    self.__mat_mult = True
-    self.__vvprint("infix matrix multiplication", versions=[None, (3, 5)])
+    user_defs_copy = self.__handle_comprehensions(node.generators)
     self.generic_visit(node)
+    self.__user_defs = user_defs_copy
 
   def visit_comprehension(self, node):
     if hasattr(node, "is_async") and node.is_async == 1:
@@ -1750,6 +1827,13 @@ ast.Call(func=ast.Name)."""
     # Reset to seen awaits before comprehension.
     self.__seen_await = seen_await
 
+  # <Comprehensions
+
+  def visit_MatMult(self, node):
+    self.__mat_mult = True
+    self.__vvprint("infix matrix multiplication", versions=[None, (3, 5)])
+    self.generic_visit(node)
+
   def visit_Continue(self, node):
     # Only accept continue in try-finally if no intermediary loops have been encountered.
     if len(self.__try_finally) > 0:
@@ -1761,9 +1845,24 @@ ast.Call(func=ast.Name)."""
   def visit_With(self, node):
     if self.__config.lax() or self.__is_no_line(node.lineno):
       return
+
+    # Copy current user-defs and add scoped ones.
+    user_defs_copy = self.__user_defs.copy()
+    if hasattr(node, "items"):
+      for withitem in node.items:
+        if hasattr(withitem, "optional_vars") and withitem.optional_vars is not None:
+          for n in assign_target_walk(withitem.optional_vars):
+            self.__add_user_def_node(n)
+    elif hasattr(node, "optional_vars") and node.optional_vars is not None:
+      for n in assign_target_walk(node.optional_vars):
+        self.__add_user_def_node(n)
+
     self.__with_statement = True
     self.__vvprint("`with`", line=node.lineno, versions=[(2, 5), (3, 0)])
     self.generic_visit(node)
+
+    # This is to minimize false positives, though the vars lives after the scope.
+    self.__user_defs = user_defs_copy
 
   def visit_Dict(self, node):
     self.__check_generalized_unpacking(node)
@@ -1822,6 +1921,11 @@ ast.Call(func=ast.Name)."""
     if not self.__config.lax() and not self.__is_no_line(node.lineno):
       self.__seen_for += 1
 
+      # Copy current user-defs and add scoped ones.
+      user_defs_copy = self.__user_defs.copy()
+      for n in assign_target_walk(node.target):
+        self.__add_user_def_node(n)
+
       # Check if any value of the for-iterable is a dictionary, then associate for-target variable
       # with a ditionary type such that sub-levels of the for-loop can use it for dict union merge
       # detection.
@@ -1836,6 +1940,9 @@ ast.Call(func=ast.Name)."""
       self.generic_visit(node)
       self.__seen_for -= 1
       self.__name_res = old_name_res
+
+      # This is to minimize false positives, though the vars lives after the scope.
+      self.__user_defs = user_defs_copy
 
   def visit_For(self, node):
     self.__handle_for(node)
