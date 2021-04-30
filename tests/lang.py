@@ -651,10 +651,31 @@ class VerminLanguageTests(VerminTest):
     visitor = self.visit("bytes().hex()")
     self.assertIn("bytes.hex", visitor.members())
 
-  def test_with_statement(self):
-    visitor = self.visit("with func():\n  pass")
+  @VerminTest.parameterized_args([
+    ["with func():\n  pass"],
+    ["with (a, b): pass"],
+    ["with (a, b) as c: pass"],
+    ["with a as (b, c): pass"],
+    ["with a as b:\n\twith c as d:\n\t\tpass"],
+  ])
+  def test_with_statement(self, source):
+    visitor = self.visit(source)
     self.assertTrue(visitor.with_statement())
+    self.assertFalse(visitor.multi_withitem())
     self.assertOnlyIn([(2, 5), (3, 0)], visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 3)  # See `visit_With` for reason for only testing on 3.3+.
+  @VerminTest.parameterized_args([
+    ["with a, b: pass"],
+    ["with a, b as c: pass"],
+    ["with a as b, c: pass"],
+    ["with a as b, c as d: pass"],
+  ])
+  def test_multi_withitem(self, source):
+    visitor = self.visit(source)
+    self.assertTrue(visitor.with_statement())
+    self.assertTrue(visitor.multi_withitem())
+    self.assertOnlyIn([(2, 7), (3, 1)], visitor.minimum_versions())
 
   def test_generalized_unpacking(self):
     if current_version() >= (3, 5):
@@ -1448,8 +1469,8 @@ file()
 """))
 
   def test_with_items_ignore_user_def(self):
-    # `with` is 2.5, 3.0.
-    self.assertEqual([(2, 5), (3, 0)], self.detect("""
+    # Multiple context expressions in a `with` statement is 2.7, 3.1.
+    self.assertEqual([(2, 7), (3, 1)], self.detect("""
 with False as a, True as file, 42 as b:
   file()
 """))
@@ -1459,8 +1480,9 @@ with ctx() as (file,):
   file()
 """))
 
-    # The user-def passed out of scope, so match `file` as 2, !3 -> 2.5, !3 due to `with`.
-    self.assertEqual([(2, 5), None], self.detect("""
+    # The user-def passed out of scope, so match `file` as 2, !3 -> 2.7, !3 due to
+    # multiple context expressions in a `with` statement.
+    self.assertEqual([(2, 7), None], self.detect("""
 with False as a, True as file, 42 as b:
   pass
 file()
