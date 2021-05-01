@@ -144,17 +144,18 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
     self.assertDetectMinVersions(source, min_versions)
 
   @VerminTest.parameterized_args([
-    ("s={1,2}\ns.isdisjoint({3,4})", ((2, 6), (3, 0))),
-    ("{1,2}.isdisjoint({3,4})", ((2, 6), (3, 0))),
-    ("s=set()\ns.isdisjoint({3,4})", ((2, 6), (3, 0))),
-    ("set().isdisjoint({3,4})", ((2, 6), (3, 0))),
+    # set literals require 2.7, 3.0
+    ("s={1,2}\ns.isdisjoint({3,4})", ((2, 7), (3, 0))),
+    ("{1,2}.isdisjoint({3,4})", ((2, 7), (3, 0))),
+    ("s=set()\ns.isdisjoint(set([3,4]))", ((2, 6), (3, 0))),
+    ("set().isdisjoint(set([3,4]))", ((2, 6), (3, 0))),
   ])
   def test_isdisjoint_of_set(self, source, min_versions):
     self.assertDetectMinVersions(source, min_versions)
 
   @VerminTest.parameterized_args([
-    ("s=frozenset()\ns.isdisjoint({3,4})", ((2, 6), (3, 0))),
-    ("frozenset().isdisjoint({3,4})", ((2, 6), (3, 0))),
+    ("s=frozenset()\ns.isdisjoint(set([3,4]))", ((2, 6), (3, 0))),
+    ("frozenset().isdisjoint(set([3,4]))", ((2, 6), (3, 0))),
   ])
   def test_isdisjoint_of_frozenset(self, source, min_versions):
     self.assertDetectMinVersions(source, min_versions)
