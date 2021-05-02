@@ -890,6 +890,25 @@ class VerminLanguageTests(VerminTest):
     self.assertFalse(visitor.generalized_unpacking(), msg=source)
     self.assertOnlyIn((3, 0), visitor.minimum_versions(), msg=source)
 
+  def test_ellipsis_in_slices(self):
+    visitor = self.visit('x[...]')
+    self.assertFalse(visitor.ellipsis_out_of_slices())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    visitor = self.visit('x[a, ..., b]')
+    self.assertFalse(visitor.ellipsis_out_of_slices())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3)
+  def test_ellipsis_out_of_slices(self):
+    visitor = self.visit('...')
+    self.assertTrue(visitor.ellipsis_out_of_slices())
+    self.assertOnlyIn((3, 0), visitor.minimum_versions())
+
+    visitor = self.visit('x[[...]]')
+    self.assertTrue(visitor.ellipsis_out_of_slices())
+    self.assertOnlyIn((3, 0), visitor.minimum_versions())
+
   @VerminTest.skipUnlessVersion(3, 5)
   def test_bytes_format(self):
     visitor = self.visit("b'%x' % 10")
