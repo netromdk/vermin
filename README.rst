@@ -80,11 +80,11 @@ multiplication, ``"..".format(..)``, imports (``import X``, ``from X import Y``,
 *``), function calls wrt. name and kwargs, ``strftime`` + ``strptime`` directives used, function and
 variable annotations (also ``Final`` and ``Literal``), ``continue`` in ``finally`` block, modular
 inverse ``pow()``, array typecodes, codecs error handler names, encodings, ``%`` formatting and
-directives for bytes and bytearray, unpacking assignment, generalized unpacking, dictionary union
-(``{..} | {..}``), dictionary union merge (``a = {..}; a |= {..}``), builtin generic type
-annotations (``list[str]``), function decorators, class decorators and relaxed decorators. It tries
-to detect and ignore user-defined functions, classes, arguments, and variables with names that clash
-with library-defined symbols.
+directives for bytes and bytearray, unpacking assignment, generalized unpacking, ellipsis literal
+(`...`) out of slices, dictionary union (``{..} | {..}``), dictionary union merge
+(``a = {..}; a |= {..}``), builtin generic type annotations (``list[str]``), function decorators,
+class decorators and relaxed decorators. It tries to detect and ignore user-defined functions,
+classes, arguments, and variables with names that clash with library-defined symbols.
 
 Caveats
 =======

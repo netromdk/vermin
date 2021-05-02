@@ -32,6 +32,14 @@ def is_none_node(node):
     return True
   return False
 
+def is_ellipsis_node(node):
+  if hasattr(ast, 'Ellipsis') and isinstance(node, ast.Ellipsis):
+    return True
+  if hasattr(ast, 'Constant') and isinstance(node, ast.Constant) and \
+    isinstance(node.value, type(Ellipsis)):
+    return True
+  return False
+
 # Generalized unpacking, or starred expressions, are allowed when used with assignment targets prior
 # to 3.5. That means that generalized unpacking expressions are only on the right-hand side of the
 # assignment, they're ctx=ast.Load for 3.5+ but ctx=ast.Store are allowed prior to 3.5.
@@ -118,6 +126,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__with_statement = False
     self.__generalized_unpacking = False
     self.__unpacking_assignment = False
+    self.__ellipsis_out_of_slices = False
     self.__bytes_format = False
     self.__bytearray_format = False
     self.__dict_union = False
@@ -166,6 +175,9 @@ class SourceVisitor(ast.NodeVisitor):
 
     # Used for incompatible versions texts.
     self.__info_versions = {}
+
+    # Keep track of all Ellipsis nodes in slices for detecting Ellipsis out of slices.
+    self.__ellipsis_nodes_in_slices = set()
 
     self.__mod_rules = MOD_REQS(self.__config)
     self.__mod_mem_reqs_rules = MOD_MEM_REQS(self.__config)
@@ -292,6 +304,9 @@ class SourceVisitor(ast.NodeVisitor):
 
   def unpacking_assignment(self):
     return self.__unpacking_assignment
+
+  def ellipsis_out_of_slices(self):
+    return self.__ellipsis_out_of_slices
 
   def bytes_format(self):
     return self.__bytes_format
@@ -464,6 +479,10 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.unpacking_assignment():
       mins = self.__add_versions_entity(mins, (None, (3, 0)), "unpacking assignment")
+
+    if self.ellipsis_out_of_slices():
+      mins = self.__add_versions_entity(mins, (None, (3, 0)),
+                                        "ellipsis literal (`...`) out of slices")
 
     if self.bytes_format():
       # Since byte strings are a `str` synonym as of 2.6+, and thus also supports `%` formatting,
@@ -1226,6 +1245,10 @@ ast.Call(func=ast.Name)."""
       for directive in BYTES_DIRECTIVE_REGEX.findall(str(node.value)):
         self.__add_bytes_directive(directive, node.lineno)
 
+    # From 3.8, Ellipsis() is represented as Constant(value=Ellipsis)
+    if is_ellipsis_node(node):
+      self.visit_Ellipsis(node)
+
   def __extract_fstring_value(self, node):  # pragma: no cover
     value = []
     is_call = False
@@ -1883,6 +1906,7 @@ ast.Call(func=ast.Name)."""
   def visit_Subscript(self, node):
     if self.__is_no_line(node.lineno):
       return
+
     if isinstance(node.value, (ast.Name, ast.Attribute)):
       def match(name):
         if self.__config.eval_annotations():
@@ -1905,6 +1929,22 @@ ast.Call(func=ast.Name)."""
       elif coll_name in self.__name_res_type and\
            self.__name_res_type[coll_name] in BUILTIN_GENERIC_ANNOTATION_TYPES:
         match(self.__name_res_type[coll_name])
+
+    slices_node = node.slice
+    if hasattr(ast, 'ExtSlice') and isinstance(slices_node, ast.ExtSlice):
+      for n in slices_node.dims:
+        if is_ellipsis_node(n):
+          self.__ellipsis_nodes_in_slices.add(n)
+    else:
+      if hasattr(ast, 'Index') and isinstance(slices_node, ast.Index):
+        slices_node = slices_node.value
+      if is_ellipsis_node(slices_node):
+        self.__ellipsis_nodes_in_slices.add(slices_node)
+      if isinstance(slices_node, ast.Tuple):
+        for n in slices_node.elts:
+          if is_ellipsis_node(n):
+            self.__ellipsis_nodes_in_slices.add(n)
+
     self.generic_visit(node)
 
   # Lax mode and comment-excluded lines skip conditional blocks if enabled.
@@ -1982,6 +2022,12 @@ ast.Call(func=ast.Name)."""
   def visit_BoolOp(self, node):
     if not self.__config.lax() and not self.__is_no_line(node.lineno):
       self.generic_visit(node)
+
+  def visit_Ellipsis(self, node):
+    # Force identity testing instead of equality testing.
+    if not any(n is node for n in self.__ellipsis_nodes_in_slices):
+      self.__ellipsis_out_of_slices = True
+      self.__vvprint("ellipsis literal (`...`) out of slices", versions=[None, (3, 0)])
 
   # Ignore unused nodes as a speed optimization.
 
