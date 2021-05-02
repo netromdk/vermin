@@ -126,6 +126,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__codecs_error_handlers = []
     self.__codecs_encodings = []
     self.__with_statement = False
+    self.__multi_withitem = False
     self.__generalized_unpacking = False
     self.__unpacking_assignment = False
     self.__ellipsis_out_of_slices = False
@@ -307,6 +308,9 @@ class SourceVisitor(ast.NodeVisitor):
   def with_statement(self):
     return self.__with_statement
 
+  def multi_withitem(self):
+    return self.__multi_withitem
+
   def generalized_unpacking(self):
     return self.__generalized_unpacking
 
@@ -487,6 +491,10 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.with_statement():
       mins = self.__add_versions_entity(mins, ((2, 5), (3, 0)), "'with' statement")
+
+    if self.multi_withitem():
+      mins = self.__add_versions_entity(mins, ((2, 7), (3, 1)),
+                                        "multiple context expressions in a 'with' statement")
 
     if self.generalized_unpacking():
       mins = self.__add_versions_entity(mins, (None, (3, 5)), "generalized unpacking")
@@ -1893,6 +1901,24 @@ ast.Call(func=ast.Name)."""
         if hasattr(withitem, "optional_vars") and withitem.optional_vars is not None:
           for n in assign_target_walk(withitem.optional_vars):
             self.__add_user_def_node(n)
+      if len(node.items) > 1:
+        # This feature can only be reliably detected when vermin is running on Python 3.3+.
+        # On older versions of Python, multiple context expressions in a `with` statement are
+        # automatically unrolled by the built-in `ast` module into
+        # With(
+        #   context_expr=<expr1>,
+        #   optional_vars=<target1>,
+        #   body=[
+        #     With(
+        #       context_expr=<expr2>,
+        #       optional_vars=<target2>,
+        #       body=...)
+        #   ]
+        # )
+        # and cannot be differentiated from manually writing multiple layers of `with` statements.
+        self.__multi_withitem = True
+        self.__vvprint("multiple context expressions in a `with` statement",
+                       line=node.lineno, versions=[(2, 7), (3, 1)])
     elif hasattr(node, "optional_vars") and node.optional_vars is not None:
       for n in assign_target_walk(node.optional_vars):
         self.__add_user_def_node(n)
