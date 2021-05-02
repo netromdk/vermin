@@ -1238,10 +1238,7 @@ ast.Call(func=ast.Name)."""
 
     # From 3.8, Ellipsis() is represented as Constant(value=Ellipsis)
     if is_ellipsis_node(node):
-      # Force identity testing instead of equality testing.
-      if not any(n is node for n in self.__ellipsis_nodes_in_slices):
-        self.__ellipsis_out_of_slices = True
-        self.__vvprint("ellipsis literal (`...`) out of slices", versions=[None, (3, 0)])
+      self.visit_Ellipsis(node)
 
   def __extract_fstring_value(self, node):  # pragma: no cover
     value = []
