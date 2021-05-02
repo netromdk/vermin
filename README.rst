@@ -75,16 +75,17 @@ Features detected include v2/v3 ``print expr`` and ``print(expr)``, ``long``, f-
 (``async`` and ``await``), asynchronous generators (``await`` and ``yield`` in same function),
 asynchronous comprehensions, ``await`` in comprehensions, asynchronous ``for``-loops, boolean
 constants, named expressions, keyword-only parameters, positional-only parameters, ``nonlocal``,
-``yield from``, exception context cause (``raise .. from ..``), ``dict`` comprehensions, infix matrix
-multiplication, ``"..".format(..)``, imports (``import X``, ``from X import Y``, ``from X import
-*``), function calls wrt. name and kwargs, ``strftime`` + ``strptime`` directives used, function and
-variable annotations (also ``Final`` and ``Literal``), ``continue`` in ``finally`` block, modular
-inverse ``pow()``, array typecodes, codecs error handler names, encodings, ``%`` formatting and
-directives for bytes and bytearray, unpacking assignment, generalized unpacking, ellipsis literal
-(`...`) out of slices, dictionary union (``{..} | {..}``), dictionary union merge
-(``a = {..}; a |= {..}``), builtin generic type annotations (``list[str]``), function decorators,
-class decorators and relaxed decorators. It tries to detect and ignore user-defined functions,
-classes, arguments, and variables with names that clash with library-defined symbols.
+``yield from``, exception context cause (``raise .. from ..``), ``set`` literals, ``set``
+comprehensions, ``dict`` comprehensions, infix matrix multiplication, ``"..".format(..)``, imports
+(``import X``, ``from X import Y``, ``from X import *``), function calls wrt. name and kwargs,
+``strftime`` + ``strptime`` directives used, function and variable annotations (also ``Final`` and
+``Literal``), ``continue`` in ``finally`` block, modular inverse ``pow()``, array typecodes, codecs
+error handler names, encodings, ``%`` formatting and directives for bytes and bytearray, unpacking
+assignment, generalized unpacking, ellipsis literal (`...`) out of slices, dictionary union
+(``{..} | {..}``), dictionary union merge (``a = {..}; a |= {..}``), builtin generic type
+annotations (``list[str]``), function decorators, class decorators and relaxed decorators. It tries
+to detect and ignore user-defined functions, classes, arguments, and variables with names that clash
+with library-defined symbols.
 
 Caveats
 =======

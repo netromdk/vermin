@@ -106,6 +106,8 @@ class SourceVisitor(ast.NodeVisitor):
     self.__yield_from = False
     self.__raise_cause = False
     self.__raise_from_none = False
+    self.__set_literals = False
+    self.__set_comp = False
     self.__dict_comp = False
     self.__mat_mult = False
     self.__continue_in_finally = False
@@ -284,6 +286,12 @@ class SourceVisitor(ast.NodeVisitor):
   def raise_from_none(self):
     return self.__raise_from_none
 
+  def set_literals(self):
+    return self.__set_literals
+
+  def set_comprehension(self):
+    return self.__set_comp
+
   def dict_comprehension(self):
     return self.__dict_comp
 
@@ -458,6 +466,12 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.raise_from_none():
       mins = self.__add_versions_entity(mins, (None, (3, 3)), "raise ... from None")
+
+    if self.set_literals():
+      mins = self.__add_versions_entity(mins, ((2, 7), (3, 0)), "set literals")
+
+    if self.set_comprehension():
+      mins = self.__add_versions_entity(mins, ((2, 7), (3, 0)), "set comprehension")
 
     if self.dict_comprehension():
       mins = self.__add_versions_entity(mins, ((2, 7), (3, 0)), "dict comprehension")
@@ -1819,6 +1833,9 @@ ast.Call(func=ast.Name)."""
     self.__user_defs = user_defs_copy
 
   def visit_SetComp(self, node):
+    self.__set_comp = True
+    self.__vvprint("set comprehensions", versions=[(2, 7), (3, 0)])
+
     user_defs_copy = self.__handle_comprehensions(node.generators)
     self.generic_visit(node)
     self.__user_defs = user_defs_copy
@@ -1900,6 +1917,8 @@ ast.Call(func=ast.Name)."""
     self.generic_visit(node)
 
   def visit_Set(self, node):
+    self.__set_literals = True
+    self.__vvprint("set literals", line=node.lineno, versions=[(2, 7), (3, 0)])
     self.__check_generalized_unpacking(node)
     self.generic_visit(node)
 

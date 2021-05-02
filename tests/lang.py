@@ -567,6 +567,16 @@ class VerminLanguageTests(VerminTest):
     self.assertTrue(visitor.raise_from_none())
     self.assertOnlyIn((3, 3), visitor.minimum_versions())
 
+  def test_set_literals(self):
+    visitor = self.visit("{1}")
+    self.assertTrue(visitor.set_literals())
+    self.assertEqual([(2, 7), (3, 0)], visitor.minimum_versions())
+
+  def test_set_comprehension(self):
+    visitor = self.visit("{key for ld in lod for key, value in ld.items()}")
+    self.assertTrue(visitor.set_comprehension())
+    self.assertEqual([(2, 7), (3, 0)], visitor.minimum_versions())
+
   def test_dict_comprehension(self):
     visitor = self.visit("{key: value for ld in lod for key, value in ld.items()}")
     self.assertTrue(visitor.dict_comprehension())
@@ -1602,8 +1612,14 @@ file()
 [file() for file in [lambda: None]]
 """))
 
-    self.assertEqual([(0, 0), (0, 0)], self.detect("""
+    # set comprehension requires 2.7, 3.0
+    self.assertEqual([(2, 7), (3, 0)], self.detect("""
 {file() for file in [lambda: None]}
+"""))
+
+    # dict comprehension requires 2.7, 3.0
+    self.assertEqual([(2, 7), (3, 0)], self.detect("""
+{file(): 1 for file in [lambda: None]}
 """))
 
     self.assertEqual([(0, 0), (0, 0)], self.detect("""
