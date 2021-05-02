@@ -653,8 +653,6 @@ class VerminLanguageTests(VerminTest):
 
   @VerminTest.parameterized_args([
     ["with func():\n  pass"],
-    ["with (a, b): pass"],
-    ["with (a, b) as c: pass"],
     ["with a as (b, c): pass"],
     ["with a as b:\n\twith c as d:\n\t\tpass"],
   ])
