@@ -1814,9 +1814,10 @@ ast.Call(func=ast.Name)."""
       self.__add_user_def_node(node.name)
 
     # Names used within `except ..:` should be detected as members being used.
-    for n in ast.walk(node.type):
-      if isinstance(n, ast.Name):
-        self.__add_member(n.id, n.lineno, n.col_offset)
+    if node.type is not None:
+      for n in ast.walk(node.type):
+        if isinstance(n, ast.Name):
+          self.__add_member(n.id, n.lineno, n.col_offset)
 
     self.generic_visit(node)
     self.__user_defs = user_defs_copy

@@ -1677,3 +1677,15 @@ file()
     self.assertEqual([(2, 0), None], self.detect("""
 [file() for w, x[[file for file in [1]][0]] in [(1, 1)]]
 """))
+
+  def test_bare_except_handler(self):
+    # Support having a bare except handler: `node.type` in `visit_ExceptHandler`.
+    try:
+      self.visit("""
+try:
+  pass
+except:
+  pass
+""")
+    except AttributeError:
+      self.fail("Crashed while parsing bare except handler.")
