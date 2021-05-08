@@ -83,15 +83,6 @@ jobs:
         restore-keys: |
           ${{ matrix.os }}-pip-
 
-    - uses: actions/cache@v2
-      with:
-        path: .venv/
-        # Include the python version in the key because it's important since 2.7+3.4+3.5 do not have
-        # a .venv/ so their caches would be empty, and they are faster so they'd be saved first.
-        key: ${{ runner.os }}-venv${{ matrix.python-version }}-coverage3-${{ hashFiles('**/.*-requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-venv${{ matrix.python-version }}-coverage3-
-
     - name: Test and coverage
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -25,11 +25,5 @@ jobs:
         key: ${{ runner.os}}-pip-${{ hashFiles('**/.*-requirements.txt') }}
         restore-keys: |
           ${{ runner.os}}-pip-
-    - uses: actions/cache@v2
-      with:
-        path: .venv/
-        key: ${{ runner.os }}-venv-analysis-${{ hashFiles('**/.*-requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-venv-analysis-
     - name: Analyze
       run: ./misc/actions/analyze.sh
