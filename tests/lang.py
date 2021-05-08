@@ -1467,8 +1467,12 @@ file()
 """))
 
   def test_with_items_ignore_user_def(self):
+    # See `visit_With` for reason for only testing on 3.3+ for first and third test case of this
+    # function.
+
     # Multiple context expressions in a `with` statement is 2.7, 3.1.
-    self.assertEqual([(2, 7), (3, 1)], self.detect("""
+    if current_version() >= (3, 3):
+      self.assertEqual([(2, 7), (3, 1)], self.detect("""
 with False as a, True as file, 42 as b:
   file()
 """))
@@ -1480,7 +1484,8 @@ with ctx() as (file,):
 
     # The user-def passed out of scope, so match `file` as 2, !3 -> 2.7, !3 due to
     # multiple context expressions in a `with` statement.
-    self.assertEqual([(2, 7), None], self.detect("""
+    if current_version() >= (3, 3):
+      self.assertEqual([(2, 7), None], self.detect("""
 with False as a, True as file, 42 as b:
   pass
 file()
