@@ -10,11 +10,11 @@ pkginfo==1.6.1
 Pygments==2.7.4
 pyparsing==2.4.7
 readme-renderer==28.0
-requests==2.24.0
+requests==2.25.1
 requests-toolbelt==0.9.1
 rfc3986==1.4.0
 six==1.15.0
 tqdm==4.51.0
 twine==3.2.0
-urllib3==1.25.11
+urllib3==1.26.5
 webencodings==0.5.1
