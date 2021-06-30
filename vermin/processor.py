@@ -109,7 +109,11 @@ class Processor:
         if ver is not None and ver > (0, 0):
           unique_versions.add(ver)
 
-      config.format().output_result(proc_res)
+      # For violations mode, only show file names and findings if there are any - no empty ones that
+      # do not violate the input targets. This is especially important when scanning many files
+      # since it can be hard to spot violations. Otherwise, show as normal.
+      if not config.only_show_violations() or len(proc_res.text) > 0:
+        config.format().output_result(proc_res)
 
       try:
         mins = combine_versions(mins, proc_res.mins, config)
