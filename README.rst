@@ -9,6 +9,9 @@
 .. |Analyze Status| image:: https://github.com/netromdk/vermin/workflows/Analyze/badge.svg?branch=master
    :target: https://github.com/netromdk/vermin/actions
 
+.. |CodeQL Status| image:: https://github.com/netromdk/vermin/workflows/CodeQL/badge.svg?branch=master
+   :target: https://github.com/netromdk/vermin/security/code-scanning
+
 .. |Coverage| image:: https://coveralls.io/repos/github/netromdk/vermin/badge.svg?branch=master
    :target: https://coveralls.io/github/netromdk/vermin?branch=master
 
