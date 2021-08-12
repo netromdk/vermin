@@ -1549,19 +1549,19 @@ ast.Call(func=ast.Name)."""
       self.generic_visit(node)
     self.__annotations = True
     self.__var_annotations = True
-    self.__vvprint("variable annotations", versions=[None, (3, 6)])
+    self.__vvprint("variable annotations", line=node.lineno, versions=[None, (3, 6)])
     if hasattr(node, "annotation"):
       ann = node.annotation
       if (isinstance(ann, ast.Name) and ann.id == "Final") or \
          (isinstance(ann, ast.Subscript) and hasattr(ann.value, "id") and
            ann.value.id == "Final"):
         self.__final_annotations = True
-        self.__vvprint("final variable annotations", versions=[None, (3, 8)])
+        self.__vvprint("final variable annotations", line=node.lineno, versions=[None, (3, 8)])
       elif (isinstance(ann, ast.Name) and ann.id == "Literal") or \
          (isinstance(ann, ast.Subscript) and hasattr(ann.value, "id") and
            ann.value.id == "Literal"):
         self.__literal_annotations = True
-        self.__vvprint("literal variable annotations", versions=[None, (3, 8)])
+        self.__vvprint("literal variable annotations", line=node.lineno, versions=[None, (3, 8)])
 
   def __check_relaxed_decorators(self, node):
     # Checking for relaxed decorators, i.e. decorators that aren't a dotted name (name or attribute)
