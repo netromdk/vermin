@@ -1,7 +1,7 @@
 import ast
 import io
 import sys
-from tokenize import generate_tokens, COMMENT, NEWLINE, NL
+from tokenize import generate_tokens, COMMENT, NEWLINE, NL, STRING
 
 from .printing import vvprint
 from .utility import version_strings
@@ -37,24 +37,35 @@ class Parser:
       return False
 
     prev_newline = False
+    multiline_string = None
     for token in tokens:
       # <3.0: tuple instance.
       # 3.0+: TokenInfo instance.
       is_tuple = (type(token) == tuple)
       typ = token[0] if is_tuple else token.type
 
-      if typ == COMMENT:
-        if is_tuple:  # pragma: no cover
-          comment, lineno, linecol = token[1], token[2][0], token[2][1]
-        else:
-          comment, lineno, linecol = token.string, token.start[0], token.start[1]
+      if is_tuple:  # pragma: no cover
+        string, lno, lcol, lend = token[1], token[2][0], token[2][1], token[3][0]
+      else:
+        string, lno, lcol, lend = token.string, token.start[0], token.start[1], token.end[0]
+
+      if typ == STRING:
+        string = string.strip()
+        if (string.startswith("\"\"\"") and string.endswith("\"\"\"")) or\
+           (string.startswith("'''") and string.endswith("'''")):
+          multiline_string = (lno, lend)
+      elif typ == COMMENT:
+        # For multi-line strings, any comment marking starts at the beginning and not at the end.
+        if multiline_string is not None and multiline_string[1] == lno:
+          lno = multiline_string[0]
+        multiline_string = None
 
         # Check each comment segment for "novermin" and "novm", not just the start of the whole
         # comment. A comment is alone on a line if the previous token is a newline or the line
         # column is zero.
-        alone = (prev_newline or linecol == 0)
-        any(find_comment(segment.strip(), lineno, alone)
-            for segment in comment[1:].strip().split("#"))
+        alone = (prev_newline or lcol == 0)
+        any(find_comment(segment.strip(), lno, alone)
+            for segment in string[1:].strip().split("#"))
 
       prev_newline = typ in (NEWLINE, NL)
     return novermin

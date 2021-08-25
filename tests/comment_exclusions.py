@@ -359,3 +359,94 @@ class Foo: pass
     else:
       self.assertTrue(visitor.class_decorators())
       self.assertEqual([(2, 6), (3, 0)], visitor.minimum_versions())
+
+  def test_multiline(self):
+    visitor = self.visit('''foo = """
+{}
+""".format('bar') #novm
+''')
+    self.assertFalse(visitor.format27())
+    self.assertIn(1, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    visitor = self.visit('''foo = """{}""".format('bar') #novm
+''')
+    self.assertFalse(visitor.format27())
+    self.assertIn(1, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    visitor = self.visit('''foo = """{}
+""".format('bar') #novm
+''')
+    self.assertFalse(visitor.format27())
+    self.assertIn(1, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    visitor = self.visit("""foo = '''
+{}
+'''.format('bar') #novm
+""")
+    self.assertFalse(visitor.format27())
+    self.assertIn(1, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    visitor = self.visit("""foo = '''{}'''.format('bar') #novm
+""")
+    self.assertFalse(visitor.format27())
+    self.assertIn(1, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    visitor = self.visit("""foo = '''{}
+'''.format('bar') #novm
+""")
+    self.assertFalse(visitor.format27())
+    self.assertIn(1, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    visitor = self.visit('''#novm
+foo = """
+{}
+""".format('bar')
+''')
+    self.assertFalse(visitor.format27())
+    self.assertIn(2, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    visitor = self.visit('''#novm
+foo = """{}""".format('bar')
+''')
+    self.assertFalse(visitor.format27())
+    self.assertIn(2, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    visitor = self.visit('''#novm
+foo = """{}
+""".format('bar')
+''')
+    self.assertFalse(visitor.format27())
+    self.assertIn(2, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    visitor = self.visit("""#novm
+foo = '''
+{}
+'''.format('bar')
+""")
+    self.assertFalse(visitor.format27())
+    self.assertIn(2, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    visitor = self.visit("""#novm
+foo = '''{}'''.format('bar')
+""")
+    self.assertFalse(visitor.format27())
+    self.assertIn(2, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    visitor = self.visit("""#novm
+foo = '''{}
+'''.format('bar')
+""")
+    self.assertFalse(visitor.format27())
+    self.assertIn(2, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
