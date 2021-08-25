@@ -12,6 +12,7 @@ from .utility import dotted_name, reverse_range, combine_versions, remove_whites
 
 STRFTIME_DIRECTIVE_REGEX = re.compile(r"%(?:[-\.\d#\s\+])*(\w)")
 BYTES_DIRECTIVE_REGEX = STRFTIME_DIRECTIVE_REGEX
+STR_27_FORMAT_REGEX = re.compile(r"(?<!{){}(?!})")
 
 def is_int_node(node):
   return (isinstance(node, ast.Num) and isinstance(node.n, int)) or \
@@ -1100,8 +1101,11 @@ class SourceVisitor(ast.NodeVisitor):
         attr = func.attr
         if attr == "format" and hasattr(func, "value") and isinstance(func.value, ast.Str) and \
            "{}" in func.value.s:
-          self.__vvprint("`\"..{}..\".format(..)`", versions=[(2, 7), (3, 0)])
-          self.__format27 = True
+          # There cannot be "{" before or "}" after an occurrence of "{}" since "{{}}" means simply
+          # an escaped "{}" and won't be replaced.
+          if STR_27_FORMAT_REGEX.search(func.value.s) is not None:
+            self.__vvprint("`\"..{}..\".format(..)`", versions=[(2, 7), (3, 0)])
+            self.__format27 = True
         elif attr in ("strftime", "strptime") and hasattr(node, "args"):
           for arg in node.args:
             if hasattr(arg, "s"):

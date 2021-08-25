@@ -48,6 +48,11 @@ class VerminLanguageTests(VerminTest):
     self.assertTrue(visitor.format27())
     self.assertOnlyIn(((2, 7), (3, 0)), visitor.minimum_versions())
 
+    # "{0}" is py 2.6. "{{}}" simply yields "{}" as a string value.
+    visitor = self.visit("'{{}} {0}'.format('test')")
+    self.assertFalse(visitor.format27())
+    self.assertOnlyIn(((2, 6), (3, 0)), visitor.minimum_versions())
+
     # Ensure regular str formatting is ~2, ~3.
     visitor = self.visit("'%x' % 66")
     self.assertFalse(visitor.format27())
