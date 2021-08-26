@@ -142,6 +142,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__module_dir_func = False
     self.__module_getattr_func = False
     self.__pattern_matching = False
+    self.__union_types = False
     self.__builtin_types = {"dict", "set", "list", "unicode", "str", "int", "float", "long",
                             "bytes"}
     self.__codecs_encodings_kwargs = ("encoding", "data_encoding", "file_encoding")
@@ -352,6 +353,9 @@ class SourceVisitor(ast.NodeVisitor):
   def module_getattr_func(self):
     return self.__module_getattr_func
 
+  def union_types(self):
+    return self.__union_types
+
   def pattern_matching(self):
     return self.__pattern_matching
 
@@ -536,9 +540,11 @@ class SourceVisitor(ast.NodeVisitor):
     if self.relaxed_decorators():
       mins = self.__add_versions_entity(mins, (None, (3, 9)), "relaxed decorators")
 
-
     if self.pattern_matching():
       mins = self.__add_versions_entity(mins, (None, (3, 10)), "pattern matching")
+
+    if self.union_types():
+      mins = self.__add_versions_entity(mins, (None, (3, 10)), "union types as `X | Y`")
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
@@ -1268,6 +1274,11 @@ ast.Call(func=ast.Name)."""
       if (left_dict or left_special) and (right_dict or right_special):
         has_du()
 
+      if isinstance(node.left, ast.Name) and isinstance(node.right, ast.Name) and \
+         node.left.id not in self.__name_res and node.right.id not in self.__name_res:
+        self.__union_types = True
+        self.__vvprint("union types as `X | Y`", line=node.lineno, versions=[None, (3, 10)])
+
     self.generic_visit(node)
 
   def visit_Constant(self, node):
@@ -1539,16 +1550,29 @@ ast.Call(func=ast.Name)."""
     self.__add_user_def_node(node.target)
     self.__add_name_res_assign_node(node)
 
-    # Example:
-    # AugAssign(target=Name(id='d', ctx=Store()),
-    #           op=BitOr(),
-    #           value=Dict(keys=[Constant(value='b')], values=[Constant(value=2)]))
-    if isinstance(node.op, ast.BitOr) and self.__is_dict(node.value):
-      full_name = self.__resolve_full_name(node.target)
-      if full_name in DICT_UNION_MERGE_SUPPORTED_TYPES or self.__is_dict(node.target):
-        self.__dict_union_merge = True
-        self.__vvprint("dict union merge (dict var |= dict)", line=node.lineno,
-                       versions=[None, (3, 9)])
+    # |=
+    if isinstance(node.op, ast.BitOr):
+      # Example:
+      # AugAssign(target=Name(id='d', ctx=Store()),
+      #           op=BitOr(),
+      #           value=Dict(keys=[Constant(value='b')], values=[Constant(value=2)]))
+      if self.__is_dict(node.value):
+        full_name = self.__resolve_full_name(node.target)
+        if full_name in DICT_UNION_MERGE_SUPPORTED_TYPES or self.__is_dict(node.target):
+          self.__dict_union_merge = True
+          self.__vvprint("dict union merge (dict var |= dict)", line=node.lineno,
+                         versions=[None, (3, 9)])
+
+      # Example:
+      # Assign(targets=[Name(id='a', ctx=Store())],
+      #        value=Name(id='str', ctx=Load()))
+      # AugAssign(target=Name(id='a', ctx=Store()),
+      #           op=BitOr(),
+      #           value=Name(id='int', ctx=Load()))
+      elif isinstance(node.value, ast.Name) and node.value.id not in self.__name_res and\
+           isinstance(node.target, ast.Name) and node.target.id not in self.__name_res:
+        self.__union_types = True
+        self.__vvprint("union types as `a = X; a |= Y`", line=node.lineno, versions=[None, (3, 10)])
 
     self.generic_visit(node)
 
@@ -1763,9 +1787,10 @@ ast.Call(func=ast.Name)."""
       all_args.append(node.kwarg)
 
     for arg in all_args:
-      self.__add_user_def_node(arg)
-      if hasattr(arg, "arg"):
-        self.__add_user_def_node(arg.arg)
+      if arg:
+        self.__add_user_def_node(arg)
+        if hasattr(arg, "arg"):
+          self.__add_user_def_node(arg.arg)
 
     self.generic_visit(node)
 
