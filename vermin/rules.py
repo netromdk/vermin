@@ -3152,6 +3152,7 @@ KWARGS_REQS = {
   ("xmlrpclib.ServerProxy", "context"): ((2, 7), None),
   ("xmlrpclib.ServerProxy", "use_datetime"): ((2, 5), None),
   ("xmlrpclib.loads", "use_datetime"): ((2, 5), None),
+  ("zip", "strict"): (None, (3, 10)),
   ("zipapp.create_archive", "compressed"): (None, (3, 7)),
   ("zipapp.create_archive", "filter"): (None, (3, 7)),
   ("zipfile.PyZipFile", "optimize"): (None, (3, 2)),

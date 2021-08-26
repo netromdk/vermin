@@ -3400,3 +3400,6 @@ class VerminKwargsTests(VerminTest):
 
   def test_mod_of_pow(self):
     self.assertOnlyIn((3, 8), self.detect("pow(mod=None)"))
+
+  def test_strict_of_zip(self):
+    self.assertOnlyIn((3, 10), self.detect("zip(strict=True)"))
