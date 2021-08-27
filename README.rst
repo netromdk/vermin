@@ -87,8 +87,9 @@ error handler names, encodings, ``%`` formatting and directives for bytes and by
 statement, multiple context expressions in a ``with`` statement, unpacking assignment, generalized
 unpacking, ellipsis literal (`...`) out of slices, dictionary union (``{..} | {..}``), dictionary
 union merge (``a = {..}; a |= {..}``), builtin generic type annotations (``list[str]``), function
-decorators, class decorators and relaxed decorators. It tries to detect and ignore user-defined
-functions, classes, arguments, and variables with names that clash with library-defined symbols.
+decorators, class decorators, relaxed decorators, and pattern matching with ``match``. It tries to
+detect and ignore user-defined functions, classes, arguments, and variables with names that clash
+with library-defined symbols.
 
 Caveats
 =======
@@ -262,8 +263,8 @@ Will yield "f-strings require 3.6+" even though the branch will not be evaluated
 
 The lax mode, via argument ``--lax``, was created to circumvent cases like this. *But it's not a
 perfect solution* since it will skip all ``if``, ternarys, ``for``, ``async for``, ``while``,
-``with``, ``try``, and boolean operations. Therefore it is recommended to run with and without lax
-mode to get a better understanding of individual cases.
+``with``, ``try``, boolean operations, and ``match``. Therefore it is recommended to run with and
+without lax mode to get a better understanding of individual cases.
 
 Analysis Exclusions
 ===================

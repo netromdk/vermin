@@ -1694,3 +1694,20 @@ except:
 """)
     except AttributeError:
       self.fail("Crashed while parsing bare except handler.")
+
+  @VerminTest.skipUnlessVersion(3, 10)
+  def test_pattern_matching(self):
+    visitor = self.visit("""
+def http_error(status):
+  match status:
+    case 400:
+      return "Bad request"
+    case 404:
+      return "Not found"
+    case 418:
+      return "I'm a teapot"
+    case _:
+      return "Something's wrong with the internet"
+""")
+    self.assertTrue(visitor.pattern_matching())
+    self.assertOnlyIn((3, 10), visitor.minimum_versions())

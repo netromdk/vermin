@@ -141,6 +141,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__relaxed_decorators = False
     self.__module_dir_func = False
     self.__module_getattr_func = False
+    self.__pattern_matching = False
     self.__builtin_types = {"dict", "set", "list", "unicode", "str", "int", "float", "long",
                             "bytes"}
     self.__codecs_encodings_kwargs = ("encoding", "data_encoding", "file_encoding")
@@ -351,6 +352,9 @@ class SourceVisitor(ast.NodeVisitor):
   def module_getattr_func(self):
     return self.__module_getattr_func
 
+  def pattern_matching(self):
+    return self.__pattern_matching
+
   def __violates_target_versions(self, versions):
     # If only violations isn't turned on then fake violations because it means it will show the
     # rule.
@@ -531,6 +535,10 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.relaxed_decorators():
       mins = self.__add_versions_entity(mins, (None, (3, 9)), "relaxed decorators")
+
+
+    if self.pattern_matching():
+      mins = self.__add_versions_entity(mins, (None, (3, 10)), "pattern matching")
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
@@ -1995,6 +2003,13 @@ ast.Call(func=ast.Name)."""
           if is_ellipsis_node(n):
             self.__ellipsis_nodes_in_slices.add(n)
 
+    self.generic_visit(node)
+
+  def visit_Match(self, node):
+    if self.__config.lax() or self.__is_no_line(node.lineno):
+      return
+    self.__pattern_matching = True
+    self.__vvprint("pattern matching", line=node.lineno, versions=[None, (3, 10)])
     self.generic_visit(node)
 
   # Lax mode and comment-excluded lines skip conditional blocks if enabled.
