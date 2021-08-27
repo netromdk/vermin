@@ -267,6 +267,9 @@ class VerminClassMemberTests(VerminTest):
   def test_AsyncExitStack_of_contextlib(self):
     self.assertOnlyIn((3, 7), self.detect("from contextlib import AsyncExitStack"))
 
+  def test_AsyncContextDecorator_of_contextlib(self):
+    self.assertOnlyIn((3, 10), self.detect("from contextlib import AsyncContextDecorator"))
+
   def test_unix_dialect_of_csv(self):
     self.assertOnlyIn((3, 2), self.detect("from csv import unix_dialect"))
 
@@ -542,6 +545,9 @@ class VerminClassMemberTests(VerminTest):
     self.assertOnlyIn((3, 8), self.detect("from typing import TypedDict"))
     self.assertTrue(self.config.add_backport("typing"))
     self.assertOnlyIn(((2, 7), (3, 8)), self.detect("from typing import TypedDict"))
+
+  def test_ParamSpec_of_typing(self):
+    self.assertOnlyIn((3, 10), self.detect("from typing import ParamSpec"))
 
   def test_SMTP_SSL_of_smtplib(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from smtplib import SMTP_SSL"))

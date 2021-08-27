@@ -474,7 +474,8 @@ class VerminLanguageTests(VerminTest):
 
   @VerminTest.skipUnlessVersion(3, 7)
   def test_async_comprehension(self):
-    self.assertOnlyIn((3, 7), self.detect("[i async for i in aiter() if i % 2]"))
+    self.assertOnlyIn((3, 7), self.detect("[i async for i in iter() if i % 2]"))
+    self.assertOnlyIn((3, 10), self.detect("[i async for i in aiter() if i % 2]"))
 
   @VerminTest.skipUnlessVersion(3, 7)
   def test_await_in_comprehension(self):

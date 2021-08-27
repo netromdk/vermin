@@ -441,3 +441,15 @@ class VerminModuleTests(VerminTest):
 
   def test_test_support_bytecode_helper(self):
     self.assertOnlyIn((3, 9), self.detect("import test.support.bytecode_helper"))
+
+  def test_test_support_threading_helper(self):
+    self.assertOnlyIn((3, 10), self.detect("import test.support.threading_helper"))
+
+  def test_test_support_os_helper(self):
+    self.assertOnlyIn((3, 10), self.detect("import test.support.os_helper"))
+
+  def test_test_support_import_helper(self):
+    self.assertOnlyIn((3, 10), self.detect("import test.support.import_helper"))
+
+  def test_test_support_warnings_helper(self):
+    self.assertOnlyIn((3, 10), self.detect("import test.support.warnings_helper"))
