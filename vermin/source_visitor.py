@@ -1742,6 +1742,7 @@ ast.Call(func=ast.Name)."""
     if self.__is_no_line(node.lineno):
       return
     self.__add_user_def(node.name)
+
     if getattr(node, "decorator_list", None):
       decos = node.decorator_list
       # Exclude only if all decorators are excluded, otherwise the class decorator version
@@ -1751,7 +1752,11 @@ ast.Call(func=ast.Name)."""
         self.__class_decorators = True
         self.__vvprint("class decorators", line=deco_line, versions=[(2, 6), (3, 0)])
         self.__check_relaxed_decorators(node)
+
     self.generic_visit(node)
+    # Some nodes aren't visited via `self.generic_visit(node)` so it is done explicitly.
+    for n in node.body:
+      self.generic_visit(n)
 
   def visit_NameConstant(self, node):
     if node.value is True or node.value is False:  # pragma: no cover
