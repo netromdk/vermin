@@ -822,13 +822,13 @@ class SourceVisitor(ast.NodeVisitor):
         if hasattr(attr, "func") and hasattr(attr.func, "id"):
           full_name.append(attr.func.id)
       elif not primi_type and isinstance(attr, ast.Dict):
-        if len(full_name) == 0 or (full_name[0] != "dict" and len(full_name) == 1):
+        if len(full_name) == 0 or (full_name[0] != "dict" and full_name[-1] != "dict"):
           full_name.append("dict")
       elif not primi_type and isinstance(attr, ast.Set):
-        if len(full_name) == 0 or (full_name[0] != "set" and len(full_name) == 1):
+        if len(full_name) == 0 or (full_name[0] != "set" and full_name[-1] != "set"):
           full_name.append("set")
       elif not primi_type and isinstance(attr, ast.List):
-        if len(full_name) == 0 or (full_name[0] != "list" and len(full_name) == 1):
+        if len(full_name) == 0 or (full_name[0] != "list" and full_name[-1] != "list"):
           full_name.append("list")
       elif not primi_type and isinstance(attr, ast.Str):
         # pylint: disable=undefined-variable
@@ -1160,6 +1160,15 @@ class SourceVisitor(ast.NodeVisitor):
         # Try as a fully-qualified name.
         else:
           self.__add_member(dotted_name([res, full_name[1:]]), line)
+
+        # Check for two-tier names, like
+        #   d = {}        <- "dict"
+        #   i = d.items() <- "dict.items"
+        #   i.mapping     <- "dict.items.mapping"
+        parts = res.split(".")
+        if len(parts) > 0 and parts[0] in self.__name_res:
+          res2 = self.__name_res[parts[0]]
+          self.__add_member(dotted_name([res2, parts[1:], full_name[1:]]), line)
     self.generic_visit(node)
 
   def visit_keyword(self, node):

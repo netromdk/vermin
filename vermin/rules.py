@@ -557,6 +557,11 @@ def MOD_MEM_REQS(config):
     "memoryview.nbytes": (None, (3, 3)),
     "memoryview.obj": (None, (3, 3)),
 
+    # Dict view constants (via `dict.keys()`, `dict.values()`, or `dict.items()`)
+    "dict.items.mapping": (None, (3, 10)),
+    "dict.keys.mapping": (None, (3, 10)),
+    "dict.values.mapping": (None, (3, 10)),
+
     # Functions
     "ConfigParser.SafeConfigParser.set": ((2, 4), None),
     "EasyDialogs.GetArgv": ((2, 0), None),
