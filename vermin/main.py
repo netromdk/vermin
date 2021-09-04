@@ -50,7 +50,7 @@ def main():
 
   try:
     processor = Processor()
-    (mins, incomp, unique_versions, backports) =\
+    (mins, incomp, unique_versions, backports, used_novermin) =\
       processor.process(paths, config, config.processes())
   except KeyboardInterrupt:  # pragma: no cover
     print("Aborting..")
@@ -81,6 +81,10 @@ def main():
            config)
     nprint("If so, try using the following for better results: {}\n".
            format("".join([" --backport {}".format(n) for n in unique_bps]).strip()), config)
+
+  if not used_novermin and config.show_tips() and config.parse_comments():
+    nprint("Tip: Since '# novm' or '# novermin' weren't used, a speedup can be achieved using: "
+           "--no-parse-comments", config)
 
   if parsable:  # pragma: no cover
     print(config.format().format_output_line(msg=None, path=None, versions=mins))

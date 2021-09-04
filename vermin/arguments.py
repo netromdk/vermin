@@ -124,6 +124,12 @@ class Arguments:
             "        otherwise forces evaluation of annotations.")
       print("\n  --no-eval-annotations (default)\n"
             "        Disable annotations evaluation.")
+      print("\n  --parse-comments (default)\n"
+            "        Parse for comments to influence exclusion of code for analysis via\n"
+            "        \"# novm\" and \"# novermin\".")
+      print("\n  --no-parse-comments\n"
+            "        Don't parse for comments. Not parsing comments can sometimes yield a speedup\n"
+            "        of 30-40%+.")
       print("\n  --format <name> | -f <name>\n"
             "        Format to show results and output in.\n"
             "        Supported formats:\n{}".format(formats.help_str(10)))
@@ -338,6 +344,12 @@ class Arguments:
         path_pos += 1
       elif arg == "--no-violations":
         config.set_only_show_violations(False)
+        path_pos += 1
+      elif arg == "--parse-comments":
+        config.set_parse_comments(True)
+        path_pos += 1
+      elif arg == "--no-parse-comments":
+        config.set_parse_comments(False)
         path_pos += 1
 
     if fmt is not None:

@@ -450,3 +450,12 @@ foo = '''{}
     self.assertFalse(visitor.format27())
     self.assertIn(2, visitor.no_lines())
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+  def test_not_parsing_comments(self):
+    self.config.set_parse_comments(False)
+
+    visitor = self.visit("# novm\nimport email.parser.FeedParser")
+    self.assertEqual([(2, 4), (3, 0)], visitor.minimum_versions())
+
+    visitor = self.visit("import email.parser.FeedParser  # novm")
+    self.assertEqual([(2, 4), (3, 0)], visitor.minimum_versions())

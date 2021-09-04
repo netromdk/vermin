@@ -93,6 +93,7 @@ class Processor:
 
     unique_versions = set()
     all_backports = set()
+    used_novermin = False
     for proc_res in act():
       # Ignore paths that didn't contain python code.
       if proc_res is None:
@@ -108,6 +109,8 @@ class Processor:
       for ver in proc_res.mins:
         if ver is not None and ver > (0, 0):
           unique_versions.add(ver)
+
+      used_novermin |= (len(proc_res.novermin) > 0)
 
       # For violations mode, only show file names and findings if there are any - no empty ones that
       # do not violate the input targets. This is especially important when scanning many files
@@ -126,4 +129,4 @@ class Processor:
 
     unique_versions = list(unique_versions)
     unique_versions.sort()
-    return (mins, incomp, unique_versions, all_backports)
+    return (mins, incomp, unique_versions, all_backports, used_novermin)

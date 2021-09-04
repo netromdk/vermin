@@ -303,6 +303,10 @@ can be defined by having ``#`` for each comment "segment":
   if hasattr(ssl, "PROTOCOL_TLS"):  # noqa # novermin # pylint: disable=no-member
     tls_version = ssl.PROTOCOL_TLS
 
+Note that if a code base does not have any occurrences of ``# novermin`` or ``# novm``, speedups up
+to 30-40%+ can be achieved by using the ``--no-parse-comments`` argument or ``parse_comments = no``
+config setting.
+
 Contributing
 ============
 

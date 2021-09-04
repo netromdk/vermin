@@ -301,17 +301,21 @@ test.py:6:9:2.7:3.2:'argparse' module
   def test_detect_vermin_min_versions(self):
     paths = detect_paths([abspath("vermin")])
     processor = Processor()
-    (mins, _incomp, _unique_versions, backports) = processor.process(paths, self.config)
+    (mins, _incomp, _unique_versions, backports, used_novermin) =\
+      processor.process(paths, self.config)
     self.assertOnlyIn(((2, 7), (3, 0)), mins)
     self.assertEmpty(backports)
+    self.assertTrue(used_novermin)
 
   def test_detect_vermin_min_versions_parsable(self):
     paths = detect_paths([abspath("vermin")])
     processor = Processor()
     self.config.set_format(ParsableFormat())
-    (mins, _incomp, _unique_versions, backports) = processor.process(paths, self.config)
+    (mins, _incomp, _unique_versions, backports, used_novermin) =\
+      processor.process(paths, self.config)
     self.assertOnlyIn(((2, 7), (3, 0)), mins)
     self.assertEmpty(backports)
+    self.assertTrue(used_novermin)
 
   @VerminTest.parameterized_args([
     ([(2, 0), (3, 0)], [(2, 0), (3, 1)], [(2, 0), (3, 1)]),
@@ -739,11 +743,13 @@ urlopen(context=None)
     fp.close()
     paths = [fp.path()]
     processor = Processor()
-    (mins, incomp, unique_versions, backports) = processor.process(paths, self.config)
+    (mins, incomp, unique_versions, backports, used_novermin) =\
+      processor.process(paths, self.config)
     self.assertEqual(mins, [(0, 0), (0, 0)])
     self.assertFalse(incomp)
     self.assertEmpty(unique_versions)
     self.assertEmpty(backports)
+    self.assertFalse(used_novermin)
 
   def test_processor_incompatible(self):
     fp = ScopedTemporaryFile()
@@ -752,11 +758,13 @@ urlopen(context=None)
     fp.close()
     paths = [fp.path()]
     processor = Processor()
-    (mins, incomp, unique_versions, backports) = processor.process(paths, self.config)
+    (mins, incomp, unique_versions, backports, used_novermin) =\
+      processor.process(paths, self.config)
     self.assertEqual(mins, [(0, 0), (0, 0)])
     self.assertTrue(incomp)
     self.assertEmpty(unique_versions)
     self.assertEmpty(backports)
+    self.assertFalse(used_novermin)
 
   def test_processor_separately_incompatible(self):
     paths = []
@@ -771,14 +779,32 @@ urlopen(context=None)
       paths.append(fp.name)
 
     processor = Processor()
-    (mins, incomp, unique_versions, backports) = processor.process(paths, self.config)
+    (mins, incomp, unique_versions, backports, used_novermin) =\
+      processor.process(paths, self.config)
     self.assertEqual(mins, [(2, 0), None])  # Because the Queue file is analyzed first.
     self.assertTrue(incomp)
     self.assertEqual(unique_versions, [(2, 0), (3, 0)])
     self.assertEmpty(backports)
+    self.assertFalse(used_novermin)
 
     for path in paths:
       os.remove(path)
+
+  def test_processor_used_novermin(self):
+    fp = ScopedTemporaryFile()
+    fp.writeln(b"import Queue  # novm")  # 2.0, !3
+    fp.writeln(b"import builtins")       # !2, 3.0
+    fp.close()
+    paths = [fp.path()]
+    processor = Processor()
+    (mins, incomp, unique_versions, backports, used_novermin) =\
+      processor.process(paths, self.config)
+    print(mins)
+    self.assertEqual(mins, [None, (3, 0)])
+    self.assertFalse(incomp)
+    self.assertEqual(unique_versions, [(3, 0)])
+    self.assertEmpty(backports)
+    self.assertTrue(used_novermin)
 
   def test_processor_indent_show_output_text(self):
     self.config.set_verbose(4)  # Ensure output text.
@@ -798,7 +824,8 @@ print('hello')     # print(expr) requires 2+ or 3+
     fp.close()
     paths = [fp.path()]
     processor = Processor()
-    (mins, incomp, unique_versions, backports) = processor.process(paths, self.config)
+    (mins, incomp, unique_versions, backports, used_novermin) =\
+      processor.process(paths, self.config)
 
     if current_version() >= (3, 0):
       self.assertEqual(mins, [(2, 0), (3, 0)])
@@ -809,6 +836,7 @@ print('hello')     # print(expr) requires 2+ or 3+
 
     self.assertFalse(incomp)
     self.assertEmpty(backports)
+    self.assertFalse(used_novermin)
 
   # Since python 3.8+, the multiprocessing context on macOS started using spawn() instead of fork(),
   # which means that the concurrently run functionality doesn't inherit the same information. It was
@@ -821,11 +849,13 @@ print('hello')     # print(expr) requires 2+ or 3+
     self.config.add_backport("argparse")  # -> 2.3, 3.1
     paths = [fp.path()]
     processor = Processor()
-    (mins, incomp, unique_versions, backports) = processor.process(paths, self.config)
+    (mins, incomp, unique_versions, backports, used_novermin) =\
+      processor.process(paths, self.config)
     self.assertEqual(mins, [(2, 3), (3, 1)])
     self.assertFalse(incomp)
     self.assertEqual(unique_versions, [(2, 3), (3, 1)])
     self.assertEqual(backports, {"argparse"})
+    self.assertFalse(used_novermin)
 
   def test_format_title_descs(self):
     descs = (

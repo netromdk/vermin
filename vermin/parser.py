@@ -11,10 +11,12 @@ class Parser:
     self.__source = source
     self.__path = "<unknown>" if path is None else path
 
-  def parse(self):
+  def parse(self, parse_comments=True):
     """Parse python source into an AST."""
     node = ast.parse(self.__source, filename=self.__path)
-    novermin = self.comments()
+    novermin = set()
+    if parse_comments:
+      novermin = self.comments()
     return (node, novermin)
 
   def comments(self):
@@ -74,7 +76,7 @@ class Parser:
     """Parse python source into an AST and yield minimum versions."""
     assert(config is not None)
     try:
-      (node, novermin) = self.parse()
+      (node, novermin) = self.parse(config.parse_comments())
       return (node, [], novermin)
     except SyntaxError as err:
       text = err.text.strip() if err.text is not None else ""

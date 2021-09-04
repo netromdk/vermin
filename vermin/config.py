@@ -35,6 +35,7 @@ class Config:
     self.__targets = []
     self.__eval_annotations = False
     self.__only_show_violations = False
+    self.__parse_comments = True
     self.set_format(DefaultFormat())
 
   def override_from(self, other_config):
@@ -53,6 +54,7 @@ class Config:
     self.__targets = other_config.targets()
     self.__eval_annotations = other_config.eval_annotations()
     self.__only_show_violations = other_config.only_show_violations()
+    self.__parse_comments = other_config.parse_comments()
     self.set_format(other_config.format())
 
   def __repr__(self):
@@ -72,12 +74,13 @@ class Config:
   targets = {}
   eval_annotations = {}
   only_show_violations = {}
+  parse_comments = {}
   format = {}
 )""".format(self.__class__.__name__, self.quiet(), self.verbose(), self.print_visits(),
             self.processes(), self.ignore_incomp(), self.lax(), self.pessimistic(),
             self.show_tips(), self.analyze_hidden(), self.exclusions(), list(self.backports()),
             list(self.features()), self.targets(), self.eval_annotations(),
-            self.only_show_violations(), self.format().name())
+            self.only_show_violations(), self.parse_comments(), self.format().name())
 
   @staticmethod
   def parse_file(path):
@@ -122,6 +125,7 @@ class Config:
       "targets": encode_list(config.targets()),
       "eval_annotations": str(config.eval_annotations()),
       "only_show_violations": str(config.only_show_violations()),
+      "parse_comments": str(config.parse_comments()),
       "format": config.format().name(),
     }, allow_no_value=True)
 
@@ -175,6 +179,7 @@ class Config:
     config.set_analyze_hidden(getbool("analyze_hidden"))
     config.set_eval_annotations(getbool("eval_annotations"))
     config.set_only_show_violations(getbool("only_show_violations"))
+    config.set_parse_comments(getbool("parse_comments"))
 
     for exclusion in getstringlist("exclusions"):
       config.add_exclusion(exclusion)
@@ -407,3 +412,9 @@ and a version tuple: [exact, (x, y)]. But it can also be a version tuple (x, y) 
 
   def set_only_show_violations(self, violations):
     self.__only_show_violations = violations
+
+  def parse_comments(self):
+    return self.__parse_comments
+
+  def set_parse_comments(self, parse):
+    self.__parse_comments = parse

@@ -26,6 +26,7 @@ class VerminConfigTests(VerminTest):
     self.assertEqual("default", self.config.format().name())
     self.assertFalse(self.config.eval_annotations())
     self.assertFalse(self.config.only_show_violations())
+    self.assertTrue(self.config.parse_comments())
 
   def test_override_from(self):
     other = Config()
@@ -45,6 +46,7 @@ class VerminConfigTests(VerminTest):
     other.set_format(vermin.formats.ParsableFormat())
     other.set_eval_annotations(True)
     other.set_only_show_violations(True)
+    other.set_parse_comments(False)
 
     self.config.override_from(other)
     self.assertEqual(other.quiet(), self.config.quiet())
@@ -63,6 +65,7 @@ class VerminConfigTests(VerminTest):
     self.assertEqual(other.format(), self.config.format())
     self.assertEqual(other.eval_annotations(), self.config.eval_annotations())
     self.assertEqual(other.only_show_violations(), self.config.only_show_violations())
+    self.assertEqual(other.parse_comments(), self.config.parse_comments())
 
   def test_repr(self):
     self.assertEqual(str(self.config), """{}(
@@ -81,13 +84,15 @@ class VerminConfigTests(VerminTest):
   targets = {}
   eval_annotations = {}
   only_show_violations = {}
+  parse_comments = {}
   format = {}
 )""".format(self.config.__class__.__name__, self.config.quiet(), self.config.verbose(),
             self.config.print_visits(), self.config.processes(), self.config.ignore_incomp(),
             self.config.lax(), self.config.pessimistic(), self.config.show_tips(),
             self.config.analyze_hidden(), self.config.exclusions(), list(self.config.backports()),
             list(self.config.features()), self.config.targets(), self.config.eval_annotations(),
-            self.config.only_show_violations(), self.config.format().name()))
+            self.config.only_show_violations(), self.config.parse_comments(),
+            self.config.format().name()))
 
   @VerminTest.parameterized_args([
     [u""],
@@ -550,3 +555,22 @@ only_show_violations = False
       self.config.add_exclusion("x")
     except AttributeError:
       self.fail("Crashed while adding exclusion.")
+
+  @VerminTest.parameterized_args([
+    [u"""[vermin]
+parse_comments =
+""", True],
+    [u"""[vermin]
+#parse_comments = True
+""", True],
+    [u"""[vermin]
+parse_comments = True
+""", True],
+    [u"""[vermin]
+parse_comments = False
+""", False],
+  ])
+  def test_parse_parse_comments(self, data, expected):
+    config = Config.parse_data(data)
+    self.assertIsNotNone(config)
+    self.assertEqual(config.parse_comments(), expected)

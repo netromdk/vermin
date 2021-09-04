@@ -439,3 +439,13 @@ pessimistic = yes
     self.config.set_only_show_violations(True)
     self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--no-violations"]))
     self.assertFalse(self.config.only_show_violations())
+
+  def test_parse_comments(self):
+    self.config.set_parse_comments(False)
+    self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--parse-comments"]))
+    self.assertTrue(self.config.parse_comments())
+
+  def test_no_parse_comments(self):
+    self.config.set_parse_comments(True)
+    self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--no-parse-comments"]))
+    self.assertFalse(self.config.parse_comments())
