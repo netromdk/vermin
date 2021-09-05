@@ -174,16 +174,19 @@ test.py:6:9:2.7:3.2:'argparse' module
     depth = 0
     hidden = False
     ignore_chars = []
-    (accepted, further_args) = detect_paths_incremental(([tmp_fld], depth, hidden, ignore_chars))
+    scan_symlink_folders = False
+    (accepted, further_args) =\
+      detect_paths_incremental(([tmp_fld], depth, hidden, ignore_chars, scan_symlink_folders))
 
     self.assertEmpty(accepted)
     self.assertEqual(len(further_args), 1)
 
-    (paths, depth, hidden, ignore_chars) = further_args[0]
+    (paths, depth, hidden, ignore_chars, scan_symlink_folders) = further_args[0]
     self.assertEqualItems(paths, [files[1], files[3]])
     self.assertEqual(depth, 1)
     self.assertFalse(hidden)
     self.assertEmpty(ignore_chars)
+    self.assertFalse(scan_symlink_folders)
 
     rmtree(tmp_fld)
 
@@ -195,16 +198,19 @@ test.py:6:9:2.7:3.2:'argparse' module
     depth = 0
     hidden = True
     ignore_chars = []
-    (accepted, further_args) = detect_paths_incremental(([tmp_fld], depth, hidden, ignore_chars))
+    scan_symlink_folders = False
+    (accepted, further_args) = \
+      detect_paths_incremental(([tmp_fld], depth, hidden, ignore_chars, scan_symlink_folders))
 
     self.assertEmpty(accepted)
     self.assertEqual(len(further_args), 1)
 
-    (paths, depth, hidden, ignore_chars) = further_args[0]
+    (paths, depth, hidden, ignore_chars, scan_symlink_folders) = further_args[0]
     self.assertEqualItems(paths, [files[0], files[1], files[2], files[3]])
     self.assertEqual(depth, 1)
     self.assertTrue(hidden)
     self.assertEmpty(ignore_chars)
+    self.assertFalse(scan_symlink_folders)
 
     rmtree(tmp_fld)
 
@@ -218,7 +224,9 @@ test.py:6:9:2.7:3.2:'argparse' module
     depth = 0
     hidden = False
     ignore_chars = []
-    (accepted, further_args) = detect_paths_incremental((files, depth, hidden, ignore_chars))
+    scan_symlink_folders = False
+    (accepted, further_args) =\
+      detect_paths_incremental((files, depth, hidden, ignore_chars, scan_symlink_folders))
 
     self.assertEqualItems(accepted, files)
     self.assertEmpty(further_args)
@@ -229,8 +237,9 @@ test.py:6:9:2.7:3.2:'argparse' module
     depth = 0
     hidden = False
     ignore_chars = []
+    scan_symlink_folders = False
     (accepted, further_args) = detect_paths_incremental((["i-do-not-exist"], depth, hidden,
-                                                        ignore_chars))
+                                                         ignore_chars, scan_symlink_folders))
     self.assertEmpty(accepted)
     self.assertEmpty(further_args)
 
@@ -238,8 +247,9 @@ test.py:6:9:2.7:3.2:'argparse' module
     depth = 0
     hidden = False
     ignore_chars = []
+    scan_symlink_folders = False
     (accepted, further_args) = detect_paths_incremental(([".i-start-with-dot"], depth, hidden,
-                                                         ignore_chars))
+                                                         ignore_chars, scan_symlink_folders))
     self.assertEmpty(accepted)
     self.assertEmpty(further_args)
 

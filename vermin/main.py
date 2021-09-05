@@ -34,7 +34,8 @@ def main():
     ignore_chars = [":", "\n"]
 
   paths = list(set(detect_paths(paths, hidden=config.analyze_hidden(),
-                                processes=config.processes(), ignore_chars=ignore_chars)))
+                                processes=config.processes(), ignore_chars=ignore_chars,
+                                scan_symlink_folders=config.scan_symlink_folders())))
   paths.sort()
 
   amount = len(paths)

@@ -1,5 +1,5 @@
-from stat import S_ISDIR, S_ISREG
-from os import listdir, stat
+from stat import S_ISDIR, S_ISREG, S_ISLNK
+from os import listdir, stat, lstat
 from os.path import abspath, join, splitext
 from multiprocessing import Pool, cpu_count
 
@@ -453,10 +453,27 @@ def probably_python_file(path):
 
   return False
 
+# Only invoke os.lstat() once per path. Instead of twice via a call to isdir() and isfile() that
+# calls os.stat() internally. Unless it is a symlink, then another os.stat() is made to check what
+# is pointed to.
+def stat_path(path, scan_symlink_folders=False):
+  try:
+    st = lstat(path)  # Don't follow symlink.
+    if not S_ISLNK(st.st_mode):
+      return st
+
+    # Ignore symlink if pointing to a dir.
+    st = stat(path)  # Follow symlink.
+    if S_ISDIR(st.st_mode) and not scan_symlink_folders:
+      return None
+    return st
+  except OSError:
+    return None
+
 # Called concurrently in an iterative fashion. Each invocation will return accepted paths and a list
 # of further arguments tuples, if any.
 def detect_paths_incremental(args):
-  (paths, depth, hidden, ignore_chars) = args
+  (paths, depth, hidden, ignore_chars, scan_symlink_folders) = args
   accepted = []
   further_args = []
   for path in paths:
@@ -466,16 +483,13 @@ def detect_paths_incremental(args):
       continue
     path = abspath(path)
 
-    # Only invoke os.stat() once per path. Instead of twice via a call to isdir() and isfile()
-    # that calls os.stat() internally.
-    try:
-      st = stat(path)
-    except OSError:
+    st = stat_path(path, scan_symlink_folders)
+    if st is None:
       continue
 
     if S_ISDIR(st.st_mode):
       files = [join(path, p) for p in listdir(path) if hidden or p[0] != "."]
-      further_args.append((files, depth + 1, hidden, ignore_chars))
+      further_args.append((files, depth + 1, hidden, ignore_chars, scan_symlink_folders))
     elif S_ISREG(st.st_mode) and (depth == 0 or probably_python_file(path)):
       accepted.append(path)
   return (accepted, further_args)
@@ -484,12 +498,13 @@ def detect_paths_incremental(args):
 # ".pyw", for instance. But try directly specified files on CLI, on depth 0, in any case (non-pyhton
 # files will be ignored when trying to parse them). Paths containing chars in `ignore_chars` will be
 # ignored.
-def detect_paths(paths, hidden=False, processes=cpu_count(), ignore_chars=None):
+def detect_paths(paths, hidden=False, processes=cpu_count(), ignore_chars=None,
+                 scan_symlink_folders=False):
   pool = Pool(processes=processes) if processes > 1 else None
   accept_paths = []
   depth = 0
   ignore_chars = ignore_chars or []
-  args = [(paths, depth, hidden, ignore_chars)]
+  args = [(paths, depth, hidden, ignore_chars, scan_symlink_folders)]
 
   # Automatically don't use concurrency when only one process is specified to be used.
   def act(args):

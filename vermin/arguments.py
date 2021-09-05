@@ -130,6 +130,11 @@ class Arguments:
       print("\n  --no-parse-comments\n"
             "        Don't parse for comments. Not parsing comments can sometimes yield a speedup\n"
             "        of 30-40%+.")
+      print("\n  --scan-symlink-folders\n"
+            "        Scan symlinks to folders to include in analysis.")
+      print("\n  --no-symlink-folders (default)\n"
+            "        Don't scan symlinks to folders to include in analysis. Symlinks\n"
+            "        to non-folders will always be scanned.")
       print("\n  --format <name> | -f <name>\n"
             "        Format to show results and output in.\n"
             "        Supported formats:\n{}".format(formats.help_str(10)))
@@ -350,6 +355,12 @@ class Arguments:
         path_pos += 1
       elif arg == "--no-parse-comments":
         config.set_parse_comments(False)
+        path_pos += 1
+      elif arg == "--scan-symlink-folders":
+        config.set_scan_symlink_folders(True)
+        path_pos += 1
+      elif arg == "--no-symlink-folders":
+        config.set_scan_symlink_folders(False)
         path_pos += 1
 
     if fmt is not None:

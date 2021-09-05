@@ -449,3 +449,13 @@ pessimistic = yes
     self.config.set_parse_comments(True)
     self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--no-parse-comments"]))
     self.assertFalse(self.config.parse_comments())
+
+  def test_scan_symlink_folders(self):
+    self.config.set_scan_symlink_folders(False)
+    self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--scan-symlink-folders"]))
+    self.assertTrue(self.config.scan_symlink_folders())
+
+  def test_no_symlink_folders(self):
+    self.config.set_scan_symlink_folders(True)
+    self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--no-symlink-folders"]))
+    self.assertFalse(self.config.scan_symlink_folders())

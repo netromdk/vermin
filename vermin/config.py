@@ -36,6 +36,7 @@ class Config:
     self.__eval_annotations = False
     self.__only_show_violations = False
     self.__parse_comments = True
+    self.__scan_symlink_folders = False
     self.set_format(DefaultFormat())
 
   def override_from(self, other_config):
@@ -55,6 +56,7 @@ class Config:
     self.__eval_annotations = other_config.eval_annotations()
     self.__only_show_violations = other_config.only_show_violations()
     self.__parse_comments = other_config.parse_comments()
+    self.__scan_symlink_folders = other_config.scan_symlink_folders()
     self.set_format(other_config.format())
 
   def __repr__(self):
@@ -75,12 +77,14 @@ class Config:
   eval_annotations = {}
   only_show_violations = {}
   parse_comments = {}
+  scan_symlink_folders = {}
   format = {}
 )""".format(self.__class__.__name__, self.quiet(), self.verbose(), self.print_visits(),
             self.processes(), self.ignore_incomp(), self.lax(), self.pessimistic(),
             self.show_tips(), self.analyze_hidden(), self.exclusions(), list(self.backports()),
             list(self.features()), self.targets(), self.eval_annotations(),
-            self.only_show_violations(), self.parse_comments(), self.format().name())
+            self.only_show_violations(), self.parse_comments(), self.scan_symlink_folders(),
+            self.format().name())
 
   @staticmethod
   def parse_file(path):
@@ -126,6 +130,7 @@ class Config:
       "eval_annotations": str(config.eval_annotations()),
       "only_show_violations": str(config.only_show_violations()),
       "parse_comments": str(config.parse_comments()),
+      "scan_symlink_folders": str(config.scan_symlink_folders()),
       "format": config.format().name(),
     }, allow_no_value=True)
 
@@ -180,6 +185,7 @@ class Config:
     config.set_eval_annotations(getbool("eval_annotations"))
     config.set_only_show_violations(getbool("only_show_violations"))
     config.set_parse_comments(getbool("parse_comments"))
+    config.set_scan_symlink_folders(getbool("scan_symlink_folders"))
 
     for exclusion in getstringlist("exclusions"):
       config.add_exclusion(exclusion)
@@ -418,3 +424,9 @@ and a version tuple: [exact, (x, y)]. But it can also be a version tuple (x, y) 
 
   def set_parse_comments(self, parse):
     self.__parse_comments = parse
+
+  def scan_symlink_folders(self):
+    return self.__scan_symlink_folders
+
+  def set_scan_symlink_folders(self, scan):
+    self.__scan_symlink_folders = scan

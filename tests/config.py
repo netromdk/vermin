@@ -27,6 +27,7 @@ class VerminConfigTests(VerminTest):
     self.assertFalse(self.config.eval_annotations())
     self.assertFalse(self.config.only_show_violations())
     self.assertTrue(self.config.parse_comments())
+    self.assertFalse(self.config.scan_symlink_folders())
 
   def test_override_from(self):
     other = Config()
@@ -47,6 +48,7 @@ class VerminConfigTests(VerminTest):
     other.set_eval_annotations(True)
     other.set_only_show_violations(True)
     other.set_parse_comments(False)
+    other.set_scan_symlink_folders(True)
 
     self.config.override_from(other)
     self.assertEqual(other.quiet(), self.config.quiet())
@@ -66,6 +68,7 @@ class VerminConfigTests(VerminTest):
     self.assertEqual(other.eval_annotations(), self.config.eval_annotations())
     self.assertEqual(other.only_show_violations(), self.config.only_show_violations())
     self.assertEqual(other.parse_comments(), self.config.parse_comments())
+    self.assertEqual(other.scan_symlink_folders(), self.config.scan_symlink_folders())
 
   def test_repr(self):
     self.assertEqual(str(self.config), """{}(
@@ -85,6 +88,7 @@ class VerminConfigTests(VerminTest):
   eval_annotations = {}
   only_show_violations = {}
   parse_comments = {}
+  scan_symlink_folders = {}
   format = {}
 )""".format(self.config.__class__.__name__, self.config.quiet(), self.config.verbose(),
             self.config.print_visits(), self.config.processes(), self.config.ignore_incomp(),
@@ -92,7 +96,7 @@ class VerminConfigTests(VerminTest):
             self.config.analyze_hidden(), self.config.exclusions(), list(self.config.backports()),
             list(self.config.features()), self.config.targets(), self.config.eval_annotations(),
             self.config.only_show_violations(), self.config.parse_comments(),
-            self.config.format().name()))
+            self.config.scan_symlink_folders(), self.config.format().name()))
 
   @VerminTest.parameterized_args([
     [u""],
@@ -574,3 +578,22 @@ parse_comments = False
     config = Config.parse_data(data)
     self.assertIsNotNone(config)
     self.assertEqual(config.parse_comments(), expected)
+
+  @VerminTest.parameterized_args([
+    [u"""[vermin]
+scan_symlink_folders =
+""", False],
+    [u"""[vermin]
+#scan_symlink_folders = False
+""", False],
+    [u"""[vermin]
+scan_symlink_folders = True
+""", True],
+    [u"""[vermin]
+scan_symlink_folders = False
+""", False],
+  ])
+  def test_parse_scan_symlink_folders(self, data, expected):
+    config = Config.parse_data(data)
+    self.assertIsNotNone(config)
+    self.assertEqual(config.scan_symlink_folders(), expected)
