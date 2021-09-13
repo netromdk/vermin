@@ -245,8 +245,11 @@ recommended to use the command-line interface.
   >>> V.version_strings(v.minimum_versions())
   '!2, 3.5'
 
-Lax Mode
-========
+Lax Mode (deprecated)
+=====================
+
+*Deprecated as of v. 1.3. Will be removed in v. 1.4. It is recommended to use specific analysis
+exclusions instead.*
 
 Vermin parses Python source code into abstract syntax trees (ASTs) which it traverses to do
 analysis. However, it doesn't do conditional logic, i.e. deciding which branches will be taken at

@@ -74,10 +74,12 @@ class Arguments:
             "        not have an absence of results.\n")
       print("  --no-ignore (default)\n"
             "        Don't ignore incompatible versions and warnings.\n")
-      print("  --lax | -l\n"
+      print("  --lax | -l (deprecated)\n"
             "        Lax mode: ignores conditionals (if, ternary, for, async for, while, with,\n"
             "        try, bool op) on AST traversal, which can be useful when minimum versions\n"
-            "        are detected in conditionals that it is known does not affect the results.\n")
+            "        are detected in conditionals that it is known does not affect the results.\n"
+            "\n"
+            "        It is recommended to use specific analysis exclusions instead.\n")
       print("  --no-lax (default)\n"
             "        Disable lax mode.\n")
       print("  --dump | -d\n"
@@ -256,7 +258,7 @@ class Arguments:
           return {"code": 1}
         path_pos += 1
       elif arg in ("--lax", "-l"):
-        print("Running in lax mode!")
+        print("Running in deprecated lax mode!")
         config.set_lax(True)
         path_pos += 1
       elif arg == "--no-lax":
