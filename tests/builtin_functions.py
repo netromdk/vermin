@@ -354,6 +354,10 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
     self.assertOnlyIn(((2, 7), (3, 1)), self.detect("(42).bit_length()"))
     self.assertOnlyIn(((2, 7), (3, 1)), self.detect("n=42\nn.bit_length()"))
 
+  def test_bit_count_of_int(self):
+    self.assertOnlyIn((3, 10), self.detect("(42).bit_count()"))
+    self.assertOnlyIn((3, 10), self.detect("n=42\nn.bit_count()"))
+
   def test_to_bytes_of_int(self):
     self.assertOnlyIn((3, 2), self.detect("(42).to_bytes()"))
     self.assertOnlyIn((3, 2), self.detect("n=42\nn.to_bytes()"))
@@ -447,3 +451,9 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
 
   def test_indices_of_slice(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("slice.indices()"))
+
+  def test_aiter(self):
+    self.assertOnlyIn((3, 10), self.detect("aiter()"))
+
+  def test_anext(self):
+    self.assertOnlyIn((3, 10), self.detect("anext()"))

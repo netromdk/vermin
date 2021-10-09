@@ -474,7 +474,8 @@ class VerminLanguageTests(VerminTest):
 
   @VerminTest.skipUnlessVersion(3, 7)
   def test_async_comprehension(self):
-    self.assertOnlyIn((3, 7), self.detect("[i async for i in aiter() if i % 2]"))
+    self.assertOnlyIn((3, 7), self.detect("[i async for i in iter() if i % 2]"))
+    self.assertOnlyIn((3, 10), self.detect("[i async for i in aiter() if i % 2]"))
 
   @VerminTest.skipUnlessVersion(3, 7)
   def test_await_in_comprehension(self):
@@ -1694,3 +1695,138 @@ except:
 """)
     except AttributeError:
       self.fail("Crashed while parsing bare except handler.")
+
+  @VerminTest.skipUnlessVersion(3, 10)
+  def test_pattern_matching(self):
+    visitor = self.visit("""
+def http_error(status):
+  match status:
+    case 400:
+      return "Bad request"
+    case 404:
+      return "Not found"
+    case 418:
+      return "I'm a teapot"
+    case _:
+      return "Something's wrong with the internet"
+""")
+    self.assertTrue(visitor.pattern_matching())
+
+  def test_union_types(self):
+    visitor = self.visit("int | float")
+    self.assertTrue(visitor.union_types())
+    self.assertOnlyIn((3, 10), visitor.minimum_versions())
+
+    visitor = self.visit("a = 1 | 0")
+    self.assertFalse(visitor.union_types())
+
+    visitor = self.visit("""
+a = {'x':1}
+b = {'y':2}
+a | b
+""")
+    self.assertFalse(visitor.union_types())
+
+    visitor = self.visit('isinstance("", int | str)')
+    self.assertTrue(visitor.union_types())
+    self.assertOnlyIn((3, 10), visitor.minimum_versions())
+
+    visitor = self.visit("issubclass(bool, int | float)")
+    self.assertTrue(visitor.union_types())
+    self.assertOnlyIn((3, 10), visitor.minimum_versions())
+
+    visitor = self.visit("""
+a = str
+a |= "test"
+""")
+    self.assertFalse(visitor.union_types())
+
+    visitor = self.visit("""
+a = "test"
+a |= int
+""")
+    self.assertFalse(visitor.union_types())
+
+    visitor = self.visit("""
+a = str
+a |= int
+""")
+    self.assertTrue(visitor.union_types())
+    self.assertOnlyIn((3, 10), visitor.minimum_versions())
+
+    visitor = self.visit("""
+class Foo: pass
+class Bar: pass
+a = Foo() | Bar()
+""")
+    self.assertFalse(visitor.union_types())
+
+    visitor = self.visit("""
+class Foo: pass
+foo = Foo()
+class Bar: pass
+bar = Bar()
+a = foo | bar
+""")
+    self.assertFalse(visitor.union_types())
+
+    visitor = self.visit("""
+class Foo: pass
+class Bar: pass
+a = Foo | Bar
+""")
+    self.assertTrue(visitor.union_types())
+    self.assertOnlyIn((3, 10), visitor.minimum_versions())
+
+    visitor = self.visit("""
+class Foo: pass
+class Bar: pass
+a = Foo
+a |= Bar
+""")
+    self.assertTrue(visitor.union_types())
+    self.assertOnlyIn((3, 10), visitor.minimum_versions())
+
+    if current_version() >= (3, 10):
+      visitor = self.visit("""
+def square(number) -> int | float:
+  return number ** 2
+""")
+      self.assertTrue(visitor.union_types())
+      self.assertOnlyIn((3, 10), visitor.minimum_versions())
+
+      visitor = self.visit("""
+def square(number: int | float) -> int | float:
+  return number ** 2
+""")
+      self.assertTrue(visitor.union_types())
+      self.assertOnlyIn((3, 10), visitor.minimum_versions())
+
+      self.config.set_eval_annotations(False)
+      visitor = self.visit("a: int | float = 1")
+      self.assertFalse(visitor.union_types())
+      # variable annotations requires !2, 3.6
+      self.assertOnlyIn((3, 6), visitor.minimum_versions())
+
+      self.config.set_eval_annotations(True)
+      visitor = self.visit("a: int | float = 1")
+      self.assertTrue(visitor.union_types())
+      self.assertOnlyIn((3, 10), visitor.minimum_versions())
+
+      self.config.set_eval_annotations(False)
+      visitor = self.visit("""
+a = int
+b = str
+c: a | b = 1
+""")
+      self.assertFalse(visitor.union_types())
+      self.assertOnlyIn((3, 6), visitor.minimum_versions())
+
+      self.config.set_eval_annotations(True)
+      visitor = self.visit("""
+a = int
+b = str
+c: a | b = 1
+""")
+      self.assertTrue(visitor.union_types())
+      self.assertOnlyIn((3, 10), visitor.minimum_versions())

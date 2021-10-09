@@ -141,6 +141,8 @@ class SourceVisitor(ast.NodeVisitor):
     self.__relaxed_decorators = False
     self.__module_dir_func = False
     self.__module_getattr_func = False
+    self.__pattern_matching = False
+    self.__union_types = False
     self.__builtin_types = {"dict", "set", "list", "unicode", "str", "int", "float", "long",
                             "bytes"}
     self.__codecs_encodings_kwargs = ("encoding", "data_encoding", "file_encoding")
@@ -351,6 +353,12 @@ class SourceVisitor(ast.NodeVisitor):
   def module_getattr_func(self):
     return self.__module_getattr_func
 
+  def union_types(self):
+    return self.__union_types
+
+  def pattern_matching(self):
+    return self.__pattern_matching
+
   def __violates_target_versions(self, versions):
     # If only violations isn't turned on then fake violations because it means it will show the
     # rule.
@@ -531,6 +539,12 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.relaxed_decorators():
       mins = self.__add_versions_entity(mins, (None, (3, 9)), "relaxed decorators")
+
+    if self.pattern_matching():
+      mins = self.__add_versions_entity(mins, (None, (3, 10)), "pattern matching")
+
+    if self.union_types():
+      mins = self.__add_versions_entity(mins, (None, (3, 10)), "union types as `X | Y`")
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
@@ -808,13 +822,13 @@ class SourceVisitor(ast.NodeVisitor):
         if hasattr(attr, "func") and hasattr(attr.func, "id"):
           full_name.append(attr.func.id)
       elif not primi_type and isinstance(attr, ast.Dict):
-        if len(full_name) == 0 or (full_name[0] != "dict" and len(full_name) == 1):
+        if len(full_name) == 0 or (full_name[0] != "dict" and full_name[-1] != "dict"):
           full_name.append("dict")
       elif not primi_type and isinstance(attr, ast.Set):
-        if len(full_name) == 0 or (full_name[0] != "set" and len(full_name) == 1):
+        if len(full_name) == 0 or (full_name[0] != "set" and full_name[-1] != "set"):
           full_name.append("set")
       elif not primi_type and isinstance(attr, ast.List):
-        if len(full_name) == 0 or (full_name[0] != "list" and len(full_name) == 1):
+        if len(full_name) == 0 or (full_name[0] != "list" and full_name[-1] != "list"):
           full_name.append("list")
       elif not primi_type and isinstance(attr, ast.Str):
         # pylint: disable=undefined-variable
@@ -1146,6 +1160,15 @@ class SourceVisitor(ast.NodeVisitor):
         # Try as a fully-qualified name.
         else:
           self.__add_member(dotted_name([res, full_name[1:]]), line)
+
+        # Check for two-tier names, like
+        #   d = {}        <- "dict"
+        #   i = d.items() <- "dict.items"
+        #   i.mapping     <- "dict.items.mapping"
+        parts = res.split(".")
+        if len(parts) > 0 and parts[0] in self.__name_res:
+          res2 = self.__name_res[parts[0]]
+          self.__add_member(dotted_name([res2, parts[1:], full_name[1:]]), line)
     self.generic_visit(node)
 
   def visit_keyword(self, node):
@@ -1259,6 +1282,11 @@ ast.Call(func=ast.Name)."""
       right_special = self.__resolve_full_name(node.right) in DICT_UNION_SUPPORTED_TYPES
       if (left_dict or left_special) and (right_dict or right_special):
         has_du()
+
+      if isinstance(node.left, ast.Name) and isinstance(node.right, ast.Name) and \
+         node.left.id not in self.__name_res and node.right.id not in self.__name_res:
+        self.__union_types = True
+        self.__vvprint("union types as `X | Y`", line=node.lineno, versions=[None, (3, 10)])
 
     self.generic_visit(node)
 
@@ -1531,16 +1559,29 @@ ast.Call(func=ast.Name)."""
     self.__add_user_def_node(node.target)
     self.__add_name_res_assign_node(node)
 
-    # Example:
-    # AugAssign(target=Name(id='d', ctx=Store()),
-    #           op=BitOr(),
-    #           value=Dict(keys=[Constant(value='b')], values=[Constant(value=2)]))
-    if isinstance(node.op, ast.BitOr) and self.__is_dict(node.value):
-      full_name = self.__resolve_full_name(node.target)
-      if full_name in DICT_UNION_MERGE_SUPPORTED_TYPES or self.__is_dict(node.target):
-        self.__dict_union_merge = True
-        self.__vvprint("dict union merge (dict var |= dict)", line=node.lineno,
-                       versions=[None, (3, 9)])
+    # |=
+    if isinstance(node.op, ast.BitOr):
+      # Example:
+      # AugAssign(target=Name(id='d', ctx=Store()),
+      #           op=BitOr(),
+      #           value=Dict(keys=[Constant(value='b')], values=[Constant(value=2)]))
+      if self.__is_dict(node.value):
+        full_name = self.__resolve_full_name(node.target)
+        if full_name in DICT_UNION_MERGE_SUPPORTED_TYPES or self.__is_dict(node.target):
+          self.__dict_union_merge = True
+          self.__vvprint("dict union merge (dict var |= dict)", line=node.lineno,
+                         versions=[None, (3, 9)])
+
+      # Example:
+      # Assign(targets=[Name(id='a', ctx=Store())],
+      #        value=Name(id='str', ctx=Load()))
+      # AugAssign(target=Name(id='a', ctx=Store()),
+      #           op=BitOr(),
+      #           value=Name(id='int', ctx=Load()))
+      elif isinstance(node.value, ast.Name) and node.value.id not in self.__name_res and\
+           isinstance(node.target, ast.Name) and node.target.id not in self.__name_res:
+        self.__union_types = True
+        self.__vvprint("union types as `a = X; a |= Y`", line=node.lineno, versions=[None, (3, 10)])
 
     self.generic_visit(node)
 
@@ -1710,6 +1751,7 @@ ast.Call(func=ast.Name)."""
     if self.__is_no_line(node.lineno):
       return
     self.__add_user_def(node.name)
+
     if getattr(node, "decorator_list", None):
       decos = node.decorator_list
       # Exclude only if all decorators are excluded, otherwise the class decorator version
@@ -1719,7 +1761,11 @@ ast.Call(func=ast.Name)."""
         self.__class_decorators = True
         self.__vvprint("class decorators", line=deco_line, versions=[(2, 6), (3, 0)])
         self.__check_relaxed_decorators(node)
+
     self.generic_visit(node)
+    # Some nodes aren't visited via `self.generic_visit(node)` so it is done explicitly.
+    for n in node.body:
+      self.generic_visit(n)
 
   def visit_NameConstant(self, node):
     if node.value is True or node.value is False:  # pragma: no cover
@@ -1755,9 +1801,10 @@ ast.Call(func=ast.Name)."""
       all_args.append(node.kwarg)
 
     for arg in all_args:
-      self.__add_user_def_node(arg)
-      if hasattr(arg, "arg"):
-        self.__add_user_def_node(arg.arg)
+      if arg:
+        self.__add_user_def_node(arg)
+        if hasattr(arg, "arg"):
+          self.__add_user_def_node(arg.arg)
 
     self.generic_visit(node)
 
@@ -1995,6 +2042,13 @@ ast.Call(func=ast.Name)."""
           if is_ellipsis_node(n):
             self.__ellipsis_nodes_in_slices.add(n)
 
+    self.generic_visit(node)
+
+  def visit_Match(self, node):
+    if self.__config.lax() or self.__is_no_line(node.lineno):
+      return
+    self.__pattern_matching = True
+    self.__vvprint("pattern matching", line=node.lineno, versions=[None, (3, 10)])
     self.generic_visit(node)
 
   # Lax mode and comment-excluded lines skip conditional blocks if enabled.

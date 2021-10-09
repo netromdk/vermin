@@ -74,6 +74,18 @@ class VerminConstantMemberTests(VerminTest):
   def test_O_TMPFILE_of_os(self):
     self.assertOnlyIn((3, 4), self.detect("from os import O_TMPFILE"))
 
+  def test_O_EVTONLY_of_os(self):
+    self.assertOnlyIn((3, 10), self.detect("from os import O_EVTONLY"))
+
+  def test_O_FSYNC_of_os(self):
+    self.assertOnlyIn((3, 10), self.detect("from os import O_FSYNC"))
+
+  def test_O_SYMLINK_of_os(self):
+    self.assertOnlyIn((3, 10), self.detect("from os import O_SYMLINK"))
+
+  def test_O_NOFOLLOW_ANY_of_os(self):
+    self.assertOnlyIn((3, 10), self.detect("from os import O_NOFOLLOW_ANY"))
+
   def test_POSIX_FADV_NORMAL_of_os(self):
     self.assertOnlyIn((3, 3), self.detect("from os import POSIX_FADV_NORMAL"))
 
@@ -276,6 +288,12 @@ class VerminConstantMemberTests(VerminTest):
   def test_VERIFY_X509_TRUSTED_FIRST_of_ssl(self):
     self.assertOnlyIn(((2, 7), (3, 4)), self.detect("from ssl import VERIFY_X509_TRUSTED_FIRST"))
 
+  def test_VERIFY_X509_PARTIAL_CHAIN_of_ssl(self):
+    self.assertOnlyIn((3, 10), self.detect("from ssl import VERIFY_X509_PARTIAL_CHAIN"))
+
+  def test_VERIFY_ALLOW_PROXY_CERTS_of_ssl(self):
+    self.assertOnlyIn((3, 10), self.detect("from ssl import VERIFY_ALLOW_PROXY_CERTS"))
+
   def test_PROTOCOL_TLS_of_ssl(self):
     self.assertOnlyIn(((2, 7), (3, 6)), self.detect("from ssl import PROTOCOL_TLS"))
 
@@ -320,6 +338,9 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_OP_NO_TICKET_of_ssl(self):
     self.assertOnlyIn((3, 6), self.detect("from ssl import OP_NO_TICKET"))
+
+  def test_OP_IGNORE_UNEXPECTED_EOF_of_ssl(self):
+    self.assertOnlyIn((3, 10), self.detect("from ssl import OP_IGNORE_UNEXPECTED_EOF"))
 
   def test_HAS_ALPN_of_ssl(self):
     self.assertOnlyIn(((2, 7), (3, 5)), self.detect("from ssl import HAS_ALPN"))
@@ -377,6 +398,9 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_check_hostname_of_ssl_SSLContext(self):
     self.assertOnlyIn((3, 4), self.detect("from ssl import SSLContext\nSSLContext.check_hostname"))
+
+  def test_security_level_of_ssl_SSLContext(self):
+    self.assertOnlyIn((3, 10), self.detect("from ssl import SSLContext\nSSLContext.security_level"))
 
   def test_verify_flags_of_ssl_SSLContext(self):
     self.assertOnlyIn((3, 4), self.detect("from ssl import SSLContext\nSSLContext.verify_flags"))
@@ -620,6 +644,9 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_MADV_PROTECT_of_mmap(self):
     self.assertOnlyIn((3, 8), self.detect("import mmap\nmmap.MADV_PROTECT"))
+
+  def test_MAP_POPULATE_of_mmap(self):
+    self.assertOnlyIn((3, 10), self.detect("import mmap\nmmap.MAP_POPULATE"))
 
   def test_MFD_CLOEXEC_of_os(self):
     self.assertOnlyIn((3, 8), self.detect("from os import MFD_CLOEXEC"))
@@ -1213,6 +1240,9 @@ class VerminConstantMemberTests(VerminTest):
   def test_RWF_SYNC_of_os(self):
     self.assertOnlyIn((3, 7), self.detect("from os import RWF_SYNC"))
 
+  def test_RWF_APPEND_of_os(self):
+    self.assertOnlyIn((3, 10), self.detect("from os import RWF_APPEND"))
+
   def test_SCHED_BATCH_of_os(self):
     self.assertOnlyIn((3, 3), self.detect("from os import SCHED_BATCH"))
 
@@ -1311,6 +1341,24 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_P_PIDFD_of_os(self):
     self.assertOnlyIn((3, 9), self.detect("from os import P_PIDFD"))
+
+  def test_SPLICE_F_MOVE_of_os(self):
+    self.assertOnlyIn((3, 10), self.detect("from os import SPLICE_F_MOVE"))
+
+  def test_SPLICE_F_NONBLOCK_of_os(self):
+    self.assertOnlyIn((3, 10), self.detect("from os import SPLICE_F_NONBLOCK"))
+
+  def test_SPLICE_F_MORE_of_os(self):
+    self.assertOnlyIn((3, 10), self.detect("from os import SPLICE_F_MORE"))
+
+  def test_EFD_CLOEXEC_of_os(self):
+    self.assertOnlyIn((3, 10), self.detect("from os import EFD_CLOEXEC"))
+
+  def test_EFD_NONBLOCK_of_os(self):
+    self.assertOnlyIn((3, 10), self.detect("from os import EFD_NONBLOCK"))
+
+  def test_EFD_SEMAPHORE_of_os(self):
+    self.assertOnlyIn((3, 10), self.detect("from os import EFD_SEMAPHORE"))
 
   def test_st_atime_from_os_stat(self):
     self.assertOnlyIn(((2, 2), (3, 0)),
@@ -1530,6 +1578,11 @@ class VerminConstantMemberTests(VerminTest):
                       self.detect("from pyclbr import Function\n"
                                   "Function().parent"))
 
+  def test_is_async_from_pyclbr_Function(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from pyclbr import Function\n"
+                                  "Function().is_async"))
+
   def test_colno_from_re_error(self):
     self.assertOnlyIn((3, 5),
                       self.detect("from re import error\n"
@@ -1573,6 +1626,9 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_RLIMIT_NPTS_of_resource(self):
     self.assertOnlyIn((3, 4), self.detect("from resource import RLIMIT_NPTS"))
+
+  def test_RLIMIT_KQUEUES_of_resource(self):
+    self.assertOnlyIn((3, 10), self.detect("from resource import RLIMIT_KQUEUES"))
 
   def test_RLIMIT_RTPRIO_of_resource(self):
     self.assertOnlyIn((3, 4), self.detect("from resource import RLIMIT_RTPRIO"))
@@ -2054,6 +2110,9 @@ class VerminConstantMemberTests(VerminTest):
   def test_TCP_USER_TIMEOUT_of_socket(self):
     self.assertOnlyIn((3, 6), self.detect("from socket import TCP_USER_TIMEOUT"))
 
+  def test_TCP_KEEPALIVE_of_socket(self):
+    self.assertOnlyIn((3, 10), self.detect("from socket import TCP_KEEPALIVE"))
+
   def test_TIPC_ADDR_ID_of_socket(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from socket import TIPC_ADDR_ID"))
 
@@ -2134,6 +2193,12 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_IPPROTO_UDPLITE_of_socket(self):
     self.assertOnlyIn((3, 9), self.detect("from socket import IPPROTO_UDPLITE"))
+
+  def test_IPPROTO_MPTCP_of_socket(self):
+    self.assertOnlyIn((3, 10), self.detect("from socket import IPPROTO_MPTCP"))
+
+  def test_IP_RECVTOS_of_socket(self):
+    self.assertOnlyIn((3, 10), self.detect("from socket import IP_RECVTOS"))
 
   def test_has_ipv6_of_socket(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("from socket import has_ipv6"))
@@ -2483,6 +2548,12 @@ class VerminConstantMemberTests(VerminTest):
   def test_thread_info_of_sys(self):
     self.assertOnlyIn((3, 3), self.detect("from sys import thread_info"))
 
+  def test_orig_argv_of_sys(self):
+    self.assertOnlyIn((3, 10), self.detect("from sys import orig_argv"))
+
+  def test_stdlib_module_names_of_sys(self):
+    self.assertOnlyIn((3, 10), self.detect("from sys import stdlib_module_names"))
+
   def test_major_from_sys_version_info(self):
     self.assertOnlyIn(((2, 7), (3, 0)),
                       self.detect("from sys import version_info\n"
@@ -2560,6 +2631,9 @@ class VerminConstantMemberTests(VerminTest):
                       self.detect("from threading import Thread\n"
                                   "Thread().native_id"))
 
+  def test___excepthook___from_threading(self):
+    self.assertOnlyIn((3, 10), self.detect("from threading import __excepthook__"))
+
   def test_tm_gmtoff_from_time_struct_time(self):
     self.assertOnlyIn((3, 3),
                       self.detect("from time import struct_time\n"
@@ -2618,6 +2692,18 @@ class VerminConstantMemberTests(VerminTest):
   def test_CoroutineType_of_types(self):
     self.assertOnlyIn((3, 5), self.detect("from types import CoroutineType"))
 
+  def test_NoneType_of_types(self):
+    self.assertOnlyIn((3, 10), self.detect("from types import NoneType"))
+
+  def test_NotImplementedType_of_types(self):
+    self.assertOnlyIn((3, 10), self.detect("from types import NotImplementedType"))
+
+  def test_EllipsisType_of_types(self):
+    self.assertOnlyIn((3, 10), self.detect("from types import EllipsisType"))
+
+  def test_UnionType_of_types(self):
+    self.assertOnlyIn((3, 10), self.detect("from types import UnionType"))
+
   def test_GeneratorType_of_types(self):
     self.assertOnlyIn(((2, 2), (3, 0)), self.detect("from types import GeneratorType"))
 
@@ -2659,6 +2745,21 @@ something.Final
 
   def test_Annotated_of_typing(self):
     self.assertOnlyIn((3, 9), self.detect("from typing import Annotated"))
+
+  def test_Concatenate_of_typing(self):
+    self.assertOnlyIn((3, 10), self.detect("from typing import Concatenate"))
+
+  def test_ParamSpecArgs_of_typing(self):
+    self.assertOnlyIn((3, 10), self.detect("from typing import ParamSpecArgs"))
+
+  def test_ParamSpecKwargs_of_typing(self):
+    self.assertOnlyIn((3, 10), self.detect("from typing import ParamSpecKwargs"))
+
+  def test_TypeAlias_of_typing(self):
+    self.assertOnlyIn((3, 10), self.detect("from typing import TypeAlias"))
+
+  def test_TypeGuard_of_typing(self):
+    self.assertOnlyIn((3, 10), self.detect("from typing import TypeGuard"))
 
   def test_ucd_3_2_0_of_unicodedata(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("from unicodedata import ucd_3_2_0"))
@@ -2981,3 +3082,18 @@ something.Final
 
   def test_status_of_urllib_response_addinfourl(self):
     self.assertOnlyIn((3, 9), self.detect("from urllib.response.addinfourl import status"))
+
+  def test_COPY_DICT_WITHOUT_KEYS_of_dis(self):
+    self.assertOnlyIn((3, 10), self.detect("from dis import COPY_DICT_WITHOUT_KEYS"))
+
+  def test_GET_LEN_of_dis(self):
+    self.assertOnlyIn((3, 10), self.detect("from dis import GET_LEN"))
+
+  def test_MATCH_KEYS_of_dis(self):
+    self.assertOnlyIn((3, 10), self.detect("from dis import MATCH_KEYS"))
+
+  def test_MATCH_MAPPING_of_dis(self):
+    self.assertOnlyIn((3, 10), self.detect("from dis import MATCH_MAPPING"))
+
+  def test_MATCH_SEQUENCE_of_dis(self):
+    self.assertOnlyIn((3, 10), self.detect("from dis import MATCH_SEQUENCE"))

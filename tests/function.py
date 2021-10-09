@@ -124,6 +124,18 @@ class VerminFunctionMemberTests(VerminTest):
   def test_writev_of_os(self):
     self.assertOnlyIn((3, 3), self.detect("from os import writev"))
 
+  def test_splice_of_os(self):
+    self.assertOnlyIn((3, 10), self.detect("from os import splice"))
+
+  def test_eventfd_of_os(self):
+    self.assertOnlyIn((3, 10), self.detect("from os import eventfd"))
+
+  def test_eventfd_read_of_os(self):
+    self.assertOnlyIn((3, 10), self.detect("from os import eventfd_read"))
+
+  def test_eventfd_write_of_os(self):
+    self.assertOnlyIn((3, 10), self.detect("from os import eventfd_write"))
+
   def test_get_terminal_size_of_os(self):
     self.assertOnlyIn((3, 3), self.detect("from os import get_terminal_size"))
 
@@ -364,6 +376,13 @@ class VerminFunctionMemberTests(VerminTest):
                       self.detect("from collections import Counter\n"
                                   "c = Counter()\n"
                                   "c.subtract()"))
+
+  def test_total_of_collections_Counter(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from collections import Counter
+c = Counter()
+c.total()
+"""))
 
   def test_suppress_of_contextlib(self):
     self.assertOnlyIn((3, 4), self.detect("import contextlib\ncontextlib.suppress()"))
@@ -675,6 +694,9 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_getcoroutinelocals_from_inspect(self):
     self.assertOnlyIn((3, 5), self.detect("import inspect\ninspect.getcoroutinelocals()"))
+
+  def test_get_annotations_from_inspect(self):
+    self.assertOnlyIn((3, 10), self.detect("import inspect\ninspect.get_annotations()"))
 
   def test_detach_from_io_BufferedIOBase(self):
     self.assertOnlyIn(((2, 7), (3, 1)),
@@ -1114,6 +1136,30 @@ class VerminFunctionMemberTests(VerminTest):
                                   "zi = zipimporter()\n"
                                   "zi.get_filename()"))
 
+  def test_create_module_from_zipimport_zipimporter(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from zipimport import zipimporter\n"
+                                  "zi = zipimporter()\n"
+                                  "zi.create_module()"))
+
+  def test_exec_module_from_zipimport_zipimporter(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from zipimport import zipimporter\n"
+                                  "zi = zipimporter()\n"
+                                  "zi.exec_module()"))
+
+  def test_find_spec_from_zipimport_zipimporter(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from zipimport import zipimporter\n"
+                                  "zi = zipimporter()\n"
+                                  "zi.find_spec()"))
+
+  def test_invalidate_caches_from_zipimport_zipimporter(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from zipimport import zipimporter\n"
+                                  "zi = zipimporter()\n"
+                                  "zi.invalidate_caches()"))
+
   def test_Tcl_from_Tkinter(self):
     self.assertOnlyIn((2, 4), self.detect("import Tkinter\nTkinter.Tcl()"))
 
@@ -1235,6 +1281,13 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_link_to_from_path(self):
     self.assertOnlyIn((3, 8), self.detect("from pathlib import Path\np=Path('foo')\np.link_to()"))
+
+  def test_hardlink_to_from_path(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from pathlib import Path
+p=Path('foo')
+p.hardlink_to()
+"""))
 
   def test_readlink_from_path(self):
     self.assertOnlyIn((3, 9), self.detect("from pathlib import Path\np=Path('foo')\np.readlink()"))
@@ -1421,6 +1474,9 @@ class VerminFunctionMemberTests(VerminTest):
   def test_nullcontext_of_contextlib(self):
     self.assertOnlyIn((3, 7), self.detect("import contextlib\ncontextlib.nullcontext()"))
 
+  def test_aclosing_of_contextlib(self):
+    self.assertOnlyIn((3, 10), self.detect("import contextlib\ncontextlib.aclosing()"))
+
   def test_writeheader_of_csv_DictWriter(self):
     self.assertOnlyIn(((2, 7), (3, 2)), self.detect("from csv import DictWriter\n"
                                                     "DictWriter.writeheader()"))
@@ -1430,6 +1486,9 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_unget_wch_of_curses(self):
     self.assertOnlyIn((3, 3), self.detect("import curses\ncurses.unget_wch()"))
+
+  def test_has_extended_color_support_of_curses(self):
+    self.assertOnlyIn((3, 10), self.detect("import curses\ncurses.has_extended_color_support()"))
 
   def test_fromisoformat_of_datetime_date(self):
     self.assertOnlyIn((3, 7), self.detect("from datetime import date\ndate.fromisoformat()"))
@@ -1459,6 +1518,15 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_stack_effect_of_dis(self):
     self.assertOnlyIn((3, 4), self.detect("import dis\ndis.stack_effect()"))
+
+  def test_GEN_START_of_dis(self):
+    self.assertOnlyIn((3, 10), self.detect("import dis\ndis.GEN_START()"))
+
+  def test_MATCH_CLASS_of_dis(self):
+    self.assertOnlyIn((3, 10), self.detect("import dis\ndis.MATCH_CLASS()"))
+
+  def test_ROT_N_of_dis(self):
+    self.assertOnlyIn((3, 10), self.detect("import dis\ndis.ROT_N()"))
 
   def test_as_integer_ratio_of_franctions_Fraction(self):
     self.assertOnlyIn((3, 8),
@@ -1613,6 +1681,15 @@ class VerminFunctionMemberTests(VerminTest):
   def test_quantiles_of_statistics(self):
     self.assertOnlyIn((3, 8), self.detect("from statistics import quantiles"))
 
+  def test_covariance_of_statistics(self):
+    self.assertOnlyIn((3, 10), self.detect("from statistics import covariance"))
+
+  def test_correlation_of_statistics(self):
+    self.assertOnlyIn((3, 10), self.detect("from statistics import correlation"))
+
+  def test_linear_regression_of_statistics(self):
+    self.assertOnlyIn((3, 10), self.detect("from statistics import linear_regression"))
+
   def test_unraisablehook_of_sys(self):
     self.assertOnlyIn((3, 8), self.detect("from sys import unraisablehook"))
 
@@ -1642,6 +1719,9 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_get_args_of_typing(self):
     self.assertOnlyIn((3, 8), self.detect("from typing import get_args"))
+
+  def test_is_typeddict_of_typing(self):
+    self.assertOnlyIn((3, 10), self.detect("from typing import is_typeddict"))
 
   def test_is_normalized_of_unicodedata(self):
     self.assertOnlyIn((3, 8), self.detect("from unicodedata import is_normalized"))
@@ -1787,6 +1867,9 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_get_cache_token_from_abc(self):
     self.assertOnlyIn((3, 4), self.detect("import abc\nabc.get_cache_token()"))
+
+  def test_update_abstractmethods_from_abc(self):
+    self.assertOnlyIn((3, 10), self.detect("import abc\nabc.update_abstractmethods()"))
 
   def test_frombytes_from_array_array(self):
     self.assertOnlyIn((3, 2),
@@ -1941,6 +2024,12 @@ class VerminFunctionMemberTests(VerminTest):
   def test_b85encode_from_base64(self):
     self.assertOnlyIn((3, 4), self.detect("import base64\nbase64.b85encode()"))
 
+  def test_b32hexencode_from_base64(self):
+    self.assertOnlyIn((3, 10), self.detect("import base64\nbase64.b32hexencode()"))
+
+  def test_b32hexdecode_from_base64(self):
+    self.assertOnlyIn((3, 10), self.detect("import base64\nbase64.b32hexdecode()"))
+
   def test_getfirst_from_cgi_FieldStorage(self):
     self.assertOnlyIn(((2, 2), (3, 0)),
                       self.detect("from cgi import FieldStorage\n"
@@ -1988,6 +2077,9 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_namereplace_errors_from_codecs(self):
     self.assertOnlyIn((3, 5), self.detect("import codecs\ncodecs.namereplace_errors()"))
+
+  def test_unregister_from_codecs(self):
+    self.assertOnlyIn((3, 10), self.detect("import codecs\ncodecs.unregister()"))
 
   def test___getnewargs___from_collections_UserString(self):
     self.assertOnlyIn((3, 5),
@@ -2573,6 +2665,9 @@ class VerminFunctionMemberTests(VerminTest):
   def test_open_code_from_io(self):
     self.assertOnlyIn((3, 8), self.detect("import io\nio.open_code()"))
 
+  def test_text_encoding_from_io(self):
+    self.assertOnlyIn((3, 10), self.detect("import io\nio.text_encoding()"))
+
   def test_subnet_of_from_ipaddress_IPv4Network(self):
     self.assertOnlyIn((3, 7),
                       self.detect("from ipaddress import IPv4Network\n"
@@ -2599,6 +2694,9 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_delocalize_from_locale(self):
     self.assertOnlyIn((3, 5), self.detect("import locale\nlocale.delocalize()"))
+
+  def test_localize_from_locale(self):
+    self.assertOnlyIn((3, 10), self.detect("import locale\nlocale.localize()"))
 
   def test_format_string_from_locale(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("import locale\nlocale.format_string()"))
@@ -3096,6 +3194,9 @@ s.replace()
   def test_win32_is_iot_from_platform(self):
     self.assertOnlyIn((3, 8), self.detect("import platform\nplatform.win32_is_iot()"))
 
+  def test_freedesktop_os_release_from_platform(self):
+    self.assertOnlyIn((3, 10), self.detect("import platform\nplatform.freedesktop_os_release()"))
+
   def test_capa_from_poplib_POP3(self):
     self.assertOnlyIn((3, 4),
                       self.detect("from poplib import POP3\n"
@@ -3572,6 +3673,12 @@ s.replace()
   def test_setprofile_from_threading(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("import threading\nthreading.setprofile()"))
 
+  def test_getprofile_from_threading(self):
+    self.assertOnlyIn((3, 10), self.detect("import threading\nthreading.getprofile()"))
+
+  def test_gettrace_from_threading(self):
+    self.assertOnlyIn((3, 10), self.detect("import threading\nthreading.gettrace()"))
+
   def test_settrace_from_threading(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("import threading\nthreading.settrace()"))
 
@@ -3644,6 +3751,11 @@ s.replace()
     self.assertOnlyIn((3, 4),
                       self.detect("from unittest import TestCase\n"
                                   "TestCase().assertLogs()"))
+
+  def test_assertNoLogs_from_unittest_TestCase(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from unittest import TestCase\n"
+                                  "TestCase().assertNoLogs()"))
 
   def test_assertRaisesRegex_from_unittest_TestCase(self):
     self.assertOnlyIn((3, 2),
@@ -3854,6 +3966,16 @@ s.replace()
   def test_wait_process_from_test_support(self):
     self.assertOnlyIn((3, 9), self.detect("from test.support import wait_process"))
 
+  def test_skip_if_broken_multiprocessing_synchronize_from_test_support(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from test.support import skip_if_broken_multiprocessing_synchronize
+"""))
+
+  def test_check_disallow_instantiation_from_test_support(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from test.support import check_disallow_instantiation
+"""))
+
   def test_zscore_from_statistics_NormalDist(self):
     self.assertOnlyIn((3, 9),
                       self.detect("from statistics import NormalDist\nNormalDist().zscore()"))
@@ -3876,3 +3998,15 @@ s.replace()
 
   def test_get_stats_profile_from_pstats_Stats(self):
     self.assertOnlyIn((3, 9), self.detect("import pstats.Stats\npstats.Stats.get_stats_profile()"))
+
+  def test__get_preferred_schemes_from_sysconfig(self):
+    self.assertOnlyIn((3, 10), self.detect("from sysconfig import _get_preferred_schemes"))
+
+  def test_get_preferred_scheme_from_sysconfig(self):
+    self.assertOnlyIn((3, 10), self.detect("from sysconfig import get_preferred_scheme"))
+
+  def test_get_default_scheme_from_sysconfig(self):
+    self.assertOnlyIn((3, 10), self.detect("from sysconfig import get_default_scheme"))
+
+  def test_packages_distributions_from_importlib_metadata(self):
+    self.assertOnlyIn((3, 10), self.detect("from importlib.metadata import packages_distributions"))

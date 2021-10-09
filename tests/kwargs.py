@@ -1,4 +1,4 @@
-from .testutils import VerminTest
+from .testutils import VerminTest, current_version
 
 class VerminKwargsTests(VerminTest):
   def test_name_of_ImportError(self):
@@ -67,6 +67,12 @@ class VerminKwargsTests(VerminTest):
 
   def test_chars_of_str_strip(self):
     self.assertOnlyIn(((2, 2), (3, 0)), self.detect("str.strip(chars=None)"))
+
+  def test_weights_of_statistics_harmonic_mean(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from statistics import harmonic_mean
+harmonic_mean(weights=None)
+"""))
 
   def test_start_of_sum(self):
     self.assertOnlyIn((3, 8), self.detect("sum(start=None)"))
@@ -160,6 +166,12 @@ class VerminKwargsTests(VerminTest):
 
   def test_domain_of_Filter_from_tracemalloc(self):
     self.assertOnlyIn((3, 6), self.detect("import tracemalloc\ntracemalloc.Filter(domain=1)"))
+
+  def test_compact_of_TracebackException_from_traceback(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from traceback import TracebackException
+TracebackException(compact=1)
+"""))
 
   def test_max_length_of_decompress_from_bz2_BZ2Decompressor(self):
     self.assertOnlyIn((3, 5),
@@ -292,6 +304,27 @@ class VerminKwargsTests(VerminTest):
 
   def test_follow_wrapped_of_signature_from_inspect(self):
     self.assertOnlyIn((3, 5), self.detect("import inspect\ninspect.signature(follow_wrapped=True)"))
+
+  def test_eval_str_of_signature_from_inspect(self):
+    self.assertOnlyIn((3, 10), self.detect("import inspect\ninspect.signature(eval_str=True)"))
+
+  def test_globals_of_signature_from_inspect(self):
+    self.assertOnlyIn((3, 10), self.detect("import inspect\ninspect.signature(globals=True)"))
+
+  def test_locals_of_signature_from_inspect(self):
+    self.assertOnlyIn((3, 10), self.detect("import inspect\ninspect.signature(locals=True)"))
+
+  def test_globalns_of_signature_from_inspect(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from inspect import Signature
+Signature.from_callable(globalns=True)
+"""))
+
+  def test_localns_of_signature_from_inspect(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from inspect import Signature
+Signature.from_callable(localns=True)
+"""))
 
   def test_write_through_of_TextIOWrapper_from_io(self):
     self.assertOnlyIn((3, 3), self.detect("import io\nio.TextIOWrapper(write_through=True)"))
@@ -735,6 +768,27 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn(
         (3, 6), self.detect("from pathlib import Path\np=Path('foo')\np.resolve(strict=True)"))
 
+  def test_follow_symlinks_of_path_chmod(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from pathlib import Path
+p=Path('foo')
+p.chmod(follow_symlinks=True)
+"""))
+
+  def test_follow_symlinks_of_path_stat(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from pathlib import Path
+p=Path('foo')
+p.stat(follow_symlinks=True)
+"""))
+
+  def test_newline_of_path_write_text(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from pathlib import Path
+p=Path('foo')
+p.write_text(newline=True)
+"""))
+
   def test_optimization_of_importlib_util_cache_from_source(self):
     self.assertOnlyIn((3, 5),
                       self.detect("from importlib.util import cache_from_source\n"
@@ -762,6 +816,9 @@ class VerminKwargsTests(VerminTest):
 
   def test_errors_of_cgi_parse_multipart(self):
     self.assertOnlyIn((3, 7), self.detect("import cgi\ncgi.parse_multipart(errors='utf-8')"))
+
+  def test_separator_of_cgi_parse_multipart(self):
+    self.assertOnlyIn((3, 10), self.detect("import cgi\ncgi.parse_multipart(separator='-')"))
 
   def test_exitmsg_of_code_interact(self):
     self.assertOnlyIn((3, 6), self.detect("import code\ncode.interact(exitmsg='hello')"))
@@ -1261,10 +1318,34 @@ class VerminKwargsTests(VerminTest):
                       self.detect("from fileinput import FileInput\n"
                                   "FileInput(openhook=None)"))
 
+  def test_encoding_of_FileInput_from_fileinput(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from fileinput import FileInput
+FileInput(encoding=None)
+"""))
+
+  def test_errors_of_FileInput_from_fileinput(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from fileinput import FileInput
+FileInput(errors=None)
+"""))
+
   def test_errors_of_hook_encoded_from_fileinput(self):
     self.assertOnlyIn((3, 6),
                       self.detect("from fileinput import hook_encoded\n"
                                   "hook_encoded(errors=None)"))
+
+  def test_encoding_of_hook_compressed_from_fileinput(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from fileinput import hook_compressed
+hook_compressed(encoding=None)
+"""))
+
+  def test_errors_of_hook_compressed_from_fileinput(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from fileinput import hook_compressed
+hook_compressed(errors=None)
+"""))
 
   def test_mode_of_input_from_fileinput(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
@@ -1275,6 +1356,18 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn(((2, 5), (3, 0)),
                       self.detect("from fileinput import input\n"
                                   "input(openhook=None)"))
+
+  def test_encoding_of_input_from_fileinput(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from fileinput import input
+input(encoding=None)
+"""))
+
+  def test_errors_of_input_from_fileinput(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from fileinput import input
+input(errors=None)
+"""))
 
   def test_source_address_of_FTP_from_ftplib(self):
     self.assertOnlyIn((3, 3),
@@ -1330,6 +1423,26 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn((3, 5),
                       self.detect("from glob import glob\n"
                                   "glob(recursive=None)"))
+
+  def test_dir_fd_of_glob_from_glob(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from glob import glob\n"
+                                  "glob(dir_fd=None)"))
+
+  def test_root_dir_of_glob_from_glob(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from glob import glob\n"
+                                  "glob(root_dir=None)"))
+
+  def test_dir_fd_of_iglob_from_glob(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from glob import iglob\n"
+                                  "iglob(dir_fd=None)"))
+
+  def test_root_dir_of_iglob_from_glob(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from glob import iglob\n"
+                                  "iglob(root_dir=None)"))
 
   def test_mtime_of_GzipFile_from_gzip(self):
     self.assertOnlyIn(((2, 7), (3, 1)),
@@ -1415,6 +1528,11 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn((3, 8),
                       self.detect("from logging import Formatter\n"
                                   "Formatter(validate=None)"))
+
+  def test_defaults_of_Formatter_from_logging(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from logging import Formatter\n"
+                                  "Formatter(defaults=None)"))
 
   def test_datefmt_of_basicConfig_from_logging(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
@@ -1651,6 +1769,21 @@ class VerminKwargsTests(VerminTest):
                       self.detect("from os import startfile\n"
                                   "startfile(operation=None)"))
 
+  def test_arguments_of_startfile_from_os(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from os import startfile\n"
+                                  "startfile(arguments=None)"))
+
+  def test_cwd_of_startfile_from_os(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from os import startfile\n"
+                                  "startfile(cwd=None)"))
+
+  def test_show_cmd_of_startfile_from_os(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from os import startfile\n"
+                                  "startfile(show_cmd=None)"))
+
   def test_dir_fd_of_stat_from_os(self):
     self.assertOnlyIn((3, 3),
                       self.detect("from os import stat\n"
@@ -1690,6 +1823,11 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn(((2, 6), (3, 0)),
                       self.detect("from os import walk\n"
                                   "walk(followlinks=None)"))
+
+  def test_strict_of_realpath_from_os_path(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from os.path import realpath\n"
+                                  "realpath(strict=None)"))
 
   def test_nosigint_of_Pdb_from_pdb(self):
     self.assertOnlyIn((3, 2),
@@ -1771,6 +1909,11 @@ class VerminKwargsTests(VerminTest):
                       self.detect("from pprint import PrettyPrinter\n"
                                   "PrettyPrinter(sort_dicts=None)"))
 
+  def test_underscore_numbers_of_PrettyPrinter_from_pprint(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from pprint import PrettyPrinter\n"
+                                  "PrettyPrinter(underscore_numbers=None)"))
+
   def test_depth_of_pformat_from_pprint(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
                       self.detect("from pprint import pformat\n"
@@ -1791,6 +1934,11 @@ class VerminKwargsTests(VerminTest):
                       self.detect("from pprint import pformat\n"
                                   "pformat(width=None)"))
 
+  def test_underscore_numbers_of_pformat_from_pprint(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from pprint import pformat\n"
+                                  "pformat(underscore_numbers=None)"))
+
   def test_depth_of_pprint_from_pprint(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
                       self.detect("from pprint import pprint\n"
@@ -1810,6 +1958,11 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn(((2, 4), (3, 0)),
                       self.detect("from pprint import pprint\n"
                                   "pprint(width=None)"))
+
+  def test_underscore_numbers_of_pprint_from_pprint(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from pprint import pprint\n"
+                                  "pprint(underscore_numbers=None)"))
 
   def test_invalidation_mode_of_compile_from_py_compile(self):
     self.assertOnlyIn((3, 7),
@@ -2030,6 +2183,11 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn((3, 8),
                       self.detect("from tempfile import TemporaryFile\n"
                                   "TemporaryFile(errors=None)"))
+
+  def test_ignore_cleanup_errors_of_TemporaryDirectory_from_tempfile(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from tempfile import TemporaryDirectory\n"
+                                  "TemporaryDirectory(ignore_cleanup_errors=None)"))
 
   def test_daemon_of_Thread_from_threading(self):
     self.assertOnlyIn((3, 3),
@@ -2301,6 +2459,11 @@ class VerminKwargsTests(VerminTest):
                       self.detect("from logging.config import fileConfig\n"
                                   "fileConfig(disable_existing_loggers=None)"))
 
+  def test_encoding_of_fileConfig_from_logging_config(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from logging.config import fileConfig\n"
+                                  "fileConfig(encoding=None)"))
+
   def test_verify_of_listen_from_logging_config(self):
     self.assertOnlyIn((3, 4),
                       self.detect("from logging.config import listen\n"
@@ -2391,6 +2554,11 @@ class VerminKwargsTests(VerminTest):
                       self.detect("from urllib.parse import parse_qs\n"
                                   "parse_qs(max_num_fields=None)"))
 
+  def test_separator_of_parse_qs_from_urllib_parse(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from urllib.parse import parse_qs\n"
+                                  "parse_qs(separator=None)"))
+
   def test_encoding_of_parse_qsl_from_urllib_parse(self):
     self.assertOnlyIn((3, 2),
                       self.detect("from urllib.parse import parse_qsl\n"
@@ -2405,6 +2573,11 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn((3, 8),
                       self.detect("from urllib.parse import parse_qsl\n"
                                   "parse_qsl(max_num_fields=None)"))
+
+  def test_separator_of_parse_qsl_from_urllib_parse(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from urllib.parse import parse_qsl\n"
+                                  "parse_qsl(separator=None)"))
 
   def test_quote_via_of_urlencode_from_urllib_parse(self):
     self.assertOnlyIn((3, 5),
@@ -2861,6 +3034,12 @@ class VerminKwargsTests(VerminTest):
                                   "x = SSLContext()\n"
                                   "x.wrap_socket(session=None)"))
 
+  def test_timeout_of_get_server_certificate_from_ssl(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from ssl import get_server_certificate
+get_server_certificate(timeout=None)
+"""))
+
   def test_timeout_of_open_from_telnetlib_Telnet(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
                       self.detect("from telnetlib import Telnet\n"
@@ -3225,6 +3404,11 @@ class VerminKwargsTests(VerminTest):
                       self.detect("from subprocess import Popen\n"
                                   "Popen(user=None)"))
 
+  def test_pipesize_of_Popen_from_subprocess(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from subprocess import Popen\n"
+                                  "Popen(pipesize=None)"))
+
   def test_encoding_of_call_from_subprocess(self):
     self.assertOnlyIn((3, 6),
                       self.detect("from subprocess import call\n"
@@ -3274,6 +3458,11 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn((3, 9),
                       self.detect("from subprocess import call\n"
                                   "call(user=None)"))
+
+  def test_pipesize_of_call_from_subprocess(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from subprocess import call\n"
+                                  "call(pipesize=None)"))
 
   def test_encoding_of_check_call_from_subprocess(self):
     self.assertOnlyIn((3, 6),
@@ -3325,6 +3514,11 @@ class VerminKwargsTests(VerminTest):
                       self.detect("from subprocess import check_call\n"
                                   "check_call(user=None)"))
 
+  def test_pipesize_of_check_call_from_subprocess(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from subprocess import check_call\n"
+                                  "check_call(pipesize=None)"))
+
   def test_extra_groups_of_check_output_from_subprocess(self):
     self.assertOnlyIn((3, 9),
                       self.detect("from subprocess import check_output\n"
@@ -3360,6 +3554,11 @@ class VerminKwargsTests(VerminTest):
                       self.detect("from subprocess import check_output\n"
                                   "check_output(user=None)"))
 
+  def test_pipesize_of_check_output_from_subprocess(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from subprocess import check_output\n"
+                                  "check_output(pipesize=None)"))
+
   def test_extra_groups_of_run_from_subprocess(self):
     self.assertOnlyIn((3, 9),
                       self.detect("from subprocess import run\n"
@@ -3379,6 +3578,11 @@ class VerminKwargsTests(VerminTest):
     self.assertOnlyIn((3, 9),
                       self.detect("from subprocess import run\n"
                                   "run(user=None)"))
+
+  def test_pipesize_of_run_from_subprocess(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from subprocess import run\n"
+                                  "run(pipesize=None)"))
 
   def test_msg_of_cancel_from_asyncio_Future(self):
     self.assertOnlyIn((3, 9),
@@ -3400,3 +3604,68 @@ class VerminKwargsTests(VerminTest):
 
   def test_mod_of_pow(self):
     self.assertOnlyIn((3, 8), self.detect("pow(mod=None)"))
+
+  def test_strict_of_zip(self):
+    self.assertOnlyIn((3, 10), self.detect("zip(strict=True)"))
+
+  def test_key_of_bisect_bisect(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+import bisect
+bisect.bisect(key='x')
+"""))
+
+  def test_key_of_bisect_bisect_left(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+import bisect
+bisect.bisect_left(key='x')
+"""))
+
+  def test_key_of_bisect_insort(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+import bisect
+bisect.insort(key='x')
+"""))
+
+  def test_key_of_bisect_insort_left(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+import bisect
+bisect.insort_left(key='x')
+"""))
+
+  def test_kw_only_of_dataclasses_dataclass(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from dataclasses import dataclass
+@dataclass(kw_only=True)
+class Foo: pass
+"""))
+
+  def test_match_args_of_dataclasses_dataclass(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from dataclasses import dataclass
+@dataclass(match_args=True)
+class Foo: pass
+"""))
+
+  def test_slots_of_dataclasses_dataclass(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from dataclasses import dataclass
+@dataclass(slots=True)
+class Foo: pass
+"""))
+
+  def test_kw_only_of_dataclasses_field(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from dataclasses import dataclass, field
+@dataclass
+class Foo:
+  bar = field(kw_only=False)
+"""))
+
+    # variable annotations requires !2, 3.6
+    if current_version() >= (3, 6):
+      self.assertOnlyIn((3, 10), self.detect("""
+from dataclasses import dataclass, field
+@dataclass
+class Foo:
+  bar: int = field(kw_only=False)
+"""))
