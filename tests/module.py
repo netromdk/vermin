@@ -430,6 +430,9 @@ class VerminModuleTests(VerminTest):
   def test_urlparse(self):
     self.assertOnlyIn((2, 0), self.detect("import urlparse"))
 
+  def test_urllib_parse(self):
+    self.assertOnlyIn((3, 0), self.detect("import urllib.parse"))
+
   def test_zoneinfo(self):
     self.assertOnlyIn((3, 9), self.detect("import zoneinfo"))
 

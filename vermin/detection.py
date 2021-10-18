@@ -441,7 +441,7 @@ def probably_python_file(path):
 
   # Try opening file for reading as a text device.
   try:
-    with open(path, mode="rt") as fp:
+    with open(path, mode="rt", encoding="utf-8") as fp:
       for _i in range(10):
         # A script with a magic line might contain "python".
         line = fp.readline().lower().strip()

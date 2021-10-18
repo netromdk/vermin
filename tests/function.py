@@ -744,6 +744,9 @@ c.total()
   def test_izip_longest_from_itertools(self):
     self.assertOnlyIn((2, 6), self.detect("import itertools\nitertools.izip_longest()"))
 
+  def test_pairwise_from_itertools(self):
+    self.assertOnlyIn((3, 10), self.detect("import itertools\nitertools.pairwise()"))
+
   def test_permutations_from_itertools(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import itertools\nitertools.permutations()"))
 
@@ -762,6 +765,11 @@ c.total()
 
   def test_hasHandlers_from_logging_Logger(self):
     self.assertOnlyIn((3, 2), self.detect("from logging import Logger\nLogger.hasHandlers()"))
+
+  def test__log_from_logging_LoggerAdapter(self):
+    self.assertOnlyIn((3, 6),
+                      self.detect("from logging import LoggerAdapter\n"
+                                  "LoggerAdapter()._log()"))
 
   def test_getLogRecordFactory_from_logging(self):
     self.assertOnlyIn((3, 2), self.detect("import logging\nlogging.getLogRecordFactory()"))
@@ -1454,6 +1462,11 @@ p.hardlink_to()
   def test_get_bpbynumber_of_bdb_Bdb(self):
     self.assertOnlyIn((3, 2), self.detect("from bdb import Bdb\nbp=Bdb()\nbp.get_bpbynumber()"))
 
+  def test_clearBreakpoints_from_bdb_Breakpoint(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from bdb import Breakpoint\n"
+                                  "Breakpoint().clearBreakpoints()"))
+
   def test_itermonthdays3_of_calendar_Calendar(self):
     self.assertOnlyIn((3, 7), self.detect(
       "from calendar import Calendar\nc=Calendar()\nc.itermonthdays3()"))
@@ -1518,15 +1531,6 @@ p.hardlink_to()
 
   def test_stack_effect_of_dis(self):
     self.assertOnlyIn((3, 4), self.detect("import dis\ndis.stack_effect()"))
-
-  def test_GEN_START_of_dis(self):
-    self.assertOnlyIn((3, 10), self.detect("import dis\ndis.GEN_START()"))
-
-  def test_MATCH_CLASS_of_dis(self):
-    self.assertOnlyIn((3, 10), self.detect("import dis\ndis.MATCH_CLASS()"))
-
-  def test_ROT_N_of_dis(self):
-    self.assertOnlyIn((3, 10), self.detect("import dis\ndis.ROT_N()"))
 
   def test_as_integer_ratio_of_franctions_Fraction(self):
     self.assertOnlyIn((3, 8),
@@ -2125,9 +2129,17 @@ p.hardlink_to()
     self.assertOnlyIn((3, 2),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser().read_dict()"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from configparser import ConfigParser\n"
+                                  "ConfigParser().read_dict()"))
 
   def test_read_file_from_configparser_ConfigParser(self):
     self.assertOnlyIn((3, 2),
+                      self.detect("from configparser import ConfigParser\n"
+                                  "ConfigParser().read_file()"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser().read_file()"))
 
@@ -2135,6 +2147,37 @@ p.hardlink_to()
     self.assertOnlyIn((3, 2),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser().read_string()"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from configparser import ConfigParser\n"
+                                  "ConfigParser().read_string()"))
+
+  def test_read_dict_from_configparser_RawConfigParser(self):
+    self.assertOnlyIn((3, 2),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "RawConfigParser().read_dict()"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "RawConfigParser().read_dict()"))
+
+  def test_read_file_from_configparser_RawConfigParser(self):
+    self.assertOnlyIn((3, 2),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "RawConfigParser().read_file()"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "RawConfigParser().read_file()"))
+
+  def test_read_string_from_configparser_RawConfigParser(self):
+    self.assertOnlyIn((3, 2),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "RawConfigParser().read_string()"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "RawConfigParser().read_string()"))
 
   def test_get_wch_from_curses_window(self):
     self.assertOnlyIn((3, 3),
@@ -2652,6 +2695,10 @@ p.hardlink_to()
     self.assertOnlyIn((3, 9), self.detect(
       "import importlib.resources\nimportlib.resources.files()"))
 
+  def test_as_file_from_importlib_resources(self):
+    self.assertOnlyIn((3, 9), self.detect("import importlib.resources\n"
+                                          "importlib.resources.as_file()"))
+
   def test_from_callable_from_inspect_Signature(self):
     self.assertOnlyIn((3, 5),
                       self.detect("from inspect import Signature\n"
@@ -2667,6 +2714,11 @@ p.hardlink_to()
 
   def test_text_encoding_from_io(self):
     self.assertOnlyIn((3, 10), self.detect("import io\nio.text_encoding()"))
+
+  def test___format___from_ipaddress_IPv4Address(self):
+    self.assertOnlyIn((3, 9),
+                      self.detect("from ipaddress import IPv4Address\n"
+                                  "IPv4Address().__format__()"))
 
   def test_subnet_of_from_ipaddress_IPv4Network(self):
     self.assertOnlyIn((3, 7),
@@ -2685,6 +2737,11 @@ p.hardlink_to()
     self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from ipaddress import IPv4Network\n"
                                   "IPv4Network().supernet_of()"))
+
+  def test___format___from_ipaddress_IPv6Address(self):
+    self.assertOnlyIn((3, 9),
+                      self.detect("from ipaddress import IPv6Address\n"
+                                  "IPv6Address().__format__()"))
 
   def test_lazycache_from_linecache(self):
     self.assertOnlyIn((3, 5), self.detect("import linecache\nlinecache.lazycache()"))
@@ -3552,6 +3609,11 @@ s.replace()
 
   def test_unpack_from_from_struct(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("import struct\nstruct.unpack_from()"))
+
+  def test_is_annotated_from_symtable_Symbol(self):
+    self.assertOnlyIn((3, 6),
+                      self.detect("from symtable import Symbol\n"
+                                  "Symbol().is_annotated()"))
 
   def test__clear_type_cache_from_sys(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import sys\nsys._clear_type_cache()"))

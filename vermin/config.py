@@ -89,7 +89,7 @@ class Config:
   @staticmethod
   def parse_file(path):
     try:
-      return Config.parse_fp(open(path, mode="r"), filename=path)
+      return Config.parse_fp(open(path, mode="r", encoding="utf-8"), filename=path)
     except Exception as ex:
       print("Could not load config file: {}".format(path))
       print(ex)
@@ -227,7 +227,7 @@ folders until root or project boundaries are reached. Each candidate is checked 
         if os.path.exists(look_for):
           try:
             cp = ConfigParser()
-            if look_for in cp.read(look_for) and cp.has_section(CONFIG_SECTION):
+            if look_for in cp.read(look_for, encoding="utf-8") and cp.has_section(CONFIG_SECTION):
               return look_for
           except ParsingError:
             pass
