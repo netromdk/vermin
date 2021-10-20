@@ -193,7 +193,7 @@ def parse_target(target):
 
 def open_wrapper(file, mode='r', buffering=-1, encoding=None, errors=None, newline=None,
                  closefd=True):
-  if sys.version_info.major < 3:
+  if sys.version_info.major < 3:  # pragma: no cover
     return open(file, mode, buffering=buffering)
   return open(file, mode, buffering=buffering, encoding=encoding, errors=errors,  # novm
               newline=newline, closefd=closefd)
