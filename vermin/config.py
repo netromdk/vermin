@@ -227,7 +227,7 @@ folders until root or project boundaries are reached. Each candidate is checked 
         if os.path.exists(look_for):
           try:
             cp = ConfigParser()
-            parse_success_files = cp.read(look_for) if sys.version_info.major < 3 \
+            parse_success_files = cp.read(look_for) if sys.version_info < (3, 2) \
               else cp.read(look_for, encoding="utf-8")
             if look_for in parse_success_files and cp.has_section(CONFIG_SECTION):
               return look_for
