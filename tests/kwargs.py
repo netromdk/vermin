@@ -672,6 +672,26 @@ Signature.from_callable(localns=True)
   def test_level_of___import__(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("__import__(level=None)"))
 
+  def test_closefd_of_open(self):
+    self.assertOnlyIn((3, 0), self.detect("open(closefd=None)"))
+    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from io import open\n"
+                                                    "open(closefd=None)"))
+
+  def test_encoding_of_open(self):
+    self.assertOnlyIn((3, 0), self.detect("open(encoding=None)"))
+    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from io import open\n"
+                                                    "open(encoding=None)"))
+
+  def test_errors_of_open(self):
+    self.assertOnlyIn((3, 0), self.detect("open(errors=None)"))
+    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from io import open\n"
+                                                    "open(errors=None)"))
+
+  def test_newline_of_open(self):
+    self.assertOnlyIn((3, 0), self.detect("open(newline=None)"))
+    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from io import open\n"
+                                                    "open(newline=None)"))
+
   def test_opener_of_open(self):
     self.assertOnlyIn((3, 3), self.detect("open(opener=None)"))
 
@@ -1633,6 +1653,11 @@ input(errors=None)
     self.assertOnlyIn((3, 3),
                       self.detect("from io import FileIO\n"
                                   "FileIO(opener=None)"))
+
+  def test_opener_of_open_from_io(self):
+    self.assertOnlyIn((3, 3),
+                      self.detect("from io import open\n"
+                                  "open(opener=None)"))
 
   def test_initial_of_accumulate_from_itertools(self):
     self.assertOnlyIn((3, 8),

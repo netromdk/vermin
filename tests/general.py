@@ -10,6 +10,7 @@ from vermin import combine_versions, InvalidVersionException, detect_paths,\
   dotted_name, remove_whitespace, main, sort_line_column, sort_line_column_parsable,\
   version_strings, format_title_descs, DEFAULT_PROCESSES
 from vermin.formats import ParsableFormat
+from vermin.utility import open_wrapper
 
 from .testutils import VerminTest, current_version, ScopedTemporaryFile, detect, visit, touch
 
@@ -136,7 +137,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     self.assertFalse(probably_python_file(f))
 
     # Magic line.
-    with open(f, mode="w") as fp:
+    with open_wrapper(f, mode="w", encoding="utf-8") as fp:
       fp.write("#!/usr/bin/env python\n")
     self.assertTrue(probably_python_file(f))
 
@@ -260,7 +261,7 @@ test.py:6:9:2.7:3.2:'argparse' module
 
     # Won't be picked by heuristics.
     f = touch(tmp_fld, "no-shebang")
-    with open(f, mode="w") as fp:
+    with open_wrapper(f, mode="w", encoding="utf-8") as fp:
       fp.write("print('this is code')")
 
     paths = detect_paths([tmp_fld])
@@ -278,7 +279,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     exts = ('py', 'py3', 'pyw', 'pyj', 'pyi')
     for ext in exts:
       f = touch(tmp_fld, "code." + ext)
-      with open(f, mode="w") as fp:
+      with open_wrapper(f, mode="w", encoding="utf-8") as fp:
         fp.write("print('this is code')")
 
     found_exts = set()
@@ -296,7 +297,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     exts = ("pyc", "pyd", "pxd", "pyx", "pyo")
     for ext in exts:
       f = touch(tmp_fld, "code." + ext)
-      with open(f, mode="w") as fp:
+      with open_wrapper(f, mode="w", encoding="utf-8") as fp:
         fp.write("print('this is code')")
 
     # Since the detection ignores the extensions, no body of this for-loop will be executed.

@@ -3,6 +3,7 @@ from tempfile import mkdtemp
 from shutil import rmtree
 
 from vermin import Backports, Features, DEFAULT_PROCESSES, CONFIG_FILE_NAMES
+from vermin.utility import open_wrapper
 import vermin.formats
 
 from .testutils import VerminTest, ScopedTemporaryFile
@@ -373,7 +374,7 @@ pessimistic = on
   def test_no_config_file(self):
     tmp_fld = mkdtemp()
     path = os.path.join(tmp_fld, CONFIG_FILE_NAMES[0])
-    with open(path, mode="w+") as fp:
+    with open_wrapper(path, mode="w+", encoding="utf-8") as fp:
       fp.write("""[vermin]
 pessimistic = yes
 """)
