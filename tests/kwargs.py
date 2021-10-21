@@ -2024,6 +2024,16 @@ input(errors=None)
                       self.detect("from pickle import Unpickler\n"
                                   "Unpickler(buffers=None)"))
 
+  def test_encoding_of_Unpickler_from_pickle(self):
+    self.assertOnlyIn((3, 0),
+                      self.detect("from pickle import Unpickler\n"
+                                  "Unpickler(encoding=None)"))
+
+  def test_errors_of_Unpickler_from_pickle(self):
+    self.assertOnlyIn((3, 0),
+                      self.detect("from pickle import Unpickler\n"
+                                  "Unpickler(errors=None)"))
+
   def test_buffer_callback_of_dump_from_pickle(self):
     self.assertOnlyIn((3, 8),
                       self.detect("from pickle import dump\n"
@@ -2049,10 +2059,30 @@ input(errors=None)
                       self.detect("from pickle import load\n"
                                   "load(buffers=None)"))
 
+  def test_encoding_of_load_from_pickle(self):
+    self.assertOnlyIn((3, 0),
+                      self.detect("from pickle import load\n"
+                                  "load(encoding=None)"))
+
+  def test_errors_of_load_from_pickle(self):
+    self.assertOnlyIn((3, 0),
+                      self.detect("from pickle import load\n"
+                                  "load(errors=None)"))
+
   def test_buffers_of_loads_from_pickle(self):
     self.assertOnlyIn((3, 8),
                       self.detect("from pickle import loads\n"
                                   "loads(buffers=None)"))
+
+  def test_encoding_of_loads_from_pickle(self):
+    self.assertOnlyIn((3, 0),
+                      self.detect("from pickle import loads\n"
+                                  "loads(encoding=None)"))
+
+  def test_errors_of_loads_from_pickle(self):
+    self.assertOnlyIn((3, 0),
+                      self.detect("from pickle import loads\n"
+                                  "loads(errors=None)"))
 
   def test_timeout_of_POP3_from_poplib(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
@@ -2193,6 +2223,13 @@ input(errors=None)
     self.assertOnlyIn((3, 3),
                       self.detect("from select import epoll\n"
                                   "epoll(flags=None)"))
+
+  def test_timeout_of_control_from_select(self):
+    self.assertOnlyIn((3, 0),
+                      self.detect("""
+from select import kqueue
+kqueue().control(timeout=1)
+"""))
 
   def test_keyencoding_of_Shelf_from_shelve(self):
     self.assertOnlyIn((3, 2),
@@ -3259,11 +3296,23 @@ get_server_certificate(timeout=None)
                                   "x = Lock()\n"
                                   "x.acquire(timeout=None)"))
 
+  def test_blocking_of_acquire_from_threading_Lock(self):
+    self.assertOnlyIn((3, 0),
+                      self.detect("from threading import Lock\n"
+                                  "x = Lock()\n"
+                                  "x.acquire(blocking=None)"))
+
   def test_timeout_of_acquire_from_threading_RLock(self):
     self.assertOnlyIn((3, 2),
                       self.detect("from threading import RLock\n"
                                   "x = RLock()\n"
                                   "x.acquire(timeout=None)"))
+
+  def test_blocking_of_acquire_from_threading_RLock(self):
+    self.assertOnlyIn((3, 0),
+                      self.detect("from threading import RLock\n"
+                                  "x = RLock()\n"
+                                  "x.acquire(blocking=None)"))
 
   def test_timeout_of_acquire_from_threading_Semaphore(self):
     self.assertOnlyIn((3, 2),
@@ -3443,6 +3492,12 @@ get_server_certificate(timeout=None)
                       self.detect("from xml.dom.minidom import Node\n"
                                   "x = Node()\n"
                                   "x.writexml(standalone=None)"))
+
+  def test_encoding_of_writexml_from_xml_dom_minidom_Node(self):
+    self.assertOnlyIn((3, 0),
+                      self.detect("from xml.dom.minidom import Node\n"
+                                  "x = Node()\n"
+                                  "x.writexml(encoding=None)"))
 
   def test_short_empty_elements_of_write_from_xml_etree_ElementTree_ElementTree(self):
     self.assertOnlyIn((3, 4),
