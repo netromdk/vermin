@@ -1,6 +1,12 @@
 from .testutils import VerminTest
 
 class VerminConstantMemberTests(VerminTest):
+  def test_name_of_AttributeError(self):
+    self.assertOnlyIn((3, 10), self.detect("AttributeError.name"))
+
+  def test_obj_of_AttributeError(self):
+    self.assertOnlyIn((3, 10), self.detect("AttributeError.obj"))
+
   def test___suppress_context___of_BaseException(self):
     self.assertOnlyIn((3, 3), self.detect("BaseException.__suppress_context__"))
 
@@ -10,11 +16,29 @@ class VerminConstantMemberTests(VerminTest):
   def test_path_of_ImportError(self):
     self.assertOnlyIn((3, 3), self.detect("ImportError.path"))
 
+  def test_name_of_NameError(self):
+    self.assertOnlyIn((3, 10), self.detect("NameError.name"))
+
   def test_filename2_of_OSError(self):
     self.assertOnlyIn((3, 4), self.detect("OSError.filename2"))
 
   def test_value_of_StopIteration(self):
     self.assertOnlyIn((3, 3), self.detect("StopIteration.value"))
+
+  def test_end_lineno_of_SyntaxError(self):
+    self.assertOnlyIn((3, 10), self.detect("SyntaxError.end_lineno"))
+
+  def test_end_offset_of_SyntaxError(self):
+    self.assertOnlyIn((3, 10), self.detect("SyntaxError.end_offset"))
+
+  def test___wrapped___of_classmethod(self):
+    self.assertOnlyIn((3, 10), self.detect("classmethod.__wrapped__"))
+
+  def test___wrapped___of_staticmethod(self):
+    self.assertOnlyIn((3, 10), self.detect("staticmethod.__wrapped__"))
+
+  def test___match_args___of_object(self):
+    self.assertOnlyIn((3, 10), self.detect("object.__match_args__"))
 
   def test_encoding_of_file(self):
     self.assertOnlyIn((2, 3), self.detect("file.encoding"))
@@ -221,6 +245,12 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_generator_stop_of___future__(self):
     self.assertOnlyIn((3, 5), self.detect("from __future__ import generator_stop"))
+
+  def test_PyCF_ALLOW_TOP_LEVEL_AWAIT_of_ast(self):
+    self.assertOnlyIn((3, 8), self.detect("from ast import PyCF_ALLOW_TOP_LEVEL_AWAIT"))
+
+  def test_PyCF_TYPE_COMMENTS_of_ast(self):
+    self.assertOnlyIn((3, 8), self.detect("from ast import PyCF_TYPE_COMMENTS"))
 
   def test_eof_of_bz2_BZ2Decompressor(self):
     self.assertOnlyIn((3, 3),
@@ -496,6 +526,11 @@ class VerminConstantMemberTests(VerminTest):
   def test_EXTENSION_SUFFIXES_of_importlib_machinery(self):
     self.assertOnlyIn((3, 3),
                       self.detect("from importlib import machinery\nmachinery.EXTENSION_SUFFIXES"))
+
+  def test_json_from_importlib_metadata_metadata(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from importlib.metadata import metadata\n"
+                                  "metadata().json"))
 
   def test_MAGIC_NUMBER_of_importlib_util(self):
     self.assertOnlyIn((3, 4), self.detect("from importlib import util\nutil.MAGIC_NUMBER"))
@@ -864,14 +899,26 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn((3, 2),
                       self.detect("from configparser import DuplicateSectionError\n"
                                   "DuplicateSectionError().lineno"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from configparser import DuplicateSectionError\n"
+                                  "DuplicateSectionError().lineno"))
 
   def test_source_from_configparser_DuplicateSectionError(self):
     self.assertOnlyIn((3, 2),
                       self.detect("from configparser import DuplicateSectionError\n"
                                   "DuplicateSectionError().source"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from configparser import DuplicateSectionError\n"
+                                  "DuplicateSectionError().source"))
 
   def test_source_from_configparser_ParsingError(self):
     self.assertOnlyIn((3, 2),
+                      self.detect("from configparser import ParsingError\n"
+                                  "ParsingError().source"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
                       self.detect("from configparser import ParsingError\n"
                                   "ParsingError().source"))
 
@@ -1084,6 +1131,11 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn(((2, 6), (3, 0)),
                       self.detect("from logging import LogRecord\n"
                                   "LogRecord().processName"))
+
+  def test_manager_from_logging_LoggerAdapter(self):
+    self.assertOnlyIn((3, 6),
+                      self.detect("from logging import LoggerAdapter\n"
+                                  "LoggerAdapter().manager"))
 
   def test_terminator_from_logging_StreamHandler(self):
     self.assertOnlyIn((3, 2),
@@ -1563,6 +1615,11 @@ class VerminConstantMemberTests(VerminTest):
                       self.detect("from pyclbr import Class\n"
                                   "Class().children"))
 
+  def test_end_lineno_from_pyclbr_Class(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from pyclbr import Class\n"
+                                  "Class().end_lineno"))
+
   def test_parent_from_pyclbr_Class(self):
     self.assertOnlyIn((3, 7),
                       self.detect("from pyclbr import Class\n"
@@ -1572,6 +1629,11 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn((3, 7),
                       self.detect("from pyclbr import Function\n"
                                   "Function().children"))
+
+  def test_end_lineno_from_pyclbr_Function(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from pyclbr import Function\n"
+                                  "Function().end_lineno"))
 
   def test_parent_from_pyclbr_Function(self):
     self.assertOnlyIn((3, 7),
@@ -2692,14 +2754,19 @@ class VerminConstantMemberTests(VerminTest):
   def test_CoroutineType_of_types(self):
     self.assertOnlyIn((3, 5), self.detect("from types import CoroutineType"))
 
+  def test___spec___from_types_ModuleType(self):
+    self.assertOnlyIn((3, 4),
+                      self.detect("from types import ModuleType\n"
+                                  "ModuleType().__spec__"))
+
   def test_NoneType_of_types(self):
-    self.assertOnlyIn((3, 10), self.detect("from types import NoneType"))
+    self.assertOnlyIn(((2, 0), (3, 10)), self.detect("from types import NoneType"))
 
   def test_NotImplementedType_of_types(self):
-    self.assertOnlyIn((3, 10), self.detect("from types import NotImplementedType"))
+    self.assertOnlyIn(((2, 0), (3, 10)), self.detect("from types import NotImplementedType"))
 
   def test_EllipsisType_of_types(self):
-    self.assertOnlyIn((3, 10), self.detect("from types import EllipsisType"))
+    self.assertOnlyIn(((2, 0), (3, 10)), self.detect("from types import EllipsisType"))
 
   def test_UnionType_of_types(self):
     self.assertOnlyIn((3, 10), self.detect("from types import UnionType"))
@@ -2796,6 +2863,9 @@ something.Final
     self.assertOnlyIn((3, 4),
                       self.detect("from urllib.error import HTTPError\n"
                                   "HTTPError().headers"))
+
+  def test__UNSAFE_URL_BYTES_TO_REMOVE_of_urllib_parse(self):
+    self.assertOnlyIn((3, 10), self.detect("from urllib.parse import _UNSAFE_URL_BYTES_TO_REMOVE"))
 
   def test_method_from_urllib_request_Request(self):
     self.assertOnlyIn((3, 3),
@@ -3068,6 +3138,12 @@ something.Final
   def test_F_GETPATH_of_fcntl(self):
     self.assertOnlyIn((3, 9), self.detect("from fcntl import F_GETPATH"))
 
+  def test_F_GETPIPE_SZ_of_fcntl(self):
+    self.assertOnlyIn((3, 10), self.detect("from fcntl import F_GETPIPE_SZ"))
+
+  def test_F_SETPIPE_SZ_of_fcntl(self):
+    self.assertOnlyIn((3, 10), self.detect("from fcntl import F_SETPIPE_SZ"))
+
   def test_COLONEQUAL_of_token(self):
     self.assertOnlyIn((3, 8), self.detect("from token import COLONEQUAL"))
 
@@ -3082,18 +3158,3 @@ something.Final
 
   def test_status_of_urllib_response_addinfourl(self):
     self.assertOnlyIn((3, 9), self.detect("from urllib.response.addinfourl import status"))
-
-  def test_COPY_DICT_WITHOUT_KEYS_of_dis(self):
-    self.assertOnlyIn((3, 10), self.detect("from dis import COPY_DICT_WITHOUT_KEYS"))
-
-  def test_GET_LEN_of_dis(self):
-    self.assertOnlyIn((3, 10), self.detect("from dis import GET_LEN"))
-
-  def test_MATCH_KEYS_of_dis(self):
-    self.assertOnlyIn((3, 10), self.detect("from dis import MATCH_KEYS"))
-
-  def test_MATCH_MAPPING_of_dis(self):
-    self.assertOnlyIn((3, 10), self.detect("from dis import MATCH_MAPPING"))
-
-  def test_MATCH_SEQUENCE_of_dis(self):
-    self.assertOnlyIn((3, 10), self.detect("from dis import MATCH_SEQUENCE"))

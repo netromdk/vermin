@@ -5,7 +5,7 @@ from vermin import Config, MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, B
 config = Config()
 (mods, mems, kwargs, dirs, bdirs, typecodes, codecshandlers, codecsencs, builtinanntypes,
  dictuniontypes, dictunionmergetypes, decouserfuncs) =\
-  (len(MOD_REQS(config)), len(MOD_MEM_REQS(config)), len(KWARGS_REQS), len(STRFTIME_REQS),
+  (len(MOD_REQS(config)), len(MOD_MEM_REQS(config)), len(KWARGS_REQS(config)), len(STRFTIME_REQS),
    len(BYTES_REQS), len(ARRAY_TYPECODE_REQS), len(CODECS_ERROR_HANDLERS), len(CODECS_ENCODINGS),
    len(BUILTIN_GENERIC_ANNOTATION_TYPES), len(DICT_UNION_SUPPORTED_TYPES),
    len(DICT_UNION_MERGE_SUPPORTED_TYPES), len(DECORATOR_USER_FUNCTIONS))

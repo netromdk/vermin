@@ -672,6 +672,26 @@ Signature.from_callable(localns=True)
   def test_level_of___import__(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("__import__(level=None)"))
 
+  def test_closefd_of_open(self):
+    self.assertOnlyIn((3, 0), self.detect("open(closefd=None)"))
+    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from io import open\n"
+                                                    "open(closefd=None)"))
+
+  def test_encoding_of_open(self):
+    self.assertOnlyIn((3, 0), self.detect("open(encoding=None)"))
+    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from io import open\n"
+                                                    "open(encoding=None)"))
+
+  def test_errors_of_open(self):
+    self.assertOnlyIn((3, 0), self.detect("open(errors=None)"))
+    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from io import open\n"
+                                                    "open(errors=None)"))
+
+  def test_newline_of_open(self):
+    self.assertOnlyIn((3, 0), self.detect("open(newline=None)"))
+    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from io import open\n"
+                                                    "open(newline=None)"))
+
   def test_opener_of_open(self):
     self.assertOnlyIn((3, 3), self.detect("open(opener=None)"))
 
@@ -811,6 +831,11 @@ p.write_text(newline=True)
   def test_newline_of_binascii_b2a_base64(self):
     self.assertOnlyIn((3, 6), self.detect("import binascii\nbinascii.b2a_base64(newline=True)"))
 
+  def test_separator_of_parse_from_cgi(self):
+    self.assertOnlyIn((3, 6),
+                      self.detect("from cgi import parse\n"
+                                  "parse(separator=None)"))
+
   def test_encoding_of_cgi_parse_multipart(self):
     self.assertOnlyIn((3, 7), self.detect("import cgi\ncgi.parse_multipart(encoding='utf-8')"))
 
@@ -818,7 +843,17 @@ p.write_text(newline=True)
     self.assertOnlyIn((3, 7), self.detect("import cgi\ncgi.parse_multipart(errors='utf-8')"))
 
   def test_separator_of_cgi_parse_multipart(self):
-    self.assertOnlyIn((3, 10), self.detect("import cgi\ncgi.parse_multipart(separator='-')"))
+    self.assertOnlyIn((3, 6), self.detect("import cgi\ncgi.parse_multipart(separator='-')"))
+
+  def test_max_num_fields_of_parse_qs_from_cgi(self):
+    self.assertOnlyIn((2, 7),
+                      self.detect("from cgi import parse_qs\n"
+                                  "parse_qs(max_num_fields=None)"))
+
+  def test_max_num_fields_of_parse_qsl_from_cgi(self):
+    self.assertOnlyIn((2, 7),
+                      self.detect("from cgi import parse_qsl\n"
+                                  "parse_qsl(max_num_fields=None)"))
 
   def test_exitmsg_of_code_interact(self):
     self.assertOnlyIn((3, 6), self.detect("import code\ncode.interact(exitmsg='hello')"))
@@ -1147,9 +1182,17 @@ p.write_text(newline=True)
     self.assertOnlyIn((3, 2),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(allow_no_value=None)"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from configparser import ConfigParser\n"
+                                  "ConfigParser(allow_no_value=None)"))
 
   def test_comment_prefixes_of_ConfigParser_from_configparser(self):
     self.assertOnlyIn((3, 2),
+                      self.detect("from configparser import ConfigParser\n"
+                                  "ConfigParser(comment_prefixes=None)"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(comment_prefixes=None)"))
 
@@ -1157,9 +1200,17 @@ p.write_text(newline=True)
     self.assertOnlyIn((3, 5),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(converters=None)"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from configparser import ConfigParser\n"
+                                  "ConfigParser(converters=None)"))
 
   def test_default_section_of_ConfigParser_from_configparser(self):
     self.assertOnlyIn((3, 2),
+                      self.detect("from configparser import ConfigParser\n"
+                                  "ConfigParser(default_section=None)"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(default_section=None)"))
 
@@ -1167,9 +1218,17 @@ p.write_text(newline=True)
     self.assertOnlyIn((3, 2),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(delimiters=None)"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from configparser import ConfigParser\n"
+                                  "ConfigParser(delimiters=None)"))
 
   def test_empty_lines_in_values_of_ConfigParser_from_configparser(self):
     self.assertOnlyIn((3, 2),
+                      self.detect("from configparser import ConfigParser\n"
+                                  "ConfigParser(empty_lines_in_values=None)"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(empty_lines_in_values=None)"))
 
@@ -1177,14 +1236,98 @@ p.write_text(newline=True)
     self.assertOnlyIn((3, 2),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(interpolation=None)"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from configparser import ConfigParser\n"
+                                  "ConfigParser(interpolation=None)"))
 
   def test_strict_of_ConfigParser_from_configparser(self):
     self.assertOnlyIn((3, 2),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(strict=None)"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from configparser import ConfigParser\n"
+                                  "ConfigParser(strict=None)"))
+
+  def test_allow_no_value_of_RawConfigParser_from_configparser(self):
+    self.assertOnlyIn((3, 2),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "RawConfigParser(allow_no_value=None)"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "RawConfigParser(allow_no_value=None)"))
+
+  def test_comment_prefixes_of_RawConfigParser_from_configparser(self):
+    self.assertOnlyIn((3, 2),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "RawConfigParser(comment_prefixes=None)"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "RawConfigParser(comment_prefixes=None)"))
+
+  def test_converters_of_RawConfigParser_from_configparser(self):
+    self.assertOnlyIn((3, 5),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "RawConfigParser(converters=None)"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "RawConfigParser(converters=None)"))
+
+  def test_default_section_of_RawConfigParser_from_configparser(self):
+    self.assertOnlyIn((3, 2),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "RawConfigParser(default_section=None)"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "RawConfigParser(default_section=None)"))
+
+  def test_delimiters_of_RawConfigParser_from_configparser(self):
+    self.assertOnlyIn((3, 2),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "RawConfigParser(delimiters=None)"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "RawConfigParser(delimiters=None)"))
+
+  def test_empty_lines_in_values_of_RawConfigParser_from_configparser(self):
+    self.assertOnlyIn((3, 2),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "RawConfigParser(empty_lines_in_values=None)"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "RawConfigParser(empty_lines_in_values=None)"))
+
+  def test_interpolation_of_RawConfigParser_from_configparser(self):
+    self.assertOnlyIn((3, 2),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "RawConfigParser(interpolation=None)"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "RawConfigParser(interpolation=None)"))
+
+  def test_strict_of_RawConfigParser_from_configparser(self):
+    self.assertOnlyIn((3, 2),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "RawConfigParser(strict=None)"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "RawConfigParser(strict=None)"))
 
   def test_lineno_of_DuplicateSectionError_from_configparser(self):
     self.assertOnlyIn((3, 2),
+                      self.detect("from configparser import DuplicateSectionError\n"
+                                  "DuplicateSectionError(lineno=None)"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
                       self.detect("from configparser import DuplicateSectionError\n"
                                   "DuplicateSectionError(lineno=None)"))
 
@@ -1192,9 +1335,17 @@ p.write_text(newline=True)
     self.assertOnlyIn((3, 2),
                       self.detect("from configparser import DuplicateSectionError\n"
                                   "DuplicateSectionError(source=None)"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from configparser import DuplicateSectionError\n"
+                                  "DuplicateSectionError(source=None)"))
 
   def test_source_of_ParsingError_from_configparser(self):
     self.assertOnlyIn((3, 2),
+                      self.detect("from configparser import ParsingError\n"
+                                  "ParsingError(source=None)"))
+    self.assertTrue(self.config.add_backport("configparser"))
+    self.assertOnlyIn(((2, 6), (3, 0)),
                       self.detect("from configparser import ParsingError\n"
                                   "ParsingError(source=None)"))
 
@@ -1305,6 +1456,10 @@ p.write_text(newline=True)
 
   def test_start_of_Enum_from_enum(self):
     self.assertOnlyIn((3, 5),
+                      self.detect("from enum import Enum\n"
+                                  "Enum(start=None)"))
+    self.assertTrue(self.config.add_backport("enum"))
+    self.assertOnlyIn(((2, 4), (3, 3)),
                       self.detect("from enum import Enum\n"
                                   "Enum(start=None)"))
 
@@ -1498,6 +1653,11 @@ input(errors=None)
     self.assertOnlyIn((3, 3),
                       self.detect("from io import FileIO\n"
                                   "FileIO(opener=None)"))
+
+  def test_opener_of_open_from_io(self):
+    self.assertOnlyIn((3, 3),
+                      self.detect("from io import open\n"
+                                  "open(opener=None)"))
 
   def test_initial_of_accumulate_from_itertools(self):
     self.assertOnlyIn((3, 8),
@@ -1979,6 +2139,31 @@ input(errors=None)
                       self.detect("from py_compile import compile\n"
                                   "compile(quiet=None)"))
 
+  def test_end_lineno_of_Class_from_pyclbr(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from pyclbr import Class\n"
+                                  "Class(end_lineno=None)"))
+
+  def test_parent_of_Class_from_pyclbr(self):
+    self.assertOnlyIn((3, 7),
+                      self.detect("from pyclbr import Class\n"
+                                  "Class(parent=None)"))
+
+  def test_end_lineno_of_Function_from_pyclbr(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from pyclbr import Function\n"
+                                  "Function(end_lineno=None)"))
+
+  def test_is_async_of_Function_from_pyclbr(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from pyclbr import Function\n"
+                                  "Function(is_async=None)"))
+
+  def test_parent_of_Function_from_pyclbr(self):
+    self.assertOnlyIn((3, 7),
+                      self.detect("from pyclbr import Function\n"
+                                  "Function(parent=None)"))
+
   def test_flags_of_findall_from_re(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
                       self.detect("from re import findall\n"
@@ -2209,6 +2394,11 @@ input(errors=None)
                       self.detect("from timeit import timeit\n"
                                   "timeit(globals=None)"))
 
+  def test_root_of_nametofont_from_tkinter_font(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from tkinter.font import nametofont\n"
+                                  "nametofont(root=None)"))
+
   def test_tb_locals_of_TextTestRunner_from_unittest(self):
     self.assertOnlyIn((3, 5),
                       self.detect("from unittest import TextTestRunner\n"
@@ -2318,6 +2508,11 @@ input(errors=None)
     self.assertOnlyIn((3, 6),
                       self.detect("from venv import create\n"
                                   "create(prompt=None)"))
+
+  def test_upgrade_deps_of_create_from_venv(self):
+    self.assertOnlyIn((3, 9),
+                      self.detect("from venv import create\n"
+                                  "create(upgrade_deps=None)"))
 
   def test_line_of_showwarning_from_warnings(self):
     self.assertOnlyIn(((2, 7), (3, 0)),
@@ -2550,12 +2745,12 @@ input(errors=None)
                                   "parse_qs(errors=None)"))
 
   def test_max_num_fields_of_parse_qs_from_urllib_parse(self):
-    self.assertOnlyIn((3, 8),
+    self.assertOnlyIn((3, 6),
                       self.detect("from urllib.parse import parse_qs\n"
                                   "parse_qs(max_num_fields=None)"))
 
   def test_separator_of_parse_qs_from_urllib_parse(self):
-    self.assertOnlyIn((3, 10),
+    self.assertOnlyIn((3, 6),
                       self.detect("from urllib.parse import parse_qs\n"
                                   "parse_qs(separator=None)"))
 
@@ -2570,12 +2765,12 @@ input(errors=None)
                                   "parse_qsl(errors=None)"))
 
   def test_max_num_fields_of_parse_qsl_from_urllib_parse(self):
-    self.assertOnlyIn((3, 8),
+    self.assertOnlyIn((3, 6),
                       self.detect("from urllib.parse import parse_qsl\n"
                                   "parse_qsl(max_num_fields=None)"))
 
   def test_separator_of_parse_qsl_from_urllib_parse(self):
-    self.assertOnlyIn((3, 10),
+    self.assertOnlyIn((3, 6),
                       self.detect("from urllib.parse import parse_qsl\n"
                                   "parse_qsl(separator=None)"))
 
@@ -2828,6 +3023,12 @@ input(errors=None)
     self.assertOnlyIn((3, 2),
                       self.detect("from configparser import ConfigParser\n"
                                   "x = ConfigParser()\n"
+                                  "x.read(encoding=None)"))
+
+  def test_encoding_of_read_from_configparser_RawConfigParser(self):
+    self.assertOnlyIn((3, 2),
+                      self.detect("from configparser import RawConfigParser\n"
+                                  "x = RawConfigParser()\n"
                                   "x.read(encoding=None)"))
 
   def test_source_address_of_connect_from_ftplib_FTP(self):
@@ -3172,6 +3373,11 @@ get_server_certificate(timeout=None)
                                   "x = BaseHTTPRequestHandler()\n"
                                   "x.send_error(explain=None)"))
 
+  def test_directory_of_SimpleHTTPRequestHandler_from_http_server(self):
+    self.assertOnlyIn((3, 7),
+                      self.detect("from http.server import SimpleHTTPRequestHandler\n"
+                                  "SimpleHTTPRequestHandler(directory=None)"))
+
   def test_return_value_of_reset_mock_from_unittest_mock_Mock(self):
     self.assertOnlyIn((3, 6),
                       self.detect("from unittest.mock import Mock\n"
@@ -3196,11 +3402,23 @@ get_server_certificate(timeout=None)
                                   "x = Node()\n"
                                   "x.toprettyxml(encoding=None)"))
 
+  def test_standalone_of_toprettyxml_from_xml_dom_minidom_Node(self):
+    self.assertOnlyIn((3, 9),
+                      self.detect("from xml.dom.minidom import Node\n"
+                                  "x = Node()\n"
+                                  "x.toprettyxml(standalone=None)"))
+
   def test_encoding_of_toxml_from_xml_dom_minidom_Node(self):
     self.assertOnlyIn(((2, 3), (3, 0)),
                       self.detect("from xml.dom.minidom import Node\n"
                                   "x = Node()\n"
                                   "x.toxml(encoding=None)"))
+
+  def test_standalone_of_toxml_from_xml_dom_minidom_Node(self):
+    self.assertOnlyIn((3, 9),
+                      self.detect("from xml.dom.minidom import Node\n"
+                                  "x = Node()\n"
+                                  "x.toxml(standalone=None)"))
 
   def test_addindent_of_writexml_from_xml_dom_minidom_Node(self):
     self.assertOnlyIn(((2, 1), (3, 0)),
@@ -3219,6 +3437,12 @@ get_server_certificate(timeout=None)
                       self.detect("from xml.dom.minidom import Node\n"
                                   "x = Node()\n"
                                   "x.writexml(newl=None)"))
+
+  def test_standalone_of_writexml_from_xml_dom_minidom_Node(self):
+    self.assertOnlyIn((3, 9),
+                      self.detect("from xml.dom.minidom import Node\n"
+                                  "x = Node()\n"
+                                  "x.writexml(standalone=None)"))
 
   def test_short_empty_elements_of_write_from_xml_etree_ElementTree_ElementTree(self):
     self.assertOnlyIn((3, 4),
@@ -3620,6 +3844,12 @@ import bisect
 bisect.bisect_left(key='x')
 """))
 
+  def test_key_of_bisect_bisect_right(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+import bisect
+bisect.bisect_right(key='x')
+"""))
+
   def test_key_of_bisect_insort(self):
     self.assertOnlyIn((3, 10), self.detect("""
 import bisect
@@ -3630,6 +3860,12 @@ bisect.insort(key='x')
     self.assertOnlyIn((3, 10), self.detect("""
 import bisect
 bisect.insort_left(key='x')
+"""))
+
+  def test_key_of_bisect_insort_right(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+import bisect
+bisect.insort_right(key='x')
 """))
 
   def test_kw_only_of_dataclasses_dataclass(self):

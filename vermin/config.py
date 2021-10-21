@@ -12,7 +12,7 @@ from .backports import Backports
 from .features import Features
 from .formats import Format, DefaultFormat
 from .constants import DEFAULT_PROCESSES, CONFIG_FILE_NAMES, CONFIG_SECTION, PROJECT_BOUNDARIES
-from .utility import parse_target
+from .utility import open_wrapper, parse_target
 from . import formats
 
 class Config:
@@ -89,7 +89,7 @@ class Config:
   @staticmethod
   def parse_file(path):
     try:
-      return Config.parse_fp(open(path, mode="r"), filename=path)
+      return Config.parse_fp(open_wrapper(path, mode="r", encoding="utf-8"), filename=path)
     except Exception as ex:
       print("Could not load config file: {}".format(path))
       print(ex)
@@ -227,7 +227,9 @@ folders until root or project boundaries are reached. Each candidate is checked 
         if os.path.exists(look_for):
           try:
             cp = ConfigParser()
-            if look_for in cp.read(look_for) and cp.has_section(CONFIG_SECTION):
+            parse_success_files = cp.read(look_for) if sys.version_info < (3, 2) \
+              else cp.read(look_for, encoding="utf-8")
+            if look_for in parse_success_files and cp.has_section(CONFIG_SECTION):
               return look_for
           except ParsingError:
             pass
@@ -292,7 +294,7 @@ folders until root or project boundaries are reached. Each candidate is checked 
 
   def add_exclusion_file(self, filename):
     try:
-      with open(filename, mode="r") as f:
+      with open_wrapper(filename, mode="r", encoding="utf-8") as f:
         for line in f.readlines():
           self.add_exclusion(line.strip())
     except Exception as ex:

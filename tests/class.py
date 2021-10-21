@@ -19,6 +19,9 @@ class VerminClassMemberTests(VerminTest):
   def test_ABC_of_abc(self):
     self.assertOnlyIn((3, 4), self.detect("from abc import ABC"))
 
+  def test_BooleanOptionalAction_of_argparse(self):
+    self.assertOnlyIn((3, 9), self.detect("from argparse import BooleanOptionalAction"))
+
   def test_BufferedProtocol_of_asyncio(self):
     self.assertOnlyIn((3, 7), self.detect("from asyncio import BufferedProtocol"))
 
@@ -152,6 +155,9 @@ class VerminClassMemberTests(VerminTest):
     self.assertTrue(self.config.add_backport("typing"))
     self.assertOnlyIn(((2, 7), (3, 3)), self.detect("from typing import Deque"))
 
+  def test_ForwardRef_of_typing(self):
+    self.assertOnlyIn((3, 7), self.detect("from typing import ForwardRef"))
+
   def test_OrderedDict_of_typing(self):
     self.assertOnlyIn((3, 7), self.detect("from typing import OrderedDict"))
 
@@ -194,6 +200,9 @@ class VerminClassMemberTests(VerminTest):
 
   def test_AsyncIterator_of_typing(self):
     self.assertOnlyIn((3, 5), self.detect("from typing import AsyncIterator"))
+
+  def test_GenericAlias_of_types(self):
+    self.assertOnlyIn((3, 9), self.detect("from types import GenericAlias"))
 
   def test_MappingProxyType_of_types(self):
     self.assertOnlyIn((3, 3), self.detect("from types import MappingProxyType"))
@@ -400,6 +409,9 @@ class VerminClassMemberTests(VerminTest):
   def test_XMLPullParser_of_xml_etree_ElementTree(self):
     self.assertOnlyIn((3, 4), self.detect("from xml.etree.ElementTree import XMLPullParser"))
 
+  def test_LexicalHandler_of_xml_sax_handler(self):
+    self.assertOnlyIn((3, 10), self.detect("from xml.sax.handler import LexicalHandler"))
+
   def test_MultiCall_of_xmlrpclib(self):
     self.assertOnlyIn((2, 4), self.detect("from xmlrpclib import MultiCall"))
 
@@ -490,6 +502,9 @@ class VerminClassMemberTests(VerminTest):
   def test_TraversableReader_of_importlib_abc(self):
     self.assertOnlyIn((3, 9), self.detect("from importlib.abc import TraversableReader"))
 
+  def test_TraversableResources_of_importlib_abc(self):
+    self.assertOnlyIn((3, 9), self.detect("from importlib.abc import TraversableResources"))
+
   def test_WindowsRegistryFinder_of_importlib_machinery(self):
     self.assertOnlyIn((3, 3), self.detect("from importlib.machinery import WindowsRegistryFinder"))
 
@@ -507,6 +522,9 @@ class VerminClassMemberTests(VerminTest):
 
   def test_ModuleSpec_of_importlib_machinery(self):
     self.assertOnlyIn((3, 4), self.detect("from importlib.machinery import ModuleSpec"))
+
+  def test_EntryPoints_of_importlib_metadata(self):
+    self.assertOnlyIn((3, 10), self.detect("from importlib.metadata import EntryPoints"))
 
   def test_LazyLoader_of_importlib_util(self):
     self.assertOnlyIn((3, 5), self.detect("from importlib.util import LazyLoader"))

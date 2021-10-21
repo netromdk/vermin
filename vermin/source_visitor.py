@@ -187,6 +187,7 @@ class SourceVisitor(ast.NodeVisitor):
 
     self.__mod_rules = MOD_REQS(self.__config)
     self.__mod_mem_reqs_rules = MOD_MEM_REQS(self.__config)
+    self.__kwargs_reqs_rules = KWARGS_REQS(self.__config)
 
   def modules(self):
     return self.__modules
@@ -593,8 +594,8 @@ class SourceVisitor(ast.NodeVisitor):
 
     kwargs = self.kwargs()
     for fn_kw in kwargs:
-      if fn_kw in KWARGS_REQS:
-        vers = KWARGS_REQS[fn_kw]
+      if fn_kw in self.__kwargs_reqs_rules:
+        vers = self.__kwargs_reqs_rules[fn_kw]
         mins = self.__add_versions_entity(mins, vers, "'{}({})'".format(fn_kw[0], fn_kw[1]),
                                           vvprint=True, entity=fn_kw)
 
