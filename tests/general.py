@@ -647,6 +647,17 @@ test.py:6:9:2.7:3.2:'argparse' module
     sys.argv = [sys.argv[0]]
     self.assertEqual(ex.exception.code, 1)
 
+  def test_main_no_rules_hit_target_not_met_violations_mode(self):
+    # Python file that doesn't hit any rules, even with targets, should exit successfully for
+    # violations mode.
+    fp = ScopedTemporaryFile()
+    fp.close()
+    with self.assertRaises(SystemExit) as ex:
+      sys.argv = [sys.argv[0], "-t=3.0", "--violations", fp.path()]
+      main()
+    sys.argv = [sys.argv[0]]
+    self.assertEqual(ex.exception.code, 0)
+
   @VerminTest.skipUnlessPlatform("win32")
   def test_main_parsable_dont_ignore_paths_with_colon_in_drive_part(self):
     # Tests that detection of paths works with ":" in them (due to parsable format) especially on

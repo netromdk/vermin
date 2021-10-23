@@ -105,7 +105,12 @@ def main():
 
   targets = config.targets()
   if len(targets) > 0:
-    if not (len(reqs) == len(targets) and
+    # For violations mode, if all findings are inconclusive, like empty files or no rules triggered,
+    # don't fail wrt. targets.
+    all_inconclusive = config.only_show_violations() and len(reqs) > 0 and \
+      all(req == (0, 0) for req in reqs)
+    if not all_inconclusive and\
+       not (len(reqs) == len(targets) and
             all(((exact and target == req) or (not exact and target >= req)) for
                 ((exact, target), req) in zip(targets, reqs))):
       if not parsable:

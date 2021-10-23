@@ -62,7 +62,9 @@ class Arguments:
             "        Target version that files must abide by. Can be specified once or twice.\n"
             "        A '-' can be appended to match target version or smaller, like '-t=3.5-'.\n"
             "        If not met Vermin will exit with code 1. Note that the amount of target\n"
-            "        versions must match the amount of minimum required versions detected.\n")
+            "        versions must match the amount of minimum required versions detected.\n"
+            "        However, if used in conjunction with --violations, and no rules are\n"
+            "        triggered, it will exit with code 0.\n")
       print("  --no-target (default)\n"
             "        Don't expect certain target version(s).\n")
       print("  --processes=N | -p=N\n"
@@ -110,7 +112,9 @@ class Arguments:
             "        Show only results that violate versions described by --target arguments,\n"
             "        which are required to be specified. Verbosity mode is automatically set to\n"
             "        at least 2 in order to show violations in output text, but can be increased\n"
-            "        if necessary.")
+            "        if necessary.\n\n"
+            "        If no rules are triggered while used in conjunction with --target, an exit\n"
+            "        code 0 will still be yielded due to inconclusivity.")
       print("\n  --no-violations (default)\n"
             "        Show regular results.")
       print("\n  --pessimistic\n"
