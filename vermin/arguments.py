@@ -140,7 +140,7 @@ class Arguments:
             "        Scan symlinks to folders to include in analysis.")
       print("\n  --no-symlink-folders (default)\n"
             "        Don't scan symlinks to folders to include in analysis. Symlinks\n"
-            "        to non-folders will always be scanned.")
+            "        to non-folders or top-level folders will always be scanned.")
       print("\n  --format <name> | -f <name>\n"
             "        Format to show results and output in.\n"
             "        Supported formats:\n{}".format(formats.help_str(10)))

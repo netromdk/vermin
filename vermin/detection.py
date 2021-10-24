@@ -484,7 +484,8 @@ def detect_paths_incremental(args):
       continue
     path = abspath(path)
 
-    st = stat_path(path, scan_symlink_folders)
+    # Scan top-level folders, or input folders, in all cases.
+    st = stat_path(path, True if depth == 0 else scan_symlink_folders)
     if st is None:
       continue
 
