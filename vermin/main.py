@@ -91,6 +91,10 @@ def main():
     print(config.format().format_output_line(msg=None, path=None, versions=mins))
   elif len(reqs) > 0:
     print("Minimum required versions: {}".format(version_strings(reqs)))
+    if any(req == (0, 0) for req in reqs):
+      vers = [req.replace("~", "") for req in version_strings(reqs, ",").split(",") if "~" in req]
+      nprint("Note: Not enough evidence to conclude it won't work with Python {}.".
+             format(" or ".join(vers)), config)
 
   # Don't show incompatible versions when -i is given, unless there are no non-incompatible versions
   # found then we need must show the incompatible versions - nothing will be shown otherwise. That
