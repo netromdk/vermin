@@ -146,6 +146,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__builtin_types = {"dict", "set", "list", "unicode", "str", "int", "float", "long",
                             "bytes"}
     self.__codecs_encodings_kwargs = ("encoding", "data_encoding", "file_encoding")
+    self.__super_no_args = False
 
     # Imported members of modules, like "exc_clear" of "sys".
     self.__import_mem_mod = {}
@@ -360,6 +361,9 @@ class SourceVisitor(ast.NodeVisitor):
   def pattern_matching(self):
     return self.__pattern_matching
 
+  def super_no_args(self):
+    return self.__super_no_args
+
   def __violates_target_versions(self, versions):
     # If only violations isn't turned on then fake violations because it means it will show the
     # rule.
@@ -546,6 +550,9 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.union_types():
       mins = self.__add_versions_entity(mins, (None, (3, 10)), "union types as `X | Y`")
+
+    if self.super_no_args():
+      mins = self.__add_versions_entity(mins, (None, (3, 0)), "super() without arguments")
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
@@ -1112,6 +1119,9 @@ class SourceVisitor(ast.NodeVisitor):
              is_int_node(node.args[2]):
             self.__mod_inverse_pow = True
             self.__vvprint("modular inverse pow()", versions=[None, (3, 8)])
+        elif func.id == "super" and len(node.args) == 0:
+          self.__super_no_args = True
+          self.__vvprint("super() without arguments", versions=[None, (3, 0)])
       elif hasattr(func, "attr"):
         attr = func.attr
         if attr == "format" and hasattr(func, "value") and isinstance(func.value, ast.Str) and \
