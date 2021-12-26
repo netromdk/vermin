@@ -10,6 +10,7 @@ BACKPORTS = (
   ("faulthandler", ["https://pypi.org/project/faulthandler/"]),
   ("importlib", ["https://pypi.org/project/importlib/"]),
   ("ipaddress", ["https://pypi.org/project/ipaddress/"]),
+  ("mock", ["https://pypi.org/project/mock/"]),
   ("statistics", ["https://pypi.org/project/statistics/"]),
   ("typing", ["https://pypi.org/project/typing/"]),
 )
