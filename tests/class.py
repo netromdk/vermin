@@ -102,6 +102,8 @@ class VerminClassMemberTests(VerminTest):
 
   def test_AsyncMock_of_unittest_mock(self):
     self.assertOnlyIn((3, 8), self.detect("from unittest.mock import AsyncMock"))
+    self.assertTrue(self.config.add_backport("mock"))
+    self.assertOnlyIn(((3, 6)), self.detect("from unittest.mock import AsyncMock"))
 
   def test_DefragResult_of_urllib_parse(self):
     self.assertOnlyIn((3, 2), self.detect("from urllib.parse import DefragResult"))

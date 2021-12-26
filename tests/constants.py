@@ -3152,9 +3152,13 @@ something.Final
 
   def test_args_of_unittest_mock_Mock_call_args(self):
     self.assertOnlyIn((3, 8), self.detect("from unittest.mock.Mock.call_args import args"))
+    self.assertTrue(self.config.add_backport("mock"))
+    self.assertOnlyIn((3, 6), self.detect("from unittest.mock.Mock.call_args import args"))
 
   def test_kwargs_of_unittest_mock_Mock_call_args(self):
     self.assertOnlyIn((3, 8), self.detect("from unittest.mock.Mock.call_args import kwargs"))
+    self.assertTrue(self.config.add_backport("mock"))
+    self.assertOnlyIn((3, 6), self.detect("from unittest.mock.Mock.call_args import kwargs"))
 
   def test_status_of_urllib_response_addinfourl(self):
     self.assertOnlyIn((3, 9), self.detect("from urllib.response.addinfourl import status"))

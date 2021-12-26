@@ -1815,6 +1815,8 @@ p.hardlink_to()
 
   def test_seal_from_unittest_mock(self):
     self.assertOnlyIn((3, 7), self.detect("import unittest.mock\nunittest.mock.seal()"))
+    self.assertTrue(self.config.add_backport("mock"))
+    self.assertOnlyIn(((3, 6)), self.detect("import unittest.mock\nunittest.mock.seal()"))
 
   def test_quoteattr_from_xml_sax_saxutils(self):
     self.assertOnlyIn(((2, 2), (3, 0)), self.detect(
