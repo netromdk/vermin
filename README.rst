@@ -75,6 +75,22 @@ be used to check that the minimum required versions didn't change. The following
   script:
   - vermin -t=2.7 -t=3 project_package otherfile.py
 
+Vermin can also be used as a `pre-commit <https://pre-commit.com/>`__ hook:
+
+.. code-block:: yaml
+
+  repos:
+    - repo: https://github.com/netromdk/vermin
+      rev: e88bda9
+      hooks:
+        - id: vermin
+          # specify your target version here, OR in a Vermin config file as usual:
+          args: ['-t=3.8']
+
+When using the hook, a target version must be specified via a Vermin config file in your package,
+or via the ``args`` option in your ``.pre-commit-config.yaml`` config (shown above). For further
+information on setting up pre-commit for your project, see the `pre-commit docs <https://pre-commit.com/#quick-start>`__.
+
 Features
 ========
 
