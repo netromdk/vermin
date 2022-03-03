@@ -1,0 +1,6 @@
+- id: vermin
+  name: vermin
+  description: checks the minimum needed Python version to run your package
+  entry: vermin -vv
+  language: python
+  types: [python]
