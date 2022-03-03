@@ -3,4 +3,5 @@
   description: checks the minimum needed Python version to run your package
   entry: vermin -vv
   language: python
+  require_serial: true
   types: [python]
