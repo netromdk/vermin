@@ -75,6 +75,31 @@ be used to check that the minimum required versions didn't change. The following
   script:
   - vermin -t=2.7 -t=3 project_package otherfile.py
 
+Vermin can also be used as a `pre-commit <https://pre-commit.com/>`__ hook:
+
+.. code-block:: yaml
+
+  repos:
+    - repo: https://github.com/netromdk/vermin
+      rev: GIT_SHA_OR_TAG  # ex: 'e88bda9' or 'v1.3.4'
+      hooks:
+        - id: vermin
+          # specify your target version here, OR in a Vermin config file as usual:
+          args: ['-t=3.8-', '--violations']
+          # (if your target is specified in a Vermin config, you may omit the 'args' entry entirely)
+
+When using the hook, a target version must be specified via a Vermin config file in your package,
+or via the ``args`` option in your ``.pre-commit-config.yaml`` config. If you're passing the target
+via ``args``, it's recommended to also include ``--violations`` (shown above).
+
+If you're using the ``vermin-all`` hook, you can specify any target as you usually would. However,
+if you're using the ``vermin`` hook, your target must be in the form of ``x.y-`` (as opposed to
+``x.y``), otherwise you will run into issues when your staged changes meet a minimum version that
+is lower than your target.
+
+See the `pre-commit docs <https://pre-commit.com/#quick-start>`__ for further general information
+on how to get hooks set up on your project.
+
 Features
 ========
 
