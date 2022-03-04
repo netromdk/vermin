@@ -1,16 +1,16 @@
 - id: vermin
   name: Check minimum Python version
-  description: Checks the minimum needed Python version to run your package. Only runs on staged files (your target must be `x.y-` rather than `x.y` for it to work properly).
+  description: Checks the minimum needed Python version to run your package. Only runs on staged files (your target must be `x.y-` rather than `x.y` for it to work properly). If using non-default args, including `--violations` is recommended.
   entry: vermin
-  args: ["-vv"]
+  args: ["--violations"]
   require_serial: true
   language: python
   types: [python]
 - id: vermin-all
   name: Check minimum Python version
-  description: Checks the minimum needed Python version to run your package. Runs on all Python files in the repo.
+  description: Checks the minimum needed Python version to run your package. Runs on all Python files in the repo. If using non-default args, including `--violations` is recommended.
   entry: vermin
-  args: ["-vv", "."]
+  args: ["--violations", "."]
   pass_filenames: false
   require_serial: true
   language: python
