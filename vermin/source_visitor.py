@@ -659,9 +659,6 @@ class SourceVisitor(ast.NodeVisitor):
     msg = fmt.format_output_line(msg, self.__path, line, col, versions)
     self.__output_text.append(msg)
 
-  def __vprint(self, msg, entity=None):  # pragma: no cover
-    self.__verbose_print(msg, 1, entity)
-
   def __vvprint(self, msg, entity=None, line=None, versions=None):  # pragma: no cover
     self.__verbose_print(msg, 2, entity, line, versions)
 
