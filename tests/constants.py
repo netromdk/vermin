@@ -128,6 +128,9 @@ class VerminConstantMemberTests(VerminTest):
   def test_POSIX_FADV_DONTNEED_of_os(self):
     self.assertOnlyIn((3, 3), self.detect("from os import POSIX_FADV_DONTNEED"))
 
+  def test_SF_NOCACHE_of_os(self):
+    self.assertOnlyIn((3, 11), self.detect("from os import SF_NOCACHE"))
+
   def test_SF_NODISKIO_of_os(self):
     self.assertOnlyIn((3, 3), self.detect("from os import SF_NODISKIO"))
 
@@ -173,6 +176,9 @@ class VerminConstantMemberTests(VerminTest):
   def test_failfast_of_unittest_TestResult(self):
     self.assertOnlyIn(((2, 7), (3, 2)),
                       self.detect("from unittest import TestResult\np = TestResult()\np.failfast"))
+
+  def test_UTC_of_datetime(self):
+    self.assertOnlyIn((3, 11), self.detect("from datetime import UTC"))
 
   def test_fold_of_datetime_datetime(self):
     self.assertOnlyIn((3, 6), self.detect("from datetime import datetime\np = datetime()\np.fold"))
@@ -479,6 +485,15 @@ class VerminConstantMemberTests(VerminTest):
   def test_ZIP_LZMA_of_zipfile(self):
     self.assertOnlyIn((3, 3), self.detect("import zipfile\nzipfile.ZIP_LZMA"))
 
+  def test_suffix_of_Path_of_zipfile(self):
+    self.assertOnlyIn((3, 11), self.detect("from zipfile import Path\nPath().suffix"))
+
+  def test_stem_of_Path_of_zipfile(self):
+    self.assertOnlyIn((3, 11), self.detect("from zipfile import Path\nPath().stem"))
+
+  def test_suffixes_of_Path_of_zipfile(self):
+    self.assertOnlyIn((3, 11), self.detect("from zipfile import Path\nPath().suffixes"))
+
   def test_METHOD_SHA512_of_crypt(self):
     self.assertOnlyIn((3, 3), self.detect("import crypt\ncrypt.METHOD_SHA512"))
 
@@ -682,6 +697,9 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_MAP_POPULATE_of_mmap(self):
     self.assertOnlyIn((3, 10), self.detect("import mmap\nmmap.MAP_POPULATE"))
+
+  def test_MAP_STACK_of_mmap(self):
+    self.assertOnlyIn((3, 11), self.detect("import mmap\nmmap.MAP_STACK"))
 
   def test_MFD_CLOEXEC_of_os(self):
     self.assertOnlyIn((3, 8), self.detect("from os import MFD_CLOEXEC"))
@@ -957,6 +975,9 @@ class VerminConstantMemberTests(VerminTest):
                       self.detect("from difflib import SequenceMatcher\n"
                                   "SequenceMatcher().bpopular"))
 
+  def test_positions_of_dis_Instruction(self):
+    self.assertOnlyIn((3, 11), self.detect("import dis\ndis.Instruction().positions"))
+
   def test_COMPARISON_FLAGS_of_doctest(self):
     self.assertOnlyIn(((2, 4), (3, 0)), self.detect("from doctest import COMPARISON_FLAGS"))
 
@@ -1006,8 +1027,17 @@ class VerminConstantMemberTests(VerminTest):
                       self.detect("from email.policy import Policy\n"
                                   "Policy().message_factory"))
 
+  def test_EQFULL_of_errno(self):
+    self.assertOnlyIn((3, 11), self.detect("from errno import EQFULL"))
+
   def test_F_ADD_SEALS_of_fcntl(self):
     self.assertOnlyIn((3, 8), self.detect("from fcntl import F_ADD_SEALS"))
+
+  def test_F_DUP2FD_of_fcntl(self):
+    self.assertOnlyIn((3, 11), self.detect("from fcntl import F_DUP2FD"))
+
+  def test_F_DUP2FD_CLOEXEC_of_fcntl(self):
+    self.assertOnlyIn((3, 11), self.detect("from fcntl import F_DUP2FD_CLOEXEC"))
 
   def test_F_GET_SEALS_of_fcntl(self):
     self.assertOnlyIn((3, 8), self.detect("from fcntl import F_GET_SEALS"))
@@ -1382,6 +1412,15 @@ class VerminConstantMemberTests(VerminTest):
   def test_WUNTRACED_of_os(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("from os import WUNTRACED"))
 
+  def test__COPYFILE_ACL_of_os(self):
+    self.assertOnlyIn((3, 11), self.detect("from os import _COPYFILE_ACL"))
+
+  def test__COPYFILE_STAT_of_os(self):
+    self.assertOnlyIn((3, 11), self.detect("from os import _COPYFILE_STAT"))
+
+  def test__COPYFILE_XATTR_of_os(self):
+    self.assertOnlyIn((3, 11), self.detect("from os import _COPYFILE_XATTR"))
+
   def test_devnull_of_os(self):
     self.assertOnlyIn(((2, 4), (3, 0)), self.detect("from os import devnull"))
 
@@ -1645,6 +1684,9 @@ class VerminConstantMemberTests(VerminTest):
                       self.detect("from pyclbr import Function\n"
                                   "Function().is_async"))
 
+  def test_NOFLAG_of_re(self):
+    self.assertOnlyIn((3, 11), self.detect("from re import NOFLAG"))
+
   def test_colno_from_re_error(self):
     self.assertOnlyIn((3, 5),
                       self.detect("from re import error\n"
@@ -1841,6 +1883,9 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_CTRL_C_EVENT_of_signal(self):
     self.assertOnlyIn(((2, 7), (3, 2)), self.detect("from signal import CTRL_C_EVENT"))
+
+  def test_SIGSTKFLT_of_signal(self):
+    self.assertOnlyIn((3, 11), self.detect("from signal import SIGSTKFLT"))
 
   def test_SIG_BLOCK_of_signal(self):
     self.assertOnlyIn((3, 3), self.detect("from signal import SIG_BLOCK"))
@@ -2112,6 +2157,9 @@ class VerminConstantMemberTests(VerminTest):
   def test_RDS_RECVERR_of_socket(self):
     self.assertOnlyIn((3, 3), self.detect("from socket import RDS_RECVERR"))
 
+  def test_SCM_CREDS2_of_socket(self):
+    self.assertOnlyIn((3, 11), self.detect("from socket import SCM_CREDS2"))
+
   def test_SIO_KEEPALIVE_VALS_of_socket(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from socket import SIO_KEEPALIVE_VALS"))
 
@@ -2145,6 +2193,9 @@ class VerminConstantMemberTests(VerminTest):
   def test_SO_DOMAIN_of_socket(self):
     self.assertOnlyIn((3, 6), self.detect("from socket import SO_DOMAIN"))
 
+  def test_SO_INCOMING_CPU_of_socket(self):
+    self.assertOnlyIn((3, 11), self.detect("from socket import SO_INCOMING_CPU"))
+
   def test_SO_PASSSEC_of_socket(self):
     self.assertOnlyIn((3, 6), self.detect("from socket import SO_PASSSEC"))
 
@@ -2165,6 +2216,9 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_TCP_CONGESTION_of_socket(self):
     self.assertOnlyIn((3, 6), self.detect("from socket import TCP_CONGESTION"))
+
+  def test_TCP_CONNECTION_INFO_of_socket(self):
+    self.assertOnlyIn((3, 11), self.detect("from socket import TCP_CONNECTION_INFO"))
 
   def test_TCP_NOTSENT_LOWAT_of_socket(self):
     self.assertOnlyIn((3, 7), self.detect("from socket import TCP_NOTSENT_LOWAT"))
@@ -2262,6 +2316,12 @@ class VerminConstantMemberTests(VerminTest):
   def test_IP_RECVTOS_of_socket(self):
     self.assertOnlyIn((3, 10), self.detect("from socket import IP_RECVTOS"))
 
+  def test_LOCAL_CREDS_of_socket(self):
+    self.assertOnlyIn((3, 11), self.detect("from socket import LOCAL_CREDS"))
+
+  def test_LOCAL_CREDS_PERSISTENT_of_socket(self):
+    self.assertOnlyIn((3, 11), self.detect("from socket import LOCAL_CREDS_PERSISTENT"))
+
   def test_has_ipv6_of_socket(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("from socket import has_ipv6"))
 
@@ -2294,6 +2354,16 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn((3, 2),
                       self.detect("from sqlite3 import Connection\n"
                                   "Connection().in_transaction"))
+
+  def test_sqlite_errorcode_from_sqlite3_Error(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from sqlite3 import Error\n"
+                                  "Error().sqlite_errorcode"))
+
+  def test_sqlite_errorname_from_sqlite3_Error(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from sqlite3 import Error\n"
+                                  "Error().sqlite_errorname"))
 
   def test_ALERT_DESCRIPTION_ACCESS_DENIED_of_ssl(self):
     self.assertOnlyIn(((2, 7), (3, 4)), self.detect(
@@ -2494,6 +2564,9 @@ class VerminConstantMemberTests(VerminTest):
 
   def test___unraisablehook___of_sys(self):
     self.assertOnlyIn((3, 8), self.detect("from sys import __unraisablehook__"))
+
+  def test__emscripten_info_of_sys(self):
+    self.assertOnlyIn((3, 11), self.detect("from sys import _emscripten_info"))
 
   def test__xoptions_of_sys(self):
     self.assertOnlyIn((3, 2), self.detect("from sys import _xoptions"))
@@ -2827,6 +2900,27 @@ something.Final
 
   def test_TypeGuard_of_typing(self):
     self.assertOnlyIn((3, 10), self.detect("from typing import TypeGuard"))
+
+  def test_LiteralString_of_typing(self):
+    self.assertOnlyIn((3, 11), self.detect("from typing import LiteralString"))
+
+  def test_Never_of_typing(self):
+    self.assertOnlyIn((3, 11), self.detect("from typing import Never"))
+
+  def test_Self_of_typing(self):
+    self.assertOnlyIn((3, 11), self.detect("from typing import Self"))
+
+  def test_Required_of_typing(self):
+    self.assertOnlyIn((3, 11), self.detect("from typing import Required"))
+
+  def test_NotRequired_of_typing(self):
+    self.assertOnlyIn((3, 11), self.detect("from typing import NotRequired"))
+
+  def test_TypeVarTuple_of_typing(self):
+    self.assertOnlyIn((3, 11), self.detect("from typing import TypeVarTuple"))
+
+  def test_Unpack_of_typing(self):
+    self.assertOnlyIn((3, 11), self.detect("from typing import Unpack"))
 
   def test_ucd_3_2_0_of_unicodedata(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("from unicodedata import ucd_3_2_0"))

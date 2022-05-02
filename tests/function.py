@@ -4,6 +4,9 @@ class VerminFunctionMemberTests(VerminTest):
   def test_exc_clear_of_sys(self):
     self.assertOnlyIn((2, 3), self.detect("from sys import exc_clear"))
 
+  def test_exception_of_sys(self):
+    self.assertOnlyIn((3, 11), self.detect("from sys import exception"))
+
   def test_getcheckinterval_of_sys(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("from sys import getcheckinterval"))
 
@@ -100,6 +103,9 @@ class VerminFunctionMemberTests(VerminTest):
   def test_lockf_of_os(self):
     self.assertOnlyIn((3, 3), self.detect("from os import lockf"))
 
+  def test_login_tty_of_os(self):
+    self.assertOnlyIn((3, 11), self.detect("from os import login_tty"))
+
   def test_pipe2_of_os(self):
     self.assertOnlyIn((3, 3), self.detect("from os import pipe2"))
 
@@ -175,6 +181,13 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_get_context_of_multiprocessing(self):
     self.assertOnlyIn((3, 4), self.detect("from multiprocessing import get_context"))
+
+  def test_enterAsyncContext_of_unittest_IsolatedAsyncioTestCase(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("""
+from unittest import IsolatedAsyncioTestCase
+IsolatedAsyncioTestCase.enterAsyncContext()
+"""))
 
   def test_assertIs_of_unittest_TestCase(self):
     self.assertOnlyIn(((2, 7), (3, 1)),
@@ -287,6 +300,14 @@ class VerminFunctionMemberTests(VerminTest):
     self.assertOnlyIn(((2, 7), (3, 1)),
                       self.detect("from unittest import TestCase\nTestCase.doCleanups()"))
 
+  def test_enterClassContext_of_unittest_TestCase(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from unittest import TestCase\nTestCase.enterClassContext()"))
+
+  def test_enterContext_of_unittest_TestCase(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from unittest import TestCase\nTestCase.enterContext()"))
+
   def test_discover_of_unittest_TestLoader(self):
     self.assertOnlyIn(((2, 7), (3, 2)),
                       self.detect("from unittest import TestLoader\nTestLoader.discover()"))
@@ -304,6 +325,9 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_doModuleCleanups_of_unittest(self):
     self.assertOnlyIn((3, 8), self.detect("from unittest import doModuleCleanups"))
+
+  def test_enterModuleContext_of_unittest(self):
+    self.assertOnlyIn((3, 11), self.detect("from unittest import enterModuleContext"))
 
   def test_total_seconds_of_datetime_timedelta(self):
     self.assertOnlyIn(((2, 7), (3, 2)), self.detect(
@@ -689,6 +713,9 @@ c.total()
   def test_getgeneratorlocals_from_inspect(self):
     self.assertOnlyIn((3, 3), self.detect("import inspect\ninspect.getgeneratorlocals()"))
 
+  def test_getmembers_static_from_inspect(self):
+    self.assertOnlyIn((3, 11), self.detect("import inspect\ninspect.getmembers_static()"))
+
   def test_getcoroutinestate_from_inspect(self):
     self.assertOnlyIn((3, 5), self.detect("import inspect\ninspect.getcoroutinestate()"))
 
@@ -771,6 +798,9 @@ c.total()
                       self.detect("from logging import LoggerAdapter\n"
                                   "LoggerAdapter()._log()"))
 
+  def test_getLevelNamesMapping_from_logging(self):
+    self.assertOnlyIn((3, 11), self.detect("import logging\nlogging.getLevelNamesMapping()"))
+
   def test_getLogRecordFactory_from_logging(self):
     self.assertOnlyIn((3, 2), self.detect("import logging\nlogging.getLogRecordFactory()"))
 
@@ -827,6 +857,21 @@ c.total()
                       self.detect("from xmlrpc.server import SimpleXMLRPCServer\n"
                                   "srv = SimpleXMLRPCServer()\n"
                                   "srv.register_introspection_functions()"))
+
+  def test_serialize_from_sqlite3_Connection(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from sqlite3 import Connection\n"
+                                  "Connection().serialize()"))
+
+  def test_getlimit_from_sqlite3_Connection(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from sqlite3 import Connection\n"
+                                  "Connection().getlimit()"))
+
+  def test_setlimit_from_sqlite3_Connection(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from sqlite3 import Connection\n"
+                                  "Connection().setlimit()"))
 
   def test_set_progress_handler_from_sqlite3_Connection(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
@@ -988,6 +1033,9 @@ c.total()
   def test_repeat_from_timeit(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import timeit\ntimeit.repeat()"))
 
+  def test_info_patchlevel_from_tkinter(self):
+    self.assertOnlyIn((3, 11), self.detect("import tkinter\ntkinter.info_patchlevel()"))
+
   def test_warnpy3k_from_warnings(self):
     self.assertOnlyIn((2, 6), self.detect("import warnings\nwarnings.warnpy3k()"))
 
@@ -1120,6 +1168,12 @@ c.total()
                                   "zf = ZipFile()\n"
                                   "zf.extractall()"))
 
+  def test_mkdir_from_zipfile_ZipFile(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from zipfile import ZipFile\n"
+                                  "zf = ZipFile()\n"
+                                  "zf.mkdir()"))
+
   def test_setpassword_from_zipfile_ZipFile(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
                       self.detect("from zipfile import ZipFile\n"
@@ -1202,6 +1256,9 @@ c.total()
   def test_trunc_from_math(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import math\nmath.trunc()"))
 
+  def test_exp2_from_math(self):
+    self.assertOnlyIn((3, 11), self.detect("import math\nmath.exp2()"))
+
   def test_expm1_from_math(self):
     self.assertOnlyIn(((2, 7), (3, 2)), self.detect("import math\nmath.expm1()"))
 
@@ -1243,6 +1300,9 @@ c.total()
 
   def test_dist_from_math(self):
     self.assertOnlyIn((3, 8), self.detect("import math\nmath.dist()"))
+
+  def test_cbrt_from_math(self):
+    self.assertOnlyIn((3, 11), self.detect("import math\nmath.cbrt()"))
 
   def test_comb_from_math(self):
     self.assertOnlyIn((3, 8), self.detect("import math\nmath.comb()"))
@@ -1415,6 +1475,9 @@ p.hardlink_to()
   def test_time_ns_of_time(self):
     self.assertOnlyIn((3, 7), self.detect("from time import time_ns"))
 
+  def test__check_future_of_asyncio_Task(self):
+    self.assertOnlyIn((3, 11), self.detect("from asyncio import Task\nTask()._check_future()"))
+
   def test_run_of_asyncio(self):
     self.assertOnlyIn((3, 7), self.detect("import asyncio\nasyncio.run()"))
 
@@ -1489,6 +1552,9 @@ p.hardlink_to()
 
   def test_aclosing_of_contextlib(self):
     self.assertOnlyIn((3, 10), self.detect("import contextlib\ncontextlib.aclosing()"))
+
+  def test_chdir_of_contextlib(self):
+    self.assertOnlyIn((3, 11), self.detect("import contextlib\ncontextlib.chdir()"))
 
   def test_writeheader_of_csv_DictWriter(self):
     self.assertOnlyIn(((2, 7), (3, 2)), self.detect("from csv import DictWriter\n"
@@ -1718,14 +1784,29 @@ p.hardlink_to()
   def test_open_of_tokenize(self):
     self.assertOnlyIn((3, 2), self.detect("from tokenize import open"))
 
+  def test_assert_never_of_typing(self):
+    self.assertOnlyIn((3, 11), self.detect("from typing import assert_never"))
+
+  def test_assert_type_of_typing(self):
+    self.assertOnlyIn((3, 11), self.detect("from typing import assert_type"))
+
+  def test_clear_overloads_of_typing(self):
+    self.assertOnlyIn((3, 11), self.detect("from typing import clear_overloads"))
+
   def test_get_origin_of_typing(self):
     self.assertOnlyIn((3, 8), self.detect("from typing import get_origin"))
+
+  def test_get_overloads_of_typing(self):
+    self.assertOnlyIn((3, 11), self.detect("from typing import get_overloads"))
 
   def test_get_args_of_typing(self):
     self.assertOnlyIn((3, 8), self.detect("from typing import get_args"))
 
   def test_is_typeddict_of_typing(self):
     self.assertOnlyIn((3, 10), self.detect("from typing import is_typeddict"))
+
+  def test_reveal_type_of_typing(self):
+    self.assertOnlyIn((3, 11), self.detect("from typing import reveal_type"))
 
   def test_is_normalized_of_unicodedata(self):
     self.assertOnlyIn((3, 8), self.detect("from unicodedata import is_normalized"))
@@ -1804,6 +1885,10 @@ p.hardlink_to()
   def test_detect_api_mismatch_from_test_support(self):
     self.assertOnlyIn((3, 5), self.detect(
       "import test.support\ntest.support.detect_api_mismatch()"))
+
+  def test_flush_std_streams_from_test_support(self):
+    self.assertOnlyIn((3, 11), self.detect(
+      "import test.support\ntest.support.flush_std_streams()"))
 
   def test_import_fresh_module_from_test_support(self):
     self.assertOnlyIn(((2, 7), (3, 1)), self.detect(
@@ -1940,6 +2025,11 @@ p.hardlink_to()
                       self.detect("from asyncio import StreamWriter\n"
                                   "StreamWriter().is_closing()"))
 
+  def test_start_tls_from_asyncio_StreamWriter(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from asyncio import StreamWriter\n"
+                                  "StreamWriter().start_tls()"))
+
   def test_wait_closed_from_asyncio_StreamWriter(self):
     self.assertOnlyIn((3, 7),
                       self.detect("from asyncio import StreamWriter\n"
@@ -2005,6 +2095,21 @@ p.hardlink_to()
     self.assertOnlyIn((3, 7),
                       self.detect("from asyncio import loop\n"
                                   "loop().sock_recv_into()"))
+
+  def test_sock_recvfrom_from_asyncio_loop(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from asyncio import loop\n"
+                                  "loop().sock_recvfrom()"))
+
+  def test_sock_recvfrom_into_from_asyncio_loop(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from asyncio import loop\n"
+                                  "loop().sock_recvfrom_into()"))
+
+  def test_sock_sendto_from_asyncio_loop(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from asyncio import loop\n"
+                                  "loop().sock_sendto()"))
 
   def test_sock_sendfile_from_asyncio_loop(self):
     self.assertOnlyIn((3, 7),
@@ -2480,6 +2585,9 @@ p.hardlink_to()
   def test_blake2s_from_hashlib(self):
     self.assertOnlyIn((3, 6), self.detect("import hashlib\nhashlib.blake2s()"))
 
+  def test_file_digest_from_hashlib(self):
+    self.assertOnlyIn((3, 11), self.detect("import hashlib\nhashlib.file_digest()"))
+
   def test_sha3_224_from_hashlib(self):
     self.assertOnlyIn((3, 6), self.detect("import hashlib\nhashlib.sha3_224()"))
 
@@ -2759,6 +2867,9 @@ p.hardlink_to()
 
   def test_format_string_from_locale(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("import locale\nlocale.format_string()"))
+
+  def test_getencoding_from_locale(self):
+    self.assertOnlyIn((3, 11), self.detect("import locale\nlocale.getencoding()"))
 
   def test_getpreferredencoding_from_locale(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("import locale\nlocale.getpreferredencoding()"))
@@ -3560,6 +3671,21 @@ s.replace()
                       self.detect("from sqlite3 import Connection\n"
                                   "Connection().backup()"))
 
+  def test_blobopen_from_sqlite3_Connection(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from sqlite3 import Connection\n"
+                                  "Connection().blobopen()"))
+
+  def test_create_window_function_from_sqlite3_Connection(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from sqlite3 import Connection\n"
+                                  "Connection().create_window_function()"))
+
+  def test_deserialize_from_sqlite3_Connection(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from sqlite3 import Connection\n"
+                                  "Connection().deserialize()"))
+
   def test_compression_from_ssl_SSLSocket(self):
     self.assertOnlyIn(((2, 7), (3, 3)),
                       self.detect("from ssl import SSLSocket\n"
@@ -3594,6 +3720,18 @@ s.replace()
     self.assertOnlyIn(((2, 7), (3, 5)),
                       self.detect("from ssl import SSLSocket\n"
                                   "SSLSocket().version()"))
+
+  def test_get_identifiers_from_string_Template(self):
+    self.assertOnlyIn((3, 11), self.detect("""
+from string import Template
+Template().get_identifiers()
+"""))
+
+  def test_is_valid_from_string_Template(self):
+    self.assertOnlyIn((3, 11), self.detect("""
+from string import Template
+Template().is_valid()
+"""))
 
   def test_rsplit_from_string(self):
     self.assertOnlyIn((2, 4), self.detect("import string\nstring.rsplit()"))
@@ -3702,6 +3840,12 @@ s.replace()
   def test_mkstemp_from_tempfile(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("import tempfile\ntempfile.mkstemp()"))
 
+  def test_tcgetwinsize_from_termios(self):
+    self.assertOnlyIn((3, 11), self.detect("import termios\ntermios.tcgetwinsize()"))
+
+  def test_tcsetwinsize_from_termios(self):
+    self.assertOnlyIn((3, 11), self.detect("import termios\ntermios.tcsetwinsize()"))
+
   def test_interrupt_main_from_thread(self):
     self.assertOnlyIn((2, 3), self.detect("import thread\nthread.interrupt_main()"))
 
@@ -3756,6 +3900,12 @@ s.replace()
     self.assertOnlyIn((3, 6),
                       self.detect("from timeit import Timer\n"
                                   "Timer().autorange()"))
+
+  def test_format_frame_summary_from_traceback_StackSummary(self):
+    self.assertOnlyIn((3, 11), self.detect("""
+from traceback import StackSummary
+StackSummary().format_frame_summary()
+"""))
 
   def test_clear_frames_from_traceback(self):
     self.assertOnlyIn((3, 4), self.detect("import traceback\ntraceback.clear_frames()"))
@@ -3892,6 +4042,11 @@ s.replace()
 
   def test_removeResult_from_unittest(self):
     self.assertOnlyIn(((2, 7), (3, 2)), self.detect("import unittest\nunittest.removeResult()"))
+
+  def test_http_error_308_from_urllib_request_HTTPRedirectHandler(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from urllib.request import HTTPRedirectHandler\n"
+                                  "HTTPRedirectHandler().http_error_308()"))
 
   def test_remove_header_from_urllib_request_Request(self):
     self.assertOnlyIn((3, 4),

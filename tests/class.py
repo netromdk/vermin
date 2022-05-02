@@ -22,6 +22,9 @@ class VerminClassMemberTests(VerminTest):
   def test_BooleanOptionalAction_of_argparse(self):
     self.assertOnlyIn((3, 9), self.detect("from argparse import BooleanOptionalAction"))
 
+  def test_Barrier_of_asyncio(self):
+    self.assertOnlyIn((3, 11), self.detect("from asyncio import Barrier"))
+
   def test_BufferedProtocol_of_asyncio(self):
     self.assertOnlyIn((3, 7), self.detect("from asyncio import BufferedProtocol"))
 
@@ -33,6 +36,9 @@ class VerminClassMemberTests(VerminTest):
 
   def test_PidfdChildWatcher_of_asyncio(self):
     self.assertOnlyIn((3, 9), self.detect("from asyncio import PidfdChildWatcher"))
+
+  def test_Runner_of_asyncio(self):
+    self.assertOnlyIn((3, 11), self.detect("from asyncio import Runner"))
 
   def test_Calendar_of_calendar(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("from calendar import Calendar"))
@@ -159,6 +165,9 @@ class VerminClassMemberTests(VerminTest):
 
   def test_ForwardRef_of_typing(self):
     self.assertOnlyIn((3, 7), self.detect("from typing import ForwardRef"))
+
+  def test_NamedTuple_of_typing(self):
+    self.assertOnlyIn((3, 11), self.detect("from typing import NamedTuple"))
 
   def test_OrderedDict_of_typing(self):
     self.assertOnlyIn((3, 7), self.detect("from typing import OrderedDict"))
@@ -292,6 +301,12 @@ class VerminClassMemberTests(VerminTest):
 
   def test_c_ssize_t_of_ctypes(self):
     self.assertOnlyIn(((2, 7), (3, 2)), self.detect("from ctypes import c_ssize_t"))
+
+  def test_BigEndianUnion_of_ctypes(self):
+    self.assertOnlyIn((3, 11), self.detect("from ctypes import BigEndianUnion"))
+
+  def test_LittleEndianUnion_of_ctypes(self):
+    self.assertOnlyIn((3, 11), self.detect("from ctypes import LittleEndianUnion"))
 
   def test_HtmlDiff_of_difflib(self):
     self.assertOnlyIn(((2, 4), (3, 0)), self.detect("from difflib import HtmlDiff"))
@@ -453,11 +468,20 @@ class VerminClassMemberTests(VerminTest):
   def test_BytesGenerator_of_email_generator(self):
     self.assertOnlyIn((3, 2), self.detect("from email.generator import BytesGenerator"))
 
+  def test_EnumCheck_of_enum(self):
+    self.assertOnlyIn((3, 11), self.detect("from enum import EnumCheck"))
+
   def test_Flag_of_enum(self):
     self.assertOnlyIn((3, 6), self.detect("from enum import Flag"))
 
+  def test_FlagBoundary_of_enum(self):
+    self.assertOnlyIn((3, 11), self.detect("from enum import FlagBoundary"))
+
   def test_IntFlag_of_enum(self):
     self.assertOnlyIn((3, 6), self.detect("from enum import IntFlag"))
+
+  def test_StrEnum_of_enum(self):
+    self.assertOnlyIn((3, 11), self.detect("from enum import StrEnum"))
 
   def test_auto_of_enum(self):
     self.assertOnlyIn((3, 6), self.detect("from enum import auto"))
@@ -467,6 +491,9 @@ class VerminClassMemberTests(VerminTest):
 
   def test_partialmethod_of_functools(self):
     self.assertOnlyIn((3, 4), self.detect("from functools import partialmethod"))
+
+  def test_HTTPMethod_of_http(self):
+    self.assertOnlyIn((3, 11), self.detect("from http import HTTPMethod"))
 
   def test_HTTPStatus_of_http(self):
     self.assertOnlyIn((3, 5), self.detect("from http import HTTPStatus"))
@@ -528,6 +555,9 @@ class VerminClassMemberTests(VerminTest):
   def test_ModuleSpec_of_importlib_machinery(self):
     self.assertOnlyIn((3, 4), self.detect("from importlib.machinery import ModuleSpec"))
 
+  def test_NamespaceLoader_of_importlib_machinery(self):
+    self.assertOnlyIn((3, 11), self.detect("from importlib.machinery import NamespaceLoader"))
+
   def test_EntryPoints_of_importlib_metadata(self):
     self.assertOnlyIn((3, 10), self.detect("from importlib.metadata import EntryPoints"))
 
@@ -539,6 +569,9 @@ class VerminClassMemberTests(VerminTest):
 
   def test_Instruction_of_dis(self):
     self.assertOnlyIn((3, 4), self.detect("from dis import Instruction"))
+
+  def test_Positions_of_dis(self):
+    self.assertOnlyIn((3, 11), self.detect("from dis import Positions"))
 
   def test_DocTest_of_doctest(self):
     self.assertOnlyIn(((2, 4), (3, 0)), self.detect("from doctest import DocTest"))
@@ -574,6 +607,9 @@ class VerminClassMemberTests(VerminTest):
 
   def test_SMTP_SSL_of_smtplib(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from smtplib import SMTP_SSL"))
+
+  def test_Blob_of_sqlite3(self):
+    self.assertOnlyIn((3, 11), self.detect("from sqlite3 import Blob"))
 
   def test_LMTP_of_smtplib(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from smtplib import LMTP"))
