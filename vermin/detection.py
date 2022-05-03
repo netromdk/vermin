@@ -540,7 +540,7 @@ occur in errors instead of the default '<unknown>'.
   if node is None:
     return mins
 
-  visitor = SourceVisitor(config=config, path=path)
+  visitor = SourceVisitor(config=config, path=path, source=source)
   visitor.set_no_lines(novermin)
   visitor.tour(node)
 

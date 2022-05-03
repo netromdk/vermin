@@ -29,9 +29,11 @@ def process_individual(args):
   (path, config) = args
   res = ProcessResult(path)
 
+  source = None
   with open(path, mode="rb") as fp:
     try:
-      parser = Parser(fp.read(), path)
+      source = fp.read()
+      parser = Parser(source, path)
       (res.node, res.mins, res.novermin) = parser.detect(config)
     except KeyboardInterrupt:  # pragma: no cover
       return res
@@ -51,7 +53,7 @@ def process_individual(args):
   if res.node is None:
     return res
 
-  visitor = SourceVisitor(config, path)
+  visitor = SourceVisitor(config, path, source)
   visitor.set_no_lines(res.novermin)
 
   try:

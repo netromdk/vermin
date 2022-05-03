@@ -65,7 +65,7 @@ def assign_target_walk(node):
       yield node
 
 class SourceVisitor(ast.NodeVisitor):
-  def __init__(self, config, path=None):
+  def __init__(self, config, path=None, source=None):
     super(SourceVisitor, self).__init__()
 
     assert config is not None, "Config must be specified!"
@@ -73,6 +73,12 @@ class SourceVisitor(ast.NodeVisitor):
     self.__parsable = (self.__config.format().name() == "parsable")
 
     self.__path = "<unknown>" if path is None else path
+
+    if isinstance(source, bytes):
+      self.__source = source.decode(errors="replace")
+    else:
+      self.__source = source
+
     if self.__parsable and not sys.platform.startswith("win32"):
       for c in (":", "\n"):
         assert c not in self.__path, "Path '{}' cannot contain '{}'".format(self.__path, c)
@@ -122,6 +128,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__user_func_decorators = []
     self.__depth = 0
     self.__line = 1
+    self.__lines = None
     self.__strftime_directives = []
     self.__bytes_directives = []
     self.__codecs_error_handlers = []
@@ -363,6 +370,18 @@ class SourceVisitor(ast.NodeVisitor):
 
   def super_no_args(self):
     return self.__super_no_args
+
+  def __get_source_line(self, line, col=0):
+    if self.__source is None:
+      return None
+    if self.__lines is None:
+      self.__lines = self.__source.splitlines()
+    if 0 < line <= len(self.__lines):
+      cur = self.__lines[line - 1]
+      if col >= 0:
+        return cur[col:]
+      return cur
+    return None
 
   def __violates_target_versions(self, versions):
     # If only violations isn't turned on then fake violations because it means it will show the
