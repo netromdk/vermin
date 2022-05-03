@@ -159,6 +159,7 @@ class SourceVisitor(ast.NodeVisitor):
                             "bytes"}
     self.__codecs_encodings_kwargs = ("encoding", "data_encoding", "file_encoding")
     self.__super_no_args = False
+    self.__except_star = False
 
     # Imported members of modules, like "exc_clear" of "sys".
     self.__import_mem_mod = {}
@@ -408,6 +409,9 @@ class SourceVisitor(ast.NodeVisitor):
         res.append(value)
     return "\n".join(res)
 
+  def except_star(self):
+    return self.__except_star
+
   def __violates_target_versions(self, versions):
     # If only violations isn't turned on then fake violations because it means it will show the
     # rule.
@@ -608,6 +612,9 @@ class SourceVisitor(ast.NodeVisitor):
     if self.super_no_args():
       mins = self.__add_versions_entity(mins, (None, (3, 0)), "super() without arguments",
                                         plural=False)
+
+    if self.except_star():
+      mins = self.__add_versions_entity(mins, (None, (3, 11)), "`except*`")
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
@@ -1974,6 +1981,11 @@ ast.Call(func=ast.Name)."""
   def visit_ExceptHandler(self, node):
     if self.__is_no_line(node.lineno):
       return
+
+    line = self.__get_source_line(node.lineno, node.col_offset)
+    if line is not None and line.startswith("except") and line[6:].lstrip().startswith("*"):
+      self.__except_star = True
+      self.__vvprint("`except*`", line=node.lineno, versions=[None, (3, 11)])
 
     # Copy current user-defs and add scoped ones. Note that except handler name is an `ast.Name` in
     # py2 and `str` in py3.

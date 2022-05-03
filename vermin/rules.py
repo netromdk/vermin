@@ -380,6 +380,7 @@ def MOD_MEM_REQS(config):
 
     # Builtin exceptions
     "BaseException": ((2, 5), (3, 0)),
+    "BaseExceptionGroup": (None, (3, 11)),
     "BlockingIOError": (None, (3, 3)),
     "BrokenPipeError": (None, (3, 3)),
     "BytesWarning": ((2, 6), (3, 0)),
@@ -389,6 +390,7 @@ def MOD_MEM_REQS(config):
     "ConnectionRefusedError": (None, (3, 3)),
     "ConnectionResetError": (None, (3, 3)),
     "EncodingWarning": (None, (3, 10)),
+    "ExceptionGroup": (None, (3, 11)),
     "FileExistsError": (None, (3, 3)),
     "FileNotFoundError": (None, (3, 3)),
     "GeneratorExit": ((2, 5), (3, 0)),
