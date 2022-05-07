@@ -311,6 +311,9 @@ class VerminClassMemberTests(VerminTest):
   def test_NullHandler_of_logging(self):
     self.assertOnlyIn(((2, 7), (3, 1)), self.detect("from logging import NullHandler"))
 
+  def test_StreamHandler_of_logging(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from logging import StreamHandler"))
+
   def test_QueueHandler_of_logging_handlers(self):
     self.assertOnlyIn((3, 2), self.detect("from logging.handlers import QueueHandler"))
 
