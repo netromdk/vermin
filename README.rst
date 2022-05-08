@@ -23,6 +23,9 @@ Vermin
 Concurrently detect the minimum Python versions needed to run code. Additionally, since the code is
 vanilla Python, and it doesn't have any external dependencies, it works with v2.7+ and v3+.
 
+*Note: Vermin 1.5 will end support for Python 2.7* which has been
+`sunset <https://www.python.org/doc/sunset-python-2/>`__ since January 1, 2020.
+
 It functions by parsing Python code into an abstract syntax tree (AST), which it traverses and
 matches against internal dictionaries with **3427** rules, covering v2.0-2.7 and v3.0-3.10, divided
 into **144** modules, **2356** classes/functions/constants members of modules, **801** kwargs of
