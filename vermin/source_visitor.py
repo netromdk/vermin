@@ -2009,6 +2009,9 @@ ast.Call(func=ast.Name)."""
         self.__vvprint("continue in finally block", line=node.lineno, versions=[None, (3, 8)])
 
   def __handle_with(self, node):
+    if self.__is_no_line(node.lineno):
+      return
+
     # Copy current user-defs and add scoped ones.
     user_defs_copy = self.__user_defs.copy()
     if hasattr(node, "items"):
@@ -2055,14 +2058,14 @@ ast.Call(func=ast.Name)."""
     self.__user_defs = user_defs_copy
 
   def visit_With(self, node):
-    if self.__config.lax() or self.__is_no_line(node.lineno):
+    if self.__is_no_line(node.lineno):
       return
     self.__with_statement = True
     self.__vvprint("`with`", line=node.lineno, versions=[(2, 5), (3, 0)])
     self.__handle_with(node)
 
   def visit_AsyncWith(self, node):
-    if self.__config.lax() or self.__is_no_line(node.lineno):
+    if self.__is_no_line(node.lineno):
       return
     self.__async_with_statement = True
     self.__vvprint("`async with`", line=node.lineno, versions=[None, (3, 5)])
@@ -2133,24 +2136,24 @@ ast.Call(func=ast.Name)."""
     self.generic_visit(node)
 
   def visit_Match(self, node):
-    if self.__config.lax() or self.__is_no_line(node.lineno):
+    if self.__is_no_line(node.lineno):
       return
     self.__pattern_matching = True
     self.__vvprint("pattern matching", line=node.lineno, versions=[None, (3, 10)])
     self.generic_visit(node)
 
-  # Lax mode and comment-excluded lines skip conditional blocks if enabled.
+  # Comment-excluded lines skip conditional blocks if enabled.
 
   def visit_If(self, node):
-    if not self.__config.lax() and not self.__is_no_line(node.lineno):
+    if not self.__is_no_line(node.lineno):
       self.generic_visit(node)
 
   def visit_IfExp(self, node):
-    if not self.__config.lax() and not self.__is_no_line(node.lineno):
+    if not self.__is_no_line(node.lineno):
       self.generic_visit(node)
 
   def __handle_for(self, node):
-    if not self.__config.lax() and not self.__is_no_line(node.lineno):
+    if not self.__is_no_line(node.lineno):
       self.__seen_for += 1
 
       # Copy current user-defs and add scoped ones.
@@ -2180,20 +2183,20 @@ ast.Call(func=ast.Name)."""
     self.__handle_for(node)
 
   def visit_AsyncFor(self, node):
-    if self.__config.lax() or self.__is_no_line(node.lineno):
+    if self.__is_no_line(node.lineno):
       return
     self.__async_for = True
     self.__vvprint("async for-loops", line=node.lineno, versions=[None, (3, 5)])
     self.__handle_for(node)
 
   def visit_While(self, node):
-    if not self.__config.lax() and not self.__is_no_line(node.lineno):
+    if not self.__is_no_line(node.lineno):
       self.__seen_while += 1
       self.generic_visit(node)
       self.__seen_while -= 1
 
   def __handle_Try(self, node):
-    if not self.__config.lax() and not self.__is_no_line(node.lineno):
+    if not self.__is_no_line(node.lineno):
       if hasattr(node, "finalbody"):
         self.__try_finally.append((self.__seen_for, self.__seen_while))
         for stm in node.finalbody:
@@ -2212,7 +2215,7 @@ ast.Call(func=ast.Name)."""
     self.__handle_Try(node)  # pragma: no cover
 
   def visit_BoolOp(self, node):
-    if not self.__config.lax() and not self.__is_no_line(node.lineno):
+    if not self.__is_no_line(node.lineno):
       self.generic_visit(node)
 
   def visit_Ellipsis(self, node):

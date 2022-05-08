@@ -75,8 +75,6 @@ def main():
   if not parsable and (len(reqs) == 0 and len(incomps) == 0):  # pragma: no cover
     nprint("No known reason found that it will not work with 2+ and 3+.", config)
     nprint("Please report if it does not: https://github.com/netromdk/vermin/issues/", config)
-    if config.lax() and config.show_tips():
-      tips.append(["Try without using lax mode for more thorough analysis."])
 
   if config.show_tips():  # pragma: no cover
     if maybe_annotations and not config.eval_annotations():

@@ -7,7 +7,6 @@ SUITES = (
   "general",
   "config",
   "arguments",
-  "lax_mode",
   "lang",
   "module",
   "builtin_classes",

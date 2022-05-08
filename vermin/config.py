@@ -25,7 +25,6 @@ class Config:
     self.__print_visits = False
     self.__processes = DEFAULT_PROCESSES
     self.__ignore_incomp = False
-    self.__lax = False
     self.__pessimistic = False
     self.__show_tips = True
     self.__analyze_hidden = False
@@ -45,7 +44,6 @@ class Config:
     self.__print_visits = other_config.print_visits()
     self.__processes = other_config.processes()
     self.__ignore_incomp = other_config.ignore_incomp()
-    self.__lax = other_config.lax()
     self.__pessimistic = other_config.pessimistic()
     self.__show_tips = other_config.show_tips()
     self.__analyze_hidden = other_config.analyze_hidden()
@@ -66,7 +64,6 @@ class Config:
   print_visits = {}
   processes = {}
   ignore_incomp = {}
-  lax = {}
   pessimistic = {}
   show_tips = {}
   analyze_hidden = {}
@@ -80,11 +77,10 @@ class Config:
   scan_symlink_folders = {}
   format = {}
 )""".format(self.__class__.__name__, self.quiet(), self.verbose(), self.print_visits(),
-            self.processes(), self.ignore_incomp(), self.lax(), self.pessimistic(),
-            self.show_tips(), self.analyze_hidden(), self.exclusions(), list(self.backports()),
-            list(self.features()), self.targets(), self.eval_annotations(),
-            self.only_show_violations(), self.parse_comments(), self.scan_symlink_folders(),
-            self.format().name())
+            self.processes(), self.ignore_incomp(), self.pessimistic(), self.show_tips(),
+            self.analyze_hidden(), self.exclusions(), list(self.backports()), list(self.features()),
+            self.targets(), self.eval_annotations(), self.only_show_violations(),
+            self.parse_comments(), self.scan_symlink_folders(), self.format().name())
 
   @staticmethod
   def parse_file(path):
@@ -119,7 +115,6 @@ class Config:
       "print_visits": str(config.print_visits()),
       "processes": str(config.processes()),
       "ignore_incomp": str(config.ignore_incomp()),
-      "lax": str(config.lax()),
       "pessimistic": str(config.pessimistic()),
       "show_tips": str(config.show_tips()),
       "analyze_hidden": str(config.analyze_hidden()),
@@ -178,7 +173,6 @@ class Config:
     config.set_print_visits(getbool("print_visits"))
     config.set_processes(getuint("processes"))
     config.set_ignore_incomp(getbool("ignore_incomp"))
-    config.set_lax(getbool("lax"))
     config.set_pessimistic(getbool("pessimistic"))
     config.set_show_tips(getbool("show_tips"))
     config.set_analyze_hidden(getbool("analyze_hidden"))
@@ -282,12 +276,6 @@ folders until root or project boundaries are reached. Each candidate is checked 
 
   def set_ignore_incomp(self, ignore):
     self.__ignore_incomp = ignore
-
-  def lax(self):
-    return self.__lax
-
-  def set_lax(self, lax):
-    self.__lax = lax
 
   def add_exclusion(self, name):
     self.__exclusions.add(name)

@@ -165,19 +165,6 @@ class VerminArgumentsTests(VerminTest):
     self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--no-dump"]))
     self.assertFalse(self.config.print_visits())
 
-  def test_lax(self):
-    self.assertFalse(self.config.lax())
-    self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["-l"]))
-    self.assertTrue(self.config.lax())
-    self.config.set_lax(False)
-    self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--lax"]))
-    self.assertTrue(self.config.lax())
-
-  def test_no_lax(self):
-    self.config.set_lax(True)
-    self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--no-lax"]))
-    self.assertFalse(self.config.lax())
-
   def test_hidden(self):
     self.assertContainsDict({"code": 0}, self.parse_args(["--hidden"]))
     self.assertTrue(self.config.analyze_hidden())

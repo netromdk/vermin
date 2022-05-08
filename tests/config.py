@@ -15,7 +15,6 @@ class VerminConfigTests(VerminTest):
     self.assertFalse(self.config.print_visits())
     self.assertEqual(DEFAULT_PROCESSES, self.config.processes())
     self.assertFalse(self.config.ignore_incomp())
-    self.assertFalse(self.config.lax())
     self.assertFalse(self.config.pessimistic())
     self.assertTrue(self.config.show_tips())
     self.assertFalse(self.config.analyze_hidden())
@@ -36,7 +35,6 @@ class VerminConfigTests(VerminTest):
     other.set_print_visits(True)
     other.set_processes(DEFAULT_PROCESSES + 1)
     other.set_ignore_incomp(True)
-    other.set_lax(True)
     other.set_pessimistic(True)
     other.set_show_tips(False)
     other.set_analyze_hidden(True)
@@ -56,7 +54,6 @@ class VerminConfigTests(VerminTest):
     self.assertEqual(other.print_visits(), self.config.print_visits())
     self.assertEqual(other.processes(), self.config.processes())
     self.assertEqual(other.ignore_incomp(), self.config.ignore_incomp())
-    self.assertEqual(other.lax(), self.config.lax())
     self.assertEqual(other.pessimistic(), self.config.pessimistic())
     self.assertEqual(other.show_tips(), self.config.show_tips())
     self.assertEqual(other.analyze_hidden(), self.config.analyze_hidden())
@@ -77,7 +74,6 @@ class VerminConfigTests(VerminTest):
   print_visits = {}
   processes = {}
   ignore_incomp = {}
-  lax = {}
   pessimistic = {}
   show_tips = {}
   analyze_hidden = {}
@@ -92,9 +88,9 @@ class VerminConfigTests(VerminTest):
   format = {}
 )""".format(self.config.__class__.__name__, self.config.quiet(), self.config.verbose(),
             self.config.print_visits(), self.config.processes(), self.config.ignore_incomp(),
-            self.config.lax(), self.config.pessimistic(), self.config.show_tips(),
-            self.config.analyze_hidden(), self.config.exclusions(), list(self.config.backports()),
-            list(self.config.features()), self.config.targets(), self.config.eval_annotations(),
+            self.config.pessimistic(), self.config.show_tips(), self.config.analyze_hidden(),
+            self.config.exclusions(), list(self.config.backports()), list(self.config.features()),
+            self.config.targets(), self.config.eval_annotations(),
             self.config.only_show_violations(), self.config.parse_comments(),
             self.config.scan_symlink_folders(), self.config.format().name()))
 
@@ -248,25 +244,6 @@ ignore_incomp = False
     config = Config.parse_data(data)
     self.assertIsNotNone(config)
     self.assertEqual(config.ignore_incomp(), expected)
-
-  @VerminTest.parameterized_args([
-    [u"""[vermin]
-lax =
-""", False],
-    [u"""[vermin]
-#lax = True
-""", False],
-    [u"""[vermin]
-lax = True
-""", True],
-    [u"""[vermin]
-lax = False
-""", False],
-  ])
-  def test_parse_lax(self, data, expected):
-    config = Config.parse_data(data)
-    self.assertIsNotNone(config)
-    self.assertEqual(config.lax(), expected)
 
   @VerminTest.parameterized_args([
     [u"""[vermin]
@@ -452,7 +429,6 @@ quiet = 1
 verbose = 2
 print_visits = on
 ignore_incomp = yes
-lax = true
 pessimistic = TrUe
 """)
     fp.close()
@@ -462,7 +438,6 @@ pessimistic = TrUe
     self.assertEqual(2, config.verbose())
     self.assertTrue(config.print_visits())
     self.assertTrue(config.ignore_incomp())
-    self.assertTrue(config.lax())
     self.assertTrue(config.pessimistic())
 
   def test_detect_config_file_same_level(self):

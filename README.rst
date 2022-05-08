@@ -275,35 +275,12 @@ recommended to use the command-line interface.
   >>> V.version_strings(v.minimum_versions())
   '!2, 3.5'
 
-Lax Mode (deprecated)
-=====================
-
-*Deprecated as of v. 1.3. Will be removed in v. 1.4. It is recommended to use specific analysis
-exclusions instead.*
-
-Vermin parses Python source code into abstract syntax trees (ASTs) which it traverses to do
-analysis. However, it doesn't do conditional logic, i.e. deciding which branches will be taken at
-runtime, since it can cause unexpected side-effects to actually evaluate code. As an example,
-analysis of the following:
-
-.. code-block:: python
-
-  if False:
-    print(f"..but I won't be evaluated")
-
-Will yield "f-strings require 3.6+" even though the branch will not be evaluated at runtime.
-
-The lax mode, via argument ``--lax``, was created to circumvent cases like this. *But it's not a
-perfect solution* since it will skip all ``if``, ternarys, ``for``, ``async for``, ``while``,
-``with``, ``try``, boolean operations, and ``match``. Therefore it is recommended to run with and
-without lax mode to get a better understanding of individual cases.
-
 Analysis Exclusions
 ===================
 
-Another approach to conditional logic than lax mode, is to exclude modules, members, kwargs, codecs
-error handler names, or codecs encodings by name from being analysed via argument ``--exclude
-<name>`` (multiple can be specified). Consider the following code block that checks if
+Analysis exclusion can be necessary in certain cases. The argument ``--exclude <name>`` (multiple
+can be specified) can be used to exclude modules, members, kwargs, codecs error handler names, or
+codecs encodings by name from being analysed via . Consider the following code block that checks if
 ``PROTOCOL_TLS`` is an attribute of ``ssl``:
 
 .. code-block:: python

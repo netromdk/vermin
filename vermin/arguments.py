@@ -76,14 +76,6 @@ class Arguments:
             "        not have an absence of results.\n")
       print("  --no-ignore (default)\n"
             "        Don't ignore incompatible versions and warnings.\n")
-      print("  --lax | -l (deprecated)\n"
-            "        Lax mode: ignores conditionals (if, ternary, for, async for, while, with,\n"
-            "        try, bool op) on AST traversal, which can be useful when minimum versions\n"
-            "        are detected in conditionals that it is known does not affect the results.\n"
-            "\n"
-            "        It is recommended to use specific analysis exclusions instead.\n")
-      print("  --no-lax (default)\n"
-            "        Disable lax mode.\n")
       print("  --dump | -d\n"
             "        Dump AST node visits.\n")
       print("  --no-dump (default)\n"
@@ -105,8 +97,8 @@ class Arguments:
       print("\n  --versions\n"
             "        In the end, print all unique versions required by the analysed code.")
       print("\n  --show-tips (default)\n"
-            "        Show helpful tips at the end, like those relating to backports, lax mode,\n"
-            "        or usage of unevaluated generic/literal annotations.")
+            "        Show helpful tips at the end, like those relating to backports or usage of\n"
+            "        unevaluated generic/literal annotations.")
       print("\n  --no-tips\n"
             "        Don't show tips.")
       print("\n  --violations\n"
@@ -147,8 +139,7 @@ class Arguments:
             "        Supported formats:\n{}".format(formats.help_str(10)))
       print("\n  [--exclude <name>] ...\n"
             "        Exclude full names, like 'email.parser.FeedParser', from analysis. Useful to\n"
-            "        ignore conditional logic that can trigger incompatible results. It's more\n"
-            "        fine grained than lax mode.\n\n"
+            "        ignore conditional logic that can trigger incompatible results.\n\n"
             "        Examples:\n"
             "          Exclude 'foo.bar.baz' module/member: --exclude 'foo.bar.baz'\n"
             "          Exclude 'foo' kwarg:                 --exclude 'somemodule.func(foo)'\n"
@@ -261,13 +252,6 @@ class Arguments:
         except ValueError:
           print("Invalid value: {}".format(value))
           return {"code": 1}
-        path_pos += 1
-      elif arg in ("--lax", "-l"):
-        print("Running in deprecated lax mode!")
-        config.set_lax(True)
-        path_pos += 1
-      elif arg == "--no-lax":
-        config.set_lax(False)
         path_pos += 1
       elif arg == "--no-dump":
         config.set_print_visits(False)
