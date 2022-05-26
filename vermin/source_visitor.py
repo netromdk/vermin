@@ -13,6 +13,7 @@ from .utility import dotted_name, reverse_range, combine_versions, remove_whites
 STRFTIME_DIRECTIVE_REGEX = re.compile(r"%(?:[-\.\d#\s\+])*(\w)")
 BYTES_DIRECTIVE_REGEX = STRFTIME_DIRECTIVE_REGEX
 STR_27_FORMAT_REGEX = re.compile(r"(?<!{){}(?!})")
+WITH_PAREN_REGEX = re.compile(r"with[\s\\]*\(")
 
 def is_int_node(node):
   return (isinstance(node, ast.Num) and isinstance(node.n, int)) or \
@@ -135,6 +136,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__codecs_encodings = []
     self.__with_statement = False
     self.__multi_withitem = False
+    self.__with_parentheses = False
     self.__generalized_unpacking = False
     self.__unpacking_assignment = False
     self.__ellipsis_out_of_slices = False
@@ -323,6 +325,9 @@ class SourceVisitor(ast.NodeVisitor):
   def multi_withitem(self):
     return self.__multi_withitem
 
+  def with_parentheses(self):
+    return self.__with_parentheses
+
   def generalized_unpacking(self):
     return self.__generalized_unpacking
 
@@ -382,6 +387,14 @@ class SourceVisitor(ast.NodeVisitor):
         return cur[col:]
       return cur
     return None
+
+  def __get_source_lines(self, line_begin, amount):
+    res = []
+    for line in range(line_begin, line_begin + amount + 1):
+      value = self.__get_source_line(line)
+      if value is not None:
+        res.append(value)
+    return "\n".join(res)
 
   def __violates_target_versions(self, versions):
     # If only violations isn't turned on then fake violations because it means it will show the
@@ -528,6 +541,10 @@ class SourceVisitor(ast.NodeVisitor):
     if self.multi_withitem():
       mins = self.__add_versions_entity(mins, ((2, 7), (3, 1)),
                                         "multiple context expressions in a 'with' statement")
+
+    if self.with_parentheses():
+      msg = "multiple context expressions in a `with` statement with parentheses"
+      mins = self.__add_versions_entity(mins, (None, (3, 9)), msg)
 
     if self.generalized_unpacking():
       mins = self.__add_versions_entity(mins, (None, (3, 5)), "generalized unpacking")
@@ -2005,6 +2022,17 @@ ast.Call(func=ast.Name)."""
         self.__multi_withitem = True
         self.__vvprint("multiple context expressions in a `with` statement",
                        line=node.lineno, versions=[(2, 7), (3, 1)])
+
+        # Check for "with (" with "with" part on the first line such that it doesn't match with
+        # "with (" further down. Note that we don't check for the ending parenthesis because that
+        # would yield a syntax error if missing anyway. This feature is supposed to work from 3.10+
+        # but it works from 3.9+.
+        lines = self.__get_source_lines(node.lineno, node.lineno + 10)
+        match = WITH_PAREN_REGEX.search(lines)
+        if match is not None and match.start() < len(lines.splitlines()[0]):
+          self.__with_parentheses = True
+          self.__vvprint("multiple context expressions in a `with` statement with parentheses",
+                         line=node.lineno, versions=[None, (3, 9)])
     elif hasattr(node, "optional_vars") and node.optional_vars is not None:
       for n in assign_target_walk(node.optional_vars):
         self.__add_user_def_node(n)

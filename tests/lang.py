@@ -666,6 +666,7 @@ class VerminLanguageTests(VerminTest):
     visitor = self.visit(source)
     self.assertTrue(visitor.with_statement())
     self.assertFalse(visitor.multi_withitem())
+    self.assertFalse(visitor.with_parentheses())
     self.assertOnlyIn([(2, 5), (3, 0)], visitor.minimum_versions())
 
   @VerminTest.skipUnlessVersion(3, 3)  # See `visit_With` for reason for only testing on 3.3+.
@@ -679,7 +680,70 @@ class VerminLanguageTests(VerminTest):
     visitor = self.visit(source)
     self.assertTrue(visitor.with_statement())
     self.assertTrue(visitor.multi_withitem())
+    self.assertFalse(visitor.with_parentheses())
     self.assertOnlyIn([(2, 7), (3, 1)], visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 9)
+  @VerminTest.parameterized_args([
+    ["with (a, b): pass"],
+    ["with (a, b as c): pass"],
+    ["with (a as b, c): pass"],
+    ["with (a as b, c as d): pass"],
+    ["""with \
+  (a, b): pass"""],
+    ["""with \
+  (a, b as c): pass"""],
+    ["""with \
+  (\
+  a, b): pass"""],
+    ["""with \
+  (\
+  a, b as c): pass"""],
+    ["""with \
+  \
+  (a, b): pass"""],
+    ["""with \
+  \
+  (a, b as c): pass"""],
+  ])
+  def test_with_parentheses(self, source):
+    visitor = self.visit(source)
+    self.assertTrue(visitor.with_statement())
+    self.assertTrue(visitor.multi_withitem())
+    self.assertTrue(visitor.with_parentheses())
+    self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 9)
+  def test_with_parentheses_first_match(self):
+    self.config.set_verbose(3)  # show lines
+    visitor = self.visit("""with (a as b, c as d): pass
+with a as b, c as d: pass""")
+    self.assertTrue(visitor.with_statement())
+    self.assertTrue(visitor.multi_withitem())
+    self.assertTrue(visitor.with_parentheses())
+    self.assertOnlyIn((3, 9), visitor.minimum_versions())
+    self.assertEqual(visitor.output_text(), """L1: `with` requires 2.5, 3.0
+L1: multiple context expressions in a `with` statement requires 2.7, 3.1
+L1: multiple context expressions in a `with` statement with parentheses requires !2, 3.9
+L2: `with` requires 2.5, 3.0
+L2: multiple context expressions in a `with` statement requires 2.7, 3.1
+""")
+
+  @VerminTest.skipUnlessVersion(3, 9)
+  def test_with_parentheses_second_match(self):
+    self.config.set_verbose(3)  # show lines
+    visitor = self.visit("""with a as b, c as d: pass
+with (a as b, c as d): pass""")
+    self.assertTrue(visitor.with_statement())
+    self.assertTrue(visitor.multi_withitem())
+    self.assertTrue(visitor.with_parentheses())
+    self.assertOnlyIn((3, 9), visitor.minimum_versions())
+    self.assertEqual(visitor.output_text(), """L1: `with` requires 2.5, 3.0
+L1: multiple context expressions in a `with` statement requires 2.7, 3.1
+L2: `with` requires 2.5, 3.0
+L2: multiple context expressions in a `with` statement requires 2.7, 3.1
+L2: multiple context expressions in a `with` statement with parentheses requires !2, 3.9
+""")
 
   def test_generalized_unpacking(self):
     if current_version() >= (3, 5):
