@@ -483,9 +483,9 @@ class VerminLanguageTests(VerminTest):
     self.assertTrue(visitor.await_in_comprehension())
     self.assertOnlyIn((3, 7), visitor.minimum_versions())
 
-  @VerminTest.skipUnlessVersion(3, 6)
+  @VerminTest.skipUnlessVersion(3, 5)
   def test_async_for(self):
-    self.assertOnlyIn((3, 6), self.detect("async def foo():\n\tasync for a in []:pass"))
+    self.assertOnlyIn((3, 5), self.detect("async def foo():\n\tasync for a in []:pass"))
 
   @VerminTest.skipUnlessVersion(3, 8)
   def test_continue_in_finally(self):

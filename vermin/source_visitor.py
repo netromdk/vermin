@@ -494,7 +494,7 @@ class SourceVisitor(ast.NodeVisitor):
       mins = self.__add_versions_entity(mins, (None, (3, 7)), "await in comprehension")
 
     if self.async_for():
-      mins = self.__add_versions_entity(mins, (None, (3, 6)), "async for-loop")
+      mins = self.__add_versions_entity(mins, (None, (3, 5)), "async for-loop")
 
     if self.named_expressions():
       mins = self.__add_versions_entity(mins, (None, (3, 8)), "named expressions")
@@ -2157,7 +2157,7 @@ ast.Call(func=ast.Name)."""
     if self.__config.lax() or self.__is_no_line(node.lineno):
       return
     self.__async_for = True
-    self.__vvprint("async for-loops", line=node.lineno, versions=[None, (3, 6)])
+    self.__vvprint("async for-loops", line=node.lineno, versions=[None, (3, 5)])
     self.__handle_for(node)
 
   def visit_While(self, node):
