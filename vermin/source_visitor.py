@@ -615,8 +615,12 @@ class SourceVisitor(ast.NodeVisitor):
     return mins
 
   def output_text(self):
-    # Throw away dups and sort.
-    self.__output_text = self.__config.format().sort_output_lines(list(set(self.__output_text)))
+    # Throw away dups and sort. But only when not dumping AST node visits because it would throw
+    # away multiple statements that are similar in AST.
+    text = self.__output_text
+    if not self.__config.print_visits():
+      text = list(set(text))
+    self.__output_text = self.__config.format().sort_output_lines(text)
 
     text = "\n".join(self.__output_text)
     if len(text) > 0:
