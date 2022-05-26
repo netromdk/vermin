@@ -135,6 +135,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__codecs_error_handlers = []
     self.__codecs_encodings = []
     self.__with_statement = False
+    self.__async_with_statement = False
     self.__multi_withitem = False
     self.__with_parentheses = False
     self.__generalized_unpacking = False
@@ -321,6 +322,9 @@ class SourceVisitor(ast.NodeVisitor):
 
   def with_statement(self):
     return self.__with_statement
+
+  def async_with_statement(self):
+    return self.__async_with_statement
 
   def multi_withitem(self):
     return self.__multi_withitem
@@ -537,6 +541,9 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.with_statement():
       mins = self.__add_versions_entity(mins, ((2, 5), (3, 0)), "'with' statement")
+
+    if self.async_with_statement():
+      mins = self.__add_versions_entity(mins, (None, (3, 5)), "'async with' statement")
 
     if self.multi_withitem():
       mins = self.__add_versions_entity(mins, ((2, 7), (3, 1)),
@@ -1993,10 +2000,7 @@ ast.Call(func=ast.Name)."""
         self.__continue_in_finally = True
         self.__vvprint("continue in finally block", line=node.lineno, versions=[None, (3, 8)])
 
-  def visit_With(self, node):
-    if self.__config.lax() or self.__is_no_line(node.lineno):
-      return
-
+  def __handle_with(self, node):
     # Copy current user-defs and add scoped ones.
     user_defs_copy = self.__user_defs.copy()
     if hasattr(node, "items"):
@@ -2037,12 +2041,24 @@ ast.Call(func=ast.Name)."""
       for n in assign_target_walk(node.optional_vars):
         self.__add_user_def_node(n)
 
-    self.__with_statement = True
-    self.__vvprint("`with`", line=node.lineno, versions=[(2, 5), (3, 0)])
     self.generic_visit(node)
 
     # This is to minimize false positives, though the vars lives after the scope.
     self.__user_defs = user_defs_copy
+
+  def visit_With(self, node):
+    if self.__config.lax() or self.__is_no_line(node.lineno):
+      return
+    self.__with_statement = True
+    self.__vvprint("`with`", line=node.lineno, versions=[(2, 5), (3, 0)])
+    self.__handle_with(node)
+
+  def visit_AsyncWith(self, node):
+    if self.__config.lax() or self.__is_no_line(node.lineno):
+      return
+    self.__async_with_statement = True
+    self.__vvprint("`async with`", line=node.lineno, versions=[None, (3, 5)])
+    self.__handle_with(node)
 
   def visit_Dict(self, node):
     self.__check_generalized_unpacking(node)

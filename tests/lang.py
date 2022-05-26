@@ -745,6 +745,81 @@ L2: multiple context expressions in a `with` statement requires 2.7, 3.1
 L2: multiple context expressions in a `with` statement with parentheses requires !2, 3.9
 """)
 
+  @VerminTest.skipUnlessVersion(3, 5)
+  @VerminTest.parameterized_args([
+    ["""async def foo():
+  async with func(): pass"""],
+    ["""async def foo():
+  async with a as (b, c): pass"""],
+    ["""async def foo():
+  async with a as b:
+    with c as d: pass"""],
+  ])
+  def test_async_with_statement(self, source):
+    visitor = self.visit(source)
+    self.assertTrue(visitor.async_with_statement())
+    self.assertFalse(visitor.multi_withitem())
+    self.assertFalse(visitor.with_parentheses())
+    self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 5)
+  @VerminTest.parameterized_args([
+    ["""async def foo():
+  async with a, b: pass"""],
+    ["""async def foo():
+  async with a, b as c: pass"""],
+    ["""async def foo():
+  async with a as b, c: pass"""],
+    ["""async def foo():
+  async with a as b, c as d: pass"""],
+  ])
+  def test_async_multi_withitem(self, source):
+    visitor = self.visit(source)
+    self.assertTrue(visitor.async_with_statement())
+    self.assertTrue(visitor.multi_withitem())
+    self.assertFalse(visitor.with_parentheses())
+    self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 9)
+  @VerminTest.parameterized_args([
+    ["""async def foo():
+  async with (a, b): pass"""],
+    ["""async def foo():
+  async with (a, b as c): pass"""],
+    ["""async def foo():
+  async with (a as b, c): pass"""],
+    ["""async def foo():
+  async with (a as b, c as d): pass"""],
+    ["""async def foo():
+  async with \
+  (a, b): pass"""],
+    ["""async def foo():
+  async with \
+  (a, b as c): pass"""],
+    ["""async def foo():
+  async with \
+  (\
+  a, b): pass"""],
+    ["""async def foo():
+  async with \
+  (\
+  a, b as c): pass"""],
+    ["""async def foo():
+  async with \
+  \
+  (a, b): pass"""],
+    ["""async def foo():
+  async with \
+  \
+  (a, b as c): pass"""],
+  ])
+  def test_async_with_parentheses(self, source):
+    visitor = self.visit(source)
+    self.assertTrue(visitor.async_with_statement())
+    self.assertTrue(visitor.multi_withitem())
+    self.assertTrue(visitor.with_parentheses())
+    self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
   def test_generalized_unpacking(self):
     if current_version() >= (3, 5):
       visitor = self.visit("(*range(4), 4)")  # tuple
