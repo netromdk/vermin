@@ -105,7 +105,8 @@ class Arguments:
       print("\n  --versions\n"
             "        In the end, print all unique versions required by the analysed code.")
       print("\n  --show-tips (default)\n"
-            "        Show helpful tips at the end, like those relating to backports or lax mode.")
+            "        Show helpful tips at the end, like those relating to backports, lax mode,\n"
+            "        or usage of unevaluated generic/literal annotations.")
       print("\n  --no-tips\n"
             "        Don't show tips.")
       print("\n  --violations\n"

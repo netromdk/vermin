@@ -15,6 +15,9 @@ class ProcessResult:
     self.novermin = set()  # novermin/novm lines.
     self.bps = set()       # Potential backport modules used.
 
+    # Potential generic/literal annotations used.
+    self.maybe_annotations = False
+
 # NOTE: This function isn't in the Processor class because Python 2's multiprocessing.pool doesn't
 # like it being an instance method:
 #
@@ -67,6 +70,7 @@ def process_individual(args):
     for m in visitor.modules():
       if Backports.is_backport(m):
         res.bps.add(m)
+    res.maybe_annotations = visitor.maybe_annotations()
   except InvalidVersionException as ex:
     res.mins = None
     res.text = str(ex)
@@ -96,6 +100,7 @@ class Processor:
     unique_versions = set()
     all_backports = set()
     used_novermin = False
+    maybe_annotations = False
     for proc_res in act():
       # Ignore paths that didn't contain python code.
       if proc_res is None:
@@ -113,6 +118,7 @@ class Processor:
           unique_versions.add(ver)
 
       used_novermin |= (len(proc_res.novermin) > 0)
+      maybe_annotations |= proc_res.maybe_annotations
 
       # For violations mode, only show file names and findings if there are any - no empty ones that
       # do not violate the input targets. This is especially important when scanning many files
@@ -131,4 +137,4 @@ class Processor:
 
     unique_versions = list(unique_versions)
     unique_versions.sort()
-    return (mins, incomp, unique_versions, all_backports, used_novermin)
+    return (mins, incomp, unique_versions, all_backports, used_novermin, maybe_annotations)

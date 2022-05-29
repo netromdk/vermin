@@ -196,6 +196,9 @@ class SourceVisitor(ast.NodeVisitor):
     # Keep track of all Ellipsis nodes in slices for detecting Ellipsis out of slices.
     self.__ellipsis_nodes_in_slices = set()
 
+    # Might be using generic/literal annotations that require `--eval-annotations` to work.
+    self.__maybe_annotations = False
+
     self.__mod_rules = MOD_REQS(self.__config)
     self.__mod_mem_reqs_rules = MOD_MEM_REQS(self.__config)
     self.__kwargs_reqs_rules = KWARGS_REQS(self.__config)
@@ -379,6 +382,9 @@ class SourceVisitor(ast.NodeVisitor):
 
   def super_no_args(self):
     return self.__super_no_args
+
+  def maybe_annotations(self):
+    return self.__maybe_annotations
 
   def __get_source_line(self, line, col=0):
     if self.__source is None:
@@ -1750,6 +1756,8 @@ ast.Call(func=ast.Name)."""
       if self.__config.eval_annotations():
         self.__literal_annotations = True
         self.__vvprint("literal variable annotations", line=node.lineno, versions=[None, (3, 8)])
+      else:
+        self.__maybe_annotations = True
 
     for arg in node.args.args:
       if not hasattr(arg, "annotation") or not arg.annotation:
@@ -2091,6 +2099,8 @@ ast.Call(func=ast.Name)."""
             self.__builtin_generic_type_annotations = True
             self.__vvprint("builtin generic type annotation ({}[..])".format(name),
                            versions=[None, (3, 9)])
+        else:
+          self.__maybe_annotations = True
       if isinstance(node.value, ast.Name):
         coll_name = node.value.id
       else:

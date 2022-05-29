@@ -51,7 +51,7 @@ def main():
 
   try:
     processor = Processor()
-    (mins, incomp, unique_versions, backports, used_novermin) =\
+    (mins, incomp, unique_versions, backports, used_novermin, maybe_annotations) =\
       processor.process(paths, config, config.processes())
   except KeyboardInterrupt:  # pragma: no cover
     print("Aborting..")
@@ -75,6 +75,11 @@ def main():
     print("Please report if it does not: https://github.com/netromdk/vermin/issues/")
     if config.lax() and config.show_tips():
       nprint("Tip: Try without using lax mode for more thorough analysis.", config)
+
+  if maybe_annotations and config.show_tips() and not config.eval_annotations():
+    nprint("Tip: Generic or literal annotations might be in use. If so, try using: "
+           "--eval-annotations", config)
+    nprint("But check the caveat section: https://github.com/netromdk/vermin#caveats", config)
 
   unique_bps = sorted(backports - config.backports())
   if len(unique_bps) > 0 and config.show_tips():  # pragma: no cover
