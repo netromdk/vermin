@@ -70,27 +70,44 @@ def main():
     elif ver is not None and ver != 0:
       reqs.append(ver)
 
+  tips = []
+
   if not parsable and (len(reqs) == 0 and len(incomps) == 0):  # pragma: no cover
     print("No known reason found that it will not work with 2+ and 3+.")
     print("Please report if it does not: https://github.com/netromdk/vermin/issues/")
     if config.lax() and config.show_tips():
-      nprint("Tip: Try without using lax mode for more thorough analysis.", config)
+      tips.append(["Try without using lax mode for more thorough analysis."])
 
-  if maybe_annotations and config.show_tips() and not config.eval_annotations():
-    nprint("Tip: Generic or literal annotations might be in use. If so, try using: "
-           "--eval-annotations", config)
-    nprint("But check the caveat section: https://github.com/netromdk/vermin#caveats", config)
+  if config.show_tips():  # pragma: no cover
+    if maybe_annotations and not config.eval_annotations():
+      tips.append([
+        "Generic or literal annotations might be in use. If so, try using: --eval-annotations",
+        "But check the caveat section: https://github.com/netromdk/vermin#caveats"
+      ])
 
-  unique_bps = sorted(backports - config.backports())
-  if len(unique_bps) > 0 and config.show_tips():  # pragma: no cover
-    nprint("Tip: You're using potentially backported modules: {}".format(", ".join(unique_bps)),
-           config)
-    nprint("If so, try using the following for better results: {}\n".
-           format("".join([" --backport {}".format(n) for n in unique_bps]).strip()), config)
+    unique_bps = sorted(backports - config.backports())
+    if len(unique_bps) > 0:
+      tips.append([
+        "You're using potentially backported modules: {}".format(", ".join(unique_bps)),
+        "If so, try using the following for better results: {}".
+        format("".join([" --backport {}".format(n) for n in unique_bps]).strip())
+      ])
 
-  if not used_novermin and config.show_tips() and config.parse_comments():
-    nprint("Tip: Since '# novm' or '# novermin' weren't used, a speedup can be achieved using: "
-           "--no-parse-comments", config)
+    if not used_novermin and config.parse_comments():
+      tips.append(["Since '# novm' or '# novermin' weren't used, a speedup can be achieved using: "
+                   "--no-parse-comments"])
+
+    if len(tips) > 0:
+      verbose = config.verbose()
+      if len(reqs) == 0 or (reqs == [(0, 0), (0, 0)] and verbose > 0) or \
+         (len(reqs) > 0 and 0 < verbose < 2):
+        nprint("", config)
+      nprint("Tips:", config)
+      for tip in tips:
+        nprint("- " + "\n  ".join(tip), config)
+      nprint("(disable using: --no-tips)", config)
+      if len(reqs) > 0:
+        nprint("", config)
 
   if parsable:  # pragma: no cover
     print(config.format().format_output_line(msg=None, path=None, versions=mins))
