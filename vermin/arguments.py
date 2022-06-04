@@ -48,7 +48,7 @@ class Arguments:
 
       print("\nOptions:")
       print("  --quiet | -q\n"
-            "        Quiet mode. It only prints the final versions verdict.\n")
+            "        Quiet mode.\n")
       print("  --no-quiet (default)\n"
             "        Disable quiet mode.\n")
       print("  -v..  Verbosity level 1 to 4. -v, -vv, -vvv, and -vvvv shows increasingly more\n"

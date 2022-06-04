@@ -40,7 +40,7 @@ def main():
 
   amount = len(paths)
   if amount == 0:
-    print("No files specified to analyze!")
+    nprint("No files specified to analyze!", config)
     sys.exit(1)
 
   msg = "Analyzing"
@@ -54,7 +54,7 @@ def main():
     (mins, incomp, unique_versions, backports, used_novermin, maybe_annotations) =\
       processor.process(paths, config, config.processes())
   except KeyboardInterrupt:  # pragma: no cover
-    print("Aborting..")
+    nprint("Aborting..", config)
     sys.exit(1)
 
   if incomp and not config.ignore_incomp():  # pragma: no cover
@@ -73,8 +73,8 @@ def main():
   tips = []
 
   if not parsable and (len(reqs) == 0 and len(incomps) == 0):  # pragma: no cover
-    print("No known reason found that it will not work with 2+ and 3+.")
-    print("Please report if it does not: https://github.com/netromdk/vermin/issues/")
+    nprint("No known reason found that it will not work with 2+ and 3+.", config)
+    nprint("Please report if it does not: https://github.com/netromdk/vermin/issues/", config)
     if config.lax() and config.show_tips():
       tips.append(["Try without using lax mode for more thorough analysis."])
 
@@ -112,7 +112,7 @@ def main():
   if parsable:  # pragma: no cover
     print(config.format().format_output_line(msg=None, path=None, versions=mins))
   elif len(reqs) > 0:
-    print("Minimum required versions: {}".format(version_strings(reqs)))
+    nprint("Minimum required versions: {}".format(version_strings(reqs)), config)
     if any(req == (0, 0) for req in reqs):
       vers = [req.replace("~", "") for req in version_strings(reqs, ",").split(",") if "~" in req]
       nprint("Note: Not enough evidence to conclude it won't work with Python {}.".
@@ -124,10 +124,11 @@ def main():
   # and `reqs = []`. But if `incomps = [2]` and `reqs = [3.4]`, for instance, then it makes sense
   # not to show incompatible versions with -i specified.
   if len(incomps) > 0 and (not parsable and (not config.ignore_incomp() or len(reqs) == 0)):
-    print("Incompatible versions:     {}".format(version_strings(incomps)))  # pragma: no cover
+    # pragma: no cover
+    nprint("Incompatible versions:     {}".format(version_strings(incomps)), config)
 
   if args["versions"] and len(unique_versions) > 0:
-    print("Version range:             {}".format(version_strings(unique_versions)))
+    nprint("Version range:             {}".format(version_strings(unique_versions)), config)
 
   targets = config.targets()
   if len(targets) > 0:
@@ -141,7 +142,7 @@ def main():
                 ((exact, target), req) in zip(targets, reqs))):
       if not parsable:
         vers = ["{}{}".format(dotted_name(t), "-" if not e else "") for (e, t) in targets]
-        print("Target versions not met:   {}".format(version_strings(vers)))
+        nprint("Target versions not met:   {}".format(version_strings(vers)), config)
         if len(targets) < len(reqs):
           nprint("Note: Number of specified targets ({}) doesn't match number of detected minimum "
                  "versions ({}).".format(len(targets), len(reqs)), config)

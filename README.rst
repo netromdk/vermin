@@ -166,16 +166,16 @@ Examples
 
 .. code-block:: console
 
-  % ./vermin.py -q vermin
+  % ./vermin.py vermin
   Minimum required versions: 2.7, 3.0
 
-  % ./vermin.py -q -t=3.3 vermin
+  % ./vermin.py -t=2.7 -t=3.3 vermin
   Minimum required versions: 2.7, 3.0
-  Target versions not met:   3.3
+  Target versions not met:   2.7, 3.3
   % echo $?
   1
 
-  % ./vermin.py -q --versions vermin
+  % ./vermin.py --versions vermin
   Minimum required versions: 2.7, 3.0
   Version range:             2.0, 2.6, 2.7, 3.0
 
