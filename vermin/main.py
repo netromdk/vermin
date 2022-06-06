@@ -1,5 +1,6 @@
 import sys
 from os.path import abspath
+from copy import deepcopy
 
 from .config import Config
 from .printing import nprint, vprint
@@ -50,9 +51,16 @@ def main():
     vprint("{} using {} processes..".format(msg, config.processes()), config)
 
   try:
+    # In violations mode it is allowed to use quiet mode to show literally only discrepancies and
+    # nothing else. But the processor must use the original verbosity level and not be quiet!
+    local_config = deepcopy(config)
+    if local_config.only_show_violations() and local_config.quiet():
+      local_config.set_verbose(config.verbose())
+      local_config.set_quiet(False)
+
     processor = Processor()
     (mins, incomp, unique_versions, backports, used_novermin, maybe_annotations) =\
-      processor.process(paths, config, config.processes())
+      processor.process(paths, local_config, local_config.processes())
   except KeyboardInterrupt:  # pragma: no cover
     nprint("Aborting..", config)
     sys.exit(1)

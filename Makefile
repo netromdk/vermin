@@ -5,7 +5,7 @@ MODULES=vermin tests
 TOP_LEVEL_FILES=${MODULES} vermin.py runtests.py ${OTHER_FILES}
 
 self-test:
-	./vermin.py -v -t=2.7 -t=3 ${VERMIN_FILES}
+	./vermin.py --violations -q -t=2.7 -t=3 ${VERMIN_FILES}
 
 test: self-test
 	./runtests.py

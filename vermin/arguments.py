@@ -48,7 +48,8 @@ class Arguments:
 
       print("\nOptions:")
       print("  --quiet | -q\n"
-            "        Quiet mode.\n")
+            "        Quiet mode. If used together with --violations, quiet mode is preserved\n"
+            "        while showing only violations: no descriptive text, tips, or verdicts.\n")
       print("  --no-quiet (default)\n"
             "        Disable quiet mode.\n")
       print("  -v..  Verbosity level 1 to 4. -v, -vv, -vvv, and -vvvv shows increasingly more\n"
@@ -107,7 +108,9 @@ class Arguments:
             "        at least 2 in order to show violations in output text, but can be increased\n"
             "        if necessary.\n\n"
             "        If no rules are triggered while used in conjunction with --target, an exit\n"
-            "        code 0 will still be yielded due to inconclusivity.")
+            "        code 0 will still be yielded due to inconclusivity.\n\n"
+            "        Can be used together with --quiet such that only the violations are shown:\n"
+            "        no descriptive text, tips, or verdicts.")
       print("\n  --no-violations (default)\n"
             "        Show regular results.")
       print("\n  --pessimistic\n"
@@ -366,7 +369,7 @@ class Arguments:
       if config.verbose() < 2:
         config.set_verbose(2)
 
-    if config.quiet() and config.verbose() > 0:
+    if config.quiet() and config.verbose() > 0 and not config.only_show_violations():
       print("Cannot use quiet and verbose modes together!")
       return {"code": 1}
 

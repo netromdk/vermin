@@ -48,6 +48,10 @@ class VerminArgumentsTests(VerminTest):
   def test_cant_mix_quiet_and_verbose(self):
     self.assertContainsDict({"code": 1}, self.parse_args(["-q", "-v"]))
 
+  # Quiet and verbosity can be mixed only with violations mode.
+  def test_quiet_and_violations(self):
+    self.assertContainsDict({"code": 0}, self.parse_args(["-q", "--violations", "-t=3"]))
+
   @VerminTest.parameterized_args([
     # The boolean value means match target version exactly or not (equal or smaller).
     (["-t=2.8"],
