@@ -36,7 +36,7 @@ function decorators.
 
 Backports of the standard library, like ``typing``, can be enabled for better results.
 
-The project is fairly well-tested with **3601** unit and integration tests that are executed on
+The project is fairly well-tested with **3598** unit and integration tests that are executed on
 Linux, macOS, and Windows.
 
 It is recommended to use the most recent Python version to run Vermin on projects since Python's own
