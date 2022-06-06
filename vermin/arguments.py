@@ -102,7 +102,7 @@ class Arguments:
             "        unevaluated generic/literal annotations.")
       print("\n  --no-tips\n"
             "        Don't show tips.")
-      print("\n  --violations\n"
+      print("\n  --violations | --lint\n"
             "        Show only results that violate versions described by --target arguments,\n"
             "        which are required to be specified. Verbosity mode is automatically set to\n"
             "        at least 2 in order to show violations in output text, but can be increased\n"
@@ -111,7 +111,7 @@ class Arguments:
             "        code 0 will still be yielded due to inconclusivity.\n\n"
             "        Can be used together with --quiet such that only the violations are shown:\n"
             "        no descriptive text, tips, or verdicts.")
-      print("\n  --no-violations (default)\n"
+      print("\n  --no-violations | --no-lint (default)\n"
             "        Show regular results.")
       print("\n  --pessimistic\n"
             "        Pessimistic mode: syntax errors are interpreted as the major Python version\n"
@@ -338,10 +338,10 @@ class Arguments:
       elif arg == "--no-eval-annotations":
         config.set_eval_annotations(False)
         path_pos += 1
-      elif arg == "--violations":
+      elif arg in ("--violations", "--lint"):
         config.set_only_show_violations(True)
         path_pos += 1
-      elif arg == "--no-violations":
+      elif arg in ("--no-violations", "--no-lint"):
         config.set_only_show_violations(False)
         path_pos += 1
       elif arg == "--parse-comments":

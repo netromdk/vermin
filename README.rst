@@ -224,11 +224,12 @@ Linting: Showing only target versions violations
 ================================================
 
 Vermin shows lots of useful minimum version results when run normally, but it can also be used as a
-linter to show only rules violating specified target versions by using ``--violations`` and one or
-two ``--target`` values. Verbosity level 2 is automatically set when showing only violations, but
-can be increased if necessary. The final versions verdict is still calculated and printed at the end
-and the program exit code signifies whether the specified targets were met (``0``) or violated
-(``1``). However, if no rules are triggered the exit code will be ``0`` due to inconclusivity.
+linter to show only rules violating specified target versions by using ``--violations`` (or
+``--lint``) and one or two ``--target`` values. Verbosity level 2 is automatically set when showing
+only violations, but can be increased if necessary. The final versions verdict is still calculated
+and printed at the end and the program exit code signifies whether the specified targets were met
+(``0``) or violated (``1``). However, if no rules are triggered the exit code will be ``0`` due to
+inconclusivity.
 
 .. code-block:: console
 
