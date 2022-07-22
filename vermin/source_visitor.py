@@ -1347,8 +1347,9 @@ ast.Call(func=ast.Name)."""
       if (left_dict or left_special) and (right_dict or right_special):
         has_du()
 
-      if isinstance(node.left, ast.Name) and isinstance(node.right, ast.Name) and \
-         node.left.id not in self.__name_res and node.right.id not in self.__name_res:
+      def is_none_or_name(node):
+        return is_none_node(node) or isinstance(node, ast.Name) and node.id not in self.__name_res
+      if is_none_or_name(node.left) and is_none_or_name(node.right):
         self.__union_types = True
         self.__vvprint("union types as `X | Y`", line=node.lineno, versions=[None, (3, 10)])
 

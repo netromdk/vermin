@@ -1970,6 +1970,34 @@ c: a | b = 1
       self.assertTrue(visitor.union_types())
       self.assertOnlyIn((3, 10), visitor.minimum_versions())
 
+      visitor = self.visit("a: int | None")
+      self.assertTrue(visitor.union_types())
+      self.assertOnlyIn((3, 10), visitor.minimum_versions())
+
+      visitor = self.visit("a: None | int")
+      self.assertTrue(visitor.union_types())
+      self.assertOnlyIn((3, 10), visitor.minimum_versions())
+
+      visitor = self.visit("a: None | None")
+      self.assertTrue(visitor.union_types())
+      self.assertOnlyIn((3, 10), visitor.minimum_versions())
+
+      visitor = self.visit("""
+def foo(n: int | None):
+  return n
+""")
+      self.assertTrue(visitor.union_types())
+      self.assertOnlyIn((3, 10), visitor.minimum_versions())
+
+      self.config.set_eval_annotations(True)
+      visitor = self.visit("""
+a = int
+b = None
+c: a | b = 1  # though in this case `b` is a Name and not Constant.
+""")
+      self.assertTrue(visitor.union_types())
+      self.assertOnlyIn((3, 10), visitor.minimum_versions())
+
   def test_super_no_args(self):
     # Without arguments, it's v3.0.
     visitor = self.visit("""
