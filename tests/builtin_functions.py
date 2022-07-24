@@ -254,7 +254,6 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
   def test_isprintable_of_str(self, source, min_versions):
     self.assertDetectMinVersions(source, min_versions)
 
-  @VerminTest.skipUnlessVersion(3)
   @VerminTest.parameterized_args([
     ("s=\"\"\ns.isdecimal()", (3, 0)),
     ("\"\".isdecimal()", (3, 0)),
@@ -264,7 +263,6 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
   def test_isdecimal_of_str(self, source, min_versions):
     self.assertDetectMinVersions(source, min_versions)
 
-  @VerminTest.skipUnlessVersion(3)
   @VerminTest.parameterized_args([
     ("s=\"\"\ns.isnumeric()", (3, 0)),
     ("\"\".isnumeric()", (3, 0)),
@@ -378,7 +376,6 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("(42.0).fromhex()"))
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("n=42.0\nn.fromhex()"))
 
-  @VerminTest.skipUnlessVersion(3)
   def test_hex_of_bytes(self):
     self.assertOnlyIn((3, 5), self.detect("b'\x10'.hex()"))
     self.assertOnlyIn((3, 5), self.detect("b=b'\x10'\nb.hex()"))

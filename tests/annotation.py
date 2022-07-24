@@ -1,11 +1,9 @@
 from .testutils import VerminTest
 
 class VerminModuleTests(VerminTest):
-  @VerminTest.skipUnlessVersion(3)
   def test_return_annotation(self):
     self.assertOnlyIn((3, 0), self.detect("def foo() -> str:\n\treturn ''"))
 
-  @VerminTest.skipUnlessVersion(3)
   def test_arg_annotation(self):
     self.assertOnlyIn((3, 0), self.detect("def foo(bar: int):\n\tpass"))
 

@@ -516,7 +516,6 @@ class VerminLanguageTests(VerminTest):
     self.assertTrue(visitor.named_expressions())
     self.assertOnlyIn((3, 8), visitor.minimum_versions())
 
-  @VerminTest.skipUnlessVersion(3)
   def test_kw_only_args(self):
     visitor = self.visit("def foo(a, *, b): return a + b")
     self.assertTrue(visitor.kw_only_args())
@@ -528,7 +527,6 @@ class VerminLanguageTests(VerminTest):
     self.assertTrue(visitor.pos_only_args())
     self.assertOnlyIn((3, 8), visitor.minimum_versions())
 
-  @VerminTest.skipUnlessVersion(3)
   def test_nonlocal_stmt(self):
     visitor = self.visit("def foo():\n\tlong = 1\n\tdef bar():\n\t\tnonlocal long")
     self.assertTrue(visitor.nonlocal_stmt())
@@ -615,7 +613,6 @@ class VerminLanguageTests(VerminTest):
     visitor = self.visit("float().hex()")
     self.assertIn("float.hex", visitor.members())
 
-  @VerminTest.skipUnlessVersion(3)
   def test_bytes_from_type(self):
     visitor = self.visit("b'hello'.hex()")
     self.assertIn("bytes.hex", visitor.members())
@@ -1010,7 +1007,6 @@ L2: multiple context expressions in a `with` statement with parentheses require 
     visitor = self.visit("d = {'a': 'b'}\ndict(**d)")
     self.assertFalse(visitor.generalized_unpacking())
 
-  @VerminTest.skipUnlessVersion(3)
   @VerminTest.parameterized_args([
     ["*x, y = [1, 2, 3]"],
     ["a, *b = 'hello'"],
@@ -1038,7 +1034,6 @@ L2: multiple context expressions in a `with` statement with parentheses require 
     self.assertFalse(visitor.ellipsis_out_of_slices())
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
 
-  @VerminTest.skipUnlessVersion(3)
   def test_ellipsis_out_of_slices(self):
     visitor = self.visit('...')
     self.assertTrue(visitor.ellipsis_out_of_slices())
@@ -1060,7 +1055,6 @@ L2: multiple context expressions in a `with` statement with parentheses require 
     self.assertTrue(visitor.bytearray_format())
     self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
-  @VerminTest.skipUnlessVersion(3)
   def test_bytes_directives(self):
     visitor = self.visit("b'%b %x'")
     self.assertOnlyIn(("b", "x"), visitor.bytes_directives())
@@ -1311,7 +1305,6 @@ collections.abc.Reversible[int]
     self.assertTrue(visitor.builtin_generic_type_annotations())
     self.assertOnlyIn((3, 9), visitor.minimum_versions())
 
-  @VerminTest.skipUnlessVersion(3)
   def test_issue_66_annotations(self):
     self.assertOnlyIn((3, 7), self.detect("""
 from __future__ import annotations
@@ -1645,7 +1638,6 @@ def foo(file, /, a="Hello"):
 file()
 """)
 
-  @VerminTest.skipUnlessVersion(3)
   def test_func_kwonlyarg_ignore_user_def(self):
     self.assertEqual([None, (3, 0)], self.detect("""
 def foo(a, *, file="Hello"):

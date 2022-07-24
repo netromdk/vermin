@@ -752,15 +752,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     # fix.
     self.assertEqual(ex.exception.code, 0)
 
-  @VerminTest.skipUnlessVersion(3)
   def test_main_parsable_has_last_results_line(self):
-    # This test is currently only run on py3 due to io.StringIO() using unicode() on py2 and we are
-    # writing a str() to it.
-    #
-    # File "vermin/formats/parsable_format.py", line 31, in output_result
-    #   sys.stdout.write(proc_res.text)
-    # TypeError: unicode argument expected, got 'str'
-
     tmp_fld = mkdtemp()
     file_name = "test.py"
     path = join(tmp_fld, file_name)

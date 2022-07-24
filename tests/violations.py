@@ -270,7 +270,6 @@ import argparse    # 2.3, 3.1
     visitor = self.visit(code)
     self.assertEmpty(visitor.output_text())
 
-  @VerminTest.skipUnlessVersion(3)
   def test_violate_unpacking_assignment(self):
     # Violation.
     self.config.add_target((2, 7))
@@ -350,7 +349,6 @@ import argparse    # 2.3, 3.1
     visitor = self.visit(code)
     self.assertEmpty(visitor.output_text())
 
-  @VerminTest.skipUnlessVersion(3)
   def test_violate_bytesv3(self):
     # Violation.
     self.config.add_target((2, 5))
