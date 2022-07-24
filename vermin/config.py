@@ -410,9 +410,7 @@ and a version tuple: [exact, (x, y)]. But it can also be a version tuple (x, y) 
     if isinstance(target, tuple) and len(target) == 2:
       target = [exact, target]
 
-    # pylint: disable=undefined-variable
-    if isinstance(target, str) or\
-       (sys.version_info.major == 2 and isinstance(target, unicode)):  # novm
+    if isinstance(target, str):
       target = parse_target(target)
       if target is None:
         return None

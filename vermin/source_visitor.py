@@ -918,11 +918,7 @@ class SourceVisitor(ast.NodeVisitor):
         if len(full_name) == 0 or (full_name[0] != "list" and full_name[-1] != "list"):
           full_name.append("list")
       elif not primi_type and isinstance(attr, ast.Str):
-        # pylint: disable=undefined-variable
-        if MAJOR_VER == 2 and isinstance(attr.s, unicode):  # novm
-          name = "unicode"  # pragma: no cover
-        else:
-          name = "str"
+        name = "str"
         if len(full_name) == 0 or (full_name[0] != name and len(full_name) == 1):
           full_name.append(name)
       elif not primi_type and isinstance(attr, ast.Num):
@@ -968,11 +964,7 @@ class SourceVisitor(ast.NodeVisitor):
     elif isinstance(node.value, ast.List):
       value_name = "list"
     elif isinstance(node.value, ast.Str):
-      # pylint: disable=undefined-variable
-      if MAJOR_VER == 2 and isinstance(node.value.s, unicode):  # novm
-        value_name = "unicode"  # pragma: no cover
-      else:
-        value_name = "str"
+      value_name = "str"
     elif isinstance(node.value, ast.Num):
       n = node.value.n
       if isinstance(n, int):
