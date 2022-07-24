@@ -25,7 +25,7 @@ def is_neg_int_node(node):
     (isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub) and
      isinstance(node.operand, ast.Num) and isinstance(node.operand.n, int))
 
-def is_none_node(node):
+def is_none_node(node):  # pragma: no cover
   if isinstance(node, ast.Name) and node.id == 'None':
     return True
   if hasattr(ast, 'NameConstant') and isinstance(node, ast.NameConstant) and node.value is None:
@@ -34,7 +34,7 @@ def is_none_node(node):
     return True
   return False
 
-def is_ellipsis_node(node):
+def is_ellipsis_node(node):  # pragma: no cover
   if hasattr(ast, 'Ellipsis') and isinstance(node, ast.Ellipsis):
     return True
   if hasattr(ast, 'Constant') and isinstance(node, ast.Constant) and \
@@ -784,12 +784,12 @@ class SourceVisitor(ast.NodeVisitor):
     return True
 
   def __add_user_func_deco(self, ufd, line=None, col=None):
-    if ufd in self.__user_defs:
+    if ufd in self.__user_defs:  # pragma: no cover
       self.__vvvvprint("Ignoring user function decorator '{}' because it's user-defined!".
                        format(ufd))
       return
 
-    if self.__config.is_excluded(ufd):
+    if self.__config.is_excluded(ufd):  # pragma: no cover
       self.__vvprint("Excluding user function decorator: {}".format(ufd))
       return
 
@@ -2126,7 +2126,7 @@ ast.Call(func=ast.Name)."""
           self.__with_parentheses = True
           self.__vvprint("multiple context expressions in a `with` statement with parentheses",
                          line=node.lineno, versions=[None, (3, 9)])
-    elif hasattr(node, "optional_vars") and node.optional_vars is not None:
+    elif hasattr(node, "optional_vars") and node.optional_vars is not None:  # pragma: no cover
       for n in assign_target_walk(node.optional_vars):
         self.__add_user_def_node(n)
 
@@ -2198,7 +2198,7 @@ ast.Call(func=ast.Name)."""
             match(t)
 
     slices_node = node.slice
-    if hasattr(ast, 'ExtSlice') and isinstance(slices_node, ast.ExtSlice):
+    if hasattr(ast, 'ExtSlice') and isinstance(slices_node, ast.ExtSlice):  # pragma: no cover
       for n in slices_node.dims:
         if is_ellipsis_node(n):
           self.__ellipsis_nodes_in_slices.add(n)

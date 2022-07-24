@@ -134,13 +134,13 @@ class Config:
       "scan_symlink_folders": str(config.scan_symlink_folders()),
       "format": config.format().name(),
     }
-    if sys.version_info < (3, 2):
+    if sys.version_info < (3, 2):  # pragma: no cover
       parser = ConfigParser(args)
     else:
       parser = ConfigParser(args, allow_no_value=True)  # novm
 
     try:
-      if sys.version_info < (3, 2):
+      if sys.version_info < (3, 2):  # pragma: no cover
         parser.readfp(fp, filename=filename)  # pylint: disable=deprecated-method  # novm
       else:
         # `read_file` supercedes `readfp` since 3.2.
@@ -240,7 +240,7 @@ folders until root or project boundaries are reached. Each candidate is checked 
               else cp.read(look_for, encoding="utf-8")  # novm
             if look_for in parse_success_files and cp.has_section(CONFIG_SECTION):
               return look_for
-          except ParsingError:
+          except ParsingError:  # pragma: no cover
             pass
 
       # Stop if didn't find config and is at project boundary, which means it has ".git/" or
@@ -257,7 +257,7 @@ folders until root or project boundaries are reached. Each candidate is checked 
       # Go up one level and stop at root.
       old_folder = folder
       folder = os.path.abspath(os.path.join(folder, ".."))
-      if folder == old_folder:
+      if folder == old_folder:  # pragma: no cover
         break
 
     return None

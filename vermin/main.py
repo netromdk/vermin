@@ -56,7 +56,7 @@ def main():
     # In violations mode it is allowed to use quiet mode to show literally only discrepancies and
     # nothing else. But the processor must use the original verbosity level and not be quiet!
     local_config = deepcopy(config)
-    if local_config.only_show_violations() and local_config.quiet():
+    if local_config.only_show_violations() and local_config.quiet():  # pragma: no cover
       local_config.set_verbose(config.verbose())
       local_config.set_quiet(False)
 

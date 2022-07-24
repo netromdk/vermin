@@ -82,7 +82,7 @@ class Parser:
       text = err.text.strip() if err.text is not None else ""
       lmsg = err.msg.lower()  # pylint: disable=no-member
       parsable = (config.format().name() == "parsable")
-      if parsable:
+      if parsable:  # pragma: no cover
         text = text.replace("\n", "\\n")
 
       # `print expr` is a Python 2 construct, in v3 it's `print(expr)`.

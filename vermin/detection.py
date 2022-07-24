@@ -458,7 +458,7 @@ def probably_python_file(path):
 # calls os.stat() internally. Unless it is a symlink, then another os.stat() is made to check what
 # is pointed to.
 def stat_path(path, scan_symlink_folders=False):
-  try:
+  try:  # pragma: no cover
     st = lstat(path)  # Don't follow symlink.
     if not S_ISLNK(st.st_mode):
       return st
