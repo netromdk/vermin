@@ -6,7 +6,6 @@ from multiprocessing import Pool, cpu_count
 from .parser import Parser
 from .source_visitor import SourceVisitor
 from .config import Config
-from .utility import open_wrapper
 from .printing import nprint
 
 NOT_PY_CODE_EXTS = {
@@ -443,7 +442,7 @@ def probably_python_file(path):
 
   # Try opening file for reading as a text device.
   try:
-    with open_wrapper(path, mode="r", encoding="utf-8") as fp:
+    with open(path, mode="r", encoding="utf-8") as fp:
       for _i in range(10):
         # A script with a magic line might contain "python".
         line = fp.readline().lower().strip()

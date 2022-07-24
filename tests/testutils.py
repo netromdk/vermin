@@ -6,14 +6,13 @@ from os.path import join
 from tempfile import NamedTemporaryFile
 
 from vermin import Config, Arguments, detect, visit
-from vermin.utility import open_wrapper
 
 def current_version():
   return sys.version_info
 
 def touch(fld, name, contents=None):
   filename = join(fld, name)
-  fp = open_wrapper(filename, mode="w", encoding="utf-8")
+  fp = open(filename, mode="w", encoding="utf-8")
   if contents is not None:
     fp.write(contents)
   fp.close()
