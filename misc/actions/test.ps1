@@ -23,7 +23,7 @@ else {
     $Host.SetShouldExit(1) # This is necessary in order to fail the GitHub job.
     exit 1
   }
-  coverage run --append --source=vermin ./vermin.py -v -t="2.7" -t=3 vermin.py vermin
+  coverage run --append --source=vermin ./vermin.py -v -t=3 vermin.py vermin
   if (!$?) {
     $Host.SetShouldExit(1)
     exit 1

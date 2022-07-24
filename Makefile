@@ -5,7 +5,7 @@ MODULES=vermin tests
 TOP_LEVEL_FILES=${MODULES} vermin.py runtests.py ${OTHER_FILES}
 
 self-test:
-	./vermin.py --violations -q -t=2.7 -t=3 ${VERMIN_FILES}
+	./vermin.py --violations -q -t=3 ${VERMIN_FILES}
 
 test: self-test
 	./runtests.py
@@ -90,7 +90,7 @@ check-all: check security-check
 
 test-coverage:
 	coverage run --source=vermin,tests runtests.py
-	coverage run --append --source=vermin ./vermin.py -v -t=2.7 -t=3 vermin.py vermin
+	coverage run --append --source=vermin ./vermin.py -v -t=3 vermin.py vermin
 
 coverage-report:
 	coverage report -m

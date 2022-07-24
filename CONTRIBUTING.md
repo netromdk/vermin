@@ -2,7 +2,8 @@
 Contributions are very welcome, especially adding and updating detection rules of modules,
 functions, classes etc. to cover as many Python versions as possible.
 
-Note that code must remain valid and working on Python v2.7+ and v3+.
+Note that code must remain valid and Vermin be able to run via Python v3+ but still include
+detection of v2.x functionality.
 
 ## Dependencies
 Install development and analysis dependencies via `make setup`. It will setup a `virtualenv` in
