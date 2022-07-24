@@ -8,9 +8,9 @@ from shutil import rmtree
 from multiprocessing import cpu_count
 
 from vermin import combine_versions, InvalidVersionException, detect_paths,\
-  detect_paths_incremental, probably_python_file, Processor, process_individual, reverse_range,\
-  dotted_name, remove_whitespace, main, sort_line_column, sort_line_column_parsable,\
-  version_strings, format_title_descs, DEFAULT_PROCESSES
+  detect_paths_incremental, probably_python_file, Processor, reverse_range, dotted_name,\
+  remove_whitespace, main, sort_line_column, sort_line_column_parsable, version_strings,\
+  format_title_descs, DEFAULT_PROCESSES
 from vermin.formats import ParsableFormat
 
 from .testutils import VerminTest, current_version, ScopedTemporaryFile, detect, visit, touch, \
@@ -787,14 +787,14 @@ test.py:6:9:2.7:3.2:'argparse' module
 
   def test_process_file_not_Found(self):
     path = "nonexistent"
-    res = process_individual((path, self.config))
+    res = Processor.process_individual((path, self.config))
     self.assertNotEqual(res, None)
     self.assertEqual(res.path, path)
     self.assertEqual(res.mins, [(0, 0), (0, 0)])
     self.assertEqual(res.node, None)
 
   def test_process_runtests_py(self):
-    proc_res = process_individual((sys.argv[0], self.config))
+    proc_res = Processor.process_individual((sys.argv[0], self.config))
     self.assertEqual(basename(proc_res.path), "runtests.py")
     self.assertEqual(proc_res.mins, [(2, 7), (3, 2)])
     self.assertEmpty(proc_res.text)
@@ -805,7 +805,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     fp = ScopedTemporaryFile()
     fp.write(b'(')  # SyntaxError: unexpected EOF while parsing
     fp.close()
-    proc_res = process_individual((fp.path(), self.config))
+    proc_res = Processor.process_individual((fp.path(), self.config))
     self.assertEqual(proc_res.mins, [(0, 0), (0, 0)])
     self.assertEmpty(proc_res.text)
     self.assertEmpty(proc_res.bps)
@@ -819,7 +819,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     fp = ScopedTemporaryFile()
     fp.write(b'\0')
     fp.close()
-    proc_res = process_individual((fp.path(), self.config))
+    proc_res = Processor.process_individual((fp.path(), self.config))
     self.assertEqual(proc_res, None)
 
   def test_process_invalid_versions(self):
@@ -828,7 +828,7 @@ test.py:6:9:2.7:3.2:'argparse' module
 breakpoint()
 """)
       fp.close()
-      proc_res = process_individual((fp.path(), self.config))
+      proc_res = Processor.process_individual((fp.path(), self.config))
       self.assertEqual(proc_res.mins, None)
       msg = "'long' member (requires 2.0, !3) vs. 'breakpoint' member (requires !2, 3.7)"
       self.assertEqual(proc_res.text, msg)
@@ -841,7 +841,7 @@ except ImportError:
   import SocketServer
 """)
       fp.close()
-      proc_res = process_individual((fp.path(), self.config))
+      proc_res = Processor.process_individual((fp.path(), self.config))
       self.assertEqual(proc_res.mins, None)
       msg = "'socketserver' module (requires !2, 3.0) vs. 'SocketServer' module (requires 2.0, !3)"
       self.assertEqual(proc_res.text, msg)
@@ -855,7 +855,7 @@ from urllib import urlopen
 urlopen(context=None)
 """)
       fp.close()
-      proc_res = process_individual((fp.path(), self.config))
+      proc_res = Processor.process_individual((fp.path(), self.config))
       self.assertEqual(proc_res.mins, None)
       msg =\
         "strftime directive 'u' (requires !2, 3.6) vs. 'urllib.urlopen(context)' (requires 2.7, !3)"
@@ -866,7 +866,7 @@ urlopen(context=None)
     fp = ScopedTemporaryFile()
     fp.writeln(b"import typing")
     fp.close()
-    proc_res = process_individual((fp.path(), self.config))
+    proc_res = Processor.process_individual((fp.path(), self.config))
     self.assertEmpty(proc_res.text)
     self.assertEqualItems(["typing"], proc_res.bps)
 
