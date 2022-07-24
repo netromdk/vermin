@@ -42,6 +42,20 @@ Linux, macOS, and Windows.
 It is recommended to use the most recent Python version to run Vermin on projects since Python's own
 language parser is used to detect language features, like f-strings since Python 3.6 etc.
 
+
+Table of Contents
+=================
+
+* `Usage <#usage>`__
+* `Features <#features>`__
+* `Caveats <#caveats>`__
+* `Configuration File <#configuration-file>`__
+* `Examples <#examples>`__
+* `Linting (showing only target versions violations) <#linting-showing-only-target-versions-violations>`__
+* `API (experimental) <#api-experimental>`__
+* `Analysis Exclusions <#analysis-exclusions>`__
+* `Contributing <#contributing>`__
+
 Usage
 =====
 
@@ -139,7 +153,7 @@ annotations`` is used (`PEP 563 <https://www.python.org/dev/peps/pep-0563/>`__).
 like using ``typing.get_type_hints`` or evaluating ``__annotations__`` of an object,
 ``--eval-annotations`` should be used for best results.
 
-Configuration file
+Configuration File
 ==================
 
 Vermin automatically tries to detect a config file, starting in the current working directory where
