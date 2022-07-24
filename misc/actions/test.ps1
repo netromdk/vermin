@@ -1,6 +1,6 @@
 $PYTHON_VERSION = python -c "import sys;v=sys.version_info;print('{}.{}'.format(v[0],v[1]))"
 
-if ( $PYTHON_VERSION -eq "2.7" -or $PYTHON_VERSION -eq "3.4" -or $PYTHON_VERSION -eq "3.5" -or $PYTHON_VERSION -eq "3.6") {
+if ( $PYTHON_VERSION -eq "3.4" -or $PYTHON_VERSION -eq "3.5" -or $PYTHON_VERSION -eq "3.6") {
   make test
 }
 else {
