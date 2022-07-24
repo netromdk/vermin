@@ -65,16 +65,6 @@ class VerminTest(unittest.TestCase):
     return decorator
 
   @staticmethod
-  def skipUnlessLowerVersion(major_version, minor_version=0):
-    """Decorator that only runs test if lower than the specified Python version is being used."""
-    def decorator(func):
-      def wrapper(self, *args, **kwargs):
-        if current_version() < (major_version, minor_version):
-          func(self, *args, **kwargs)
-      return wrapper
-    return decorator
-
-  @staticmethod
   def skipUnlessPlatform(platform):
     """Decorator that only runs test if executing on specified platform. It checks that the platform
 starts with the provided value, like 'win32' or 'darwin'."""

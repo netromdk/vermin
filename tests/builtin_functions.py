@@ -254,28 +254,6 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
   def test_isprintable_of_str(self, source, min_versions):
     self.assertDetectMinVersions(source, min_versions)
 
-  # pragma: no cover
-  @VerminTest.skipUnlessLowerVersion(3)
-  @VerminTest.parameterized_args([
-    ("s=u\"\"\ns.isdecimal()", (2, 0)),
-    ("u\"\".isdecimal()", (2, 0)),
-    ("s=unicode()\ns.isdecimal()", (2, 0)),
-    ("unicode().isdecimal()", (2, 0)),
-  ])
-  def test_isdecimal_of_unicode(self, source, min_versions):
-    self.assertDetectMinVersions(source, min_versions)
-
-  # pragma: no cover
-  @VerminTest.skipUnlessLowerVersion(3)
-  @VerminTest.parameterized_args([
-    ("s=u\"\"\ns.isnumeric()", (2, 0)),
-    ("u\"\".isnumeric()", (2, 0)),
-    ("s=unicode()\ns.isnumeric()", (2, 0)),
-    ("unicode().isnumeric()", (2, 0)),
-  ])
-  def test_isnumeric_of_unicode(self, source, min_versions):
-    self.assertDetectMinVersions(source, min_versions)
-
   @VerminTest.skipUnlessVersion(3)
   @VerminTest.parameterized_args([
     ("s=\"\"\ns.isdecimal()", (3, 0)),
@@ -377,12 +355,6 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
 
   def test_from_bytes_of_int(self):
     self.assertOnlyIn((3, 2), self.detect("int.from_bytes([42])"))
-
-  # pragma: no cover
-  @VerminTest.skipUnlessLowerVersion(3)
-  def test_bit_length_of_long(self):
-    self.assertOnlyIn((2, 7), self.detect("(42L).bit_length()"))
-    self.assertOnlyIn((2, 7), self.detect("n=42L\nn.bit_length()"))
 
   def test_as_integer_ratio_of_float(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("(42.0).as_integer_ratio()"))

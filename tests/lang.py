@@ -19,22 +19,13 @@ class VerminLanguageTests(VerminTest):
     elif (3, 0) <= v < (3, 4):  # pragma: no cover
       self.assertEqual(node, None)
       self.assertEqual(mins, [(0, 0), (0, 0)])
-    # < 3.0
-    else:  # pragma: no cover
-      visitor = self.visit(source)
-      self.assertTrue(visitor.printv2())
-      self.assertEqual([(2, 0), (0, 0)], visitor.minimum_versions())
 
   def test_printv3(self):
     """Allowed in both v2 and v3."""
     visitor = self.visit("print('hello')")
     v = current_version()
-    if v < (3, 0):  # pragma: no cover
-      self.assertTrue(visitor.printv2())
-      self.assertFalse(visitor.printv3())
-    else:
-      self.assertFalse(visitor.printv2())
-      self.assertTrue(visitor.printv3())
+    self.assertFalse(visitor.printv2())
+    self.assertTrue(visitor.printv3())
     self.assertIn((v.major, 0), visitor.minimum_versions())
 
   @VerminTest.skipUnlessVersion(3, 4)
@@ -73,22 +64,12 @@ class VerminLanguageTests(VerminTest):
     self.assertOnlyIn((2, 0), visitor.minimum_versions())
 
   def test_bytesv3(self):
-    v = current_version()
-
-    # py2: type(b'hello') = <type 'str'>
-    if (2, 0) <= v < (3, 0):  # pragma: no cover
-      visitor = self.visit("s = b'hello'")
-      self.assertFalse(visitor.bytesv3())
-      self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
-
-    # py3: type(b'hello') = <type 'bytes'>
-    elif v >= (3, 0):
-      visitor = self.visit("s = b'hello'")
-      self.assertTrue(visitor.bytesv3())
-      self.assertEqual([(2, 6), (3, 0)], visitor.minimum_versions())
-      visitor = self.visit("s = B'hello'")
-      self.assertTrue(visitor.bytesv3())
-      self.assertEqual([(2, 6), (3, 0)], visitor.minimum_versions())
+    visitor = self.visit("s = b'hello'")
+    self.assertTrue(visitor.bytesv3())
+    self.assertEqual([(2, 6), (3, 0)], visitor.minimum_versions())
+    visitor = self.visit("s = B'hello'")
+    self.assertTrue(visitor.bytesv3())
+    self.assertEqual([(2, 6), (3, 0)], visitor.minimum_versions())
 
   @VerminTest.skipUnlessVersion(3, 6)
   def test_fstrings(self):
@@ -600,14 +581,6 @@ class VerminLanguageTests(VerminTest):
     visitor = self.visit("str().zfill(1)")
     self.assertIn("str.zfill", visitor.members())
 
-  # pragma: no cover
-  @VerminTest.skipUnlessLowerVersion(3)
-  def test_unicode_from_type(self):
-    visitor = self.visit("u\"\".isdecimal()")
-    self.assertIn("unicode.isdecimal", visitor.members())
-    visitor = self.visit("unicode().isdecimal()")
-    self.assertIn("unicode.isdecimal", visitor.members())
-
   def test_list_from_type(self):
     visitor = self.visit("[].clear()")
     self.assertIn("list.clear", visitor.members())
@@ -635,14 +608,6 @@ class VerminLanguageTests(VerminTest):
     self.assertIn("int.bit_length", visitor.members())
     visitor = self.visit("int().bit_length()")
     self.assertIn("int.bit_length", visitor.members())
-
-  # pragma: no cover
-  @VerminTest.skipUnlessLowerVersion(3)
-  def test_long_from_type(self):
-    visitor = self.visit("(1L).bit_length()")
-    self.assertIn("long.bit_length", visitor.members())
-    visitor = self.visit("long().bit_length()")
-    self.assertIn("long.bit_length", visitor.members())
 
   def test_float_from_type(self):
     visitor = self.visit("(4.2).hex()")
@@ -1590,17 +1555,9 @@ typing.get_type_hints(foo)"""))
     self.assertFalse(visitor.module_getattr_func())
 
   def test_for_target_ignore_user_def(self):
-    # If `file` was not ignored as user-def the minimum version would have been 2.0, !3 due to
-    # `file`.
-    if current_version() >= (3,):
-      # unpacking assignment requires !2, 3.0
-      self.assertEqual([None, (3, 0)], self.detect("""
+    # unpacking assignment requires !2, 3.0
+    self.assertEqual([None, (3, 0)], self.detect("""
 for a, (*file, c[d+e::f(g)], h.i) in []:
-  file()
-"""))
-    else:
-      self.assertEqual([(0, 0), (0, 0)], self.detect("""
-for a, file, b in []:
   file()
 """))
 
@@ -1735,8 +1692,7 @@ file()
 """))
 
     # unpacking assignment requires !2, 3.0
-    if current_version() >= (3,):
-      self.assertEqual([None, (3, 0)], self.detect("""
+    self.assertEqual([None, (3, 0)], self.detect("""
 a, (*file, c[d+e::f(g)], h.i) = [], []
 file()
 """))
@@ -1811,9 +1767,8 @@ file()
 """))
 
     # After comprehension, `file` rules apply but unpacking assignment requires !2, 3.
-    if current_version() >= (3,):
-      with self.assertRaises(InvalidVersionException):
-        self.visit("""
+    with self.assertRaises(InvalidVersionException):
+      self.visit("""
 [file() for a, *file in [1]], file()
 """)
 

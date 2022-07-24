@@ -964,13 +964,8 @@ print('hello')     # print(expr) requires 2+ or 3+
     (mins, incomp, unique_versions, backports, used_novermin, maybe_anns) =\
       processor.process(paths, self.config)
 
-    if current_version() >= (3, 0):
-      self.assertEqual(mins, [(2, 0), (3, 0)])
-      self.assertEqual(unique_versions, [(2, 0), (3, 0)])
-    else:  # pragma: no cover
-      self.assertEqual(mins, [(2, 0), (0, 0)])
-      self.assertEqual(unique_versions, [(2, 0)])
-
+    self.assertEqual(mins, [(2, 0), (3, 0)])
+    self.assertEqual(unique_versions, [(2, 0), (3, 0)])
     self.assertFalse(incomp)
     self.assertEmpty(backports)
     self.assertFalse(used_novermin)
