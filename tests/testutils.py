@@ -181,6 +181,7 @@ The difference to NamedTemporaryFile is that it isn't deleted when closing the f
   """
 
   def __init__(self, suffix=".py"):
+    # pylint: disable=consider-using-with
     self.__fp = NamedTemporaryFile(suffix=suffix, delete=False)
 
   def __del__(self):

@@ -40,6 +40,7 @@ class Processor:
     incomp = False
 
     try:
+      # pylint: disable=consider-using-with
       pool = mp.Pool(processes=processes) if processes > 1 else None
 
       def print_incomp(path, text):

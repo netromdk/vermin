@@ -517,6 +517,7 @@ def detect_paths(paths, hidden=False, processes=cpu_count(), ignore_chars=None,
   args = [(paths, depth, hidden, ignore_chars, scan_symlink_folders, config)]
 
   try:
+    # pylint: disable=consider-using-with
     pool = Pool(processes=processes) if processes > 1 else None
 
     # Automatically don't use concurrency when only one process is specified to be used.
