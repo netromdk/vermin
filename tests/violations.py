@@ -1,6 +1,6 @@
-from .testutils import VerminTest
-
 from vermin import InvalidVersionException
+
+from .testutils import VerminTest
 
 class VerminViolationsTests(VerminTest):
   def setUp(self):
