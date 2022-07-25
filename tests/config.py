@@ -98,14 +98,14 @@ class VerminConfigTests(VerminTest):
             self.config.scan_symlink_folders(), self.config.format().name()))
 
   @VerminTest.parameterized_args([
-    [u""],
-    [u"""
+    [""],
+    ["""
 """],
-    [u"""[vermin
+    ["""[vermin
 """],
-    [u"""vermin]
+    ["""vermin]
 """],
-    [u"""[ vermin ]
+    ["""[ vermin ]
 """],
   ])
   def test_parse_invalid_section(self, data):
@@ -114,40 +114,40 @@ class VerminConfigTests(VerminTest):
   @VerminTest.parameterized_args([
     # Testing all possible, case-insensitive supported boolean values: 0, 1, on, off, no, yes, true,
     # false. Does not need to be repeated for each following boolean test.
-    [u"""[vermin]
+    ["""[vermin]
 quiet =
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 #quiet = True
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 quiet = 1
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 quiet = on
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 quiet = yes
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 quiet = true
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 quiet = True
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 quiet = 0
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 quiet = off
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 quiet = no
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 quiet = false
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 quiet = False
 """, False],
   ])
@@ -157,19 +157,19 @@ quiet = False
     self.assertEqual(config.quiet(), expected)
 
   @VerminTest.parameterized_args([
-    [u"""[vermin]
+    ["""[vermin]
 verbose =
 """, 0],
-    [u"""[vermin]
+    ["""[vermin]
 #verbose = 1
 """, 0],
-    [u"""[vermin]
+    ["""[vermin]
 verbose = 0
 """, 0],
-    [u"""[vermin]
+    ["""[vermin]
 verbose = 1
 """, 1],
-    [u"""[vermin]
+    ["""[vermin]
 verbose = 2
 """, 2],
   ])
@@ -179,27 +179,27 @@ verbose = 2
     self.assertEqual(config.verbose(), expected)
 
   def test_parse_invalid_verbose(self):
-    self.assertIsNone(Config.parse_data(u"""[vermin]
+    self.assertIsNone(Config.parse_data("""[vermin]
 verbose = -1
 """))
 
   @VerminTest.parameterized_args([
-    [u"""[vermin]
+    ["""[vermin]
 print_visits =
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 #print_visits = True
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 print_visits = True
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 print_visits = False
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 print_visits = yes
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 print_visits = no
 """, False],
   ])
@@ -209,19 +209,19 @@ print_visits = no
     self.assertEqual(config.print_visits(), expected)
 
   @VerminTest.parameterized_args([
-    [u"""[vermin]
+    ["""[vermin]
 processes =
 """, DEFAULT_PROCESSES],
-    [u"""[vermin]
+    ["""[vermin]
 #processes = 1
 """, DEFAULT_PROCESSES],
-    [u"""[vermin]
+    ["""[vermin]
 processes = 0
 """, DEFAULT_PROCESSES],
-    [u"""[vermin]
+    ["""[vermin]
 processes = 10
 """, 10],
-    [u"""[vermin]
+    ["""[vermin]
 processes = 2
 """, 2],
   ])
@@ -231,27 +231,27 @@ processes = 2
     self.assertEqual(config.processes(), expected)
 
   def test_parse_invalid_processes(self):
-    self.assertIsNone(Config.parse_data(u"""[vermin]
+    self.assertIsNone(Config.parse_data("""[vermin]
 processes = -1
 """))
 
   @VerminTest.parameterized_args([
-    [u"""[vermin]
+    ["""[vermin]
 ignore_incomp =
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 #ignore_incomp = True
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 ignore_incomp = True
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 ignore_incomp = False
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 ignore_incomp = yes
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 ignore_incomp = no
 """, False],
   ])
@@ -261,22 +261,22 @@ ignore_incomp = no
     self.assertEqual(config.ignore_incomp(), expected)
 
   @VerminTest.parameterized_args([
-    [u"""[vermin]
+    ["""[vermin]
 pessimistic =
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 #pessimistic = True
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 pessimistic = True
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 pessimistic = False
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 pessimistic = yes
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 pessimistic = no
 """, False],
   ])
@@ -286,22 +286,22 @@ pessimistic = no
     self.assertEqual(config.pessimistic(), expected)
 
   @VerminTest.parameterized_args([
-    [u"""[vermin]
+    ["""[vermin]
 show_tips =
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 #show_tips = False
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 show_tips = False
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 show_tips = True
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 show_tips = no
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 show_tips = yes
 """, True],
   ])
@@ -311,24 +311,24 @@ show_tips = yes
     self.assertEqual(config.show_tips(), expected)
 
   @VerminTest.parameterized_args([
-    [u"""[vermin]
+    ["""[vermin]
 exclusions =
 """, []],
-    [u"""[vermin]
+    ["""[vermin]
 #exclusions = mod.member
 """, []],
-    [u"""[vermin]
+    ["""[vermin]
 exclusions = mod.member
-""", [u"mod.member"]],
-    [u"""[vermin]
+""", ["mod.member"]],
+    ["""[vermin]
 exclusions = mod.member
   foo.bar(baz)
-""", [u"foo.bar(baz)", u"mod.member"]],
-    [u"""[vermin]
+""", ["foo.bar(baz)", "mod.member"]],
+    ["""[vermin]
 exclusions =
   mod.member
   foo.bar(baz)
-""", [u"foo.bar(baz)", u"mod.member"]],
+""", ["foo.bar(baz)", "mod.member"]],
   ])
   def test_parse_exclusions(self, data, expected):
     config = Config.parse_data(data)
@@ -336,20 +336,20 @@ exclusions =
     self.assertEqual(config.exclusions(), expected)
 
   @VerminTest.parameterized_args([
-    [u"""[vermin]
+    ["""[vermin]
 exclusion_regex =
 """, []],
-    [u"""[vermin]
+    ["""[vermin]
 #exclusion_regex = \\.pyi$
 """, []],
-    [u"""[vermin]
+    ["""[vermin]
 exclusion_regex = \\.pyi$
 """, [r"\.pyi$"]],
-    [u"""[vermin]
+    ["""[vermin]
 exclusion_regex = \\.pyi$
   ^a/b$
 """, [r"\.pyi$", r"^a/b$"]],
-    [u"""[vermin]
+    ["""[vermin]
 exclusion_regex =
   ^a/b$
   \\.pyi$
@@ -361,22 +361,22 @@ exclusion_regex =
     self.assertEqual(config.exclusion_regex(), expected)
 
   @VerminTest.parameterized_args([
-    [u"""[vermin]
+    ["""[vermin]
 make_paths_absolute =
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 #make_paths_absolute = False
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 make_paths_absolute = yes
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 make_paths_absolute = no
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 make_paths_absolute = True
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 make_paths_absolute = False
 """, False],
   ])
@@ -387,17 +387,17 @@ make_paths_absolute = False
 
   def test_parse_backports(self):
     bps = Backports.modules()
-    config = Config.parse_data(u"""[vermin]
+    config = Config.parse_data("""[vermin]
 backports = {}
 """.format("\n  ".join(bps)))
     self.assertIsNotNone(config)
     self.assertEqual(bps, config.backports())
 
-    config = Config.parse_data(u"""[vermin]
+    config = Config.parse_data("""[vermin]
 backports = unknown
 """)
     self.assertIsNone(config)
-    config = Config.parse_data(u"""[vermin]
+    config = Config.parse_data("""[vermin]
 backports = {}
   unknown
 """.format(list(bps)[0]))
@@ -405,54 +405,54 @@ backports = {}
 
   def test_parse_features(self):
     fs = Features.features()
-    config = Config.parse_data(u"""[vermin]
+    config = Config.parse_data("""[vermin]
 features = {}
 """.format("\n  ".join(fs)))
     self.assertIsNotNone(config)
     self.assertEqual(fs, config.features())
 
-    self.assertIsNone(Config.parse_data(u"""[vermin]
+    self.assertIsNone(Config.parse_data("""[vermin]
 features = unknown
 """))
-    self.assertIsNone(Config.parse_data(u"""[vermin]
+    self.assertIsNone(Config.parse_data("""[vermin]
 features = {}
   unknown
 """.format(list(fs)[0])))
 
   def test_parse_format(self):
     for fmt in vermin.formats.names():
-      config = Config.parse_data(u"""[vermin]
+      config = Config.parse_data("""[vermin]
 format = {}
 """.format(fmt))
       self.assertIsNotNone(config)
       self.assertEqual(fmt, config.format().name())
 
-    self.assertIsNone(Config.parse_data(u"""[vermin]
+    self.assertIsNone(Config.parse_data("""[vermin]
 format = unknown
 """))
 
   @VerminTest.parameterized_args([
-    [u"""[vermin]
+    ["""[vermin]
 targets =
 """, []],
-    [u"""[vermin]
+    ["""[vermin]
 #targets = 2.0
 """, []],
-    [u"""[vermin]
+    ["""[vermin]
 targets = 2.0
 """, [(True, (2, 0))]],
-    [u"""[vermin]
+    ["""[vermin]
 targets = 2.0-
 """, [(False, (2, 0))]],
-    [u"""[vermin]
+    ["""[vermin]
 targets = 2.0
   3.0
 """, [(True, (2, 0)), (True, (3, 0))]],
-    [u"""[vermin]
+    ["""[vermin]
 targets = 2.0
   3.0-
 """, [(True, (2, 0)), (False, (3, 0))]],
-    [u"""[vermin]
+    ["""[vermin]
 targets = 2,1
   3,2-
 """, [(True, (2, 1)), (False, (3, 2))]],
@@ -463,21 +463,21 @@ targets = 2,1
     self.assertEqual(config.targets(), expected)
 
   @VerminTest.parameterized_args([
-    [u"""[vermin]
+    ["""[vermin]
 targets = invalid
 """],
-    [u"""[vermin]
+    ["""[vermin]
 targets = 2.0 3.0
 """],
-    [u"""[vermin]
+    ["""[vermin]
 targets = 2.0
   3.0
   3.1
 """],
-    [u"""[vermin]
+    ["""[vermin]
 targets = 1.0
 """],
-    [u"""[vermin]
+    ["""[vermin]
 targets = 4.0
 """],
   ])
@@ -564,16 +564,16 @@ pessimistic = TrUe
     rmtree(tmp_fld)
 
   @VerminTest.parameterized_args([
-    [u"""[vermin]
+    ["""[vermin]
 eval_annotations =
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 #eval_annotations = True
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 eval_annotations = True
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 eval_annotations = False
 """, False],
   ])
@@ -583,16 +583,16 @@ eval_annotations = False
     self.assertEqual(config.eval_annotations(), expected)
 
   @VerminTest.parameterized_args([
-    [u"""[vermin]
+    ["""[vermin]
 only_show_violations =
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 #only_show_violations = True
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 only_show_violations = True
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 only_show_violations = False
 """, False],
   ])
@@ -613,16 +613,16 @@ only_show_violations = False
       self.fail("Crashed while adding exclusion.")
 
   @VerminTest.parameterized_args([
-    [u"""[vermin]
+    ["""[vermin]
 parse_comments =
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 #parse_comments = True
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 parse_comments = True
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 parse_comments = False
 """, False],
   ])
@@ -632,16 +632,16 @@ parse_comments = False
     self.assertEqual(config.parse_comments(), expected)
 
   @VerminTest.parameterized_args([
-    [u"""[vermin]
+    ["""[vermin]
 scan_symlink_folders =
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 #scan_symlink_folders = False
 """, False],
-    [u"""[vermin]
+    ["""[vermin]
 scan_symlink_folders = True
 """, True],
-    [u"""[vermin]
+    ["""[vermin]
 scan_symlink_folders = False
 """, False],
   ])
