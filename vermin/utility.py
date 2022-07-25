@@ -71,7 +71,7 @@ def combine_versions(list1, list2, config, version_refs=None):
       return float_version(v)
     return v
 
-  for i in range(len(list1)):
+  for i in range(len(list1)):  # pylint: disable=consider-using-enumerate
     v1 = fixup(list1[i])
     v2 = fixup(list2[i])
     if v1 is None or v2 is None:
@@ -171,7 +171,7 @@ def parse_target(target):
   if len(elms) != 1 and len(elms) != 2:
     return None
 
-  for h in range(len(elms)):
+  for h in range(len(elms)):  # pylint: disable=consider-using-enumerate
     try:
       n = int(elms[h])
       if n < 0:

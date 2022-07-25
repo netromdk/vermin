@@ -73,8 +73,7 @@ def main():
 
   incomps = []
   reqs = []
-  for i in range(len(mins)):
-    ver = mins[i]
+  for (i, ver) in enumerate(mins):
     if ver is None:
       incomps.append(i + 2)  # pragma: no cover
     elif ver is not None and ver != 0:

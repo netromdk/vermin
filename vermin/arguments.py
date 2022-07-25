@@ -205,8 +205,7 @@ class Arguments:
 
     # Preparsing step. Help and version arguments quit immediately and config file parsing must be
     # done first such that other arguments can override its settings.
-    for i in range(len(self.__args)):
-      arg = self.__args[i]
+    for (i, arg) in enumerate(self.__args):
       if arg in ("--help", "-h"):
         return {"code": 0, "usage": True, "full": True}
       if arg in ("--version", "-V"):
@@ -237,8 +236,7 @@ class Arguments:
       config.override_from(c)
 
     # Main parsing step.
-    for i in range(len(self.__args)):
-      arg = self.__args[i]
+    for (i, arg) in enumerate(self.__args):
       if arg in ("--config-file", "-c"):
         # Config file parsed again only to ensure path position is correctly increased: reaching
         # this point means a well-formed config file was specified and parsed.
