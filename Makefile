@@ -23,16 +23,13 @@ count:
 setup-venv: clean-venv
 	virtualenv -p python3 .venv
 
-setup-misc: clean
-	pip install -r misc/.misc-requirements.txt
-
 setup-coverage: clean
 	pip install -r misc/.coverage-requirements.txt
 
 setup-analysis: clean
 	pip install -r misc/.analysis-requirements.txt
 
-setup: setup-venv setup-misc setup-coverage setup-analysis
+setup: setup-venv setup-coverage setup-analysis
 
 install-deps:
 	python -m pip install --upgrade pip virtualenv
@@ -54,9 +51,6 @@ dist-clean: clean clean-venv clean-pypi
 
 pypi-dist: clean-pypi
 	python setup.py bdist_wheel --universal
-
-update-misc-requirements: setup-venv setup-misc
-	pip freeze > misc/.misc-requirements.txt
 
 update-coverage-requirements: setup-venv setup-coverage
 	pip freeze > misc/.coverage-requirements.txt
