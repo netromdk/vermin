@@ -12,10 +12,9 @@ def current_version():
 
 def touch(fld, name, contents=None):
   filename = join(fld, name)
-  fp = open(filename, mode="w", encoding="utf-8")
-  if contents is not None:
-    fp.write(contents)
-  fp.close()
+  with open(filename, mode="w", encoding="utf-8") as fp:
+    if contents is not None:
+      fp.write(contents)
   return filename
 
 @contextmanager

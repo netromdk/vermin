@@ -898,10 +898,10 @@ urlopen(context=None)
       b"import builtins\n",  # !2, 3.0
     ]
     for code in codes:
-      fp = NamedTemporaryFile(suffix=".py", delete=False)
-      fp.write(code)
-      fp.close()
-      paths.append(fp.name)
+      with NamedTemporaryFile(suffix=".py", delete=False) as fp:
+        fp.write(code)
+        fp.close()
+        paths.append(fp.name)
 
     processor = Processor()
     (mins, incomp, unique_versions, backports, used_novermin, maybe_anns) =\
