@@ -31,7 +31,7 @@ def dotted_name(names):
 
 def float_version(f):
   """Converts a float X.Y into (X, Y)."""
-  assert(not f < 0)
+  assert not f < 0
   major = floor(f)
   minor = int((f - major) * 10)
   return (major, minor)
@@ -85,9 +85,9 @@ def version_strings(versions, separator=None):
 values can be specified, otherwise any number is allowed. A None separator means ', '."""
   separator = separator or ", "
   amount = len(versions)
-  assert(amount > 0)
+  assert amount > 0
   if any(v in (0, (0, 0)) for v in versions):
-    assert(amount < 3)
+    assert amount < 3
   res = []
   for i in range(amount):
     version = versions[i]
@@ -185,7 +185,7 @@ def parse_target(target):
     elms.append(0)
 
   elms = tuple(elms)
-  if not ((2, 0) <= elms < (4, 0)):
+  if not (2, 0) <= elms < (4, 0):
     return None
 
   return (exact, elms)

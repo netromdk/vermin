@@ -471,7 +471,7 @@ def stat_path(path, scan_symlink_folders=False):
 # of further arguments tuples, if any.
 def detect_paths_incremental(args):
   (paths, depth, hidden, ignore_chars, scan_symlink_folders, config) = args
-  assert(config is not None)
+  assert config is not None
   accepted = []
   further_args = []
   for path in paths:
@@ -504,7 +504,7 @@ def detect_paths_incremental(args):
 # ignored, as will any file excluded by regex from the config.
 def detect_paths(paths, hidden=False, processes=cpu_count(), ignore_chars=None,
                  scan_symlink_folders=False, config=None):
-  assert(config is not None)
+  assert config is not None
   if isinstance(paths, str):
     paths = [paths]
   accept_paths = []

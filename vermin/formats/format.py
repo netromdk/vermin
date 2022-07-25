@@ -24,7 +24,7 @@ processing."""
   def require_config(funcobj):
     """Decorator that checks config is not None."""
     def _require_config(self, *args, **kwargs):
-      assert(self.config() is not None)
+      assert self.config() is not None
       return funcobj(self, *args, **kwargs)
     return _require_config
 

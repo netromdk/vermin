@@ -74,7 +74,7 @@ class Parser:
 
   def detect(self, config):
     """Parse python source into an AST and yield minimum versions."""
-    assert(config is not None)
+    assert config is not None
     try:
       (node, novermin) = self.parse(config.parse_comments())
       return (node, [], novermin)

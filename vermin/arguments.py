@@ -191,7 +191,7 @@ class Arguments:
             "        Use no features. Clears any features specified before this.")
 
   def parse(self, config, detect_folder=None):
-    assert(config is not None)
+    assert config is not None
 
     if len(self.__args) == 0:
       return {"code": 1, "usage": True, "full": False}

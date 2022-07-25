@@ -1014,12 +1014,12 @@ class SourceVisitor(ast.NodeVisitor):
       for i in reverse_range(self.__modules):
         if self.__modules[i] == ud:  # pragma: no cover
           self.__vvvvprint("Ignoring module '{}' because it's user-defined!".format(ud))
-          del(self.__modules[i])
+          del self.__modules[i]
 
       for i in reverse_range(self.__members):
         if self.__members[i] == ud:  # pragma: no cover
           self.__vvvvprint("Ignoring member '{}' because it's user-defined!".format(ud))
-          del(self.__members[i])
+          del self.__members[i]
 
   # Entry point of source visitor.
   def tour(self, node):

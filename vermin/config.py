@@ -371,7 +371,7 @@ folders until root or project boundaries are reached. Each candidate is checked 
     return self.__features
 
   def set_format(self, fmt):
-    assert(isinstance(fmt, Format))
+    assert isinstance(fmt, Format)
     fmt.set_config(self)
     self.__format = fmt
 
