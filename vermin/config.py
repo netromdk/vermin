@@ -397,9 +397,9 @@ folders until root or project boundaries are reached. Each candidate is checked 
     return self.__analyze_hidden
 
   def add_target(self, target, exact=True):
-    """Adds a target. If target is a string it is parsed, otherwise it is required to be exactness bool
-and a version tuple: [exact, (x, y)]. But it can also be a version tuple (x, y) in which case the
-`exact` argument is supplied for exactness."""
+    """Adds a target. If target is a string it is parsed, otherwise it is required to be exactness
+bool and a version tuple: [exact, (x, y)]. But it can also be a version tuple (x, y) in which case
+the `exact` argument is supplied for exactness."""
     if len(self.targets()) == 2:
       print("A maximum of two targets can be specified!")
       return False
