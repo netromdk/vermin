@@ -41,22 +41,14 @@ class Parser:
     prev_newline = False
     multiline_string = None
     for token in tokens:
-      # <3.0: tuple instance.
-      # 3.0+: TokenInfo instance.
-      is_tuple = (type(token) == tuple)
-      typ = token[0] if is_tuple else token.type
+      string, lno, lcol, lend = token.string, token.start[0], token.start[1], token.end[0]
 
-      if is_tuple:  # pragma: no cover
-        string, lno, lcol, lend = token[1], token[2][0], token[2][1], token[3][0]
-      else:
-        string, lno, lcol, lend = token.string, token.start[0], token.start[1], token.end[0]
-
-      if typ == STRING:
+      if token.type == STRING:
         string = string.strip()
         if (string.startswith("\"\"\"") and string.endswith("\"\"\"")) or\
            (string.startswith("'''") and string.endswith("'''")):
           multiline_string = (lno, lend)
-      elif typ == COMMENT:
+      elif token.type == COMMENT:
         # For multi-line strings, any comment marking starts at the beginning and not at the end.
         if multiline_string is not None and multiline_string[1] == lno:
           lno = multiline_string[0]
@@ -69,7 +61,7 @@ class Parser:
         any(find_comment(segment.strip(), lno, alone)
             for segment in string[1:].strip().split("#"))
 
-      prev_newline = typ in (NEWLINE, NL)
+      prev_newline = token.type in (NEWLINE, NL)
     return novermin
 
   def detect(self, config):
