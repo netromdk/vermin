@@ -30,7 +30,7 @@ maybe_annotations={}""".format(self.__class__.__name__, id(self), self.path, sel
                                self.text, self.novermin, self.bps, self.maybe_annotations)
 
 class Processor:
-  def process(self, paths, config, processes=mp.cpu_count()):  # pylint: disable=no-self-use
+  def process(self, paths, config, processes=mp.cpu_count()):
     assert(config is not None)
     unique_versions = set()
     all_backports = set()

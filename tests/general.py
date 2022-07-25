@@ -462,7 +462,6 @@ test.py:6:9:2.7:3.2:'argparse' module
     (AssertionError, [1, 2, 3, 0.0]),
     (AssertionError, [(0, 0), 2, 3, 4]),
   ])
-  # pylint: disable=no-self-use
   def test_version_strings_assert(self, versions):
     version_strings(versions)
 
@@ -520,7 +519,6 @@ test.py:6:9:2.7:3.2:'argparse' module
     # Invalid values yield `assert False`.
     (AssertionError, [4.2]),
   ])
-  # pylint: disable=no-self-use
   def test_dotted_name_assert(self, names):
     dotted_name(names)
 
