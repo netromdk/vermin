@@ -643,9 +643,8 @@ class SourceVisitor(ast.NodeVisitor):
                                           vvprint=True, entity=name)
 
     for encoding in self.codecs_encodings():
-      for encs in CODECS_ENCODINGS:
+      for (encs, vers) in CODECS_ENCODINGS.items():
         if encoding.lower() in encs:
-          vers = CODECS_ENCODINGS[encs]
           mins = self.__add_versions_entity(mins, vers, "codecs encoding '{}'".format(encoding),
                                             vvprint=True, entity=encoding)
 
