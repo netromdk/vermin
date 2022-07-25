@@ -29,7 +29,7 @@ setup-coverage: clean
 setup-analysis: clean
 	pip install -r misc/.analysis-requirements.txt
 
-setup: setup-venv setup-coverage setup-analysis
+setup: setup-venv setup-analysis
 
 install-deps:
 	python -m pip install --upgrade pip virtualenv
