@@ -67,7 +67,7 @@ def assign_target_walk(node):
 
 class SourceVisitor(ast.NodeVisitor):
   def __init__(self, config, path=None, source=None):
-    super(SourceVisitor, self).__init__()
+    super().__init__()
 
     assert config is not None, "Config must be specified!"
     self.__config = config
@@ -1031,7 +1031,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__depth += 1
     if self.__config.print_visits():
       self.__nprint("| " * self.__depth + ast.dump(node))  # pragma: no cover
-    super(SourceVisitor, self).generic_visit(node)
+    super().generic_visit(node)
     self.__depth -= 1
 
   def visit_Import(self, node):

@@ -30,7 +30,7 @@ class VerminTest(unittest.TestCase):
   """General test case class for all Vermin tests."""
 
   def __init__(self, methodName):
-    super(VerminTest, self).__init__(methodName)
+    super().__init__(methodName)
 
     # Allow test diffs of any size (instead of 640 char max).
     self.maxDiff = None
