@@ -1,12 +1,8 @@
 from abc import ABCMeta, abstractmethod
 
-class Format:
+class Format(metaclass=ABCMeta):
   """Format encapsulates a format for presenting minimum versions and related information during
 processing."""
-
-  # Can't use `class Format(metaclass=ABCMeta)` in py2.
-  __metaclass__ = ABCMeta
-
   def __init__(self, name):
     self.__name = name
     self.__config = None
