@@ -109,7 +109,7 @@ expected to be raised."""
             continue
           except Exception as ex:  # pragma: no cover
             raise AssertionError("Raised {} instead of {} for args: {}".
-                                 format(type(ex), args[0], args[1:]))
+                                 format(type(ex), args[0], args[1:])) from ex
           # pragma: no cover
           raise AssertionError("Didn't raise {} for args: {}".format(args[0], args[1:]))
       return wrapper
