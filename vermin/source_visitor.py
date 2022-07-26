@@ -158,6 +158,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__codecs_encodings_kwargs = ("encoding", "data_encoding", "file_encoding")
     self.__super_no_args = False
     self.__except_star = False
+    self.__metaclass_class_keyword = False
 
     # Imported members of modules, like "exc_clear" of "sys".
     self.__import_mem_mod = {}
@@ -391,6 +392,9 @@ class SourceVisitor(ast.NodeVisitor):
   def maybe_annotations(self):
     return self.__maybe_annotations
 
+  def metaclass_class_keyword(self):
+    return self.__metaclass_class_keyword
+
   def __get_source_line(self, line, col=0):
     if self.__source is None:
       return None
@@ -617,6 +621,9 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.except_star():
       mins = self.__add_versions_entity(mins, (None, (3, 11)), "`except*`")
+
+    if self.metaclass_class_keyword():
+      mins = self.__add_versions_entity(mins, (None, (3, 0)), "'metaclass' class keyword")
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
@@ -1896,6 +1903,12 @@ ast.Call(func=ast.Name)."""
         self.__class_decorators = True
         self.__vvprint("class decorators", line=deco_line, versions=[(2, 6), (3, 0)])
         self.__check_relaxed_decorators(node)
+
+    if getattr(node, "keywords", None):
+      for keyword in node.keywords:
+        if keyword.arg == "metaclass":
+          self.__metaclass_class_keyword = True
+          self.__vvprint("'metaclass' class keyword", versions=[None, (3, 0)])
 
     self.generic_visit(node)
     # Some nodes aren't visited via `self.generic_visit(node)` so it is done explicitly.
