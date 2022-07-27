@@ -257,6 +257,16 @@ with 1 as a:  # novermin
     self.assertIn(2, visitor.no_lines())
     self.assertEqual([(2, 6), (3, 0)], visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3, 5)
+  def test_async_with(self):
+    visitor = self.visit("""import ssl
+async def foo():
+  async with 1 as a:  # novermin
+    ssl.PROTOCOL_TLS
+""")
+    self.assertIn(3, visitor.no_lines())
+    self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
   def test_subscript(self):
     visitor = self.visit("""import ssl
 l = [1, 2, 3]
@@ -459,3 +469,35 @@ foo = '''{}
 
     visitor = self.visit("import email.parser.FeedParser  # novm")
     self.assertEqual([(2, 4), (3, 0)], visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 10)
+  def test_pattern_matching(self):
+    visitor = self.visit("""
+def http_error(status):
+  match status:  #novm
+    case 400:
+      return "Bad request"
+    case 404:
+      return "Not found"
+    case 418:
+      return "I'm a teapot"
+    case _:
+      return "Something's wrong with the internet"
+""")
+    self.assertIn(3, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+  def test_ifexp(self):
+    visitor = self.visit("1 if True else 2  #novm")
+    self.assertIn(1, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+  def test_nonlocal(self):
+    visitor = self.visit("""
+def foo():
+  a = 1
+  def bar():
+    nonlocal a  #novm
+""")
+    self.assertIn(5, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
