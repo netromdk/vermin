@@ -257,14 +257,14 @@ class SourceVisitor(ast.NodeVisitor):
 
   def __get_source_line(self, line, col=0):
     if self.__s.source is None:
-      return None
+      return None  # pragma: no cover
     if self.__s.lines is None:
       self.__s.lines = self.__s.source.splitlines()
     if 0 < line <= len(self.__s.lines):
       cur = self.__s.lines[line - 1]
       if col >= 0:
         return cur[col:]
-      return cur
+      return cur  # pragma: no cover
     return None
 
   def __get_source_lines(self, line_begin, amount):
@@ -1853,7 +1853,7 @@ ast.Call(func=ast.Name)."""
       branches.append(node.exc)
     if hasattr(node, "cause"):
       branches.append(node.cause)
-    if hasattr(node, "type"):
+    if hasattr(node, "type"):  # pragma: no cover
       branches.append(node.type)
     for branch in branches:
       if branch is not None:
@@ -1957,7 +1957,7 @@ ast.Call(func=ast.Name)."""
         self.__vvprint("continue in finally block", line=node.lineno, versions=[None, (3, 8)])
 
   def __handle_with(self, node):
-    if self.__is_no_line(node.lineno):
+    if self.__is_no_line(node.lineno):  # pragma: no cover
       return
 
     # Copy current user-defs and add scoped ones.
