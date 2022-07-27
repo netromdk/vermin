@@ -153,7 +153,7 @@ test.py:6:9:2.7:3.2:'argparse' module
 
   def test_detect_paths(self):
     paths = detect_paths([abspath("vermin")], config=self.config)
-    self.assertEqual(18, len(paths))
+    self.assertEqual(19, len(paths))
 
   def test_detect_hidden_paths(self):
     tmp_fld = mkdtemp()

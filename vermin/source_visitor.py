@@ -1,13 +1,12 @@
 import ast
 import re
-import sys
-import os
 from collections import deque
 
-from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, BYTES_REQS,\
-  ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS, CODECS_ERRORS_INDICES, CODECS_ENCODINGS,\
-  CODECS_ENCODINGS_INDICES, BUILTIN_GENERIC_ANNOTATION_TYPES, DICT_UNION_SUPPORTED_TYPES,\
-  DICT_UNION_MERGE_SUPPORTED_TYPES, DECORATOR_USER_FUNCTIONS
+from .source_state import SourceState
+from .rules import STRFTIME_REQS, BYTES_REQS, ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS,\
+  CODECS_ERRORS_INDICES, CODECS_ENCODINGS, CODECS_ENCODINGS_INDICES,\
+  BUILTIN_GENERIC_ANNOTATION_TYPES, DICT_UNION_SUPPORTED_TYPES, DICT_UNION_MERGE_SUPPORTED_TYPES,\
+  DECORATOR_USER_FUNCTIONS
 from .utility import dotted_name, reverse_range, combine_versions, remove_whitespace
 
 STRFTIME_DIRECTIVE_REGEX = re.compile(r"%(?:[-\.\d#\s\+])*(\w)")
@@ -68,340 +67,201 @@ def assign_target_walk(node):
 class SourceVisitor(ast.NodeVisitor):
   def __init__(self, config, path=None, source=None):
     super().__init__()
-
-    assert config is not None, "Config must be specified!"
-    self.__config = config
-    self.__parsable = (self.__config.format().name() == "parsable")
-
-    self.__path = "<unknown>" if path is None else path
-
-    if isinstance(source, bytes):
-      self.__source = source.decode(errors="replace")
-    else:
-      self.__source = source
-
-    if self.__parsable and not sys.platform.startswith("win32"):
-      for c in (":", "\n"):
-        assert c not in self.__path, "Path '{}' cannot contain '{}'".format(self.__path, c)
-
-    self.__is_init_file = (os.path.basename(self.__path) == "__init__.py")
-
-    self.__modules = []
-    self.__members = []
-    self.__printv2 = False
-    self.__printv3 = False
-    self.__format27 = False  # If format is used so that it requires 2.7+, like '{}' etc.
-    self.__longv2 = False
-    self.__bytesv3 = False
-    self.__fstrings = False
-    self.__fstrings_self_doc = False
-    self.__bool_const = False
-    self.__annotations = False
-    self.__var_annotations = False
-    self.__final_annotations = False
-    self.__literal_annotations = False
-    self.__coroutines = False
-    self.__async_generator = False
-    self.__async_comprehension = False
-    self.__async_for = False
-    self.__seen_yield = 0
-    self.__seen_await = 0
-    self.__await_in_comprehension = False
-    self.__named_exprs = False
-    self.__kw_only_args = False
-    self.__pos_only_args = False
-    self.__nonlocal_stmt = False
-    self.__yield_from = False
-    self.__raise_cause = False
-    self.__raise_from_none = False
-    self.__set_literals = False
-    self.__set_comp = False
-    self.__dict_comp = False
-    self.__mat_mult = False
-    self.__continue_in_finally = False
-    self.__seen_for = 0
-    self.__seen_while = 0
-    self.__try_finally = []
-    self.__mod_inverse_pow = False
-    self.__function_name = None
-    self.__function_name_stack = deque()
-    self.__kwargs = []
-    self.__user_func_decorators = []
-    self.__depth = 0
-    self.__line = 1
-    self.__lines = None
-    self.__strftime_directives = []
-    self.__bytes_directives = []
-    self.__codecs_error_handlers = []
-    self.__codecs_encodings = []
-    self.__with_statement = False
-    self.__async_with_statement = False
-    self.__multi_withitem = False
-    self.__with_parentheses = False
-    self.__generalized_unpacking = False
-    self.__unpacking_assignment = False
-    self.__ellipsis_out_of_slices = False
-    self.__bytes_format = False
-    self.__bytearray_format = False
-    self.__dict_union = False
-    self.__dict_union_merge = False
-    self.__builtin_generic_type_annotations = False
-    self.__function_decorators = False
-    self.__class_decorators = False
-    self.__relaxed_decorators = False
-    self.__module_dir_func = False
-    self.__module_getattr_func = False
-    self.__pattern_matching = False
-    self.__union_types = False
-    self.__builtin_types = {"dict", "set", "list", "unicode", "str", "int", "float", "long",
-                            "bytes"}
-    self.__codecs_encodings_kwargs = ("encoding", "data_encoding", "file_encoding")
-    self.__super_no_args = False
-    self.__except_star = False
-    self.__metaclass_class_keyword = False
-
-    # Imported members of modules, like "exc_clear" of "sys".
-    self.__import_mem_mod = {}
-
-    # Name -> name resolutions.
-    self.__name_res = {}
-
-    # Name -> type resolutions. Is a dictionary of sets.
-    self.__name_res_type = {}
-
-    # User-defined symbols to be ignored.
-    self.__user_defs = set()
-
-    # List of lines of output text.
-    self.__output_text = []
-
-    # Line/column of entities for vvv-printing.
-    self.__line_col_entities = {}
-
-    # Typecodes for use with `array.array(typecode, [init..])`.
-    self.__array_typecodes = []
-
-    # Module as-name -> name.
-    self.__module_as_name = {}
-
-    # Lines that should be ignored if they have the comment "novermin" or "novm".
-    self.__no_lines = set()
-
-    # Default to disabling fstring self-doc detection since the built-in AST cannot distinguish
-    # `f'{a=}'` from `f'a={a}'`, for instance, because it optimizes some information away. And this
-    # incorrectly marks some source code as using fstring self-doc when only using general fstring.
-    self.__fstring_self_doc_enabled = self.__config.has_feature("fstring-self-doc")
-
-    # Default to disabling union types detection because it sometimes fails to report it correctly
-    # due to using heuristics.
-    self.__union_types_enabled = self.__config.has_feature("union-types")
-
-    # Used for incompatible versions texts.
-    self.__info_versions = {}
-
-    # Keep track of all Ellipsis nodes in slices for detecting Ellipsis out of slices.
-    self.__ellipsis_nodes_in_slices = set()
-
-    # Might be using generic/literal annotations that require `--eval-annotations` to work.
-    self.__maybe_annotations = False
-
-    self.__mod_rules = MOD_REQS(self.__config)
-    self.__mod_mem_reqs_rules = MOD_MEM_REQS(self.__config)
-    self.__kwargs_reqs_rules = KWARGS_REQS(self.__config)
+    self.__s = SourceState(config, path, source)
 
   def modules(self):
-    return self.__modules
+    return self.__s.modules
 
   def members(self):
-    return self.__members
+    return self.__s.members
 
   def printv2(self):
-    return self.__printv2
+    return self.__s.printv2
 
   def printv3(self):
-    return self.__printv3
+    return self.__s.printv3
 
   def format27(self):
-    return self.__format27
+    return self.__s.format27
 
   def longv2(self):
-    return self.__longv2
+    return self.__s.longv2
 
   def bytesv3(self):
-    return self.__bytesv3
+    return self.__s.bytesv3
 
   def fstrings(self):
-    return self.__fstrings
+    return self.__s.fstrings
 
   def fstrings_self_doc(self):
-    return self.__fstrings_self_doc
+    return self.__s.fstrings_self_doc
 
   def bool_const(self):
-    return self.__bool_const
+    return self.__s.bool_const
 
   def named_expressions(self):
-    return self.__named_exprs
+    return self.__s.named_exprs
 
   def kwargs(self):
-    return self.__kwargs
+    return self.__s.kwargs
 
   def user_function_decorators(self):
-    return self.__user_func_decorators
+    return self.__s.user_func_decorators
 
   def annotations(self):
-    return self.__annotations
+    return self.__s.annotations
 
   def var_annotations(self):
-    return self.__var_annotations
+    return self.__s.var_annotations
 
   def final_annotations(self):
-    return self.__final_annotations
+    return self.__s.final_annotations
 
   def literal_annotations(self):
-    return self.__literal_annotations
+    return self.__s.literal_annotations
 
   def coroutines(self):
-    return self.__coroutines
+    return self.__s.coroutines
 
   def async_generator(self):
-    return self.__async_generator
+    return self.__s.async_generator
 
   def async_comprehension(self):
-    return self.__async_comprehension
+    return self.__s.async_comprehension
 
   def await_in_comprehension(self):
-    return self.__await_in_comprehension
+    return self.__s.await_in_comprehension
 
   def async_for(self):
-    return self.__async_for
+    return self.__s.async_for
 
   def kw_only_args(self):
-    return self.__kw_only_args
+    return self.__s.kw_only_args
 
   def pos_only_args(self):
-    return self.__pos_only_args
+    return self.__s.pos_only_args
 
   def nonlocal_stmt(self):
-    return self.__nonlocal_stmt
+    return self.__s.nonlocal_stmt
 
   def strftime_directives(self):
-    return self.__strftime_directives
+    return self.__s.strftime_directives
 
   def bytes_directives(self):
-    return self.__bytes_directives
+    return self.__s.bytes_directives
 
   def user_defined(self):
-    return list(self.__user_defs)
+    return list(self.__s.user_defs)
 
   def array_typecodes(self):
-    return self.__array_typecodes
+    return self.__s.array_typecodes
 
   def codecs_error_handlers(self):
-    return self.__codecs_error_handlers
+    return self.__s.codecs_error_handlers
 
   def codecs_encodings(self):
-    return self.__codecs_encodings
+    return self.__s.codecs_encodings
 
   def yield_from(self):
-    return self.__yield_from
+    return self.__s.yield_from
 
   def raise_cause(self):
-    return self.__raise_cause
+    return self.__s.raise_cause
 
   def raise_from_none(self):
-    return self.__raise_from_none
+    return self.__s.raise_from_none
 
   def set_literals(self):
-    return self.__set_literals
+    return self.__s.set_literals
 
   def set_comprehension(self):
-    return self.__set_comp
+    return self.__s.set_comp
 
   def dict_comprehension(self):
-    return self.__dict_comp
+    return self.__s.dict_comp
 
   def infix_matrix_multiplication(self):
-    return self.__mat_mult
+    return self.__s.mat_mult
 
   def continue_in_finally(self):
-    return self.__continue_in_finally
+    return self.__s.continue_in_finally
 
   def modular_inverse_pow(self):
-    return self.__mod_inverse_pow
+    return self.__s.mod_inverse_pow
 
   def with_statement(self):
-    return self.__with_statement
+    return self.__s.with_statement
 
   def async_with_statement(self):
-    return self.__async_with_statement
+    return self.__s.async_with_statement
 
   def multi_withitem(self):
-    return self.__multi_withitem
+    return self.__s.multi_withitem
 
   def with_parentheses(self):
-    return self.__with_parentheses
+    return self.__s.with_parentheses
 
   def generalized_unpacking(self):
-    return self.__generalized_unpacking
+    return self.__s.generalized_unpacking
 
   def unpacking_assignment(self):
-    return self.__unpacking_assignment
+    return self.__s.unpacking_assignment
 
   def ellipsis_out_of_slices(self):
-    return self.__ellipsis_out_of_slices
+    return self.__s.ellipsis_out_of_slices
 
   def bytes_format(self):
-    return self.__bytes_format
+    return self.__s.bytes_format
 
   def bytearray_format(self):
-    return self.__bytearray_format
+    return self.__s.bytearray_format
 
   def dict_union(self):
-    return self.__dict_union
+    return self.__s.dict_union
 
   def dict_union_merge(self):
-    return self.__dict_union_merge
+    return self.__s.dict_union_merge
 
   def builtin_generic_type_annotations(self):
-    return self.__builtin_generic_type_annotations
+    return self.__s.builtin_generic_type_annotations
 
   def function_decorators(self):
-    return self.__function_decorators
+    return self.__s.function_decorators
 
   def class_decorators(self):
-    return self.__class_decorators
+    return self.__s.class_decorators
 
   def relaxed_decorators(self):
-    return self.__relaxed_decorators
+    return self.__s.relaxed_decorators
 
   def module_dir_func(self):
-    return self.__module_dir_func
+    return self.__s.module_dir_func
 
   def module_getattr_func(self):
-    return self.__module_getattr_func
+    return self.__s.module_getattr_func
 
   def union_types(self):
-    return self.__union_types
+    return self.__s.union_types
 
   def pattern_matching(self):
-    return self.__pattern_matching
+    return self.__s.pattern_matching
 
   def super_no_args(self):
-    return self.__super_no_args
+    return self.__s.super_no_args
 
   def maybe_annotations(self):
-    return self.__maybe_annotations
+    return self.__s.maybe_annotations
 
   def metaclass_class_keyword(self):
-    return self.__metaclass_class_keyword
+    return self.__s.metaclass_class_keyword
 
   def __get_source_line(self, line, col=0):
-    if self.__source is None:
+    if self.__s.source is None:
       return None
-    if self.__lines is None:
-      self.__lines = self.__source.splitlines()
-    if 0 < line <= len(self.__lines):
-      cur = self.__lines[line - 1]
+    if self.__s.lines is None:
+      self.__s.lines = self.__s.source.splitlines()
+    if 0 < line <= len(self.__s.lines):
+      cur = self.__s.lines[line - 1]
       if col >= 0:
         return cur[col:]
       return cur
@@ -416,15 +276,15 @@ class SourceVisitor(ast.NodeVisitor):
     return "\n".join(res)
 
   def except_star(self):
-    return self.__except_star
+    return self.__s.except_star
 
   def __violates_target_versions(self, versions):
     # If only violations isn't turned on then fake violations because it means it will show the
     # rule.
-    if versions is None or not self.__config.only_show_violations():
+    if versions is None or not self.__s.config.only_show_violations():
       return True
 
-    targets = [t for (e, t) in self.__config.targets()]
+    targets = [t for (e, t) in self.__s.config.targets()]
     if len(targets) == 1:
       if targets[0][0] < 3:
         targets.append(None)
@@ -443,13 +303,13 @@ class SourceVisitor(ast.NodeVisitor):
     # ensure the rules are shown.
     show = self.__violates_target_versions(versions)
     if show and info is not None:
-      if versions in self.__info_versions:
-        self.__info_versions[versions].append(info)
+      if versions in self.__s.info_versions:
+        self.__s.info_versions[versions].append(info)
       else:
-        self.__info_versions[versions] = [info]
+        self.__s.info_versions[versions] = [info]
       if vvprint:
         self.__vvprint(info, entity=entity, versions=versions, plural=plural)
-    return combine_versions(mins, versions, self.__config, self.__info_versions)
+    return combine_versions(mins, versions, self.__s.config, self.__s.info_versions)
 
   def minimum_versions(self):
     mins = [(0, 0), (0, 0)]
@@ -657,22 +517,22 @@ class SourceVisitor(ast.NodeVisitor):
 
     mods = self.modules()
     for mod in mods:
-      if mod in self.__mod_rules:
-        vers = self.__mod_rules[mod]
+      if mod in self.__s.mod_rules:
+        vers = self.__s.mod_rules[mod]
         mins = self.__add_versions_entity(mins, vers, "'{}' module".format(mod), vvprint=True,
                                           entity=mod)
 
     mems = self.members()
     for mem in mems:
-      if mem in self.__mod_mem_reqs_rules:
-        vers = self.__mod_mem_reqs_rules[mem]
+      if mem in self.__s.mod_mem_reqs_rules:
+        vers = self.__s.mod_mem_reqs_rules[mem]
         mins = self.__add_versions_entity(mins, vers, "'{}' member".format(mem), vvprint=True,
                                           entity=mem)
 
     kwargs = self.kwargs()
     for fn_kw in kwargs:
-      if fn_kw in self.__kwargs_reqs_rules:
-        vers = self.__kwargs_reqs_rules[fn_kw]
+      if fn_kw in self.__s.kwargs_reqs_rules:
+        vers = self.__s.kwargs_reqs_rules[fn_kw]
         mins = self.__add_versions_entity(mins, vers, "'{}({})'".format(fn_kw[0], fn_kw[1]),
                                           vvprint=True, entity=fn_kw)
 
@@ -687,12 +547,12 @@ class SourceVisitor(ast.NodeVisitor):
   def output_text(self):
     # Throw away dups and sort. But only when not dumping AST node visits because it would throw
     # away multiple statements that are similar in AST.
-    text = self.__output_text
-    if not self.__config.print_visits():
+    text = self.__s.output_text
+    if not self.__s.config.print_visits():
       text = list(set(text))
-    self.__output_text = self.__config.format().sort_output_lines(text)
+    self.__s.output_text = self.__s.config.format().sort_output_lines(text)
 
-    text = "\n".join(self.__output_text)
+    text = "\n".join(self.__s.output_text)
     if len(text) > 0:
       text += "\n"
     return text
@@ -704,8 +564,8 @@ class SourceVisitor(ast.NodeVisitor):
     return self.__no_lines
 
   def __nprint(self, msg):
-    if not self.__config.quiet():  # pragma: no cover
-      self.__output_text.append(msg)
+    if not self.__s.config.quiet():  # pragma: no cover
+      self.__s.output_text.append(msg)
 
   # pragma: no cover
   def __verbose_print(self, msg, level, entity=None, line=None, versions=None, plural=None):
@@ -714,8 +574,8 @@ class SourceVisitor(ast.NodeVisitor):
     if not self.__violates_target_versions(versions):
       return
 
-    fmt = self.__config.format()
-    config_level = self.__config.verbose()
+    fmt = self.__s.config.format()
+    config_level = self.__s.config.verbose()
     if fmt.skip_output_line() or config_level < level:
       return
 
@@ -723,16 +583,16 @@ class SourceVisitor(ast.NodeVisitor):
 
     # Line/column numbers start at level 3+ or for parsable format.
     entity = entity if config_level > 2 else None
-    if entity is not None and entity in self.__line_col_entities:
-      (line, col) = self.__line_col_entities[entity]
+    if entity is not None and entity in self.__s.line_col_entities:
+      (line, col) = self.__s.line_col_entities[entity]
 
     if line == -1:
       line = None
     elif line is None and config_level > 2:
-      line = self.__line
+      line = self.__s.line
 
-    msg = fmt.format_output_line(msg, self.__path, line, col, versions, plural)
-    self.__output_text.append(msg)
+    msg = fmt.format_output_line(msg, self.__s.path, line, col, versions, plural)
+    self.__s.output_text.append(msg)
 
   def __vvprint(self, msg, entity=None, line=None, versions=None, plural=None):  # pragma: no cover
     self.__verbose_print(msg, 2, entity, line, versions, plural=plural)
@@ -745,67 +605,67 @@ class SourceVisitor(ast.NodeVisitor):
     self.__verbose_print(msg, 4, entity, line, versions, plural=plural)
 
   def __add_module(self, module, line=None, col=None):
-    if module in self.__user_defs:  # pragma: no cover
+    if module in self.__s.user_defs:  # pragma: no cover
       self.__vvvvprint("Ignoring module '{}' because it's user-defined!".format(module))
       return
 
-    if self.__config.is_excluded(module):
+    if self.__s.config.is_excluded(module):
       self.__vvprint("Excluding module: {}".format(module))
       return
 
-    if module not in self.__modules:
-      self.__modules.append(module)
+    if module not in self.__s.modules:
+      self.__s.modules.append(module)
       self.__add_line_col(module, line, col)
 
   def __add_member(self, member, line=None, col=None):
     """Add member if fully-qualified name is known."""
-    if member in self.__user_defs:
+    if member in self.__s.user_defs:
       self.__vvvvprint("Ignoring member '{}' because it's user-defined!".format(member))
       return
 
-    if self.__config.is_excluded(member):
+    if self.__s.config.is_excluded(member):
       self.__vvprint("Excluding member: {}".format(member))
       return
 
-    if member in self.__mod_mem_reqs_rules:
-      self.__members.append(member)
+    if member in self.__s.mod_mem_reqs_rules:
+      self.__s.members.append(member)
       self.__add_line_col(member, line, col)
 
   def __add_kwargs(self, function, keyword, line=None, col=None):
-    if function in self.__user_defs:  # pragma: no cover
+    if function in self.__s.user_defs:  # pragma: no cover
       self.__vvvvprint("Ignoring function '{}' because it's user-defined!".format(function))
       return False
 
-    if self.__config.is_excluded_kwarg(function, keyword):
+    if self.__s.config.is_excluded_kwarg(function, keyword):
       self.__vvprint("Excluding kwarg: {}({})".format(function, keyword))
       return False
 
     fn_kw = (function, keyword)
-    if fn_kw not in self.__kwargs:
-      self.__kwargs.append(fn_kw)
+    if fn_kw not in self.__s.kwargs:
+      self.__s.kwargs.append(fn_kw)
       self.__add_line_col(fn_kw, line, col)
     return True
 
   def __add_user_func_deco(self, ufd, line=None, col=None):
-    if ufd in self.__user_defs:  # pragma: no cover
+    if ufd in self.__s.user_defs:  # pragma: no cover
       self.__vvvvprint("Ignoring user function decorator '{}' because it's user-defined!".
                        format(ufd))
       return
 
-    if self.__config.is_excluded(ufd):  # pragma: no cover
+    if self.__s.config.is_excluded(ufd):  # pragma: no cover
       self.__vvprint("Excluding user function decorator: {}".format(ufd))
       return
 
     if ufd in DECORATOR_USER_FUNCTIONS:
-      self.__user_func_decorators.append(ufd)
+      self.__s.user_func_decorators.append(ufd)
       self.__add_line_col(ufd, line, col)
 
   def __add_strftime_directive(self, group, line=None, col=None):
-    self.__strftime_directives.append(group)
+    self.__s.strftime_directives.append(group)
     self.__add_line_col(group, line, col)
 
   def __add_bytes_directive(self, group, line=None, col=None):
-    self.__bytes_directives.append(group)
+    self.__s.bytes_directives.append(group)
     self.__add_line_col(group, line, col)
 
   def __add_codecs_error_handler(self, func, node):
@@ -817,20 +677,20 @@ class SourceVisitor(ast.NodeVisitor):
         arg = node.args[idx]
         if hasattr(arg, "s"):
           name = arg.s
-          if self.__config.is_excluded_codecs_error_handler(name):
+          if self.__s.config.is_excluded_codecs_error_handler(name):
             self.__vvprint("Excluding codecs error handler: {}".format(name))
           else:
-            self.__codecs_error_handlers.append(name)
+            self.__s.codecs_error_handlers.append(name)
             self.__add_line_col(name, node.lineno)
 
       # Check for "errors" keyword arguments.
       for kw in node.keywords:
         if kw.arg == "errors" and hasattr(kw.value, "s"):
           name = kw.value.s
-          if self.__config.is_excluded_codecs_error_handler(name):
+          if self.__s.config.is_excluded_codecs_error_handler(name):
             self.__vvprint("Excluding codecs error handler: {}".format(name))
             continue
-          self.__codecs_error_handlers.append(name)
+          self.__s.codecs_error_handlers.append(name)
           self.__add_line_col(name, node.lineno)
 
   def __add_codecs_encoding(self, func, node):
@@ -841,20 +701,20 @@ class SourceVisitor(ast.NodeVisitor):
           arg = node.args[idx]
           if hasattr(arg, "s"):
             name = arg.s
-            if self.__config.is_excluded_codecs_encoding(name):
+            if self.__s.config.is_excluded_codecs_encoding(name):
               self.__vvprint("Excluding codecs encoding: {}".format(name))
               continue
-            self.__codecs_encodings.append(name)
+            self.__s.codecs_encodings.append(name)
             self.__add_line_col(name, node.lineno)
 
         # Check for "encoding", "data_encoding", "file_encoding" keyword arguments.
         for kw in node.keywords:
-          if kw.arg in self.__codecs_encodings_kwargs and hasattr(kw.value, "s"):
+          if kw.arg in self.__s.codecs_encodings_kwargs and hasattr(kw.value, "s"):
             name = kw.value.s
-            if self.__config.is_excluded_codecs_encoding(name):
+            if self.__s.config.is_excluded_codecs_encoding(name):
               self.__vvprint("Excluding codecs encoding: {}".format(name))
               continue
-            self.__codecs_encodings.append(name)
+            self.__s.codecs_encodings.append(name)
             self.__add_line_col(name, node.lineno)
 
   def __check_codecs_function(self, func, node):
@@ -862,7 +722,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.__add_codecs_encoding(func, node)
 
   def __add_user_def(self, name):
-    self.__user_defs.add(name)
+    self.__s.user_defs.add(name)
 
   def __add_user_def_node(self, node):
     if isinstance(node, ast.Name) and isinstance(node.ctx, (ast.Store, ast.Param)):
@@ -871,23 +731,22 @@ class SourceVisitor(ast.NodeVisitor):
       self.__add_user_def(node)
 
   def __add_name_res(self, source, target):
-    self.__name_res[source] = target
+    self.__s.name_res[source] = target
 
   def __add_name_res_type(self, source, target):
     """Keep source -> target in a dictionary. If source already exists then convert target to a set
     and add the new target value to it (if different).
     """
-    if source not in self.__name_res_type:
-      self.__name_res_type[source] = {target}
+    if source not in self.__s.name_res_type:
+      self.__s.name_res_type[source] = {target}
     else:
-      self.__name_res_type[source].add(target)
+      self.__s.name_res_type[source].add(target)
 
   def __is_builtin_type(self, name):
-    return name in self.__builtin_types
+    return name in self.__s.builtin_types
 
   def __resolve_module_name(self, name):
-    return self.__module_as_name[name] if name in self.__module_as_name\
-      else name
+    return self.__s.module_as_name[name] if name in self.__s.module_as_name else name
 
   def __get_attribute_name(self, node):
     """Retrieve full attribute name path, like ["ipaddress", "IPv4Address"] from:
@@ -1003,11 +862,11 @@ class SourceVisitor(ast.NodeVisitor):
 
   def __add_line_col(self, entity, line, col=None):
     if line is not None:
-      self.__line_col_entities[entity] = (line, col)
+      self.__s.line_col_entities[entity] = (line, col)
 
   def __add_array_typecode(self, typecode, line=None, col=None):
-    if typecode not in self.__array_typecodes:
-      self.__array_typecodes.append(typecode)
+    if typecode not in self.__s.array_typecodes:
+      self.__s.array_typecodes.append(typecode)
       self.__add_line_col(typecode, line, col)
 
   def __is_no_line(self, line):
@@ -1016,16 +875,16 @@ class SourceVisitor(ast.NodeVisitor):
   def __after_visit_all(self):
     # Remove any modules and members that were added before any known user-definitions. Do it in
     # reverse so the indices are kept while traversing!
-    for ud in self.__user_defs:
-      for i in reverse_range(self.__modules):
-        if self.__modules[i] == ud:  # pragma: no cover
+    for ud in self.__s.user_defs:
+      for i in reverse_range(self.__s.modules):
+        if self.__s.modules[i] == ud:  # pragma: no cover
           self.__vvvvprint("Ignoring module '{}' because it's user-defined!".format(ud))
-          del self.__modules[i]
+          del self.__s.modules[i]
 
-      for i in reverse_range(self.__members):
-        if self.__members[i] == ud:  # pragma: no cover
+      for i in reverse_range(self.__s.members):
+        if self.__s.members[i] == ud:  # pragma: no cover
           self.__vvvvprint("Ignoring member '{}' because it's user-defined!".format(ud))
-          del self.__members[i]
+          del self.__s.members[i]
 
   # Entry point of source visitor.
   def tour(self, node):
@@ -1034,12 +893,12 @@ class SourceVisitor(ast.NodeVisitor):
 
   def generic_visit(self, node):
     if hasattr(node, "lineno"):
-      self.__line = node.lineno
-    self.__depth += 1
-    if self.__config.print_visits():
-      self.__nprint("| " * self.__depth + ast.dump(node))  # pragma: no cover
+      self.__s.line = node.lineno
+    self.__s.depth += 1
+    if self.__s.config.print_visits():
+      self.__nprint("| " * self.__s.depth + ast.dump(node))  # pragma: no cover
     super().generic_visit(node)
-    self.__depth -= 1
+    self.__s.depth -= 1
 
   def visit_Import(self, node):
     if self.__is_no_line(node.lineno):
@@ -1051,7 +910,7 @@ class SourceVisitor(ast.NodeVisitor):
       self.__add_module(name.name, line, col)
       self.__add_member(name.name, line, col)
       if hasattr(name, "asname") and name.asname is not None:
-        self.__module_as_name[name.asname] = name.name
+        self.__s.module_as_name[name.asname] = name.name
         self.__add_user_def(name.asname)
 
   def visit_ImportFrom(self, node):
@@ -1076,7 +935,7 @@ class SourceVisitor(ast.NodeVisitor):
         # Ignore star import.
         pass
       elif name.name is not None:
-        self.__import_mem_mod[name.name] = node.module
+        self.__s.import_mem_mod[name.name] = node.module
         comb_name = "{}.{}".format(node.module, name.name)
         line = node.lineno
         col = node.col_offset + from_col
@@ -1084,37 +943,37 @@ class SourceVisitor(ast.NodeVisitor):
         self.__add_member(comb_name, line, col)
         self.__add_member(name.name, line, col)
       if hasattr(name, "asname") and name.asname is not None:
-        self.__module_as_name[name.asname] = node.module + "." + name.name
+        self.__s.module_as_name[name.asname] = node.module + "." + name.name
         self.__add_user_def(name.asname)
 
   def visit_Name(self, node):
     if node.id == "long":
-      if self.__config.is_excluded("long"):
+      if self.__s.config.is_excluded("long"):
         self.__vvprint("Excluding long type")
-      elif "long" in self.__user_defs:
+      elif "long" in self.__s.user_defs:
         self.__vvvvprint("Ignoring member 'long' because it's user-defined!")
       else:
-        self.__longv2 = True
+        self.__s.longv2 = True
         self.__vvprint("long is a v2 feature")
     elif node.id == "True" or node.id == "False":
-      self.__bool_const = True
+      self.__s.bool_const = True
       self.__vvvprint("True/False constant", versions=[(2, 3), (3, 0)])
 
   def visit_Print(self, node):  # pragma: no cover
-    self.__printv2 = True
+    self.__s.printv2 = True
     self.generic_visit(node)
 
   def visit_Starred(self, node):
     # Unpacking assignment is when a starred expression `*` is used on the left-hand side of an
     # assignment, like `*a, b = [1, 2, 3]`.
     if isinstance(node.ctx, ast.Store):
-      self.__unpacking_assignment = True
+      self.__s.unpacking_assignment = True
       self.__vvprint("unpacking assignment", versions=[None, (3, 0)])
     self.generic_visit(node)
 
   def __check_generalized_unpacking(self, node):
     def has_gen_unp():
-      self.__generalized_unpacking = True
+      self.__s.generalized_unpacking = True
       self.__vvprint("generalized unpacking", versions=[None, (3, 5)])
 
     # Call arguments and keywords: Check if more than one unpacking is used or if unpacking is used
@@ -1159,12 +1018,12 @@ class SourceVisitor(ast.NodeVisitor):
         has_gen_unp()
 
   def __push_function_name(self, name):
-    self.__function_name = name
-    self.__function_name_stack.append(name)
+    self.__s.function_name = name
+    self.__s.function_name_stack.append(name)
 
   def __pop_function_name(self):
-    self.__function_name = self.__function_name_stack.pop() \
-      if len(self.__function_name_stack) > 0 else None
+    self.__s.function_name = self.__s.function_name_stack.pop() \
+      if len(self.__s.function_name_stack) > 0 else None
 
   def visit_Call(self, node):
     if self.__is_no_line(node.lineno):
@@ -1177,17 +1036,18 @@ class SourceVisitor(ast.NodeVisitor):
         self.__push_function_name(func.id)
         self.__add_member(func.id, node.lineno, node.col_offset)
 
-        if func.id in self.__import_mem_mod:
-          name = self.__import_mem_mod[func.id] + "." + func.id
+        if func.id in self.__s.import_mem_mod:
+          name = self.__s.import_mem_mod[func.id] + "." + func.id
           self.__check_codecs_function(name, node)
-        elif func.id in self.__module_as_name:
-          name = self.__module_as_name[func.id]
+        elif func.id in self.__s.module_as_name:
+          name = self.__s.module_as_name[func.id]
           self.__check_codecs_function(name, node)
 
         if func.id == "print":
-          self.__printv3 = True
+          self.__s.printv3 = True
         elif func.id == "array" or\
-             (func.id in self.__module_as_name and self.__module_as_name[func.id] == "array.array"):
+             (func.id in self.__s.module_as_name and
+              self.__s.module_as_name[func.id] == "array.array"):
           for arg in node.args:
             if isinstance(arg, ast.Str) and hasattr(arg, "s"):
               # "array" = 5 + 1 = 6
@@ -1196,10 +1056,10 @@ class SourceVisitor(ast.NodeVisitor):
           # Check if the second of three arguments of pow() is negative.
           if is_int_node(node.args[0]) and is_neg_int_node(node.args[1]) and \
              is_int_node(node.args[2]):
-            self.__mod_inverse_pow = True
+            self.__s.mod_inverse_pow = True
             self.__vvprint("modular inverse pow()", versions=[None, (3, 8)])
         elif func.id == "super" and len(node.args) == 0:
-          self.__super_no_args = True
+          self.__s.super_no_args = True
           self.__vvprint("super() without arguments", versions=[None, (3, 0)], plural=False)
       elif hasattr(func, "attr"):
         attr = func.attr
@@ -1209,7 +1069,7 @@ class SourceVisitor(ast.NodeVisitor):
           # an escaped "{}" and won't be replaced.
           if STR_27_FORMAT_REGEX.search(func.value.s) is not None:
             self.__vvprint("`\"..{}..\".format(..)`", versions=[(2, 7), (3, 0)])
-            self.__format27 = True
+            self.__s.format27 = True
         elif attr in ("strftime", "strptime") and hasattr(node, "args"):
           for arg in node.args:
             if hasattr(arg, "s"):
@@ -1218,8 +1078,8 @@ class SourceVisitor(ast.NodeVisitor):
 
       if isinstance(func, ast.Attribute):
         self.__push_function_name(dotted_name(self.__get_attribute_name(func)))
-        self.__check_codecs_function(self.__function_name, node)
-        if self.__function_name == "array.array":
+        self.__check_codecs_function(self.__s.function_name, node)
+        if self.__s.function_name == "array.array":
           for arg in node.args:
             if isinstance(arg, ast.Str) and hasattr(arg, "s"):
               # "array.array" = 5 + 1 + 5 + 1 = 12
@@ -1234,17 +1094,18 @@ class SourceVisitor(ast.NodeVisitor):
     line = node.lineno
     if len(full_name) > 0:
       dotted = dotted_name(full_name)
-      for mod in self.__modules:
+      for mod in self.__s.modules:
         if full_name[0] == mod:
           self.__add_module(dotted, line)
-        elif full_name[0] in self.__import_mem_mod:
-          self.__add_member(dotted_name([self.__import_mem_mod[full_name[0]], full_name]), line)
+        elif full_name[0] in self.__s.import_mem_mod:
+          self.__add_member(dotted_name([self.__s.import_mem_mod[full_name[0]], full_name]),
+                            line)
       self.__add_member(dotted, line)
 
-      if full_name[0] in self.__name_res:
-        res = self.__name_res[full_name[0]]
-        if res in self.__import_mem_mod:
-          mod = self.__import_mem_mod[res]
+      if full_name[0] in self.__s.name_res:
+        res = self.__s.name_res[full_name[0]]
+        if res in self.__s.import_mem_mod:
+          mod = self.__s.import_mem_mod[res]
           self.__add_member(dotted_name([mod, res, full_name[1:]]), line)
 
         # Try as a fully-qualified name.
@@ -1256,49 +1117,49 @@ class SourceVisitor(ast.NodeVisitor):
         #   i = d.items() <- "dict.items"
         #   i.mapping     <- "dict.items.mapping"
         parts = res.split(".")
-        if len(parts) > 0 and parts[0] in self.__name_res:
-          res2 = self.__name_res[parts[0]]
+        if len(parts) > 0 and parts[0] in self.__s.name_res:
+          res2 = self.__s.name_res[parts[0]]
           self.__add_member(dotted_name([res2, parts[1:], full_name[1:]]), line)
     self.generic_visit(node)
 
   def visit_keyword(self, node):
     added = False
-    for func_name in self.__function_name_stack:
+    for func_name in self.__s.function_name_stack:
       # kwarg related.
       exp_name = func_name.split(".")
 
       # Check if function is imported from module.
-      if func_name in self.__import_mem_mod:
-        mod = self.__import_mem_mod[func_name]
-        added |= self.__add_kwargs(dotted_name([mod, func_name]), node.arg, self.__line)
+      if func_name in self.__s.import_mem_mod:
+        mod = self.__s.import_mem_mod[func_name]
+        added |= self.__add_kwargs(dotted_name([mod, func_name]), node.arg, self.__s.line)
 
       # When having "ElementTree.tostringlist", for instance, and include mapping "{'ElementTree':
       # 'xml.etree'}" then try piecing them together to form a match.
-      elif exp_name[0] in self.__import_mem_mod:
-        mod = self.__import_mem_mod[exp_name[0]]
-        added |= self.__add_kwargs(dotted_name([mod, func_name]), node.arg, self.__line)
+      elif exp_name[0] in self.__s.import_mem_mod:
+        mod = self.__s.import_mem_mod[exp_name[0]]
+        added |= self.__add_kwargs(dotted_name([mod, func_name]), node.arg, self.__s.line)
 
       # Lookup indirect names via variables.
-      elif exp_name[0] in self.__name_res:
-        res = self.__name_res[exp_name[0]]
-        if res in self.__import_mem_mod:
-          mod = self.__import_mem_mod[res]
-          added |= self.__add_kwargs(dotted_name([mod, res, exp_name[1:]]), node.arg, self.__line)
+      elif exp_name[0] in self.__s.name_res:
+        res = self.__s.name_res[exp_name[0]]
+        if res in self.__s.import_mem_mod:
+          mod = self.__s.import_mem_mod[res]
+          added |= self.__add_kwargs(dotted_name([mod, res, exp_name[1:]]), node.arg, self.__s.line)
 
         # Try as FQN.
         else:
-          added |= self.__add_kwargs(dotted_name([res, exp_name[1:]]), node.arg, self.__line)
+          added |= self.__add_kwargs(dotted_name([res, exp_name[1:]]), node.arg, self.__s.line)
 
       # Only add direct function if not found via module/class/member.
       else:
-        added |= self.__add_kwargs(func_name, node.arg, self.__line)
+        added |= self.__add_kwargs(func_name, node.arg, self.__s.line)
 
     # If not excluded or ignored then visit keyword values also.
     if added:
       self.generic_visit(node)
 
   def visit_Bytes(self, node):
-    self.__bytesv3 = True
+    self.__s.bytesv3 = True
     self.__vvprint("byte string (b'..') or `str` synonym", versions=[(2, 6), (3, 0)])
 
     if hasattr(node, "s"):
@@ -1311,7 +1172,7 @@ class SourceVisitor(ast.NodeVisitor):
     if isinstance(node, ast.Dict):
       return True
     if isinstance(node, ast.Name) and\
-       node.id in self.__name_res and self.__name_res[node.id] == "dict":
+       node.id in self.__s.name_res and self.__s.name_res[node.id] == "dict":
       return True
     if isinstance(node, ast.Call):
       if isinstance(node.func, ast.Name) and node.func.id == "dict":
@@ -1340,11 +1201,11 @@ ast.Call(func=ast.Name)."""
       name = name.func.id
     elif isinstance(name, ast.Attribute):
       name = dotted_name(self.__get_attribute_name(name))
-    name = self.__name_res[name] if name in self.__name_res else name
-    if name in self.__module_as_name:
-      return self.__module_as_name[name]
-    if name in self.__import_mem_mod:
-      return dotted_name([self.__import_mem_mod[name], name])
+    name = self.__s.name_res[name] if name in self.__s.name_res else name
+    if name in self.__s.module_as_name:
+      return self.__s.module_as_name[name]
+    if name in self.__s.import_mem_mod:
+      return dotted_name([self.__s.import_mem_mod[name], name])
     return name
 
   def visit_BinOp(self, node):
@@ -1354,12 +1215,12 @@ ast.Call(func=ast.Name)."""
     #         op=Mod(), right=Num(n=10))
     if (hasattr(ast, "Bytes") and isinstance(node.left, ast.Bytes))\
        and isinstance(node.op, ast.Mod):
-      self.__bytes_format = True
+      self.__s.bytes_format = True
       self.__vvprint("bytes `%` formatting or `str` synonym", versions=[(2, 6), (3, 5)])
 
     if (isinstance(node.left, ast.Call) and isinstance(node.left.func, ast.Name) and
          node.left.func.id == "bytearray") and isinstance(node.op, ast.Mod):
-      self.__bytearray_format = True
+      self.__s.bytearray_format = True
       self.__vvprint("bytearray `%` formatting", versions=[None, (3, 5)])
 
     # Example:
@@ -1368,7 +1229,7 @@ ast.Call(func=ast.Name)."""
     #       right=Dict(keys=[Constant(value='b')], values=[Constant(value=2)]))
     if isinstance(node.op, ast.BitOr):
       def has_du():
-        self.__dict_union = True
+        self.__s.dict_union = True
         self.__vvprint("dict union (dict | dict)", line=node.lineno, versions=[None, (3, 9)])
 
       left_dict = self.__is_dict(node.left)
@@ -1387,10 +1248,11 @@ ast.Call(func=ast.Name)."""
         elif isinstance(node, ast.Attribute):
           name = dotted_name(self.__get_attribute_name(node))
         return name is not None and \
-          ((name not in self.__name_res and name not in self.__user_defs) or
-           (name in self.__name_res_type))
-      if self.__union_types_enabled and is_none_or_name(node.left) and is_none_or_name(node.right):
-        self.__union_types = True
+          ((name not in self.__s.name_res and name not in self.__s.user_defs) or
+           (name in self.__s.name_res_type))
+      if self.__s.union_types_enabled and is_none_or_name(node.left) and \
+        is_none_or_name(node.right):
+        self.__s.union_types = True
         self.__vvprint("union types as `X | Y`", line=node.lineno, versions=[None, (3, 10)],
                        plural=True)
 
@@ -1400,14 +1262,14 @@ ast.Call(func=ast.Name)."""
     if hasattr(node, "value"):
       # From 3.8, Bytes(s=b'%x') is represented as Constant(value=b'%x', kind=None) instead.
       if isinstance(node.value, bytes):
-        self.__bytesv3 = True
+        self.__s.bytesv3 = True
         self.__vvprint("byte string (b'..') or `str` synonym", versions=[(2, 6), (3, 0)])
 
         for directive in BYTES_DIRECTIVE_REGEX.findall(str(node.value)):
           self.__add_bytes_directive(directive, node.lineno)
 
       if node.value is True or node.value is False:
-        self.__bool_const = True
+        self.__s.bool_const = True
         self.__vvvprint("True/False constant", versions=[(2, 3), (3, 0)])
 
     # From 3.8, Ellipsis() is represented as Constant(value=Ellipsis)
@@ -1631,9 +1493,9 @@ ast.Call(func=ast.Name)."""
     return ".".join(value)  # "a" or "a.b"..
 
   def visit_JoinedStr(self, node):
-    self.__fstrings = True
+    self.__s.fstrings = True
     self.__vvprint("f-strings", versions=[None, (3, 6)])
-    if self.__fstring_self_doc_enabled and hasattr(node, "values"):  # pragma: no cover
+    if self.__s.fstring_self_doc_enabled and hasattr(node, "values"):  # pragma: no cover
       total = len(node.values)
       for i in range(total):
         val = node.values[i]
@@ -1648,7 +1510,7 @@ ast.Call(func=ast.Name)."""
                 trim_fstring_value(self.__extract_fstring_value(next_val.value))
               if len(fstring_value) > 0 and\
                 trim_fstring_value(val.value).endswith(fstring_value + "="):
-                  self.__fstrings_self_doc = True
+                  self.__s.fstrings_self_doc = True
                   self.__vvprint("self-documenting fstrings", versions=[None, (3, 8)])
                   break
 
@@ -1679,12 +1541,12 @@ ast.Call(func=ast.Name)."""
         elif isinstance(node, ast.Attribute):
           name = dotted_name(self.__get_attribute_name(node))
         return name is not None and \
-           ((name not in self.__name_res and name not in self.__user_defs) or
+           ((name not in self.__s.name_res and name not in self.__s.user_defs) or
             # AugAssign: both variable names are the same so require two types.
-            (name in self.__name_res_type and len(self.__name_res_type[name]) > 1) or
+            (name in self.__s.name_res_type and len(self.__s.name_res_type[name]) > 1) or
             # Unless it's the target value, then require not name res, is user def and res type.
-            (name not in self.__name_res and name in self.__user_defs and \
-             name in self.__name_res_type))
+            (name not in self.__s.name_res and name in self.__s.user_defs and \
+             name in self.__s.name_res_type))
 
       # Example:
       # AugAssign(target=Name(id='d', ctx=Store()),
@@ -1693,7 +1555,7 @@ ast.Call(func=ast.Name)."""
       if self.__is_dict(node.value):
         full_name = self.__resolve_full_name(node.target)
         if full_name in DICT_UNION_MERGE_SUPPORTED_TYPES or self.__is_dict(node.target):
-          self.__dict_union_merge = True
+          self.__s.dict_union_merge = True
           self.__vvprint("dict union merge (dict var |= dict)", line=node.lineno,
                          versions=[None, (3, 9)])
 
@@ -1703,8 +1565,9 @@ ast.Call(func=ast.Name)."""
       # AugAssign(target=Name(id='a', ctx=Store()),
       #           op=BitOr(),
       #           value=Name(id='int', ctx=Load()))
-      elif self.__union_types_enabled and is_union_type(node.target) and is_union_type(node.value):
-        self.__union_types = True
+      elif self.__s.union_types_enabled and is_union_type(node.target) and \
+        is_union_type(node.value):
+        self.__s.union_types = True
         self.__vvprint("union types as `a = X; a |= Y`", line=node.lineno, versions=[None, (3, 10)],
                        plural=True)
 
@@ -1715,26 +1578,24 @@ ast.Call(func=ast.Name)."""
       return
     self.__add_user_def_node(node.target)
     self.__add_name_res_assign_node(node)
-
-    if self.__config.eval_annotations():
+    if self.__s.config.eval_annotations():
       self.generic_visit(node)
     else:
-      self.__maybe_annotations = True
-
-    self.__annotations = True
-    self.__var_annotations = True
+      self.__s.maybe_annotations = True
+    self.__s.annotations = True
+    self.__s.var_annotations = True
     self.__vvprint("variable annotations", line=node.lineno, versions=[None, (3, 6)])
     if hasattr(node, "annotation"):
       ann = node.annotation
       if (isinstance(ann, ast.Name) and ann.id == "Final") or \
          (isinstance(ann, ast.Subscript) and hasattr(ann.value, "id") and
            ann.value.id == "Final"):
-        self.__final_annotations = True
+        self.__s.final_annotations = True
         self.__vvprint("final variable annotations", line=node.lineno, versions=[None, (3, 8)])
       elif (isinstance(ann, ast.Name) and ann.id == "Literal") or \
          (isinstance(ann, ast.Subscript) and hasattr(ann.value, "id") and
            ann.value.id == "Literal"):
-        self.__literal_annotations = True
+        self.__s.literal_annotations = True
         self.__vvprint("literal variable annotations", line=node.lineno, versions=[None, (3, 8)])
 
   def __check_relaxed_decorators(self, node):
@@ -1748,7 +1609,7 @@ ast.Call(func=ast.Name)."""
       # such.
       for n in ast.walk(decorator if not isinstance(decorator, ast.Call) else decorator.func):
         if not isinstance(n, (ast.Name, ast.Attribute, ast.Load)):
-          self.__relaxed_decorators = True
+          self.__s.relaxed_decorators = True
           self.__vvprint("relaxed decorators", line=decorator.lineno, versions=[None, (3, 9)])
           break
 
@@ -1764,10 +1625,10 @@ ast.Call(func=ast.Name)."""
           name = decorator.id
         elif isinstance(decorator, ast.Attribute):
           name = dotted_name(self.__get_attribute_name(decorator))
-        if name in self.__import_mem_mod:
-          name = dotted_name([self.__import_mem_mod[name], name])
-        elif name in self.__module_as_name:
-          name = self.__module_as_name[name]
+        if name in self.__s.import_mem_mod:
+          name = dotted_name([self.__s.import_mem_mod[name], name])
+        elif name in self.__s.module_as_name:
+          name = self.__s.module_as_name[name]
         self.__add_user_func_deco(name, line=decorator.lineno)
 
   def __handle_FunctionDef(self, node):
@@ -1781,15 +1642,15 @@ ast.Call(func=ast.Name)."""
     # 3.7 but it isn't a version requirement because it has always been possible to define such
     # functions.
     args = node.args
-    if self.__depth == 1 and self.__is_init_file and\
+    if self.__s.depth == 1 and self.__s.is_init_file and\
        (not hasattr(args, "posonlyargs") or len(args.posonlyargs) == 0) and\
        (not hasattr(args, "kwonlyargs") or len(args.kwonlyargs) == 0) and\
        (not hasattr(args, "kwarg") or args.kwarg is None):
       if node.name == "__dir__" and len(args.args) == 0:
-        self.__module_dir_func = True
+        self.__s.module_dir_func = True
         self.__vvprint("module `__dir__()` supported by `dir()` since 3.7", line=node.lineno)
       elif node.name == "__getattr__" and len(args.args) == 1:
-        self.__module_getattr_func = True
+        self.__s.module_getattr_func = True
         self.__vvprint("module `__getattr__(name)` supported through lookup since 3.7",
                        line=node.lineno)
 
@@ -1799,27 +1660,27 @@ ast.Call(func=ast.Name)."""
       # requirement should still be in effect.
       if not all(self.__is_no_line(deco.lineno) for deco in decos):
         deco_line = [deco.lineno for deco in decos if not self.__is_no_line(deco.lineno)][0]
-        self.__function_decorators = True
+        self.__s.function_decorators = True
         self.__vvprint("function decorators", line=deco_line, versions=[(2, 4), (3, 0)])
         self.__check_relaxed_decorators(node)
         self.__check_user_func_decorators(node)
 
-    user_defs_copy = self.__user_defs.copy()
+    user_defs_copy = self.__s.user_defs.copy()
 
     # Don't visit returns annotations if not evaluating annotations. It is only possible by setting
     # it as None since it always will be visited via the AST functions.
     returns_copy = None
-    if not self.__config.eval_annotations() and hasattr(node, "returns") and node.returns:
+    if not self.__s.config.eval_annotations() and hasattr(node, "returns") and node.returns:
       returns_copy, node.returns = node.returns, None
 
     self.generic_visit(node)
 
-    self.__user_defs = user_defs_copy
+    self.__s.user_defs = user_defs_copy
     if returns_copy:
       node.returns = returns_copy
 
     def has_ann():
-      self.__annotations = True
+      self.__s.annotations = True
       self.__vvprint("annotations", line=node.lineno, versions=[None, (3, 0)])
 
     # Check if the return annotation is set
@@ -1828,11 +1689,11 @@ ast.Call(func=ast.Name)."""
       return True
 
     def has_lit_ann():
-      if self.__config.eval_annotations():
-        self.__literal_annotations = True
+      if self.__s.config.eval_annotations():
+        self.__s.literal_annotations = True
         self.__vvprint("literal variable annotations", line=node.lineno, versions=[None, (3, 8)])
       else:
-        self.__maybe_annotations = True
+        self.__s.maybe_annotations = True
 
     for arg in node.args.args:
       if not hasattr(arg, "annotation") or not arg.annotation:
@@ -1855,37 +1716,37 @@ ast.Call(func=ast.Name)."""
     return True
 
   def visit_FunctionDef(self, node):
-    seen_yield = self.__seen_yield
+    seen_yield = self.__s.seen_yield
     if self.__handle_FunctionDef(node):
       # Reset to seen yields before function.
-      self.__seen_yield = seen_yield
+      self.__s.seen_yield = seen_yield
 
   def visit_AsyncFunctionDef(self, node):
-    seen_await = self.__seen_await
-    seen_yield = self.__seen_yield
+    seen_await = self.__s.seen_await
+    seen_yield = self.__s.seen_yield
     if self.__handle_FunctionDef(node):
-      self.__coroutines = True
+      self.__s.coroutines = True
       self.__vvprint("coroutines (async)", line=node.lineno, versions=[None, (3, 5)], plural=True)
-      if self.__seen_yield > seen_yield and self.__seen_await > seen_await:
-        self.__async_generator = True
+      if self.__s.seen_yield > seen_yield and self.__s.seen_await > seen_await:
+        self.__s.async_generator = True
         self.__vvprint("async generators (await and yield in same func)",
                        line=node.lineno, versions=[None, (3, 6)], plural=True)
 
       # Reset to seen awaits/yields before async function.
-      self.__seen_await = seen_await
-      self.__seen_yield = seen_yield
+      self.__s.seen_await = seen_await
+      self.__s.seen_yield = seen_yield
 
   def visit_Lambda(self, node):
-    user_defs_copy = self.__user_defs.copy()
+    user_defs_copy = self.__s.user_defs.copy()
     self.generic_visit(node)
-    self.__user_defs = user_defs_copy
+    self.__s.user_defs = user_defs_copy
 
   def visit_Await(self, node):
     if self.__is_no_line(node.lineno):
       return
-    self.__coroutines = True
+    self.__s.coroutines = True
     self.__vvprint("coroutines (await)", versions=[None, (3, 5)], plural=True)
-    self.__seen_await += 1
+    self.__s.seen_await += 1
     self.generic_visit(node)
 
   def visit_ClassDef(self, node):
@@ -1900,14 +1761,14 @@ ast.Call(func=ast.Name)."""
       # requirement should still be in effect.
       if not all(self.__is_no_line(deco.lineno) for deco in decos):
         deco_line = [deco.lineno for deco in decos if not self.__is_no_line(deco.lineno)][0]
-        self.__class_decorators = True
+        self.__s.class_decorators = True
         self.__vvprint("class decorators", line=deco_line, versions=[(2, 6), (3, 0)])
         self.__check_relaxed_decorators(node)
 
     if getattr(node, "keywords", None):
       for keyword in node.keywords:
         if keyword.arg == "metaclass":
-          self.__metaclass_class_keyword = True
+          self.__s.metaclass_class_keyword = True
           self.__vvprint("'metaclass' class keyword", versions=[None, (3, 0)])
 
     self.generic_visit(node)
@@ -1917,14 +1778,14 @@ ast.Call(func=ast.Name)."""
 
   def visit_NameConstant(self, node):
     if node.value is True or node.value is False:  # pragma: no cover
-      self.__bool_const = True
+      self.__s.bool_const = True
       self.__vvvprint("True/False constant", versions=[(2, 3), (3, 0)])
 
   def visit_NamedExpr(self, node):
     if self.__is_no_line(node.lineno):
       return
     self.__add_user_def_node(node.target)
-    self.__named_exprs = True
+    self.__s.named_exprs = True
     self.__vvprint("named expressions", versions=[None, (3, 8)])
     self.generic_visit(node)
 
@@ -1934,12 +1795,12 @@ ast.Call(func=ast.Name)."""
       all_args += node.args
 
     if hasattr(node, "posonlyargs") and len(node.posonlyargs) > 0:
-      self.__pos_only_args = True
+      self.__s.pos_only_args = True
       self.__vvprint("positional-only parameters", versions=[None, (3, 8)])
       all_args += node.posonlyargs
 
     if hasattr(node, "kwonlyargs") and len(node.kwonlyargs) > 0:
-      self.__kw_only_args = True
+      self.__s.kw_only_args = True
       self.__vvprint("keyword-only parameters", versions=[None, (3, 0)])
       all_args += node.kwonlyargs
 
@@ -1959,31 +1820,31 @@ ast.Call(func=ast.Name)."""
   def visit_Nonlocal(self, node):
     if self.__is_no_line(node.lineno):
       return
-    self.__nonlocal_stmt = True
+    self.__s.nonlocal_stmt = True
     self.__vvprint("`nonlocal`", versions=[None, (3, 0)])
     self.generic_visit(node)
 
   def visit_YieldFrom(self, node):
     if self.__is_no_line(node.lineno):
       return
-    self.__yield_from = True
+    self.__s.yield_from = True
     self.__vvprint("`yield from`", versions=[None, (3, 3)])
     self.generic_visit(node)
 
   def visit_Yield(self, node):
     if self.__is_no_line(node.lineno):
       return
-    self.__seen_yield += 1
+    self.__s.seen_yield += 1
     self.generic_visit(node)
 
   def visit_Raise(self, node):
     if self.__is_no_line(node.lineno):
       return
     if hasattr(node, "cause") and node.cause is not None:
-      self.__raise_cause = True
+      self.__s.raise_cause = True
       self.__vvprint("exception cause", line=node.lineno, versions=[None, (3, 0)])
       if is_none_node(node.cause):
-        self.__raise_from_none = True
+        self.__s.raise_from_none = True
         self.__vvprint("raise ... from None", line=node.lineno, versions=[None, (3, 3)])
 
     # Names used within `raise ..` should be detected as members being used.
@@ -2008,12 +1869,12 @@ ast.Call(func=ast.Name)."""
 
     line = self.__get_source_line(node.lineno, node.col_offset)
     if line is not None and line.startswith("except") and line[6:].lstrip().startswith("*"):
-      self.__except_star = True
+      self.__s.except_star = True
       self.__vvprint("`except*`", line=node.lineno, versions=[None, (3, 11)])
 
     # Copy current user-defs and add scoped ones. Note that except handler name is an `ast.Name` in
     # py2 and `str` in py3.
-    user_defs_copy = self.__user_defs.copy()
+    user_defs_copy = self.__s.user_defs.copy()
     if hasattr(node, "name"):
       self.__add_user_def_node(node.name)
 
@@ -2024,7 +1885,7 @@ ast.Call(func=ast.Name)."""
           self.__add_member(n.id, n.lineno, n.col_offset)
 
     self.generic_visit(node)
-    self.__user_defs = user_defs_copy
+    self.__s.user_defs = user_defs_copy
 
   # Comprehensions:
   #
@@ -2034,7 +1895,7 @@ ast.Call(func=ast.Name)."""
 
   def __handle_comprehensions(self, comps):
     """Expects a list of `ast.comprehension` nodes. Returns previous user-defs."""
-    user_defs_copy = self.__user_defs.copy()
+    user_defs_copy = self.__s.user_defs.copy()
     for comp in comps:
       for target in assign_target_walk(comp.target):
         self.__add_user_def_node(target)
@@ -2043,56 +1904,56 @@ ast.Call(func=ast.Name)."""
   def visit_ListComp(self, node):
     user_defs_copy = self.__handle_comprehensions(node.generators)
     self.generic_visit(node)
-    self.__user_defs = user_defs_copy
+    self.__s.user_defs = user_defs_copy
 
   def visit_SetComp(self, node):
-    self.__set_comp = True
+    self.__s.set_comp = True
     self.__vvprint("set comprehensions", versions=[(2, 7), (3, 0)])
 
     user_defs_copy = self.__handle_comprehensions(node.generators)
     self.generic_visit(node)
-    self.__user_defs = user_defs_copy
+    self.__s.user_defs = user_defs_copy
 
   def visit_GeneratorExp(self, node):
     user_defs_copy = self.__handle_comprehensions(node.generators)
     self.generic_visit(node)
-    self.__user_defs = user_defs_copy
+    self.__s.user_defs = user_defs_copy
 
   def visit_DictComp(self, node):
-    self.__dict_comp = True
+    self.__s.dict_comp = True
     self.__vvprint("dict comprehensions", versions=[(2, 7), (3, 0)])
 
     user_defs_copy = self.__handle_comprehensions(node.generators)
     self.generic_visit(node)
-    self.__user_defs = user_defs_copy
+    self.__s.user_defs = user_defs_copy
 
   def visit_comprehension(self, node):
     if hasattr(node, "is_async") and node.is_async == 1:
-      self.__async_comprehension = True
+      self.__s.async_comprehension = True
       self.__vvprint("async comprehensions", versions=[None, (3, 7)])
 
-    seen_await = self.__seen_await
+    seen_await = self.__s.seen_await
     self.generic_visit(node)
-    if self.__seen_await > seen_await:
-      self.__await_in_comprehension = True
+    if self.__s.seen_await > seen_await:
+      self.__s.await_in_comprehension = True
       self.__vvprint("await in comprehensions", versions=[None, (3, 7)])
 
     # Reset to seen awaits before comprehension.
-    self.__seen_await = seen_await
+    self.__s.seen_await = seen_await
 
   # <Comprehensions
 
   def visit_MatMult(self, node):
-    self.__mat_mult = True
+    self.__s.mat_mult = True
     self.__vvprint("infix matrix multiplication", versions=[None, (3, 5)])
     self.generic_visit(node)
 
   def visit_Continue(self, node):
     # Only accept continue in try-finally if no intermediary loops have been encountered.
-    if len(self.__try_finally) > 0:
-      (seen_for, seen_while) = self.__try_finally[-1]
-      if seen_for == self.__seen_for and seen_while == self.__seen_while:
-        self.__continue_in_finally = True
+    if len(self.__s.try_finally) > 0:
+      (seen_for, seen_while) = self.__s.try_finally[-1]
+      if seen_for == self.__s.seen_for and seen_while == self.__s.seen_while:
+        self.__s.continue_in_finally = True
         self.__vvprint("continue in finally block", line=node.lineno, versions=[None, (3, 8)])
 
   def __handle_with(self, node):
@@ -2100,7 +1961,7 @@ ast.Call(func=ast.Name)."""
       return
 
     # Copy current user-defs and add scoped ones.
-    user_defs_copy = self.__user_defs.copy()
+    user_defs_copy = self.__s.user_defs.copy()
     if hasattr(node, "items"):
       for withitem in node.items:
         if hasattr(withitem, "optional_vars") and withitem.optional_vars is not None:
@@ -2121,7 +1982,7 @@ ast.Call(func=ast.Name)."""
         #   ]
         # )
         # and cannot be differentiated from manually writing multiple layers of `with` statements.
-        self.__multi_withitem = True
+        self.__s.multi_withitem = True
         self.__vvprint("multiple context expressions in a `with` statement",
                        line=node.lineno, versions=[(2, 7), (3, 1)], plural=True)
 
@@ -2132,7 +1993,7 @@ ast.Call(func=ast.Name)."""
         lines = self.__get_source_lines(node.lineno, node.lineno + 10)
         match = WITH_PAREN_REGEX.search(lines)
         if match is not None and match.start() < len(lines.splitlines()[0]):
-          self.__with_parentheses = True
+          self.__s.with_parentheses = True
           self.__vvprint("multiple context expressions in a `with` statement with parentheses",
                          line=node.lineno, versions=[None, (3, 9)])
     elif hasattr(node, "optional_vars") and node.optional_vars is not None:  # pragma: no cover
@@ -2142,19 +2003,19 @@ ast.Call(func=ast.Name)."""
     self.generic_visit(node)
 
     # This is to minimize false positives, though the vars lives after the scope.
-    self.__user_defs = user_defs_copy
+    self.__s.user_defs = user_defs_copy
 
   def visit_With(self, node):
     if self.__is_no_line(node.lineno):
       return
-    self.__with_statement = True
+    self.__s.with_statement = True
     self.__vvprint("`with`", line=node.lineno, versions=[(2, 5), (3, 0)])
     self.__handle_with(node)
 
   def visit_AsyncWith(self, node):
     if self.__is_no_line(node.lineno):
       return
-    self.__async_with_statement = True
+    self.__s.async_with_statement = True
     self.__vvprint("`async with`", line=node.lineno, versions=[None, (3, 5)])
     self.__handle_with(node)
 
@@ -2171,7 +2032,7 @@ ast.Call(func=ast.Name)."""
     self.generic_visit(node)
 
   def visit_Set(self, node):
-    self.__set_literals = True
+    self.__s.set_literals = True
     self.__vvprint("set literals", line=node.lineno, versions=[(2, 7), (3, 0)])
     self.__check_generalized_unpacking(node)
     self.generic_visit(node)
@@ -2182,27 +2043,27 @@ ast.Call(func=ast.Name)."""
 
     if isinstance(node.value, (ast.Name, ast.Attribute)):
       def match(name):
-        if self.__config.eval_annotations():
-          if name in self.__user_defs:
+        if self.__s.config.eval_annotations():
+          if name in self.__s.user_defs:
             self.__vvvvprint("Ignoring type '{}' because it's user-defined!".format(name))
           else:
-            self.__builtin_generic_type_annotations = True
+            self.__s.builtin_generic_type_annotations = True
             self.__vvprint("builtin generic type annotation ({}[..])".format(name),
                            versions=[None, (3, 9)])
         else:
-          self.__maybe_annotations = True
+          self.__s.maybe_annotations = True
       if isinstance(node.value, ast.Name):
         coll_name = node.value.id
       else:
         coll_name = dotted_name(self.__get_attribute_name(node.value))
       if coll_name in BUILTIN_GENERIC_ANNOTATION_TYPES:
         match(coll_name)
-      elif coll_name in self.__import_mem_mod:
-        full_coll_name = dotted_name([self.__import_mem_mod[coll_name], coll_name])
+      elif coll_name in self.__s.import_mem_mod:
+        full_coll_name = dotted_name([self.__s.import_mem_mod[coll_name], coll_name])
         if full_coll_name in BUILTIN_GENERIC_ANNOTATION_TYPES:
           match(full_coll_name)
-      elif coll_name in self.__name_res_type:
-        for t in self.__name_res_type[coll_name]:
+      elif coll_name in self.__s.name_res_type:
+        for t in self.__s.name_res_type[coll_name]:
           if t in BUILTIN_GENERIC_ANNOTATION_TYPES:
             match(t)
 
@@ -2210,23 +2071,23 @@ ast.Call(func=ast.Name)."""
     if hasattr(ast, 'ExtSlice') and isinstance(slices_node, ast.ExtSlice):  # pragma: no cover
       for n in slices_node.dims:
         if is_ellipsis_node(n):
-          self.__ellipsis_nodes_in_slices.add(n)
+          self.__s.ellipsis_nodes_in_slices.add(n)
     else:
       if hasattr(ast, 'Index') and isinstance(slices_node, ast.Index):
         slices_node = slices_node.value
       if is_ellipsis_node(slices_node):
-        self.__ellipsis_nodes_in_slices.add(slices_node)
+        self.__s.ellipsis_nodes_in_slices.add(slices_node)
       if isinstance(slices_node, ast.Tuple):
         for n in slices_node.elts:
           if is_ellipsis_node(n):
-            self.__ellipsis_nodes_in_slices.add(n)
+            self.__s.ellipsis_nodes_in_slices.add(n)
 
     self.generic_visit(node)
 
   def visit_Match(self, node):
     if self.__is_no_line(node.lineno):
       return
-    self.__pattern_matching = True
+    self.__s.pattern_matching = True
     self.__vvprint("pattern matching", line=node.lineno, versions=[None, (3, 10)])
     self.generic_visit(node)
 
@@ -2242,30 +2103,30 @@ ast.Call(func=ast.Name)."""
 
   def __handle_for(self, node):
     if not self.__is_no_line(node.lineno):
-      self.__seen_for += 1
+      self.__s.seen_for += 1
 
       # Copy current user-defs and add scoped ones.
-      user_defs_copy = self.__user_defs.copy()
+      user_defs_copy = self.__s.user_defs.copy()
       for n in assign_target_walk(node.target):
         self.__add_user_def_node(n)
 
       # Check if any value of the for-iterable is a dictionary, then associate for-target variable
       # with a ditionary type such that sub-levels of the for-loop can use it for dict union merge
       # detection.
-      old_name_res = self.__name_res
+      old_name_res = self.__s.name_res
       if hasattr(node.target, "id"):
         for tup in ast.iter_fields(node.iter):
           if tup[0] == "elts" or tup[0] == "values":
             if any(self.__is_dict(elm) for elm in tup[1]):
-              self.__name_res[node.target.id] = "dict"
+              self.__s.name_res[node.target.id] = "dict"
               break
 
       self.generic_visit(node)
-      self.__seen_for -= 1
-      self.__name_res = old_name_res
+      self.__s.seen_for -= 1
+      self.__s.name_res = old_name_res
 
       # This is to minimize false positives, though the vars lives after the scope.
-      self.__user_defs = user_defs_copy
+      self.__s.user_defs = user_defs_copy
 
   def visit_For(self, node):
     self.__handle_for(node)
@@ -2273,24 +2134,24 @@ ast.Call(func=ast.Name)."""
   def visit_AsyncFor(self, node):
     if self.__is_no_line(node.lineno):
       return
-    self.__async_for = True
+    self.__s.async_for = True
     self.__vvprint("async for-loops", line=node.lineno, versions=[None, (3, 5)])
     self.__handle_for(node)
 
   def visit_While(self, node):
     if not self.__is_no_line(node.lineno):
-      self.__seen_while += 1
+      self.__s.seen_while += 1
       self.generic_visit(node)
-      self.__seen_while -= 1
+      self.__s.seen_while -= 1
 
   def __handle_Try(self, node):
     if not self.__is_no_line(node.lineno):
       if hasattr(node, "finalbody"):
-        self.__try_finally.append((self.__seen_for, self.__seen_while))
+        self.__s.try_finally.append((self.__s.seen_for, self.__s.seen_while))
         for stm in node.finalbody:
           self.visit(stm)
-        if len(self.__try_finally) > 0:
-          self.__try_finally.pop()
+        if len(self.__s.try_finally) > 0:
+          self.__s.try_finally.pop()
       self.generic_visit(node)
 
   def visit_Try(self, node):
@@ -2308,8 +2169,8 @@ ast.Call(func=ast.Name)."""
 
   def visit_Ellipsis(self, node):
     # Force identity testing instead of equality testing.
-    if not any(n is node for n in self.__ellipsis_nodes_in_slices):
-      self.__ellipsis_out_of_slices = True
+    if not any(n is node for n in self.__s.ellipsis_nodes_in_slices):
+      self.__s.ellipsis_out_of_slices = True
       self.__vvprint("ellipsis literal (`...`) out of slices", versions=[None, (3, 0)],
                      plural=False)
 
