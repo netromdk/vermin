@@ -478,22 +478,26 @@ def detect_paths_incremental(args):
   accepted = []
   further_args = []
   for path in paths:
-    if any(ic in path for ic in ignore_chars):
-      continue  # pragma: no cover
-    if not hidden and path != "." and path[0] == ".":
-      continue
-    path = abspath(path)
+    try:
+      if any(ic in path for ic in ignore_chars):
+        continue  # pragma: no cover
+      if not hidden and path != "." and path[0] == ".":
+        continue
+      path = abspath(path)
 
-    # Scan top-level folders, or input folders, in all cases.
-    st = stat_path(path, True if depth == 0 else scan_symlink_folders)
-    if st is None:
-      continue
+      # Scan top-level folders, or input folders, in all cases.
+      st = stat_path(path, True if depth == 0 else scan_symlink_folders)
+      if st is None:
+        continue
 
-    if S_ISDIR(st.st_mode):
-      files = [join(path, p) for p in listdir(path) if hidden or p[0] != "."]
-      further_args.append((files, depth + 1, hidden, ignore_chars, scan_symlink_folders))
-    elif S_ISREG(st.st_mode) and (depth == 0 or probably_python_file(path)):
-      accepted.append(path)
+      if S_ISDIR(st.st_mode):
+        files = [join(path, p) for p in listdir(path) if hidden or p[0] != "."]
+        further_args.append((files, depth + 1, hidden, ignore_chars, scan_symlink_folders))
+      elif S_ISREG(st.st_mode) and (depth == 0 or probably_python_file(path)):
+        accepted.append(path)
+    except OSError as ex:
+      print("Ignoring {}: {}".format(path, ex))
+      continue
   return (accepted, further_args)
 
 # Some detected paths might not be python code since not all files use extensions like ".py" and
