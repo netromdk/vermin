@@ -1655,8 +1655,12 @@ ast.Call(func=ast.Name)."""
       return
     self.__add_user_def_node(node.target)
     self.__add_name_res_assign_node(node)
+
     if self.__config.eval_annotations():
       self.generic_visit(node)
+    else:
+      self.__maybe_annotations = True
+
     self.__annotations = True
     self.__var_annotations = True
     self.__vvprint("variable annotations", line=node.lineno, versions=[None, (3, 6)])
