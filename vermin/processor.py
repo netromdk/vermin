@@ -31,27 +31,27 @@ class ProcessResult:
 def process_individual(args):
   (path, config) = args
   res = ProcessResult(path)
-
   source = None
-  with open(path, mode="rb") as fp:
-    try:
+
+  try:
+    with open(path, mode="rb") as fp:
       source = fp.read()
       parser = Parser(source, path)
       (res.node, res.mins, res.novermin) = parser.detect(config)
-    except KeyboardInterrupt:  # pragma: no cover
-      return res
+  except KeyboardInterrupt:  # pragma: no cover
+    return res
 
-    # When input isn't python code, ignore it.
-    except ValueError:
-      # source code string cannot contain null bytes
-      return None
-    except TypeError:  # pragma: no cover
-      # compile() expected string without null bytes
-      return None
+  # When input isn't python code, ignore it.
+  except ValueError:
+    # source code string cannot contain null bytes
+    return None
+  except TypeError:  # pragma: no cover
+    # compile() expected string without null bytes
+    return None
 
-    except Exception as ex:  # pragma: no cover
-      res.text = "{}: {}, {}".format(path, type(ex), ex)
-      res.mins = [(0, 0), (0, 0)]
+  except Exception as ex:  # pragma: no cover
+    res.text = "{}: {}, {}".format(path, type(ex), ex)
+    res.mins = [(0, 0), (0, 0)]
 
   if res.node is None:
     return res

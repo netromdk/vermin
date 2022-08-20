@@ -680,12 +680,12 @@ test.py:6:9:2.7:3.2:'argparse' module
     self.assertEqual(ex.exception.code, 0)
 
   def test_process_file_not_Found(self):
-    if current_version() >= (3, 0):
-      exc = FileNotFoundError
-    else:
-      exc = Exception  # pragma: no cover
-    with self.assertRaises(exc):
-      process_individual(("nonexistent", self.config))
+    path = "nonexistent"
+    res = process_individual((path, self.config))
+    self.assertNotEqual(res, None)
+    self.assertEqual(res.path, path)
+    self.assertEqual(res.mins, [(0, 0), (0, 0)])
+    self.assertEqual(res.node, None)
 
   def test_process_runtests_py(self):
     proc_res = process_individual((sys.argv[0], self.config))
