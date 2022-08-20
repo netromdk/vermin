@@ -150,7 +150,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     rmtree(tmp_fld)
 
   def test_detect_paths(self):
-    paths = detect_paths([abspath("vermin")])
+    paths = detect_paths([abspath("vermin")], config=self.config)
     self.assertEqual(18, len(paths))
 
   def test_detect_hidden_paths(self):
@@ -158,11 +158,11 @@ test.py:6:9:2.7:3.2:'argparse' module
     files = [touch(tmp_fld, ".test.py"), touch(tmp_fld, "test.py"), touch(tmp_fld, ".test2.py"),
              touch(tmp_fld, "test2.py")]
 
-    paths = detect_paths([tmp_fld], hidden=False)
+    paths = detect_paths([tmp_fld], hidden=False, config=self.config)
     without_dot = [files[1], files[3]]
     self.assertEqualItems(without_dot, paths)
 
-    paths2 = detect_paths([tmp_fld], hidden=True)
+    paths2 = detect_paths([tmp_fld], hidden=True, config=self.config)
     self.assertEqualItems(files, paths2)
 
     rmtree(tmp_fld)
@@ -176,18 +176,19 @@ test.py:6:9:2.7:3.2:'argparse' module
     hidden = False
     ignore_chars = []
     scan_symlink_folders = False
-    (accepted, further_args) =\
-      detect_paths_incremental(([tmp_fld], depth, hidden, ignore_chars, scan_symlink_folders))
+    (accepted, further_args) = detect_paths_incremental(
+      ([tmp_fld], depth, hidden, ignore_chars, scan_symlink_folders, self.config))
 
     self.assertEmpty(accepted)
     self.assertEqual(len(further_args), 1)
 
-    (paths, depth, hidden, ignore_chars, scan_symlink_folders) = further_args[0]
+    (paths, depth, hidden, ignore_chars, scan_symlink_folders, config) = further_args[0]
     self.assertEqualItems(paths, [files[1], files[3]])
     self.assertEqual(depth, 1)
     self.assertFalse(hidden)
     self.assertEmpty(ignore_chars)
     self.assertFalse(scan_symlink_folders)
+    self.assertNotEqual(config, None)
 
     rmtree(tmp_fld)
 
@@ -200,18 +201,19 @@ test.py:6:9:2.7:3.2:'argparse' module
     hidden = True
     ignore_chars = []
     scan_symlink_folders = False
-    (accepted, further_args) = \
-      detect_paths_incremental(([tmp_fld], depth, hidden, ignore_chars, scan_symlink_folders))
+    (accepted, further_args) = detect_paths_incremental(
+      ([tmp_fld], depth, hidden, ignore_chars, scan_symlink_folders, self.config))
 
     self.assertEmpty(accepted)
     self.assertEqual(len(further_args), 1)
 
-    (paths, depth, hidden, ignore_chars, scan_symlink_folders) = further_args[0]
+    (paths, depth, hidden, ignore_chars, scan_symlink_folders, config) = further_args[0]
     self.assertEqualItems(paths, [files[0], files[1], files[2], files[3]])
     self.assertEqual(depth, 1)
     self.assertTrue(hidden)
     self.assertEmpty(ignore_chars)
     self.assertFalse(scan_symlink_folders)
+    self.assertNotEqual(config, None)
 
     rmtree(tmp_fld)
 
@@ -226,8 +228,8 @@ test.py:6:9:2.7:3.2:'argparse' module
     hidden = False
     ignore_chars = []
     scan_symlink_folders = False
-    (accepted, further_args) =\
-      detect_paths_incremental((files, depth, hidden, ignore_chars, scan_symlink_folders))
+    (accepted, further_args) = detect_paths_incremental(
+      (files, depth, hidden, ignore_chars, scan_symlink_folders, self.config))
 
     self.assertEqualItems(accepted, files)
     self.assertEmpty(further_args)
@@ -240,7 +242,8 @@ test.py:6:9:2.7:3.2:'argparse' module
     ignore_chars = []
     scan_symlink_folders = False
     (accepted, further_args) = detect_paths_incremental((["i-do-not-exist"], depth, hidden,
-                                                         ignore_chars, scan_symlink_folders))
+                                                         ignore_chars, scan_symlink_folders,
+                                                         self.config))
     self.assertEmpty(accepted)
     self.assertEmpty(further_args)
 
@@ -250,7 +253,8 @@ test.py:6:9:2.7:3.2:'argparse' module
     ignore_chars = []
     scan_symlink_folders = False
     (accepted, further_args) = detect_paths_incremental(([".i-start-with-dot"], depth, hidden,
-                                                         ignore_chars, scan_symlink_folders))
+                                                         ignore_chars, scan_symlink_folders,
+                                                         self.config))
     self.assertEmpty(accepted)
     self.assertEmpty(further_args)
 
@@ -264,10 +268,10 @@ test.py:6:9:2.7:3.2:'argparse' module
     with open_wrapper(f, mode="w", encoding="utf-8") as fp:
       fp.write("print('this is code')")
 
-    paths = detect_paths([tmp_fld])
+    paths = detect_paths([tmp_fld], config=self.config)
     self.assertEmpty(paths)
 
-    paths = detect_paths([join(tmp_fld, "no-shebang")])
+    paths = detect_paths([join(tmp_fld, "no-shebang")], config=self.config)
     self.assertEqual(paths, [f])
 
     rmtree(tmp_fld)
@@ -283,7 +287,7 @@ test.py:6:9:2.7:3.2:'argparse' module
         fp.write("print('this is code')")
 
     found_exts = set()
-    for path in detect_paths([tmp_fld]):
+    for path in detect_paths([tmp_fld], config=self.config):
       _, ext = splitext(path)
       found_exts.add(ext[1:])
     self.assertEqualItems(found_exts, exts)
@@ -302,7 +306,7 @@ test.py:6:9:2.7:3.2:'argparse' module
 
     # Since the detection ignores the extensions, no body of this for-loop will be executed.
     found_exts = set()
-    for path in detect_paths([tmp_fld]):  # pragma: no cover
+    for path in detect_paths([tmp_fld], config=self.config):  # pragma: no cover
       _, ext = splitext(path)
       found_exts.add(ext[1:])
     self.assertEmpty(found_exts)
@@ -310,7 +314,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     rmtree(tmp_fld)
 
   def test_detect_vermin_min_versions(self):
-    paths = detect_paths([abspath("vermin")])
+    paths = detect_paths([abspath("vermin")], config=self.config)
     processor = Processor()
     (mins, _incomp, _unique_versions, backports, used_novermin, maybe_anns) =\
       processor.process(paths, self.config)
@@ -320,7 +324,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     self.assertFalse(maybe_anns)
 
   def test_detect_vermin_min_versions_parsable(self):
-    paths = detect_paths([abspath("vermin")])
+    paths = detect_paths([abspath("vermin")], config=self.config)
     processor = Processor()
     self.config.set_format(ParsableFormat())
     (mins, _incomp, _unique_versions, backports, used_novermin, maybe_anns) =\

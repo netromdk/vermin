@@ -136,8 +136,9 @@ class Processor:
       if pool:
         pool.close()
     except RuntimeError:
-      print("""RuntimeError: If running `Processor.process()` outside of
-`if __name__ == \"__main__\":` it, or the code calling it, must be done within it instead.""")
+      nprint("""RuntimeError: If running `Processor.process()` outside of
+`if __name__ == \"__main__\":` it, or the code calling it, must be done within it instead.""",
+             config)
 
     unique_versions = list(unique_versions)
     unique_versions.sort()

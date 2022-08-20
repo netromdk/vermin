@@ -36,7 +36,7 @@ def main():
 
   paths = list(set(detect_paths(paths, hidden=config.analyze_hidden(),
                                 processes=config.processes(), ignore_chars=ignore_chars,
-                                scan_symlink_folders=config.scan_symlink_folders())))
+                                scan_symlink_folders=config.scan_symlink_folders(), config=config)))
   paths.sort()
 
   amount = len(paths)

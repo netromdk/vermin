@@ -7,6 +7,7 @@ from .parser import Parser
 from .source_visitor import SourceVisitor
 from .config import Config
 from .utility import open_wrapper
+from .printing import nprint
 
 NOT_PY_CODE_EXTS = {
   "3dm",
@@ -474,7 +475,8 @@ def stat_path(path, scan_symlink_folders=False):
 # Called concurrently in an iterative fashion. Each invocation will return accepted paths and a list
 # of further arguments tuples, if any.
 def detect_paths_incremental(args):
-  (paths, depth, hidden, ignore_chars, scan_symlink_folders) = args
+  (paths, depth, hidden, ignore_chars, scan_symlink_folders, config) = args
+  assert(config is not None)
   accepted = []
   further_args = []
   for path in paths:
@@ -492,11 +494,11 @@ def detect_paths_incremental(args):
 
       if S_ISDIR(st.st_mode):
         files = [join(path, p) for p in listdir(path) if hidden or p[0] != "."]
-        further_args.append((files, depth + 1, hidden, ignore_chars, scan_symlink_folders))
+        further_args.append((files, depth + 1, hidden, ignore_chars, scan_symlink_folders, config))
       elif S_ISREG(st.st_mode) and (depth == 0 or probably_python_file(path)):
         accepted.append(path)
     except OSError as ex:
-      print("Ignoring {}: {}".format(path, ex))
+      nprint("Ignoring {}: {}".format(path, ex), config)
       continue
   return (accepted, further_args)
 
@@ -505,13 +507,14 @@ def detect_paths_incremental(args):
 # files will be ignored when trying to parse them). Paths containing chars in `ignore_chars` will be
 # ignored.
 def detect_paths(paths, hidden=False, processes=cpu_count(), ignore_chars=None,
-                 scan_symlink_folders=False):
+                 scan_symlink_folders=False, config=None):
+  assert(config is not None)
   if isinstance(paths, str):
     paths = [paths]
   accept_paths = []
   depth = 0
   ignore_chars = ignore_chars or []
-  args = [(paths, depth, hidden, ignore_chars, scan_symlink_folders)]
+  args = [(paths, depth, hidden, ignore_chars, scan_symlink_folders, config)]
 
   try:
     pool = Pool(processes=processes) if processes > 1 else None
@@ -534,8 +537,8 @@ def detect_paths(paths, hidden=False, processes=cpu_count(), ignore_chars=None,
     if pool:
       pool.close()
   except RuntimeError:
-    print("""RuntimeError: If running `detect_paths()` outside of `if __name__ == \"__main__\":` it,
-or the code calling it, must be done within it instead.""")
+    nprint("""RuntimeError: If running `detect_paths()` outside of `if __name__ == \"__main__\":`
+it, or the code calling it, must be done within it instead.""", config)
   return accept_paths
 
 def visit(source, config=None, path=None):
