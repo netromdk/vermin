@@ -506,29 +506,36 @@ def detect_paths_incremental(args):
 # ignored.
 def detect_paths(paths, hidden=False, processes=cpu_count(), ignore_chars=None,
                  scan_symlink_folders=False):
-  pool = Pool(processes=processes) if processes > 1 else None
+  if isinstance(paths, str):
+    paths = [paths]
   accept_paths = []
   depth = 0
   ignore_chars = ignore_chars or []
   args = [(paths, depth, hidden, ignore_chars, scan_symlink_folders)]
 
-  # Automatically don't use concurrency when only one process is specified to be used.
-  def act(args):
-    if processes == 1:
-      return [detect_paths_incremental(arg) for arg in args]  # pragma: no cover
-    return pool.imap(detect_paths_incremental, args)
+  try:
+    pool = Pool(processes=processes) if processes > 1 else None
 
-  while args:
-    new_args = []
-    for (acc, further_args) in act(args):
-      if acc:
-        accept_paths += acc
-      if further_args:
-        new_args += further_args
-    args = new_args
+    # Automatically don't use concurrency when only one process is specified to be used.
+    def act(args):
+      if processes == 1:
+        return [detect_paths_incremental(arg) for arg in args]  # pragma: no cover
+      return pool.imap(detect_paths_incremental, args)
 
-  if pool:
-    pool.close()
+    while args:
+      new_args = []
+      for (acc, further_args) in act(args):
+        if acc:
+          accept_paths += acc
+        if further_args:
+          new_args += further_args
+      args = new_args
+
+    if pool:
+      pool.close()
+  except RuntimeError:
+    print("""RuntimeError: If running `detect_paths()` outside of `if __name__ == \"__main__\":` it,
+or the code calling it, must be done within it instead.""")
   return accept_paths
 
 def visit(source, config=None, path=None):

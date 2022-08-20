@@ -80,60 +80,64 @@ def process_individual(args):
 class Processor:
   def process(self, paths, config, processes=mp.cpu_count()):  # pylint: disable=no-self-use
     assert(config is not None)
-
-    pool = mp.Pool(processes=processes) if processes > 1 else None
-    mins = [(0, 0), (0, 0)]
-    incomp = False
-
-    def print_incomp(path, text):
-      if not config.ignore_incomp():
-        if len(text) > 0:
-          text = "\n  " + text
-        nprint("File with incompatible versions: {}{}".format(path, text), config)
-
-    # Automatically don't use concurrency when only one process is specified to be used.
-    def act():
-      if processes == 1:
-        return [process_individual((path, config)) for path in paths]  # pragma: no cover
-      return pool.imap(process_individual, ((path, config) for path in paths))
-
     unique_versions = set()
     all_backports = set()
     used_novermin = False
     maybe_annotations = False
-    for proc_res in act():
-      # Ignore paths that didn't contain python code.
-      if proc_res is None:
-        continue
+    mins = [(0, 0), (0, 0)]
+    incomp = False
 
-      if proc_res.mins is None:
-        incomp = True
-        print_incomp(proc_res.path, proc_res.text)
-        continue
+    try:
+      pool = mp.Pool(processes=processes) if processes > 1 else None
 
-      all_backports = all_backports | proc_res.bps
+      def print_incomp(path, text):
+        if not config.ignore_incomp():
+          if len(text) > 0:
+            text = "\n  " + text
+          nprint("File with incompatible versions: {}{}".format(path, text), config)
 
-      for ver in proc_res.mins:
-        if ver is not None and ver > (0, 0):
-          unique_versions.add(ver)
+      # Automatically don't use concurrency when only one process is specified to be used.
+      def act():
+        if processes == 1:
+          return [process_individual((path, config)) for path in paths]  # pragma: no cover
+        return pool.imap(process_individual, ((path, config) for path in paths))
 
-      used_novermin |= (len(proc_res.novermin) > 0)
-      maybe_annotations |= proc_res.maybe_annotations
+      for proc_res in act():
+        # Ignore paths that didn't contain python code.
+        if proc_res is None:
+          continue
 
-      # For violations mode, only show file names and findings if there are any - no empty ones that
-      # do not violate the input targets. This is especially important when scanning many files
-      # since it can be hard to spot violations. Otherwise, show as normal.
-      if not config.only_show_violations() or len(proc_res.text) > 0:
-        config.format().output_result(proc_res)
+        if proc_res.mins is None:
+          incomp = True
+          print_incomp(proc_res.path, proc_res.text)
+          continue
 
-      try:
-        mins = combine_versions(mins, proc_res.mins, config)
-      except InvalidVersionException:
-        incomp = True
-        print_incomp(proc_res.path, proc_res.text)
+        all_backports = all_backports | proc_res.bps
 
-    if pool:
-      pool.close()
+        for ver in proc_res.mins:
+          if ver is not None and ver > (0, 0):
+            unique_versions.add(ver)
+
+        used_novermin |= (len(proc_res.novermin) > 0)
+        maybe_annotations |= proc_res.maybe_annotations
+
+        # For violations mode, only show file names and findings if there are any - no empty ones
+        # that do not violate the input targets. This is especially important when scanning many
+        # files since it can be hard to spot violations. Otherwise, show as normal.
+        if not config.only_show_violations() or len(proc_res.text) > 0:
+          config.format().output_result(proc_res)
+
+        try:
+          mins = combine_versions(mins, proc_res.mins, config)
+        except InvalidVersionException:
+          incomp = True
+          print_incomp(proc_res.path, proc_res.text)
+
+      if pool:
+        pool.close()
+    except RuntimeError:
+      print("""RuntimeError: If running `Processor.process()` outside of
+`if __name__ == \"__main__\":` it, or the code calling it, must be done within it instead.""")
 
     unique_versions = list(unique_versions)
     unique_versions.sort()
