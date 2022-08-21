@@ -54,6 +54,7 @@ Table of Contents
 * `Linting (showing only target versions violations) <#linting-showing-only-target-versions-violations>`__
 * `API (experimental) <#api-experimental>`__
 * `Analysis Exclusions <#analysis-exclusions>`__
+* `Parsable Output <#parsable-output>`__
 * `Contributing <#contributing>`__
 
 Usage
@@ -234,6 +235,8 @@ Examples
   /path/to/examples/abc.py:::!2:3.4:
   :::!2:3.4:
 
+See `Parsable Output <#parsable-output>`__ for more information about parsable output format.
+
 Linting: Showing only target versions violations
 ================================================
 
@@ -334,6 +337,74 @@ can be defined by having ``#`` for each comment "segment":
 Note that if a code base does not have any occurrences of ``# novermin`` or ``# novm``, speedups up
 to 30-40%+ can be achieved by using the ``--no-parse-comments`` argument or ``parse_comments = no``
 config setting.
+
+Parsable Output
+===============
+
+For scenarios where the results of Vermin output is required, it is recommended to use the parsable
+output format (``--format parsable``) instead of the default output. With this format enabled, each
+line will be on the form:
+
+.. code-block::
+
+  <file>:<line>:<column>:<py2>:<py3>:<feature>
+
+The ``<line>`` and ``<column>`` are only shown when the verbosity level is high enough, otherwise
+they are empty.
+
+Each feature detected per processed file will have the ``<feature>`` defined on an individual
+line. The last line of the processed file will have a special line with the corresponding ``<file>``
+and no ``<feature>``, constituting the minimum versions of that file:
+
+.. code-block::
+
+   <file>:::<py2>:<py3>:
+
+The very last line is the final minimum versions results of the entire scan and therefore has no
+``<file>`` and ``<feature>``:
+
+.. code-block::
+
+   :::<py2>:<py3>:
+
+Inspection of example output
+----------------------------
+
+.. code-block:: console
+
+  % ./vermin.py -f parsable /path/to/project
+  /path/to/project/abc.py:1:7:2.6:3.0:'abc' module
+  /path/to/project/abc.py:2::!2:3.4:'abc.ABC' member
+  /path/to/project/abc.py:::!2:3.4:
+  /path/to/project/except_star.py:::~2:~3:
+  /path/to/project/annotations.py:::2.0:3.0:print(expr)
+  /path/to/project/annotations.py:1::!2:3.0:annotations
+  /path/to/project/annotations.py:::!2:3.0:
+  :::!2:3.4:
+
+``abc.py`` requires ``!2`` and ``3.4`` via:
+
+.. code-block::
+
+  /path/to/project/abc.py:::!2:3.4:
+
+``except_star.py`` requires ``~2`` and ``~3`` via:
+
+.. code-block::
+
+  /path/to/project/except_star.py:::~2:~3:
+
+And ``annotations.py`` requires ``!2`` and ``3.0`` via:
+
+.. code-block::
+
+  /path/to/project/annotations.py:::!2:3.0:
+
+That means that the final result is ``!2`` and ``3.4``, which is shown by the last line:
+
+.. code-block::
+
+  :::!2:3.4:
 
 Contributing
 ============
