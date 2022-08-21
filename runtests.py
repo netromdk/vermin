@@ -20,6 +20,7 @@ SUITES = (
   "kwargs",
   "strftime_directive",
   "annotation",
+  "maybe_annotations",
   "array_typecodes",
   "codecs_error_handlers",
   "codecs_encodings",
