@@ -1,5 +1,6 @@
 import sys
 import os
+import io
 from os.path import abspath, basename, join, splitext
 from tempfile import NamedTemporaryFile, mkdtemp
 from shutil import rmtree
@@ -682,6 +683,39 @@ test.py:6:9:2.7:3.2:'argparse' module
     # Check for no error. It would incorrectly yield "No files specified to analyze!" before the
     # fix.
     self.assertEqual(ex.exception.code, 0)
+
+  @VerminTest.skipUnlessVersion(3)
+  def test_main_parsable_has_last_results_line(self):
+    # This test is currently only run on py3 due to io.StringIO() using unicode() on py2 and we are
+    # writing a str() to it.
+    #
+    # File "vermin/formats/parsable_format.py", line 31, in output_result
+    #   sys.stdout.write(proc_res.text)
+    # TypeError: unicode argument expected, got 'str'
+
+    tmp_fld = mkdtemp()
+    file_name = "test.py"
+    path = join(tmp_fld, file_name)
+    touch(tmp_fld, file_name)
+    temp_stdout = io.StringIO()
+    backup_stdout = sys.stdout
+    with self.assertRaises(SystemExit) as ex:
+      sys.argv = [sys.argv[0], "--format", "parsable", tmp_fld]
+      sys.stdout = temp_stdout
+      main()
+
+    sys.argv = [sys.argv[0]]
+    sys.stdout = backup_stdout
+    rmtree(tmp_fld)
+
+    # Check successful execution.
+    self.assertEqual(ex.exception.code, 0)
+
+    # Check that the last line is on the form `:::v2:v3:`.
+    lines = temp_stdout.getvalue().splitlines()
+    self.assertEqual(len(lines), 2)
+    self.assertEqual(lines[0], "{}:::~2:~3:".format(path))
+    self.assertEqual(lines[1], ":::~2:~3:")
 
   def test_process_file_not_Found(self):
     path = "nonexistent"
