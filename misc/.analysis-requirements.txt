@@ -3,7 +3,7 @@ bandit==1.6.2
 docutils==0.16
 flake8==3.8.4
 gitdb==4.0.5
-GitPython==3.1.11
+GitPython==3.1.27
 isort==5.6.4
 lazy-object-proxy==1.4.3
 mccabe==0.6.1
@@ -11,7 +11,7 @@ pbr==5.5.1
 pycodestyle==2.6.0
 pyflakes==2.2.0
 Pygments==2.7.4
-pylint==2.6.0
+pylint==2.7.0
 pyroma==2.6
 PyYAML==5.4
 six==1.15.0
