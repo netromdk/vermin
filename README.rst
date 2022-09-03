@@ -1,4 +1,6 @@
-|PyPI version| |Test Status| |Analyze Status| |CodeQL Status| |Coverage| |Commits since last|
+|PyPI version| |Test Status| |Analyze Status| |Coverage| |Commits since last|
+
+|CodeQL Status| |Snyk Status|
 
 .. |PyPI version| image:: https://badge.fury.io/py/vermin.svg
    :target: https://pypi.python.org/pypi/vermin/
@@ -11,6 +13,9 @@
 
 .. |CodeQL Status| image:: https://github.com/netromdk/vermin/workflows/CodeQL/badge.svg?branch=master
    :target: https://github.com/netromdk/vermin/security/code-scanning
+
+.. |Snyk Status| image:: https://github.com/netromdk/vermin/workflows/Snyk%20Schedule/badge.svg?branch=master
+   :target: https://github.com/netromdk/vermin/actions
 
 .. |Coverage| image:: https://coveralls.io/repos/github/netromdk/vermin/badge.svg?branch=master
    :target: https://coveralls.io/github/netromdk/vermin?branch=master
