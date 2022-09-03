@@ -1,0 +1,53 @@
+name: Snyk Schedule
+
+# Run every sunday at 2:14.
+on:
+  schedule:
+    - cron: '14 2 * * 6'
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        requirements: [misc, analysis, coverage]
+
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: snyk-pip-${{ hashFiles('**/.*-requirements.txt') }}
+          restore-keys: snyk-pip-
+
+      - name: Upgrade Pip
+        run: pip3 install --upgrade pip
+      - name: Install requirements
+        run: python3 -m pip install -r misc/.${{matrix.requirements}}-requirements.txt
+
+      - name: Install Snyk
+        run: npm install -g snyk
+      - name: Run Snyk
+        continue-on-error: true # To make sure that SARIF upload gets called
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          FORCE_COLOR: 2
+          SNYK_INTEGRATION_NAME: GITHUB_ACTIONS
+          SNYK_INTEGRATION_VERSION: python
+        run: snyk test --project-name=vermin --package-manager=pip --file=misc/.${{matrix.requirements}}-requirements.txt --command=python3 --sarif-file-output=snyk-${{matrix.requirements}}.sarif --show-vulnerable-paths=all --print-deps
+
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk-${{matrix.requirements}}.sarif
