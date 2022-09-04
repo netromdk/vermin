@@ -60,13 +60,13 @@ jobs:
             python-version: 3.9
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@7f80679172b057fc5e90d70d197929d454754a5a
       with:
         python-version: ${{ matrix.python-version }}
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed
       if: startsWith(matrix.os, 'ubuntu-latest')
       with:
         path: ~/.cache/pip
@@ -74,7 +74,7 @@ jobs:
         restore-keys: |
           ${{ matrix.os }}-pip-
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed
       if: startsWith(matrix.os, 'macos-latest')
       with:
         path: ~/Library/Caches/pip
@@ -82,7 +82,7 @@ jobs:
         restore-keys: |
           ${{ matrix.os }}-pip-
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed
       if: startsWith(matrix.os, 'windows-latest')
       with:
         path: ~\AppData\Local\pip\Cache
@@ -107,7 +107,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Coveralls Finished
-      uses: coverallsapp/github-action@master
+      uses: coverallsapp/github-action@3284643be2c47fb6432518ecec17f1255e8a06a6
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         parallel-finished: true
