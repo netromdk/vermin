@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  analyze:
 
     runs-on: ubuntu-latest
     strategy:
