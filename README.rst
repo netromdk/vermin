@@ -1,6 +1,4 @@
-|PyPI version| |Test Status| |Analyze Status| |Coverage| |Commits since last| |Downloads|
-
-|CodeQL Status| |Snyk Status|
+|Test Status| |Analyze Status| |CodeQL Status| |Snyk Status| |Coverage| |PyPI version| |Commits since last| |Downloads| |CII best practices|
 
 .. |PyPI version| image:: https://badge.fury.io/py/vermin.svg
    :target: https://pypi.python.org/pypi/vermin/
@@ -24,6 +22,9 @@
 
 .. |Downloads| image:: https://static.pepy.tech/personalized-badge/vermin?period=total&units=international_system&left_color=gray&right_color=blue&left_text=Downloads
    :target: https://pepy.tech/project/vermin
+
+.. |CII best practices| image:: https://bestpractices.coreinfrastructure.org/projects/6451/badge
+   :target: https://bestpractices.coreinfrastructure.org/projects/6451
 
 Vermin
 ******
