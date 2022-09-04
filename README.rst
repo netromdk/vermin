@@ -1,4 +1,4 @@
-|PyPI version| |Test Status| |Analyze Status| |Coverage| |Commits since last|
+|PyPI version| |Test Status| |Analyze Status| |Coverage| |Commits since last| |Downloads|
 
 |CodeQL Status| |Snyk Status|
 
@@ -21,6 +21,9 @@
    :target: https://coveralls.io/github/netromdk/vermin?branch=master
 
 .. |Commits since last| image:: https://img.shields.io/github/commits-since/netromdk/vermin/latest.svg
+
+.. |Downloads| image:: https://static.pepy.tech/personalized-badge/vermin?period=total&units=international_system&left_color=gray&right_color=blue&left_text=Downloads
+   :target: https://pepy.tech/project/vermin
 
 Vermin
 ******
