@@ -1,16 +1,2 @@
-bandit
-certifi
-chardet
 coverage
 coveralls
-docopt
-gitdb2
-GitPython
-idna
-pbr
-PyYAML
-requests
-six
-smmap2
-stevedore
-urllib3
