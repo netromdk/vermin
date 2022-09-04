@@ -66,7 +66,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed
+    - uses: actions/cache@fd5de65bc895cf536527842281bea11763fefd77
       if: startsWith(matrix.os, 'ubuntu-latest')
       with:
         path: ~/.cache/pip
@@ -74,7 +74,7 @@ jobs:
         restore-keys: |
           ${{ matrix.os }}-pip-
 
-    - uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed
+    - uses: actions/cache@fd5de65bc895cf536527842281bea11763fefd77
       if: startsWith(matrix.os, 'macos-latest')
       with:
         path: ~/Library/Caches/pip
@@ -82,7 +82,7 @@ jobs:
         restore-keys: |
           ${{ matrix.os }}-pip-
 
-    - uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed
+    - uses: actions/cache@fd5de65bc895cf536527842281bea11763fefd77
       if: startsWith(matrix.os, 'windows-latest')
       with:
         path: ~\AppData\Local\pip\Cache
