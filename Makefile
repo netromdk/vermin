@@ -27,7 +27,7 @@ setup-misc: clean
 	pip install -r misc/.misc-requirements.txt
 
 setup-coverage: clean
-	pip install -r misc/.coverage-requirements.txt
+	pip install coverage coveralls
 
 setup-analysis: clean
 	pip install -r misc/.analysis-requirements.txt
@@ -57,9 +57,6 @@ pypi-dist: clean-pypi
 
 update-misc-requirements: setup-venv setup-misc
 	pip freeze > misc/.misc-requirements.txt
-
-update-coverage-requirements: setup-venv setup-coverage
-	pip freeze > misc/.coverage-requirements.txt
 
 update-analysis-requirements: setup-venv setup-analysis
 	pip freeze > misc/.analysis-requirements.txt
