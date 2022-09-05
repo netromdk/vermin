@@ -40,7 +40,7 @@ jobs:
         run: python3 -m pip install -r misc/.${{matrix.requirements}}-requirements.txt
 
       - name: Install Snyk
-        run: npm install -g snyk
+        run: npm install -g snyk@1.997.0
       - name: Run Snyk
         continue-on-error: true # To make sure that SARIF upload gets called
         env:
