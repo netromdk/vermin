@@ -139,6 +139,7 @@ def MOD_REQS(config):
     "tkinter": (None, (3, 0)),
     "tracemalloc": (None, (3, 4)),
     "typing": bpv("typing", (None, (3, 5)), config),
+    "typing_extensions": bpv("typing_extensions", ((0, 0), (0, 0)), config),
     "unittest": ((2, 1), (3, 0)),
     "unittest.mock": (None, (3, 3)),
     "urllib.parse": (None, (3, 0)),

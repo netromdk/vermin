@@ -23,6 +23,10 @@ BACKPORTS = (
   #  Although `typing` backport now requires 2.7 or 3.4+, it originally supported 3.2 and 3.3.
   #  See: https://github.com/python/typing/blob/02c9d79eb7/prototyping/setup.py
   ("typing", ["https://pypi.org/project/typing/"], ((2, 7), (3, 2))),
+
+  ("typing_extensions==4.0", ["https://pypi.org/project/typing-extensions/4.0.0/"], (None, (3, 6))),
+  ("typing_extensions==4.3", ["https://pypi.org/project/typing-extensions/4.3.0/"], (None, (3, 7))),
+  ("typing_extensions", ["https://pypi.org/project/typing-extensions/4.3.0/"], (None, (3, 7))),
 )
 
 class Backports:
