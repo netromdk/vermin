@@ -1846,6 +1846,7 @@ ast.Call(func=ast.Name)."""
     if self.__is_no_line(node.lineno):
       return
     self.__add_user_def(node.name)
+    self.__add_name_res_type(node.name, node.name)
 
     if getattr(node, "decorator_list", None):
       decos = node.decorator_list
