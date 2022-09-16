@@ -166,7 +166,7 @@ class SourceVisitor(ast.NodeVisitor):
     # Name -> name resolutions.
     self.__name_res = {}
 
-    # Name -> type resolutions.
+    # Name -> type resolutions. Is a dictionary of sets.
     self.__name_res_type = {}
 
     # User-defined symbols to be ignored.
@@ -861,7 +861,13 @@ class SourceVisitor(ast.NodeVisitor):
     self.__name_res[source] = target
 
   def __add_name_res_type(self, source, target):
-    self.__name_res_type[source] = target
+    """Keep source -> target in a dictionary. If source already exists then convert target to a set
+    and add the new target value to it (if different).
+    """
+    if source not in self.__name_res_type:
+      self.__name_res_type[source] = {target}
+    else:
+      self.__name_res_type[source].add(target)
 
   def __is_builtin_type(self, name):
     return name in self.__builtin_types
@@ -2137,9 +2143,10 @@ ast.Call(func=ast.Name)."""
         full_coll_name = dotted_name([self.__import_mem_mod[coll_name], coll_name])
         if full_coll_name in BUILTIN_GENERIC_ANNOTATION_TYPES:
           match(full_coll_name)
-      elif coll_name in self.__name_res_type and\
-           self.__name_res_type[coll_name] in BUILTIN_GENERIC_ANNOTATION_TYPES:
-        match(self.__name_res_type[coll_name])
+      elif coll_name in self.__name_res_type:
+        for t in self.__name_res_type[coll_name]:
+          if t in BUILTIN_GENERIC_ANNOTATION_TYPES:
+            match(t)
 
     slices_node = node.slice
     if hasattr(ast, 'ExtSlice') and isinstance(slices_node, ast.ExtSlice):
