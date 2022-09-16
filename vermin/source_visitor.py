@@ -15,6 +15,8 @@ BYTES_DIRECTIVE_REGEX = STRFTIME_DIRECTIVE_REGEX
 STR_27_FORMAT_REGEX = re.compile(r"(?<!{){}(?!})")
 WITH_PAREN_REGEX = re.compile(r"with[\s\\]*\(")
 
+MAJOR_VER = sys.version_info.major
+
 def is_int_node(node):
   return (isinstance(node, ast.Num) and isinstance(node.n, int)) or \
     (isinstance(node, ast.UnaryOp) and isinstance(node.operand, ast.Num) and
@@ -899,7 +901,7 @@ class SourceVisitor(ast.NodeVisitor):
           full_name.append("list")
       elif not primi_type and isinstance(attr, ast.Str):
         # pylint: disable=undefined-variable
-        if sys.version_info.major == 2 and isinstance(attr.s, unicode):  # novm
+        if MAJOR_VER == 2 and isinstance(attr.s, unicode):  # novm
           name = "unicode"  # pragma: no cover
         else:
           name = "str"
@@ -912,7 +914,7 @@ class SourceVisitor(ast.NodeVisitor):
           name = "int"
         elif t == float:
           name = "float"
-        if sys.version_info.major == 2 and t == long:  # novm # pylint: disable=undefined-variable
+        if MAJOR_VER == 2 and t == long:  # novm # pylint: disable=undefined-variable
           name = "long"  # pragma: no cover
         if name is not None and len(full_name) == 0 or \
           (full_name[0] != name and len(full_name) == 1):
@@ -949,20 +951,28 @@ class SourceVisitor(ast.NodeVisitor):
       value_name = "list"
     elif isinstance(node.value, ast.Str):
       # pylint: disable=undefined-variable
-      if sys.version_info.major == 2 and isinstance(node.value.s, unicode):  # novm
+      if MAJOR_VER == 2 and isinstance(node.value.s, unicode):  # novm
         value_name = "unicode"  # pragma: no cover
       else:
         value_name = "str"
     elif isinstance(node.value, ast.Num):
-      t = type(node.value.n)
-      if t == int:
+      n = node.value.n
+      if isinstance(n, int):
         value_name = "int"
-      elif sys.version_info.major == 2 and t == long:  # novm # pylint: disable=undefined-variable
+      elif MAJOR_VER == 2 and isinstance(n, long):  # novm # pylint: disable=undefined-variable
         value_name = "long"  # pragma: no cover
-      elif t == float:
+      elif isinstance(n, float):
         value_name = "float"
     elif hasattr(ast, "Bytes") and isinstance(node.value, ast.Bytes):
       value_name = "bytes"
+    elif hasattr(ast, "Constant") and isinstance(node.value, ast.Constant):
+      v = node.value.value
+      if isinstance(v, int):
+        value_name = "int"
+      elif isinstance(v, float):
+        value_name = "float"
+      elif v is None:
+        type_name = "None"
 
     # When a type name is used, and not a type instance.
     elif isinstance(node.value, ast.Name):
