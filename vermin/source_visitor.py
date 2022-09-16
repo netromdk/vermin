@@ -1370,7 +1370,10 @@ ast.Call(func=ast.Name)."""
         has_du()
 
       def is_none_or_name(node):
-        return is_none_node(node) or isinstance(node, ast.Name) and node.id not in self.__name_res
+        return is_none_node(node) or \
+          (isinstance(node, ast.Name) and
+           ((node.id not in self.__name_res and node.id not in self.__user_defs) or
+            (node.id in self.__name_res_type)))
       if is_none_or_name(node.left) and is_none_or_name(node.right):
         self.__union_types = True
         self.__vvprint("union types as `X | Y`", line=node.lineno, versions=[None, (3, 10)],
@@ -1649,6 +1652,15 @@ ast.Call(func=ast.Name)."""
 
     # |=
     if isinstance(node.op, ast.BitOr):
+      def is_union_type(node):
+        return isinstance(node, ast.Name) and \
+           ((node.id not in self.__name_res and node.id not in self.__user_defs) or
+            # AugAssign: both variable names are the same so require two types.
+            (node.id in self.__name_res_type and len(self.__name_res_type[node.id]) > 1) or
+            # Unless it's the target value, then require not name res, is user def and res type.
+            (node.id not in self.__name_res and node.id in self.__user_defs and \
+             node.id in self.__name_res_type))
+
       # Example:
       # AugAssign(target=Name(id='d', ctx=Store()),
       #           op=BitOr(),
@@ -1666,8 +1678,7 @@ ast.Call(func=ast.Name)."""
       # AugAssign(target=Name(id='a', ctx=Store()),
       #           op=BitOr(),
       #           value=Name(id='int', ctx=Load()))
-      elif isinstance(node.value, ast.Name) and node.value.id not in self.__name_res and\
-           isinstance(node.target, ast.Name) and node.target.id not in self.__name_res:
+      elif is_union_type(node.target) and is_union_type(node.value):
         self.__union_types = True
         self.__vvprint("union types as `a = X; a |= Y`", line=node.lineno, versions=[None, (3, 10)],
                        plural=True)
