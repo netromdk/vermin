@@ -261,7 +261,7 @@ import argparse    # 2.3, 3.1
 
     code = "x: int"
     visitor = self.visit(code)
-    self.assertEqual("""L1: variable annotations requires !2, 3.6
+    self.assertEqual("""L1: variable annotations require !2, 3.6
 """, visitor.output_text())
 
     # No violation.

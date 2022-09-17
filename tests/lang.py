@@ -723,10 +723,10 @@ with a as b, c as d: pass""")
     self.assertTrue(visitor.with_parentheses())
     self.assertOnlyIn((3, 9), visitor.minimum_versions())
     self.assertEqual(visitor.output_text(), """L1: `with` requires 2.5, 3.0
-L1: multiple context expressions in a `with` statement requires 2.7, 3.1
-L1: multiple context expressions in a `with` statement with parentheses requires !2, 3.9
+L1: multiple context expressions in a `with` statement require 2.7, 3.1
+L1: multiple context expressions in a `with` statement with parentheses require !2, 3.9
 L2: `with` requires 2.5, 3.0
-L2: multiple context expressions in a `with` statement requires 2.7, 3.1
+L2: multiple context expressions in a `with` statement require 2.7, 3.1
 """)
 
   @VerminTest.skipUnlessVersion(3, 9)
@@ -739,10 +739,10 @@ with (a as b, c as d): pass""")
     self.assertTrue(visitor.with_parentheses())
     self.assertOnlyIn((3, 9), visitor.minimum_versions())
     self.assertEqual(visitor.output_text(), """L1: `with` requires 2.5, 3.0
-L1: multiple context expressions in a `with` statement requires 2.7, 3.1
+L1: multiple context expressions in a `with` statement require 2.7, 3.1
 L2: `with` requires 2.5, 3.0
-L2: multiple context expressions in a `with` statement requires 2.7, 3.1
-L2: multiple context expressions in a `with` statement with parentheses requires !2, 3.9
+L2: multiple context expressions in a `with` statement require 2.7, 3.1
+L2: multiple context expressions in a `with` statement with parentheses require !2, 3.9
 """)
 
   @VerminTest.skipUnlessVersion(3, 5)
