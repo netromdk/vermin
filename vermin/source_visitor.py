@@ -424,7 +424,8 @@ class SourceVisitor(ast.NodeVisitor):
         return True
     return False
 
-  def __add_versions_entity(self, mins, versions, info=None, vvprint=False, entity=None):
+  def __add_versions_entity(self, mins, versions, info=None, vvprint=False, entity=None,
+                            plural=None):
     # Whether to show verbose print/version info. If there are violations in show-only-violations
     # mode, then show results. Otherwise, if it isn't that mode, it will fake being "violated" to
     # ensure the rules are shown.
@@ -435,7 +436,7 @@ class SourceVisitor(ast.NodeVisitor):
       else:
         self.__info_versions[versions] = [info]
       if vvprint:
-        self.__vvprint(info, entity=entity, versions=versions)
+        self.__vvprint(info, entity=entity, versions=versions, plural=plural)
     return combine_versions(mins, versions, self.__config, self.__info_versions)
 
   def minimum_versions(self):
@@ -553,7 +554,8 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.multi_withitem():
       mins = self.__add_versions_entity(mins, ((2, 7), (3, 1)),
-                                        "multiple context expressions in a 'with' statement")
+                                        "multiple context expressions in a 'with' statement",
+                                        plural=True)
 
     if self.with_parentheses():
       msg = "multiple context expressions in a `with` statement with parentheses"
@@ -567,7 +569,7 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.ellipsis_out_of_slices():
       mins = self.__add_versions_entity(mins, (None, (3, 0)),
-                                        "ellipsis literal (`...`) out of slices")
+                                        "ellipsis literal (`...`) out of slices", plural=False)
 
     if self.bytes_format():
       # Since byte strings are a `str` synonym as of 2.6+, and thus also supports `%` formatting,
@@ -598,10 +600,12 @@ class SourceVisitor(ast.NodeVisitor):
       mins = self.__add_versions_entity(mins, (None, (3, 10)), "pattern matching")
 
     if self.union_types():
-      mins = self.__add_versions_entity(mins, (None, (3, 10)), "union types as `X | Y`")
+      mins = self.__add_versions_entity(mins, (None, (3, 10)), "union types as `X | Y`",
+                                        plural=True)
 
     if self.super_no_args():
-      mins = self.__add_versions_entity(mins, (None, (3, 0)), "super() without arguments")
+      mins = self.__add_versions_entity(mins, (None, (3, 0)), "super() without arguments",
+                                        plural=False)
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
@@ -686,7 +690,8 @@ class SourceVisitor(ast.NodeVisitor):
     if not self.__config.quiet():  # pragma: no cover
       self.__output_text.append(msg)
 
-  def __verbose_print(self, msg, level, entity=None, line=None, versions=None):  # pragma: no cover
+  # pragma: no cover
+  def __verbose_print(self, msg, level, entity=None, line=None, versions=None, plural=None):
     # If there aren't any violations in show-only-violations mode, then return. Note that if it
     # isn't that mode, it will fake being "violated" to ensure the rules are shown.
     if not self.__violates_target_versions(versions):
@@ -709,20 +714,21 @@ class SourceVisitor(ast.NodeVisitor):
     elif line is None and config_level > 2:
       line = self.__line
 
-    msg = fmt.format_output_line(msg, self.__path, line, col, versions)
+    msg = fmt.format_output_line(msg, self.__path, line, col, versions, plural)
     self.__output_text.append(msg)
 
-  def __vprint(self, msg, entity=None):  # pragma: no cover
-    self.__verbose_print(msg, 1, entity)
+  def __vprint(self, msg, entity=None, plural=None):  # pragma: no cover
+    self.__verbose_print(msg, 1, entity, plural=plural)
 
-  def __vvprint(self, msg, entity=None, line=None, versions=None):  # pragma: no cover
-    self.__verbose_print(msg, 2, entity, line, versions)
+  def __vvprint(self, msg, entity=None, line=None, versions=None, plural=None):  # pragma: no cover
+    self.__verbose_print(msg, 2, entity, line, versions, plural=plural)
 
-  def __vvvprint(self, msg, entity=None, line=None, versions=None):  # pragma: no cover
-    self.__verbose_print(msg, 3, entity, line, versions)
+  def __vvvprint(self, msg, entity=None, line=None, versions=None, plural=None):  # pragma: no cover
+    self.__verbose_print(msg, 3, entity, line, versions, plural=plural)
 
-  def __vvvvprint(self, msg, entity=None, line=None, versions=None):  # pragma: no cover
-    self.__verbose_print(msg, 4, entity, line, versions)
+  # pragma: no cover
+  def __vvvvprint(self, msg, entity=None, line=None, versions=None, plural=None):
+    self.__verbose_print(msg, 4, entity, line, versions, plural=plural)
 
   def __add_module(self, module, line=None, col=None):
     if module in self.__user_defs:  # pragma: no cover
@@ -1174,7 +1180,7 @@ class SourceVisitor(ast.NodeVisitor):
             self.__vvprint("modular inverse pow()", versions=[None, (3, 8)])
         elif func.id == "super" and len(node.args) == 0:
           self.__super_no_args = True
-          self.__vvprint("super() without arguments", versions=[None, (3, 0)])
+          self.__vvprint("super() without arguments", versions=[None, (3, 0)], plural=False)
       elif hasattr(func, "attr"):
         attr = func.attr
         if attr == "format" and hasattr(func, "value") and isinstance(func.value, ast.Str) and \
@@ -1351,7 +1357,8 @@ ast.Call(func=ast.Name)."""
         return is_none_node(node) or isinstance(node, ast.Name) and node.id not in self.__name_res
       if is_none_or_name(node.left) and is_none_or_name(node.right):
         self.__union_types = True
-        self.__vvprint("union types as `X | Y`", line=node.lineno, versions=[None, (3, 10)])
+        self.__vvprint("union types as `X | Y`", line=node.lineno, versions=[None, (3, 10)],
+                       plural=True)
 
     self.generic_visit(node)
 
@@ -1646,7 +1653,8 @@ ast.Call(func=ast.Name)."""
       elif isinstance(node.value, ast.Name) and node.value.id not in self.__name_res and\
            isinstance(node.target, ast.Name) and node.target.id not in self.__name_res:
         self.__union_types = True
-        self.__vvprint("union types as `a = X; a |= Y`", line=node.lineno, versions=[None, (3, 10)])
+        self.__vvprint("union types as `a = X; a |= Y`", line=node.lineno, versions=[None, (3, 10)],
+                       plural=True)
 
     self.generic_visit(node)
 
@@ -1795,11 +1803,11 @@ ast.Call(func=ast.Name)."""
     seen_yield = self.__seen_yield
     if self.__handle_FunctionDef(node):
       self.__coroutines = True
-      self.__vvprint("coroutines (async)", line=node.lineno, versions=[None, (3, 5)])
+      self.__vvprint("coroutines (async)", line=node.lineno, versions=[None, (3, 5)], plural=True)
       if self.__seen_yield > seen_yield and self.__seen_await > seen_await:
         self.__async_generator = True
         self.__vvprint("async generators (await and yield in same func)",
-                       line=node.lineno, versions=[None, (3, 6)])
+                       line=node.lineno, versions=[None, (3, 6)], plural=True)
 
       # Reset to seen awaits/yields before async function.
       self.__seen_await = seen_await
@@ -1814,7 +1822,7 @@ ast.Call(func=ast.Name)."""
     if self.__is_no_line(node.lineno):
       return
     self.__coroutines = True
-    self.__vvprint("coroutines (await)", versions=[None, (3, 5)])
+    self.__vvprint("coroutines (await)", versions=[None, (3, 5)], plural=True)
     self.__seen_await += 1
     self.generic_visit(node)
 
@@ -2041,7 +2049,7 @@ ast.Call(func=ast.Name)."""
         # and cannot be differentiated from manually writing multiple layers of `with` statements.
         self.__multi_withitem = True
         self.__vvprint("multiple context expressions in a `with` statement",
-                       line=node.lineno, versions=[(2, 7), (3, 1)])
+                       line=node.lineno, versions=[(2, 7), (3, 1)], plural=True)
 
         # Check for "with (" with "with" part on the first line such that it doesn't match with
         # "with (" further down. Note that we don't check for the ending parenthesis because that
@@ -2227,7 +2235,8 @@ ast.Call(func=ast.Name)."""
     # Force identity testing instead of equality testing.
     if not any(n is node for n in self.__ellipsis_nodes_in_slices):
       self.__ellipsis_out_of_slices = True
-      self.__vvprint("ellipsis literal (`...`) out of slices", versions=[None, (3, 0)])
+      self.__vvprint("ellipsis literal (`...`) out of slices", versions=[None, (3, 0)],
+                     plural=False)
 
   # Ignore unused nodes as a speed optimization.
 

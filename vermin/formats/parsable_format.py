@@ -17,7 +17,7 @@ class ParsableFormat(Format):
     """Never skip."""
     return False
 
-  def format_output_line(self, msg, path=None, line=None, col=None, versions=None):
+  def format_output_line(self, msg, path=None, line=None, col=None, versions=None, plural=None):
     vers = version_strings(versions, ":") if versions is not None else ":"
     if msg is None:
       msg = ""
