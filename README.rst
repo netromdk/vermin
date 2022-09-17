@@ -1,4 +1,4 @@
-|Test Status| |Analyze Status| |CodeQL Status| |Snyk Status| |Coverage| |PyPI version| |Commits since last| |Downloads| |CII best practices|
+|Test Status| |Analyze Status| |CodeQL Status| |Coverage| |PyPI version| |Commits since last| |Downloads| |CII best practices|
 
 .. |PyPI version| image:: https://badge.fury.io/py/vermin.svg
    :target: https://pypi.python.org/pypi/vermin/
