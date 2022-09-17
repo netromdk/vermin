@@ -33,8 +33,10 @@ processing."""
     """Whether or not to skip outputting a line."""
 
   @abstractmethod
-  def format_output_line(self, msg, path=None, line=None, col=None, versions=None):
-    """Yield formatted output line given file name, line, column, text, minimum versions."""
+  def format_output_line(self, msg, path=None, line=None, col=None, versions=None, plural=None):
+    """Yield formatted output line given file name, line, column, text, minimum versions. The
+    plurality can be overridden but will otherwise be controlled by ending with 's' or not.
+    """
 
   @abstractmethod
   def output_result(self, proc_res):

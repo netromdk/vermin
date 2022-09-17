@@ -11,7 +11,9 @@ class DefaultFormat(Format):
     return self.config().quiet()
 
   @Format.require_config
-  def format_output_line(self, msg, path=None, line=None, col=None, versions=None):
+  def format_output_line(self, msg, path=None, line=None, col=None, versions=None, plural=None):
+    if plural is None:
+      plural = msg.strip().endswith("s")
     if self.config().verbose() < 3:
       line = None
       col = None
@@ -20,7 +22,8 @@ class DefaultFormat(Format):
     lc = "{}{}".format(line, col)
     if len(lc) > 0:
       lc += ": "
-    vers = " requires {}".format(version_strings(versions)) if versions is not None else ""
+    vers = " require{} {}".format("s" if not plural else "", version_strings(versions)) \
+      if versions is not None else ""
     return "{}{}{}".format(lc, msg, vers)
 
   @Format.require_config

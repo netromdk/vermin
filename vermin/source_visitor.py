@@ -424,7 +424,8 @@ class SourceVisitor(ast.NodeVisitor):
         return True
     return False
 
-  def __add_versions_entity(self, mins, versions, info=None, vvprint=False, entity=None):
+  def __add_versions_entity(self, mins, versions, info=None, vvprint=False, entity=None,
+                            plural=None):
     # Whether to show verbose print/version info. If there are violations in show-only-violations
     # mode, then show results. Otherwise, if it isn't that mode, it will fake being "violated" to
     # ensure the rules are shown.
@@ -435,7 +436,7 @@ class SourceVisitor(ast.NodeVisitor):
       else:
         self.__info_versions[versions] = [info]
       if vvprint:
-        self.__vvprint(info, entity=entity, versions=versions)
+        self.__vvprint(info, entity=entity, versions=versions, plural=plural)
     return combine_versions(mins, versions, self.__config, self.__info_versions)
 
   def minimum_versions(self):
@@ -686,7 +687,8 @@ class SourceVisitor(ast.NodeVisitor):
     if not self.__config.quiet():  # pragma: no cover
       self.__output_text.append(msg)
 
-  def __verbose_print(self, msg, level, entity=None, line=None, versions=None):  # pragma: no cover
+  # pragma: no cover
+  def __verbose_print(self, msg, level, entity=None, line=None, versions=None, plural=None):
     # If there aren't any violations in show-only-violations mode, then return. Note that if it
     # isn't that mode, it will fake being "violated" to ensure the rules are shown.
     if not self.__violates_target_versions(versions):
@@ -709,20 +711,21 @@ class SourceVisitor(ast.NodeVisitor):
     elif line is None and config_level > 2:
       line = self.__line
 
-    msg = fmt.format_output_line(msg, self.__path, line, col, versions)
+    msg = fmt.format_output_line(msg, self.__path, line, col, versions, plural)
     self.__output_text.append(msg)
 
-  def __vprint(self, msg, entity=None):  # pragma: no cover
-    self.__verbose_print(msg, 1, entity)
+  def __vprint(self, msg, entity=None, plural=None):  # pragma: no cover
+    self.__verbose_print(msg, 1, entity, plural=plural)
 
-  def __vvprint(self, msg, entity=None, line=None, versions=None):  # pragma: no cover
-    self.__verbose_print(msg, 2, entity, line, versions)
+  def __vvprint(self, msg, entity=None, line=None, versions=None, plural=None):  # pragma: no cover
+    self.__verbose_print(msg, 2, entity, line, versions, plural=plural)
 
-  def __vvvprint(self, msg, entity=None, line=None, versions=None):  # pragma: no cover
-    self.__verbose_print(msg, 3, entity, line, versions)
+  def __vvvprint(self, msg, entity=None, line=None, versions=None, plural=None):  # pragma: no cover
+    self.__verbose_print(msg, 3, entity, line, versions, plural=plural)
 
-  def __vvvvprint(self, msg, entity=None, line=None, versions=None):  # pragma: no cover
-    self.__verbose_print(msg, 4, entity, line, versions)
+  # pragma: no cover
+  def __vvvvprint(self, msg, entity=None, line=None, versions=None, plural=None):
+    self.__verbose_print(msg, 4, entity, line, versions, plural=plural)
 
   def __add_module(self, module, line=None, col=None):
     if module in self.__user_defs:  # pragma: no cover
