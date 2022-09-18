@@ -1,5 +1,5 @@
 import sys
-from os.path import abspath
+from os.path import abspath, dirname, isdir
 from copy import deepcopy
 
 from .config import Config
@@ -22,14 +22,14 @@ def main():
   if args["code"] != 0:
     sys.exit(args["code"])  # pragma: no cover
 
-  paths = args["paths"]
+  input_paths = args["paths"]
   parsable = isinstance(config.format(), ParsableFormat)
 
   # Detect paths, remove duplicates, and sort for deterministic results.
   if not parsable:
     vprint("Detecting python files..", config)
   if config.make_paths_absolute():
-    paths = [abspath(p) for p in paths]
+    input_paths = [abspath(p) for p in input_paths]
 
   # Parsable format ignores paths with ":" in particular because it interferes with the format that
   # uses ":" a lot.
@@ -37,7 +37,7 @@ def main():
   if parsable and not sys.platform.startswith("win32"):
     ignore_chars = [":", "\n"]
 
-  paths = list(set(detect_paths(paths, hidden=config.analyze_hidden(),
+  paths = list(set(detect_paths(input_paths, hidden=config.analyze_hidden(),
                                 processes=config.processes(), ignore_chars=ignore_chars,
                                 scan_symlink_folders=config.scan_symlink_folders(), config=config)))
   paths.sort()
@@ -104,6 +104,25 @@ def main():
         "If so, try using the following for better results: {}".
         format("".join([" --backport {}".format(n) for n in unique_bps]).strip())
       ])
+
+    # Find immediate parent folders of each detected path to find shared folders, and remove
+    # immediate subfolders of listed folders.
+    detected_folders = set()
+    for path in input_paths:
+      detected_folders.add(path if isdir(path) else dirname(path))
+    remove_folders = set()
+    for folder in detected_folders:
+      if dirname(folder) in detected_folders:
+        remove_folders.add(folder)
+    for folder in remove_folders:
+      detected_folders.remove(folder)
+    detected_folders = list(detected_folders)
+    detected_folders.sort()
+    paths_amount = len(input_paths)
+    folders_amount = len(detected_folders)
+    if paths_amount >= 3 and paths_amount > folders_amount:
+      tips.append(["Simplify input paths ({}) by using the following folders ({}) instead:".
+                   format(paths_amount, folders_amount)] + detected_folders)
 
     if not used_novermin and config.parse_comments():
       tips.append(["Since '# novm' or '# novermin' weren't used, a speedup can be achieved using: "
