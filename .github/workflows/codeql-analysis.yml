@@ -1,11 +1,10 @@
 name: "CodeQL"
 
-# On all pushes/PRs to master branche and every sunday at 2:34.
+# On all PRs to master branches and every sunday at 2:34. Not when pushing to master because PRs are
+# required and otherwise it'll run two times: once for the PR and again when the accepted PR is
+# merged to master.
 on:
-  push:
-    branches: [ master ]
   pull_request:
-    # The branches below must be a subset of the branches above
     branches: [ master ]
   schedule:
     - cron: '34 2 * * 6'
