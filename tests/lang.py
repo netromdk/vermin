@@ -1926,9 +1926,28 @@ a |= Bar
     self.assertTrue(visitor.union_types())
     self.assertOnlyIn((3, 10), visitor.minimum_versions())
 
+    # Issue 103: Don't judge `|` operator applied to values, and not types, as a union of types.
+    visitor = self.visit("""
+index = 0
+c_bitmap = [42]
+exec_result = [42]
+global_byte = c_bitmap[index]
+local_byte = exec_result[index]
+if (global_byte | local_byte) != global_byte:
+  pass
+""")
+    self.assertFalse(visitor.union_types())
+
     if current_version() >= (3, 10):
       visitor = self.visit("""
 def square(number) -> int | float:
+  return number ** 2
+""")
+      self.assertTrue(visitor.union_types())
+      self.assertOnlyIn((3, 10), visitor.minimum_versions())
+
+      visitor = self.visit("""
+def square(number: int | float):
   return number ** 2
 """)
       self.assertTrue(visitor.union_types())

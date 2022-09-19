@@ -15,6 +15,8 @@ BYTES_DIRECTIVE_REGEX = STRFTIME_DIRECTIVE_REGEX
 STR_27_FORMAT_REGEX = re.compile(r"(?<!{){}(?!})")
 WITH_PAREN_REGEX = re.compile(r"with[\s\\]*\(")
 
+MAJOR_VER = sys.version_info.major
+
 def is_int_node(node):
   return (isinstance(node, ast.Num) and isinstance(node.n, int)) or \
     (isinstance(node, ast.UnaryOp) and isinstance(node.operand, ast.Num) and
@@ -164,7 +166,7 @@ class SourceVisitor(ast.NodeVisitor):
     # Name -> name resolutions.
     self.__name_res = {}
 
-    # Name -> type resolutions.
+    # Name -> type resolutions. Is a dictionary of sets.
     self.__name_res_type = {}
 
     # User-defined symbols to be ignored.
@@ -859,7 +861,13 @@ class SourceVisitor(ast.NodeVisitor):
     self.__name_res[source] = target
 
   def __add_name_res_type(self, source, target):
-    self.__name_res_type[source] = target
+    """Keep source -> target in a dictionary. If source already exists then convert target to a set
+    and add the new target value to it (if different).
+    """
+    if source not in self.__name_res_type:
+      self.__name_res_type[source] = {target}
+    else:
+      self.__name_res_type[source].add(target)
 
   def __is_builtin_type(self, name):
     return name in self.__builtin_types
@@ -899,7 +907,7 @@ class SourceVisitor(ast.NodeVisitor):
           full_name.append("list")
       elif not primi_type and isinstance(attr, ast.Str):
         # pylint: disable=undefined-variable
-        if sys.version_info.major == 2 and isinstance(attr.s, unicode):  # novm
+        if MAJOR_VER == 2 and isinstance(attr.s, unicode):  # novm
           name = "unicode"  # pragma: no cover
         else:
           name = "str"
@@ -912,7 +920,7 @@ class SourceVisitor(ast.NodeVisitor):
           name = "int"
         elif t == float:
           name = "float"
-        if sys.version_info.major == 2 and t == long:  # novm # pylint: disable=undefined-variable
+        if MAJOR_VER == 2 and t == long:  # novm # pylint: disable=undefined-variable
           name = "long"  # pragma: no cover
         if name is not None and len(full_name) == 0 or \
           (full_name[0] != name and len(full_name) == 1):
@@ -949,20 +957,28 @@ class SourceVisitor(ast.NodeVisitor):
       value_name = "list"
     elif isinstance(node.value, ast.Str):
       # pylint: disable=undefined-variable
-      if sys.version_info.major == 2 and isinstance(node.value.s, unicode):  # novm
+      if MAJOR_VER == 2 and isinstance(node.value.s, unicode):  # novm
         value_name = "unicode"  # pragma: no cover
       else:
         value_name = "str"
     elif isinstance(node.value, ast.Num):
-      t = type(node.value.n)
-      if t == int:
+      n = node.value.n
+      if isinstance(n, int):
         value_name = "int"
-      elif sys.version_info.major == 2 and t == long:  # novm # pylint: disable=undefined-variable
+      elif MAJOR_VER == 2 and isinstance(n, long):  # novm # pylint: disable=undefined-variable
         value_name = "long"  # pragma: no cover
-      elif t == float:
+      elif isinstance(n, float):
         value_name = "float"
     elif hasattr(ast, "Bytes") and isinstance(node.value, ast.Bytes):
       value_name = "bytes"
+    elif hasattr(ast, "Constant") and isinstance(node.value, ast.Constant):
+      v = node.value.value
+      if isinstance(v, int):
+        value_name = "int"
+      elif isinstance(v, float):
+        value_name = "float"
+      elif v is None:
+        type_name = "None"
 
     # When a type name is used, and not a type instance.
     elif isinstance(node.value, ast.Name):
@@ -1354,7 +1370,10 @@ ast.Call(func=ast.Name)."""
         has_du()
 
       def is_none_or_name(node):
-        return is_none_node(node) or isinstance(node, ast.Name) and node.id not in self.__name_res
+        return is_none_node(node) or \
+          (isinstance(node, ast.Name) and
+           ((node.id not in self.__name_res and node.id not in self.__user_defs) or
+            (node.id in self.__name_res_type)))
       if is_none_or_name(node.left) and is_none_or_name(node.right):
         self.__union_types = True
         self.__vvprint("union types as `X | Y`", line=node.lineno, versions=[None, (3, 10)],
@@ -1633,6 +1652,15 @@ ast.Call(func=ast.Name)."""
 
     # |=
     if isinstance(node.op, ast.BitOr):
+      def is_union_type(node):
+        return isinstance(node, ast.Name) and \
+           ((node.id not in self.__name_res and node.id not in self.__user_defs) or
+            # AugAssign: both variable names are the same so require two types.
+            (node.id in self.__name_res_type and len(self.__name_res_type[node.id]) > 1) or
+            # Unless it's the target value, then require not name res, is user def and res type.
+            (node.id not in self.__name_res and node.id in self.__user_defs and \
+             node.id in self.__name_res_type))
+
       # Example:
       # AugAssign(target=Name(id='d', ctx=Store()),
       #           op=BitOr(),
@@ -1650,8 +1678,7 @@ ast.Call(func=ast.Name)."""
       # AugAssign(target=Name(id='a', ctx=Store()),
       #           op=BitOr(),
       #           value=Name(id='int', ctx=Load()))
-      elif isinstance(node.value, ast.Name) and node.value.id not in self.__name_res and\
-           isinstance(node.target, ast.Name) and node.target.id not in self.__name_res:
+      elif is_union_type(node.target) and is_union_type(node.value):
         self.__union_types = True
         self.__vvprint("union types as `a = X; a |= Y`", line=node.lineno, versions=[None, (3, 10)],
                        plural=True)
@@ -1830,6 +1857,7 @@ ast.Call(func=ast.Name)."""
     if self.__is_no_line(node.lineno):
       return
     self.__add_user_def(node.name)
+    self.__add_name_res_type(node.name, node.name)
 
     if getattr(node, "decorator_list", None):
       decos = node.decorator_list
@@ -2127,9 +2155,10 @@ ast.Call(func=ast.Name)."""
         full_coll_name = dotted_name([self.__import_mem_mod[coll_name], coll_name])
         if full_coll_name in BUILTIN_GENERIC_ANNOTATION_TYPES:
           match(full_coll_name)
-      elif coll_name in self.__name_res_type and\
-           self.__name_res_type[coll_name] in BUILTIN_GENERIC_ANNOTATION_TYPES:
-        match(self.__name_res_type[coll_name])
+      elif coll_name in self.__name_res_type:
+        for t in self.__name_res_type[coll_name]:
+          if t in BUILTIN_GENERIC_ANNOTATION_TYPES:
+            match(t)
 
     slices_node = node.slice
     if hasattr(ast, 'ExtSlice') and isinstance(slices_node, ast.ExtSlice):
