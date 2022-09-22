@@ -31,9 +31,9 @@ BACKPORTS = (
 
 class Backports:
   @staticmethod
-  def str(indent=0):
+  def str(indent=0, backports=BACKPORTS):
     return format_title_descs(((mod, ["{} ({})".format(link[0], version_strings(mins))])
-                               for (mod, link, mins) in BACKPORTS), Backports.modules(), indent)
+                               for (mod, link, mins) in backports), Backports.modules(), indent)
 
   @staticmethod
   def modules():

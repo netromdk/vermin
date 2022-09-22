@@ -311,6 +311,11 @@ class Arguments:
         name = self.__args[i + 1]
         if not config.add_backport(name):
           print("Unknown backport: {}".format(name))
+          backports = Backports.expand_versions(Backports.version_filter(name))
+          if len(backports) > 0:
+            print("Did you mean one of the following?")
+            print(Backports.str(2, backports))
+          print("Get the full list of backports via `--help`.")
           return {"code": 1}
         path_pos += 2
       elif arg == "--no-backport":
