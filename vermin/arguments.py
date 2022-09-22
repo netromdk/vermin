@@ -156,7 +156,9 @@ class Arguments:
       print("\n  [--backport <name>] ...\n"
             "        Some features are sometimes backported into packages, in repositories such\n"
             "        as PyPi, that are widely used but aren't in the standard language. If such a\n"
-            "        backport is specified as being used, the results will reflect that instead."
+            "        backport is specified as being used, the results will reflect that instead.\n"
+            "        Versioned backports are only used when minimum versions change. Unversioned\n"
+            "        backports must be the newest among versioned and unversioned."
             "\n\n"
             "        Supported backports:\n{}".format(Backports.str(10)))
       print("\n  --no-backport (default)\n"
@@ -309,6 +311,11 @@ class Arguments:
         name = self.__args[i + 1]
         if not config.add_backport(name):
           print("Unknown backport: {}".format(name))
+          backports = Backports.expand_versions(Backports.version_filter(name))
+          if len(backports) > 0:
+            print("Did you mean one of the following?")
+            print(Backports.str(2, backports))
+          print("Get the full list of backports via `--help`.")
           return {"code": 1}
         path_pos += 2
       elif arg == "--no-backport":

@@ -8,6 +8,7 @@ from .detection import detect_paths
 from .processor import Processor
 from .arguments import Arguments
 from .utility import version_strings, dotted_name
+from .backports import Backports
 
 def main():
   config = Config()
@@ -91,7 +92,8 @@ def main():
         "But check the caveat section: https://github.com/netromdk/vermin#caveats"
       ])
 
-    unique_bps = sorted(backports - config.backports())
+    # Only look at unversioned backports.
+    unique_bps = sorted(backports - Backports.unversioned_filter(config.backports()))
     if len(unique_bps) > 0:
       tips.append([
         "You're using potentially backported modules: {}".format(", ".join(unique_bps)),

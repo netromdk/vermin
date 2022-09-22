@@ -44,7 +44,8 @@ codecs error handler names, **20** codecs encodings, **75** builtin generic anno
 builtin dict union (``|``) types, **8** builtin dict union merge (``|=``) types, and **2** user
 function decorators.
 
-Backports of the standard library, like ``typing``, can be enabled for better results.
+Backports of the standard library, like ``typing``, can be enabled for better results. Get full list
+of backports via ``--help``.
 
 The project is fairly well-tested with **3598** unit and integration tests that are executed on
 Linux, macOS, and Windows.

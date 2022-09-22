@@ -1,6 +1,16 @@
+from .backports import Backports
+
 def bp(name, config):
   """Checking if backport is used."""
   return name in config.backports()
+
+def bpv(name, default_mins, config):
+  """Checking if backport, or any versioned variant thereof, are used and returns the minimum
+  versions, and returns default versions otherwise."""
+  for (name_, _, mins) in Backports.expand_versions(name):
+    if bp(name_, config):
+      return mins
+  return default_mins
 
 # Module requirements: name -> min version per major or None if N.A.
 def MOD_REQS(config):
@@ -20,9 +30,9 @@ def MOD_REQS(config):
     "_markupbase": (None, (3, 0)),
     "_winreg": ((2, 0), None),
     "abc": ((2, 6), (3, 0)),
-    "argparse": ((2, 7), (3, 2)) if not bp("argparse", config) else ((2, 3), (3, 1)),
+    "argparse": bpv("argparse", ((2, 7), (3, 2)), config),
     "ast": ((2, 6), (3, 0)),
-    "asyncio": (None, (3, 4)) if not bp("asyncio", config) else (None, (3, 3)),
+    "asyncio": bpv("asyncio", (None, (3, 4)), config),
     "bisect": ((2, 1), (3, 0)),
     "builtins": (None, (3, 0)),
     "bz2": ((2, 3), (3, 0)),
@@ -31,15 +41,15 @@ def MOD_REQS(config):
     "collections": ((2, 4), (3, 0)),
     "collections.abc": (None, (3, 3)),
     "concurrent.futures": (None, (3, 2)),
-    "configparser": (None if not bp("configparser", config) else (2, 6), (3, 0)),
+    "configparser": bpv("configparser", (None, (3, 0)), config),
     "contextlib": ((2, 5), (3, 0)),
-    "contextvars": (None, (3, 7)) if not bp("contextvars", config) else (None, (3, 5)),
+    "contextvars": bpv("contextvars", (None, (3, 7)), config),
     "cookielib": ((2, 4), None),
     "copy_reg": ((2, 0), None),
     "copyreg": (None, (3, 0)),
     "csv": ((2, 3), (3, 0)),
     "ctypes": ((2, 5), (3, 0)),
-    "dataclasses": (None, (3, 7)) if not bp("dataclasses", config) else (None, (3, 6)),
+    "dataclasses": bpv("dataclasses", (None, (3, 7)), config),
     "datetime": ((2, 3), (3, 0)),
     "dbm.dumb": (None, (3, 0)),
     "dbm.gnu": (None, (3, 0)),
@@ -62,8 +72,8 @@ def MOD_REQS(config):
     "encodings.idna": ((2, 3), (3, 0)),
     "encodings.utf_8_sig": ((2, 5), (3, 0)),
     "ensurepip": ((2, 7), (3, 4)),
-    "enum": (None, (3, 4)) if not bp("enum", config) else ((2, 4), (3, 3)),
-    "faulthandler": (None, (3, 3)) if not bp("faulthandler", config) else ((2, 6), (3, 0)),
+    "enum": bpv("enum", (None, (3, 4)), config),
+    "faulthandler": bpv("faulthandler", (None, (3, 3)), config),
     "fractions": ((2, 6), (3, 0)),
     "functools": ((2, 5), (3, 0)),
     "future_builtins": ((2, 6), None),
@@ -76,12 +86,12 @@ def MOD_REQS(config):
     "htmlentitydefs": ((2, 0), None),
     "http": (None, (3, 0)),
     "http.cookiejar": (None, (3, 0)),
-    "importlib": ((2, 7), (3, 1)) if not bp("importlib", config) else ((2, 3), (3, 0)),
+    "importlib": bpv("importlib", ((2, 7), (3, 1)), config),
     "importlib.metadata": (None, (3, 8)),
     "importlib.resources": (None, (3, 7)),
     "inspect": ((2, 1), (3, 0)),
     "io": ((2, 6), (3, 0)),
-    "ipaddress": (None, (3, 3)) if not bp("ipaddress", config) else ((2, 6), (3, 2)),
+    "ipaddress": bpv("ipaddress", (None, (3, 3)), config),
     "itertools": ((2, 3), (3, 0)),
     "json": ((2, 6), (3, 0)),
     "logging": ((2, 3), (3, 0)),
@@ -113,7 +123,7 @@ def MOD_REQS(config):
     "spwd": ((2, 5), (3, 0)),
     "sqlite3": ((2, 5), (3, 0)),
     "ssl": ((2, 6), (3, 0)),
-    "statistics": (None, (3, 4)) if not bp("statistics", config) else ((2, 6), (3, 4)),
+    "statistics": bpv("statistics", (None, (3, 4)), config),
     "stringprep": ((2, 3), (3, 0)),
     "subprocess": ((2, 4), (3, 0)),
     "sysconfig": ((2, 7), (3, 2)),
@@ -128,10 +138,8 @@ def MOD_REQS(config):
     "timeit": ((2, 3), (3, 0)),
     "tkinter": (None, (3, 0)),
     "tracemalloc": (None, (3, 4)),
-    # Notes:
-    #  Although `typing` backport now requires 2.7 or 3.4+, it originally supported 3.2 and 3.3.
-    #  See: https://github.com/python/typing/blob/02c9d79eb7/prototyping/setup.py
-    "typing": (None, (3, 5)) if not bp("typing", config) else ((2, 7), (3, 2)),
+    "typing": bpv("typing", (None, (3, 5)), config),
+    "typing_extensions": bpv("typing_extensions", ((0, 0), (0, 0)), config),
     "unittest": ((2, 1), (3, 0)),
     "unittest.mock": (None, (3, 3)),
     "urllib.parse": (None, (3, 0)),
@@ -348,7 +356,7 @@ def MOD_MEM_REQS(config):
     "typing.TypedDict": (None, (3, 8)) if not bp("typing", config) else ((2, 7), (3, 8)),
     "unittest.IsolatedAsyncioTestCase": (None, (3, 8)),
     "unittest.TextTestResult": ((2, 7), (3, 2)),
-    "unittest.mock.AsyncMock": (None, (3, 8)) if not bp("mock", config) else (None, (3, 6)),
+    "unittest.mock.AsyncMock": bpv("mock", (None, (3, 8)), config),
     "urllib.parse.DefragResult": (None, (3, 2)),
     "urllib.parse.DefragResultBytes": (None, (3, 2)),
     "urllib.parse.ParseResultBytes": (None, (3, 2)),
@@ -682,18 +690,12 @@ def MOD_MEM_REQS(config):
     "collections.deque.remove": ((2, 5), (3, 0)),
     "collections.deque.reverse": ((2, 7), (3, 2)),
     "compileall.compile_file": ((2, 7), (3, 2)),
-    "configparser.ConfigParser.read_dict": (None, (3, 2)) if not bp("configparser", config)
-    else ((2, 6), (3, 0)),
-    "configparser.ConfigParser.read_file": (None, (3, 2)) if not bp("configparser", config)
-    else ((2, 6), (3, 0)),
-    "configparser.ConfigParser.read_string": (None, (3, 2)) if not bp("configparser", config)
-    else ((2, 6), (3, 0)),
-    "configparser.RawConfigParser.read_dict": (None, (3, 2)) if not bp("configparser", config)
-    else ((2, 6), (3, 0)),
-    "configparser.RawConfigParser.read_file": (None, (3, 2)) if not bp("configparser", config)
-    else ((2, 6), (3, 0)),
-    "configparser.RawConfigParser.read_string": (None, (3, 2)) if not bp("configparser", config)
-    else ((2, 6), (3, 0)),
+    "configparser.ConfigParser.read_dict": bpv("configparser", (None, (3, 2)), config),
+    "configparser.ConfigParser.read_file": bpv("configparser", (None, (3, 2)), config),
+    "configparser.ConfigParser.read_string": bpv("configparser", (None, (3, 2)), config),
+    "configparser.RawConfigParser.read_dict": bpv("configparser", (None, (3, 2)), config),
+    "configparser.RawConfigParser.read_file": bpv("configparser", (None, (3, 2)), config),
+    "configparser.RawConfigParser.read_string": bpv("configparser", (None, (3, 2)), config),
     "contextlib.aclosing": (None, (3, 10)),
     "contextlib.nullcontext": (None, (3, 7)),
     "contextlib.redirect_stderr": (None, (3, 5)),
@@ -973,10 +975,8 @@ def MOD_MEM_REQS(config):
     "io.open_code": (None, (3, 8)),
     "io.text_encoding": (None, (3, 10)),
     "ipaddress.IPv4Address.__format__": (None, (3, 9)),
-    "ipaddress.IPv4Network.subnet_of": (None, (3, 7)) if not bp("ipaddress", config)
-    else ((2, 6), (3, 2)),
-    "ipaddress.IPv4Network.supernet_of": (None, (3, 7)) if not bp("ipaddress", config)
-    else ((2, 6), (3, 2)),
+    "ipaddress.IPv4Network.subnet_of": bpv("ipaddress", (None, (3, 7)), config),
+    "ipaddress.IPv4Network.supernet_of": bpv("ipaddress", (None, (3, 7)), config),
     "ipaddress.IPv6Address.__format__": (None, (3, 9)),
     "itertools.accumulate": (None, (3, 2)),
     "itertools.combinations": ((2, 6), (3, 0)),
@@ -1597,7 +1597,7 @@ def MOD_MEM_REQS(config):
     "unittest.mock.Mock.assert_called": (None, (3, 6)),
     "unittest.mock.Mock.assert_called_once": (None, (3, 6)),
     "unittest.mock.Mock.assert_not_called": (None, (3, 5)),
-    "unittest.mock.seal": (None, (3, 7)) if not bp("mock", config) else (None, (3, 6)),
+    "unittest.mock.seal": bpv("mock", (None, (3, 7)), config),
     "unittest.registerResult": ((2, 7), (3, 2)),
     "unittest.removeHandler": ((2, 7), (3, 2)),
     "unittest.removeResult": ((2, 7), (3, 2)),
@@ -1707,12 +1707,9 @@ def MOD_MEM_REQS(config):
     "cmath.tau": (None, (3, 6)),
     "collections.deque.maxlen": ((2, 7), (3, 1)),
     "collections.namedtuple._field_defaults": (None, (3, 7)),
-    "configparser.DuplicateSectionError.lineno": (None, (3, 2)) if not bp("configparser", config)
-    else ((2, 6), (3, 0)),
-    "configparser.DuplicateSectionError.source": (None, (3, 2)) if not bp("configparser", config)
-    else ((2, 6), (3, 0)),
-    "configparser.ParsingError.source": (None, (3, 2)) if not bp("configparser", config)
-    else ((2, 6), (3, 0)),
+    "configparser.DuplicateSectionError.lineno": bpv("configparser", (None, (3, 2)), config),
+    "configparser.DuplicateSectionError.source": bpv("configparser", (None, (3, 2)), config),
+    "configparser.ParsingError.source": bpv("configparser", (None, (3, 2)), config),
     "cookielib.Cookie.rfc2109": ((2, 5), None),
     "cookielib.DefaultCookiePolicy.rfc2109_as_netscape": ((2, 5), None),
     "crypt.METHOD_BLOWFISH": (None, (3, 7)),
@@ -1795,12 +1792,9 @@ def MOD_MEM_REQS(config):
     "io.SEEK_END": ((2, 7), (3, 1)),
     "io.SEEK_SET": ((2, 7), (3, 1)),
     "io.TextIOWrapper.write_through": (None, (3, 7)),
-    "ipaddress.IPv4Address.is_global": (None, (3, 4)) if not bp("ipaddress", config)
-    else ((2, 6), (3, 2)),
-    "ipaddress.IPv4Address.reverse_pointer": (None, (3, 5)) if not bp("ipaddress", config)
-    else ((2, 6), (3, 2)),
-    "ipaddress.IPv6Address.is_global": (None, (3, 4)) if not bp("ipaddress", config)
-    else ((2, 6), (3, 2)),
+    "ipaddress.IPv4Address.is_global": bpv("ipaddress", (None, (3, 4)), config),
+    "ipaddress.IPv4Address.reverse_pointer": bpv("ipaddress", (None, (3, 5)), config),
+    "ipaddress.IPv6Address.is_global": bpv("ipaddress", (None, (3, 4)), config),
     "keyword.softkwlist": (None, (3, 9)),
     "logging.Formatter.default_msec_format": (None, (3, 3)),
     "logging.Formatter.default_time_format": (None, (3, 3)),
@@ -2478,10 +2472,8 @@ def MOD_MEM_REQS(config):
     "unittest.TestResult.failfast": ((2, 7), (3, 2)),
     "unittest.TestResult.skipped": ((2, 7), (3, 1)),
     "unittest.TestResult.tb_locals": (None, (3, 5)),
-    "unittest.mock.Mock.call_args.args": (None, (3, 8))
-    if not bp("mock", config) else (None, (3, 6)),
-    "unittest.mock.Mock.call_args.kwargs": (None, (3, 8))
-    if not bp("mock", config) else (None, (3, 6)),
+    "unittest.mock.Mock.call_args.args": bpv("mock", (None, (3, 8)), config),
+    "unittest.mock.Mock.call_args.kwargs": bpv("mock", (None, (3, 8)), config),
     "urllib.error.HTTPError.headers": (None, (3, 4)),
     "urllib.parse._UNSAFE_URL_BYTES_TO_REMOVE": (None, (3, 10)),
     "urllib.request.Request.method": (None, (3, 3)),
@@ -2712,48 +2704,31 @@ def KWARGS_REQS(config):
     ("concurrent.futures.ThreadPoolExecutor", "initargs"): (None, (3, 7)),
     ("concurrent.futures.ThreadPoolExecutor", "initializer"): (None, (3, 7)),
     ("concurrent.futures.ThreadPoolExecutor", "thread_name_prefix"): (None, (3, 6)),
-    ("configparser.ConfigParser", "allow_no_value"): (None, (3, 2))
-    if not bp("configparser", config) else ((2, 6), (3, 0)),
-    ("configparser.ConfigParser", "comment_prefixes"): (None, (3, 2))
-    if not bp("configparser", config) else ((2, 6), (3, 0)),
-    ("configparser.ConfigParser", "converters"): (None, (3, 5))
-    if not bp("configparser", config) else ((2, 6), (3, 0)),
-    ("configparser.ConfigParser", "default_section"): (None, (3, 2))
-    if not bp("configparser", config) else ((2, 6), (3, 0)),
-    ("configparser.ConfigParser", "delimiters"): (None, (3, 2))
-    if not bp("configparser", config) else ((2, 6), (3, 0)),
-    ("configparser.ConfigParser", "empty_lines_in_values"): (None, (3, 2))
-    if not bp("configparser", config) else ((2, 6), (3, 0)),
-    ("configparser.ConfigParser", "interpolation"): (None, (3, 2))
-    if not bp("configparser", config) else ((2, 6), (3, 0)),
-    ("configparser.ConfigParser", "strict"): (None, (3, 2))
-    if not bp("configparser", config) else ((2, 6), (3, 0)),
-    ("configparser.ConfigParser.read", "encoding"): (None, (3, 2))
-    if not bp("configparser", config) else ((2, 6), (3, 0)),
-    ("configparser.RawConfigParser", "allow_no_value"): (None, (3, 2))
-    if not bp("configparser", config) else ((2, 6), (3, 0)),
-    ("configparser.RawConfigParser", "comment_prefixes"): (None, (3, 2))
-    if not bp("configparser", config) else ((2, 6), (3, 0)),
-    ("configparser.RawConfigParser", "converters"): (None, (3, 5))
-    if not bp("configparser", config) else ((2, 6), (3, 0)),
-    ("configparser.RawConfigParser", "default_section"): (None, (3, 2))
-    if not bp("configparser", config) else ((2, 6), (3, 0)),
-    ("configparser.RawConfigParser", "delimiters"): (None, (3, 2))
-    if not bp("configparser", config) else ((2, 6), (3, 0)),
-    ("configparser.RawConfigParser", "empty_lines_in_values"): (None, (3, 2))
-    if not bp("configparser", config) else ((2, 6), (3, 0)),
-    ("configparser.RawConfigParser", "interpolation"): (None, (3, 2))
-    if not bp("configparser", config) else ((2, 6), (3, 0)),
-    ("configparser.RawConfigParser", "strict"): (None, (3, 2))
-    if not bp("configparser", config) else ((2, 6), (3, 0)),
-    ("configparser.RawConfigParser.read", "encoding"): (None, (3, 2))
-    if not bp("configparser", config) else ((2, 6), (3, 0)),
-    ("configparser.DuplicateSectionError", "lineno"): (None, (3, 2))
-    if not bp("configparser", config) else ((2, 6), (3, 0)),
-    ("configparser.DuplicateSectionError", "source"): (None, (3, 2))
-    if not bp("configparser", config) else ((2, 6), (3, 0)),
-    ("configparser.ParsingError", "source"): (None, (3, 2))
-    if not bp("configparser", config) else ((2, 6), (3, 0)),
+    ("configparser.ConfigParser", "allow_no_value"): bpv("configparser", (None, (3, 2)), config),
+    ("configparser.ConfigParser", "comment_prefixes"): bpv("configparser", (None, (3, 2)), config),
+    ("configparser.ConfigParser", "converters"): bpv("configparser", (None, (3, 5)), config),
+    ("configparser.ConfigParser", "default_section"): bpv("configparser", (None, (3, 2)), config),
+    ("configparser.ConfigParser", "delimiters"): bpv("configparser", (None, (3, 2)), config),
+    ("configparser.ConfigParser", "empty_lines_in_values"): bpv("configparser", (None, (3, 2)),
+                                                                config),
+    ("configparser.ConfigParser", "interpolation"): bpv("configparser", (None, (3, 2)), config),
+    ("configparser.ConfigParser", "strict"): bpv("configparser", (None, (3, 2)), config),
+    ("configparser.ConfigParser.read", "encoding"): bpv("configparser", (None, (3, 2)), config),
+    ("configparser.RawConfigParser", "allow_no_value"): bpv("configparser", (None, (3, 2)), config),
+    ("configparser.RawConfigParser", "comment_prefixes"): bpv("configparser", (None, (3, 2)),
+                                                              config),
+    ("configparser.RawConfigParser", "converters"): bpv("configparser", (None, (3, 5)), config),
+    ("configparser.RawConfigParser", "default_section"): bpv("configparser", (None, (3, 2)),
+                                                             config),
+    ("configparser.RawConfigParser", "delimiters"): bpv("configparser", (None, (3, 2)), config),
+    ("configparser.RawConfigParser", "empty_lines_in_values"): bpv("configparser", (None, (3, 2)),
+                                                                   config),
+    ("configparser.RawConfigParser", "interpolation"): bpv("configparser", (None, (3, 2)), config),
+    ("configparser.RawConfigParser", "strict"): bpv("configparser", (None, (3, 2)), config),
+    ("configparser.RawConfigParser.read", "encoding"): bpv("configparser", (None, (3, 2)), config),
+    ("configparser.DuplicateSectionError", "lineno"): bpv("configparser", (None, (3, 2)), config),
+    ("configparser.DuplicateSectionError", "source"): bpv("configparser", (None, (3, 2)), config),
+    ("configparser.ParsingError", "source"): bpv("configparser", (None, (3, 2)), config),
     ("crypt.mksalt", "rounds"): (None, (3, 7)),
     ("ctypes.CDLL", "use_errno"): ((2, 6), (3, 0)),
     ("ctypes.CDLL", "use_last_error"): ((2, 6), (3, 0)),
@@ -2830,7 +2805,7 @@ def KWARGS_REQS(config):
     ("email.policy.Policy", "mangle_from_"): (None, (3, 5)),
     ("email.utils.formatdate", "charset"): (None, (3, 3)),
     ("email.utils.make_msgid", "domain"): (None, (3, 2)),
-    ("enum.Enum", "start"): (None, (3, 5)) if not bp("enum", config) else ((2, 4), (3, 3)),
+    ("enum.Enum", "start"): bpv("enum", (None, (3, 5)), config),
     ("enumerate", "start"): ((2, 6), (3, 0)),
     ("fileinput.FileInput", "encoding"): (None, (3, 10)),
     ("fileinput.FileInput", "errors"): (None, (3, 10)),
