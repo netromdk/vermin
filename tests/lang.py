@@ -1939,6 +1939,48 @@ if (global_byte | local_byte) != global_byte:
     self.assertFalse(visitor.union_types())
 
     if current_version() >= (3, 10):
+      # Issue 109: When not evaluating annotations, returns annotations must not be visited.
+      self.config.set_eval_annotations(False)
+      visitor = self.visit("""
+from __future__ import annotations
+def b(s: str) -> str | None:  # <-- don't visit returns node.
+  return s
+""")
+      self.assertFalse(visitor.union_types())
+      visitor = self.visit("""
+from __future__ import annotations
+a: str | None = None
+def b(s: str) -> str | None:  # <-- don't visit returns node.
+  return s
+b(a or '')
+""")
+      self.assertFalse(visitor.union_types())
+
+      visitor = self.visit("""
+def square(number) -> int | float:
+  return number ** 2
+""")
+      self.assertFalse(visitor.union_types())
+
+      # Issue 109: When evaluating annotations, visit returns annotations.
+      self.config.set_eval_annotations(True)
+      visitor = self.visit("""
+from __future__ import annotations
+def b(s: str) -> str | None:  # <-- visit returns node.
+  return s
+""")
+      self.assertTrue(visitor.union_types())
+      self.assertOnlyIn((3, 10), visitor.minimum_versions())
+      visitor = self.visit("""
+from __future__ import annotations
+a: str | None = None
+def b(s: str) -> str | None:  # <-- visit returns node.
+  return s
+b(a or '')
+""")
+      self.assertTrue(visitor.union_types())
+      self.assertOnlyIn((3, 10), visitor.minimum_versions())
+
       visitor = self.visit("""
 def square(number) -> int | float:
   return number ** 2
@@ -1946,6 +1988,7 @@ def square(number) -> int | float:
       self.assertTrue(visitor.union_types())
       self.assertOnlyIn((3, 10), visitor.minimum_versions())
 
+      self.config.set_eval_annotations(False)
       visitor = self.visit("""
 def square(number: int | float):
   return number ** 2

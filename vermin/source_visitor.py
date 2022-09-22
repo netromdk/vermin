@@ -1780,8 +1780,18 @@ ast.Call(func=ast.Name)."""
         self.__check_user_func_decorators(node)
 
     user_defs_copy = self.__user_defs.copy()
+
+    # Don't visit returns annotations if not evaluating annotations. It is only possible by setting
+    # it as None since it always will be visited via the AST functions.
+    returns_copy = None
+    if not self.__config.eval_annotations() and hasattr(node, "returns") and node.returns:
+      returns_copy, node.returns = node.returns, None
+
     self.generic_visit(node)
+
     self.__user_defs = user_defs_copy
+    if returns_copy:
+      node.returns = returns_copy
 
     def has_ann():
       self.__annotations = True
