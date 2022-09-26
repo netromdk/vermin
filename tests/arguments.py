@@ -2,7 +2,7 @@ import os
 from tempfile import mkdtemp
 from shutil import rmtree
 
-from vermin import Backports, Features, DEFAULT_PROCESSES, CONFIG_FILE_NAMES
+from vermin import Arguments, Backports, Features, DEFAULT_PROCESSES, CONFIG_FILE_NAMES
 from vermin.utility import open_wrapper
 import vermin.formats
 
@@ -458,3 +458,19 @@ pessimistic = yes
     self.config.set_scan_symlink_folders(True)
     self.assertContainsDict({"code": 0, "paths": []}, self.parse_args(["--no-symlink-folders"]))
     self.assertFalse(self.config.scan_symlink_folders())
+
+  @VerminTest.parameterized_args([
+    ("--holp", ["--help"]),
+    ("--fature", ["--feature", "--no-feature"]),
+    ("--feat", ["--feature", "--no-feature"]),
+    ("--pessim", ["--no-pessimistic", "--pessimistic"]),
+    ("--pessimisticc", ["--no-pessimistic", "--pessimistic"]),
+    ("--linter", ["--lint", "--no-lint"]),
+    ("--dmp", ["--dump", "--no-dump"]),
+    ("--exclud", ["--exclude", "--exclude-file", "--no-exclude"]),
+
+    # "no" is too general (len < 3) so it does not match all the "--no-X" arguments.
+    ("--no", []),
+  ])
+  def test_detect_alternatives(self, arg, alts):
+    self.assertEqual(Arguments([]).detect_alternatives(arg), alts)

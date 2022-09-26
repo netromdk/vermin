@@ -7,6 +7,7 @@ from .features import Features
 from .config import Config
 from .printing import nprint
 from . import formats
+from .utility import edit_distance_relaxed
 
 class Arguments:
   def __init__(self, args):
@@ -432,3 +433,39 @@ class Arguments:
     return {"code": 0,
             "paths": paths,
             "versions": versions}
+
+  def detect_alternatives(self, argument):
+    """Detect argument alternatives instead of unknown argument."""
+    alts = set()
+
+    # Search for edit distance.
+    for known_arg in self.__known_args:
+      dist = edit_distance_relaxed(argument, known_arg, ignore=["-"])
+      if dist <= 2:
+        alts.add(known_arg)
+
+    # Search for individual words, with direct sub-matches and edit distance.
+    words = argument.replace("--", "").split("-")
+    for known_arg in self.__known_args:
+      for word in words:
+        # Only search for words that are not too short, like "no" that are too common.
+        if 0 < len(word) >= 3:
+          added = False
+          for known_arg_word in known_arg.replace("--", "").split("-"):
+            if len(known_arg_word) == 0:
+              continue
+            if word in known_arg_word:
+              alts.add(known_arg)
+              added = True
+              break
+            dist = edit_distance_relaxed(word, known_arg_word, ignore=["-"])
+            if dist <= 2:
+              alts.add(known_arg)
+              added = True
+              break
+          if added:
+            break
+
+    alts = list(alts)
+    alts.sort()
+    return alts
