@@ -12,6 +12,47 @@ class Arguments:
   def __init__(self, args):
     self.__args = args
 
+    self.__known_args = [
+      "--backport",
+      "--config-file",
+      "--dump",
+      "--eval-annotations",
+      "--exclude",
+      "--exclude-file",
+      "--feature",
+      "--format",
+      "--help",
+      "--hidden",
+      "--ignore",
+      "--lint",
+      "--no-backport",
+      "--no-config-file",
+      "--no-dump",
+      "--no-eval-annotations",
+      "--no-exclude",
+      "--no-feature",
+      "--no-hidden",
+      "--no-ignore",
+      "--no-lint",
+      "--no-parse-comments",
+      "--no-pessimistic",
+      "--no-quiet",
+      "--no-symlink-folders",
+      "--no-target",
+      "--no-tips",
+      "--no-violations",
+      "--parse-comments",
+      "--pessimistic",
+      "--processes",
+      "--quiet",
+      "--scan-symlink-folders",
+      "--show-tips",
+      "--target",
+      "--version",
+      "--versions",
+      "--violations",
+    ]
+
   @staticmethod
   def print_usage(full=False):
     print("Vermin {}".format(VERSION))
