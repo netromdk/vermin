@@ -287,7 +287,7 @@ aaa
       self.assertEqual(fmt, self.config.format().name())
 
     # Parsable verbose level 3, no tips, ignore incompatible versions, no `--versions`.
-    for args in (["--format", "parsable"], ["--format", "parsable", "--verbose"],
+    for args in (["--format", "parsable"], ["--format", "parsable", "-vv"],
                  ["--format", "parsable", "--versions"]):
       self.config.reset()
       self.assertContainsDict({"code": 0, "versions": False}, self.parse_args(args))
