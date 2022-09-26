@@ -197,3 +197,34 @@ def open_wrapper(file, mode='r', buffering=-1, encoding=None, errors=None, newli
     return open(file, mode, buffering=buffering)
   return open(file, mode, buffering=buffering, encoding=encoding, errors=errors,  # novm
               newline=newline, closefd=closefd)
+
+def reverse_string(s):
+  s = list(s)
+  s.reverse()
+  return "".join(s)
+
+def edit_distance(a, b):
+  """Returns the edit distance, or Levenshtein distance, between two strings, a and b. Note that it
+  scans first left-to-right and then right-to-left."""
+  if len(a) > len(b):
+    a, b = b, a
+  init_diff = diff = len(b) - len(a)
+  for i in range(len(a)):
+    if a[i] != b[i]:
+      diff += 1
+  a = reverse_string(a)
+  b = reverse_string(b)
+  inv_diff = init_diff
+  for i in range(len(a)):
+    if a[i] != b[i]:
+      inv_diff += 1
+  return min(diff, inv_diff)
+
+def edit_distance_relaxed(a, b, ignore=None):
+  """Same as edit_distance() but specified values can be ignored."""
+  if ignore is None:
+    ignore = []
+  for c in ignore:
+    a = a.replace(c, "")
+    b = b.replace(c, "")
+  return edit_distance(a, b)

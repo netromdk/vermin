@@ -10,7 +10,7 @@ from .arguments import Arguments
 from .config import Config
 from .utility import reverse_range, dotted_name, combine_versions, InvalidVersionException,\
   remove_whitespace, sort_line_column, sort_line_column_parsable, version_strings,\
-  format_title_descs
+  format_title_descs, reverse_string, edit_distance, edit_distance_relaxed
 from .backports import Backports
 from .features import Features
 from .constants import DEFAULT_PROCESSES, CONFIG_FILE_NAMES, PROJECT_BOUNDARIES
@@ -45,6 +45,8 @@ __all__ = [
   "detect_paths",
   "detect_paths_incremental",
   "dotted_name",
+  "edit_distance",
+  "edit_distance_relaxed",
   "format_title_descs",
   "formats",
   "main",
@@ -52,6 +54,7 @@ __all__ = [
   "process_individual",
   "remove_whitespace",
   "reverse_range",
+  "reverse_string",
   "sort_line_column",
   "sort_line_column_parsable",
   "version_strings",

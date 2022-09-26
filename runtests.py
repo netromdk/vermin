@@ -4,6 +4,7 @@ import unittest
 from time import time
 
 SUITES = (
+  "utility",
   "general",
   "config",
   "arguments",
