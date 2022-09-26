@@ -1004,3 +1004,62 @@ three - three.one
 
   def test_default_processes(self):
     self.assertEqual(cpu_count(), DEFAULT_PROCESSES)
+
+  @VerminTest.skipUnlessVersion(3)
+  def test_main_unknown_argument_one_alternative(self):
+    # This test is currently only run on py3 due to io.StringIO() using unicode() on py2 and we are
+    # writing a str() to it.
+    #
+    # File "vermin/vermin/main.py", line 16, in main
+    #   args = Arguments(sys.argv[1:]).parse(config)
+    # File "vermin/vermin/arguments.py", line 414, in parse
+    #   print("Unknown argument: {}".format(arg))
+    # TypeError: unicode argument expected, got 'str'
+
+    temp_stdout = io.StringIO()
+    backup_stdout = sys.stdout
+    with self.assertRaises(SystemExit) as ex:
+      sys.argv = [sys.argv[0], "--holp"]
+      sys.stdout = temp_stdout
+      main()
+
+    sys.argv = [sys.argv[0]]
+    sys.stdout = backup_stdout
+
+    # Check unsuccessful execution, due to unknown argument.
+    self.assertEqual(ex.exception.code, 1)
+
+    self.assertEqual("""Unknown argument: --holp
+Did you mean "--help"?
+""", temp_stdout.getvalue())
+
+  @VerminTest.skipUnlessVersion(3)
+  def test_main_unknown_argument_multiple_alternatives(self):
+    # This test is currently only run on py3 due to io.StringIO() using unicode() on py2 and we are
+    # writing a str() to it.
+    #
+    # File "vermin/vermin/main.py", line 16, in main
+    #   args = Arguments(sys.argv[1:]).parse(config)
+    # File "vermin/vermin/arguments.py", line 414, in parse
+    #   print("Unknown argument: {}".format(arg))
+    # TypeError: unicode argument expected, got 'str'
+
+    temp_stdout = io.StringIO()
+    backup_stdout = sys.stdout
+    with self.assertRaises(SystemExit) as ex:
+      sys.argv = [sys.argv[0], "--exclud"]
+      sys.stdout = temp_stdout
+      main()
+
+    sys.argv = [sys.argv[0]]
+    sys.stdout = backup_stdout
+
+    # Check unsuccessful execution, due to unknown argument.
+    self.assertEqual(ex.exception.code, 1)
+
+    self.assertEqual("""Unknown argument: --exclud
+Did you mean any of the following?
+  --exclude
+  --exclude-file
+  --no-exclude
+""", temp_stdout.getvalue())

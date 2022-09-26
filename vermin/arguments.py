@@ -1,5 +1,6 @@
 import sys
 import os
+import os.path
 
 from .constants import VERSION, DEFAULT_PROCESSES, CONFIG_FILE_NAMES, PROJECT_BOUNDARIES
 from .backports import Backports
@@ -405,6 +406,18 @@ class Arguments:
       elif arg == "--no-symlink-folders":
         config.set_scan_symlink_folders(False)
         path_pos += 1
+
+      # Check for argument alternatives for unknown inputs, but ignore the preprocessed arguments
+      # that aren't used in the second pass.
+      elif arg != "--no-config-file" and arg.startswith("-") and not os.path.isfile(arg) and \
+           not os.path.isdir(arg):
+        print("Unknown argument: {}".format(arg))
+        alts = self.detect_alternatives(arg)
+        if len(alts) == 1:
+          print("Did you mean \"{}\"?".format(alts[0]))
+        elif len(alts) > 1:
+          print("Did you mean any of the following?\n  {}".format("\n  ".join(alts)))
+        return {"code": 1}
 
     if fmt is not None:
       config.set_format(fmt)
