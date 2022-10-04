@@ -13,7 +13,8 @@ from vermin import combine_versions, InvalidVersionException, detect_paths,\
 from vermin.formats import ParsableFormat
 from vermin.utility import open_wrapper
 
-from .testutils import VerminTest, current_version, ScopedTemporaryFile, detect, visit, touch
+from .testutils import VerminTest, current_version, ScopedTemporaryFile, detect, visit, touch, \
+  working_dir
 
 class VerminGeneralTests(VerminTest):
   def test_detect_without_config(self):
@@ -317,6 +318,11 @@ test.py:6:9:2.7:3.2:'argparse' module
   def test_exclude_pyi_glob(self):
     tmp_fld = mkdtemp()
 
+    # With the default of --make-paths-absolute, this will match .pyi files in any
+    # subdirectory. Users who expect unix shell globbing vs python fmatch might be surprised, but it
+    # would be a lot of effort to make unix shell globbing work across all platforms. The most
+    # common use case for --exclude-glob is expected to be for file extensions, so it's great that
+    # that will work regardless of the --make-paths-absolute setting.
     self.config.add_exclusion_glob("*.pyi")
 
     f = touch(tmp_fld, "code.pyi")
@@ -346,6 +352,31 @@ test.py:6:9:2.7:3.2:'argparse' module
 
     paths = detect_paths([tmp_fld], config=self.config)
     self.assertEqual(paths, [join(tmp_fld, "code.py")])
+
+    rmtree(tmp_fld)
+
+  def test_exclude_glob_relative(self):
+    tmp_fld = mkdtemp()
+
+    # Keep paths relative, and provide relative globs.
+    self.config.set_make_paths_absolute(False)
+    self.config.add_exclusion_glob("a/b")
+    self.config.add_exclusion_glob("a/[!/].pyi")
+
+    # Create .../a and .../a/b directories.
+    os.mkdir(join(tmp_fld, "a"))
+    os.mkdir(join(tmp_fld, "a/b"))
+
+    paths = ["a/code.py", "a/code.pyi", "a/b/code.py"]
+    for p in paths:
+      f = touch(tmp_fld, p)
+      with open_wrapper(f, mode="w", encoding="utf-8") as fp:
+        fp.write("print('this is code')")
+
+    # Temporarily modify the working directory.
+    with working_dir(tmp_fld):
+      paths = detect_paths(["a"], config=self.config)
+      self.assertEqual(paths, ["a/code.py"])
 
     rmtree(tmp_fld)
 

@@ -1,6 +1,7 @@
 import unittest
 import sys
 import os
+from contextlib import contextmanager
 from os.path import join
 from tempfile import NamedTemporaryFile
 
@@ -17,6 +18,15 @@ def touch(fld, name, contents=None):
     fp.write(contents)
   fp.close()
   return filename
+
+@contextmanager
+def working_dir(path):
+  prev_wd = os.getcwd()
+  try:
+    os.chdir(path)
+    yield
+  finally:
+    os.chdir(prev_wd)
 
 class VerminTest(unittest.TestCase):
   """General test case class for all Vermin tests."""

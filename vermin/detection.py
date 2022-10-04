@@ -485,6 +485,8 @@ def detect_paths_incremental(args):
         continue  # pragma: no cover
       if not hidden and path != "." and path[0] == ".":
         continue
+      if config.make_paths_absolute():
+        path = abspath(path)
 
       # Scan top-level folders, or input folders, in all cases.
       st = stat_path(path, True if depth == 0 else scan_symlink_folders)

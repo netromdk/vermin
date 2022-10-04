@@ -247,16 +247,23 @@ aaa
     self.assertFalse(self.config.is_excluded_by_glob("a/b/c.py"))
 
     self.config.reset()
+    # fnmatch interprets '**' the same as '*', but some users might expect those to work since '**'
+    # is interpreted to mean "0 or more directory components". Let's make sure we at least know how
+    # vermin will interpret those inputs.
     args = ["--exclude-glob", "a/b/**",
             "--exclude-glob", "a/**/*.pyi"]
     self.assertContainsDict({"code": 0}, self.parse_args(args))
     self.assertTrue(self.config.is_excluded_by_glob("a/b/c.py"))
-    # '**/*.pyi' does *not* match .pyi files in the top-level directory!
+    self.assertTrue(self.config.is_excluded_by_glob("a/b/c/d.py"))
+    # '*/*.pyi' does not match .pyi files in the top-level directory.
     self.assertFalse(self.config.is_excluded_by_glob("a/m.pyi"))
     self.assertTrue(self.config.is_excluded_by_glob("a/d/m.pyi"))
     self.assertFalse(self.config.is_excluded_by_glob("m.pyi"))
 
     self.config.reset()
+    # Use '[!/]' instead of '*' to force only matching files in the top-level. Some users might
+    # expect '*' to work the way it does in the unix shell (not matching directory components), but
+    # we clarify in --help that '[!/]' is required for that.
     self.assertContainsDict({"code": 0}, self.parse_args(["--exclude-glob", "a/b/[!/].pyi"]))
     self.assertTrue(self.config.is_excluded_by_glob("a/b/c.pyi"))
     self.assertFalse(self.config.is_excluded_by_glob("a/b/c.py"))
@@ -264,6 +271,15 @@ aaa
 
     self.assertContainsDict({"code": 0}, self.parse_args(["--no-exclude-globs"]))
     self.assertEmpty(self.config.exclusion_globs())
+
+  def test_make_paths_absolute(self):
+    self.assertTrue(self.config.make_paths_absolute())
+
+    self.assertContainsDict({"code": 0}, self.parse_args(["--no-make-paths-absolute"]))
+    self.assertFalse(self.config.make_paths_absolute())
+
+    self.assertContainsDict({"code": 0}, self.parse_args(["--make-paths-absolute"]))
+    self.assertTrue(self.config.make_paths_absolute())
 
   def test_backport(self):
     # Needs <name> part.

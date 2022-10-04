@@ -31,6 +31,7 @@ class Config:
     self.__analyze_hidden = False
     self.__exclusions = set()
     self.__exclusion_globs = set()
+    self.__make_paths_absolute = True
     self.__backports = set()
     self.__features = set()
     self.__targets = []
@@ -51,6 +52,7 @@ class Config:
     self.__analyze_hidden = other_config.analyze_hidden()
     self.__exclusions = set(other_config.exclusions())
     self.__exclusion_globs = set(other_config.exclusion_globs())
+    self.__make_paths_absolute = other_config.make_paths_absolute()
     self.__backports = other_config.backports()
     self.__features = other_config.features()
     self.__targets = other_config.targets()
@@ -72,6 +74,7 @@ class Config:
   analyze_hidden = {}
   exclusions = {}
   exclusion_globs = {}
+  make_paths_absolute = {}
   backports = {}
   features = {}
   targets = {}
@@ -83,9 +86,9 @@ class Config:
 )""".format(self.__class__.__name__, self.quiet(), self.verbose(), self.print_visits(),
             self.processes(), self.ignore_incomp(), self.pessimistic(), self.show_tips(),
             self.analyze_hidden(), self.exclusions(), self.exclusion_globs(),
-            list(self.backports()), list(self.features()), self.targets(), self.eval_annotations(),
-            self.only_show_violations(), self.parse_comments(), self.scan_symlink_folders(),
-            self.format().name())
+            self.make_paths_absolute(), list(self.backports()), list(self.features()),
+            self.targets(), self.eval_annotations(), self.only_show_violations(),
+            self.parse_comments(), self.scan_symlink_folders(), self.format().name())
 
   @staticmethod
   def parse_file(path):
@@ -125,6 +128,7 @@ class Config:
       "analyze_hidden": str(config.analyze_hidden()),
       "exclusions": encode_list(config.exclusions()),
       "exclusion_globs": encode_list(config.exclusion_globs()),
+      "make_paths_absolute": str(config.make_paths_absolute()),
       "backports": encode_list(config.backports()),
       "features": encode_list(config.features()),
       "targets": encode_list(config.targets()),
@@ -192,6 +196,8 @@ class Config:
 
     for exclusion_glob in getstringlist("exclusion_globs"):
       config.add_exclusion_glob(exclusion_glob)
+
+    config.set_make_paths_absolute(getbool("make_paths_absolute"))
 
     for backport in getstringlist("backports"):
       if not config.add_backport(backport):
@@ -330,6 +336,12 @@ folders until root or project boundaries are reached. Each candidate is checked 
 
   def is_excluded_by_glob(self, path):
     return any(fnmatch(path, glob) for glob in self.__exclusion_globs)
+
+  def make_paths_absolute(self):
+    return self.__make_paths_absolute
+
+  def set_make_paths_absolute(self, enable):
+    self.__make_paths_absolute = enable
 
   def add_backport(self, name):
     if not Backports.is_backport(name):
