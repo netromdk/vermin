@@ -226,6 +226,45 @@ aaa
     self.assertContainsDict({"code": 0}, self.parse_args(["--exclude-file", fn]))
     self.assertEmpty(self.config.exclusions())
 
+  def test_exclude_glob(self):
+    self.assertContainsDict({"code": 1}, self.parse_args(["--exclude-glob"]))  # Needs <glob> part.
+    self.assertEmpty(self.config.exclusion_globs())
+
+    args = ["--exclude-glob", "*.pyi",
+            "--exclude-glob", "a/b"]
+    self.assertContainsDict({"code": 0}, self.parse_args(args))
+    self.assertEqual(["*.pyi", "a/b"], self.config.exclusion_globs())  # Expect it sorted.
+    self.assertFalse(self.config.is_excluded_by_glob("a/b.py"))
+    self.assertTrue(self.config.is_excluded_by_glob("asdf.pyi"))
+    self.assertTrue(self.config.is_excluded_by_glob("a/m.pyi"))
+    self.assertTrue(self.config.is_excluded_by_glob("a/b"))
+
+    # Glob patterns are applied at each level of directory traversal. If 'a/' is provided on the
+    # command line, then the glob 'a/b' will match the recursive traversal when it encounters the
+    # directory 'a/b', and avoid recursing into that directory. However, a directory pattern without
+    # any '**' components will not itself match files contained within that directory. This makes it
+    # more efficient to use when possible, but more difficult to test in isolation.
+    self.assertFalse(self.config.is_excluded_by_glob("a/b/c.py"))
+
+    self.config.reset()
+    args = ["--exclude-glob", "a/b/**",
+            "--exclude-glob", "a/**/*.pyi"]
+    self.assertContainsDict({"code": 0}, self.parse_args(args))
+    self.assertTrue(self.config.is_excluded_by_glob("a/b/c.py"))
+    # '**/*.pyi' does *not* match .pyi files in the top-level directory!
+    self.assertFalse(self.config.is_excluded_by_glob("a/m.pyi"))
+    self.assertTrue(self.config.is_excluded_by_glob("a/d/m.pyi"))
+    self.assertFalse(self.config.is_excluded_by_glob("m.pyi"))
+
+    self.config.reset()
+    self.assertContainsDict({"code": 0}, self.parse_args(["--exclude-glob", "a/b/[!/].pyi"]))
+    self.assertTrue(self.config.is_excluded_by_glob("a/b/c.pyi"))
+    self.assertFalse(self.config.is_excluded_by_glob("a/b/c.py"))
+    self.assertFalse(self.config.is_excluded_by_glob("a/b/c/d.pyi"))
+
+    self.assertContainsDict({"code": 0}, self.parse_args(["--no-exclude-globs"]))
+    self.assertEmpty(self.config.exclusion_globs())
+
   def test_backport(self):
     # Needs <name> part.
     self.assertContainsDict({"code": 1}, self.parse_args(["--backport"]))

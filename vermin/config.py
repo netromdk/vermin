@@ -1,6 +1,7 @@
 import io
 import sys
 import os
+from fnmatch import fnmatch
 
 # novm
 try:
@@ -29,6 +30,7 @@ class Config:
     self.__show_tips = True
     self.__analyze_hidden = False
     self.__exclusions = set()
+    self.__exclusion_globs = set()
     self.__backports = set()
     self.__features = set()
     self.__targets = []
@@ -48,6 +50,7 @@ class Config:
     self.__show_tips = other_config.show_tips()
     self.__analyze_hidden = other_config.analyze_hidden()
     self.__exclusions = set(other_config.exclusions())
+    self.__exclusion_globs = set(other_config.exclusion_globs())
     self.__backports = other_config.backports()
     self.__features = other_config.features()
     self.__targets = other_config.targets()
@@ -68,6 +71,7 @@ class Config:
   show_tips = {}
   analyze_hidden = {}
   exclusions = {}
+  exclusion_globs = {}
   backports = {}
   features = {}
   targets = {}
@@ -78,9 +82,10 @@ class Config:
   format = {}
 )""".format(self.__class__.__name__, self.quiet(), self.verbose(), self.print_visits(),
             self.processes(), self.ignore_incomp(), self.pessimistic(), self.show_tips(),
-            self.analyze_hidden(), self.exclusions(), list(self.backports()), list(self.features()),
-            self.targets(), self.eval_annotations(), self.only_show_violations(),
-            self.parse_comments(), self.scan_symlink_folders(), self.format().name())
+            self.analyze_hidden(), self.exclusions(), self.exclusion_globs(),
+            list(self.backports()), list(self.features()), self.targets(), self.eval_annotations(),
+            self.only_show_violations(), self.parse_comments(), self.scan_symlink_folders(),
+            self.format().name())
 
   @staticmethod
   def parse_file(path):
@@ -119,6 +124,7 @@ class Config:
       "show_tips": str(config.show_tips()),
       "analyze_hidden": str(config.analyze_hidden()),
       "exclusions": encode_list(config.exclusions()),
+      "exclusion_globs": encode_list(config.exclusion_globs()),
       "backports": encode_list(config.backports()),
       "features": encode_list(config.features()),
       "targets": encode_list(config.targets()),
@@ -183,6 +189,9 @@ class Config:
 
     for exclusion in getstringlist("exclusions"):
       config.add_exclusion(exclusion)
+
+    for exclusion_glob in getstringlist("exclusion_globs"):
+      config.add_exclusion_glob(exclusion_glob)
 
     for backport in getstringlist("backports"):
       if not config.add_backport(backport):
@@ -280,6 +289,9 @@ folders until root or project boundaries are reached. Each candidate is checked 
   def add_exclusion(self, name):
     self.__exclusions.add(name)
 
+  def add_exclusion_glob(self, glob):
+    self.__exclusion_globs.add(glob)
+
   def add_exclusion_file(self, filename):
     try:
       with open_wrapper(filename, mode="r", encoding="utf-8") as f:
@@ -291,8 +303,16 @@ folders until root or project boundaries are reached. Each candidate is checked 
   def clear_exclusions(self):
     self.__exclusions.clear()
 
+  def clear_exclusion_globs(self):
+    self.__exclusion_globs.clear()
+
   def exclusions(self):
     res = list(self.__exclusions)
+    res.sort()
+    return res
+
+  def exclusion_globs(self):
+    res = list(self.__exclusion_globs)
     res.sort()
     return res
 
@@ -307,6 +327,9 @@ folders until root or project boundaries are reached. Each candidate is checked 
 
   def is_excluded_codecs_encoding(self, name):
     return "ce={}".format(name) in self.__exclusions
+
+  def is_excluded_by_glob(self, path):
+    return any(fnmatch(path, glob) for glob in self.__exclusion_globs)
 
   def add_backport(self, name):
     if not Backports.is_backport(name):

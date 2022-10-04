@@ -314,6 +314,41 @@ test.py:6:9:2.7:3.2:'argparse' module
 
     rmtree(tmp_fld)
 
+  def test_exclude_pyi_glob(self):
+    tmp_fld = mkdtemp()
+
+    self.config.add_exclusion_glob("*.pyi")
+
+    f = touch(tmp_fld, "code.pyi")
+    with open_wrapper(f, mode="w", encoding="utf-8") as fp:
+      fp.write("print('this is code')")
+
+    paths = detect_paths([tmp_fld], config=self.config)
+    self.assertEmpty(paths)
+
+    rmtree(tmp_fld)
+
+  def test_exclude_directory_glob(self):
+    tmp_fld = mkdtemp()
+
+    # Excluding the directory .../a should exclude any files recursively beneath it as well.
+    self.config.add_exclusion_glob(join(tmp_fld, "a"))
+
+    # Create .../a and .../a/b directories.
+    os.mkdir(join(tmp_fld, "a"))
+    os.mkdir(join(tmp_fld, "a/b"))
+
+    paths = ["code.py", "a/code.py", "a/b/code.py"]
+    for p in paths:
+      f = touch(tmp_fld, p)
+      with open_wrapper(f, mode="w", encoding="utf-8") as fp:
+        fp.write("print('this is code')")
+
+    paths = detect_paths([tmp_fld], config=self.config)
+    self.assertEqual(paths, [join(tmp_fld, "code.py")])
+
+    rmtree(tmp_fld)
+
   def test_detect_vermin_min_versions(self):
     paths = detect_paths([abspath("vermin")], config=self.config)
     processor = Processor()
