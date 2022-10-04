@@ -1,5 +1,6 @@
 import sys
 import os
+import re
 import io
 from os.path import abspath, basename, join, splitext
 from tempfile import NamedTemporaryFile, mkdtemp
@@ -315,15 +316,13 @@ test.py:6:9:2.7:3.2:'argparse' module
 
     rmtree(tmp_fld)
 
-  def test_exclude_pyi_glob(self):
+  def test_exclude_pyi_regex(self):
     tmp_fld = mkdtemp()
 
-    # With the default of --make-paths-absolute, this will match .pyi files in any
-    # subdirectory. Users who expect unix shell globbing vs python fmatch might be surprised, but it
-    # would be a lot of effort to make unix shell globbing work across all platforms. The most
-    # common use case for --exclude-glob is expected to be for file extensions, so it's great that
-    # that will work regardless of the --make-paths-absolute setting.
-    self.config.add_exclusion_glob("*.pyi")
+    # With the default of --make-paths-absolute, this will match .pyi files in any subdirectory. The
+    # most common use case for --exclude-regex is expected to be for file extensions, so it's great
+    # that that will work regardless of the --make-paths-absolute setting.
+    self.config.add_exclusion_regex(r".+\.pyi")
 
     f = touch(tmp_fld, "code.pyi")
     with open_wrapper(f, mode="w", encoding="utf-8") as fp:
@@ -334,11 +333,11 @@ test.py:6:9:2.7:3.2:'argparse' module
 
     rmtree(tmp_fld)
 
-  def test_exclude_directory_glob(self):
+  def test_exclude_directory_regex(self):
     tmp_fld = mkdtemp()
 
     # Excluding the directory .../a should exclude any files recursively beneath it as well.
-    self.config.add_exclusion_glob(join(tmp_fld, "a"))
+    self.config.add_exclusion_regex(re.escape(join(tmp_fld, "a")))
 
     # Create .../a and .../a/b directories.
     os.mkdir(join(tmp_fld, "a"))
@@ -355,13 +354,13 @@ test.py:6:9:2.7:3.2:'argparse' module
 
     rmtree(tmp_fld)
 
-  def test_exclude_glob_relative(self):
+  def test_exclude_regex_relative(self):
     tmp_fld = mkdtemp()
 
-    # Keep paths relative, and provide relative globs.
+    # Keep paths relative, and provide patterns matching relative paths.
     self.config.set_make_paths_absolute(False)
-    self.config.add_exclusion_glob("a/b")
-    self.config.add_exclusion_glob("a/[!/].pyi")
+    self.config.add_exclusion_regex("a/b")
+    self.config.add_exclusion_regex("a/[^/]+\.pyi")
 
     # Create .../a and .../a/b directories.
     os.mkdir(join(tmp_fld, "a"))

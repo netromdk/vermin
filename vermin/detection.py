@@ -481,7 +481,7 @@ def detect_paths_incremental(args):
   further_args = []
   for path in paths:
     try:
-      if any(ic in path for ic in ignore_chars) or config.is_excluded_by_glob(path):
+      if any(ic in path for ic in ignore_chars) or config.is_excluded_by_regex(path):
         continue  # pragma: no cover
       if not hidden and path != "." and path[0] == ".":
         continue
@@ -506,7 +506,7 @@ def detect_paths_incremental(args):
 # Some detected paths might not be python code since not all files use extensions like ".py" and
 # ".pyw", for instance. But try directly specified files on CLI, on depth 0, in any case (non-python
 # files will be ignored when trying to parse them). Paths containing chars in `ignore_chars` will be
-# ignored, as will any file excluded by glob from the config.
+# ignored, as will any file excluded by regex from the config.
 def detect_paths(paths, hidden=False, processes=cpu_count(), ignore_chars=None,
                  scan_symlink_folders=False, config=None):
   assert(config is not None)

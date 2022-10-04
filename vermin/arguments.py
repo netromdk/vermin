@@ -154,22 +154,22 @@ class Arguments:
             "        line constitutes an exclusion with the same format as with --exclude.")
       print("\n  --no-exclude (default)\n"
             "        Use no excludes. Clears any excludes specified before this.")
-      print("\n  [--exclude-glob <glob pattern>] ...\n"
-            "        Exclude files from analysis by matching a glob pattern against their\n"
-            "        entire path as provided on the vermin command line.\n\n"
+      print("\n  [--exclude-regex <regex pattern>] ...\n"
+            "        Exclude files from analysis by matching a regex pattern against their\n"
+            "        entire path as expanded from the vermin command line.\n\n"
             "        Examples:\n"
-            "          Exclude any '.pyi' file:                --exclude-glob '*.pyi'\n\n"
+            "          Exclude any '.pyi' file:                --exclude-regex '.+\\.pyi'\n\n"
             "          (Note: the below examples require --no-make-paths-absolute, or prefixing\n"
             "          the patterns with the absolute path to the current directory.)\n\n"
-            "          Exclude the directory 'a/b/':           --exclude-glob 'a/b'\n"
-            "          Exclude '.pyi' files under 'a/b/':      --exclude-glob 'a/b/*.pyi'\n"
-            "          Exclude '.pyi' files in exactly 'a/b/': --exclude-glob 'a/b/[!/].pyi'")
-      print("\n  --no-exclude-globs (default)\n"
-            "        Use no exclude globs. Clears any exclude globs specified before this.")
+            "          Exclude the directory 'a/b/':           --exclude-regex 'a/b'\n"
+            "          Exclude '.pyi' files under 'a/b/':      --exclude-regex 'a/b/.+\\.pyi'\n"
+            "          Exclude '.pyi' files in exactly 'a/b/': --exclude-regex 'a/b/[^/]+\\.pyi'")
+      print("\n  --no-exclude-regex (default)\n"
+            "        Use no exclude patterns. Clears any exclude patterns specified before this.")
       print("\n  --make-paths-absolute (default)\n"
             "        Convert any relative paths from the command line into absolute paths.\n"
             "        This affects the path printed to the terminal if a file fails a check,\n"
-            "        and requires --exclude-glob patterns to match absolute paths.")
+            "        and requires --exclude-regex patterns to match absolute paths.")
       print("\n  --no-make-paths-absolute\n"
             "        Do not convert relative paths from the command line into absolute paths.")
       print("\n  [--backport <name>] ...\n"
@@ -323,14 +323,14 @@ class Arguments:
       elif arg == "--no-exclude":
         config.clear_exclusions()
         path_pos += 1
-      elif arg == "--exclude-glob":
+      elif arg == "--exclude-regex":
         if (i + 1) >= len(self.__args):
-          print("Exclusion requires a glob! Example: --exclude-glob '*.pyi'")
+          print(r"Exclusion requires a regex! Example: --exclude-regex '.+\.pyi'")
           return {"code": 1}
-        config.add_exclusion_glob(self.__args[i + 1])
+        config.add_exclusion_regex(self.__args[i + 1])
         path_pos += 2
-      elif arg == "--no-exclude-globs":
-        config.clear_exclusion_globs()
+      elif arg == "--no-exclude-regex":
+        config.clear_exclusion_regex()
         path_pos += 1
       elif arg == "--make-paths-absolute":
         config.set_make_paths_absolute(True)

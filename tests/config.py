@@ -78,6 +78,8 @@ class VerminConfigTests(VerminTest):
   show_tips = {}
   analyze_hidden = {}
   exclusions = {}
+  exclusion_regex = {}
+  make_paths_absolute = {}
   backports = {}
   features = {}
   targets = {}
@@ -89,8 +91,9 @@ class VerminConfigTests(VerminTest):
 )""".format(self.config.__class__.__name__, self.config.quiet(), self.config.verbose(),
             self.config.print_visits(), self.config.processes(), self.config.ignore_incomp(),
             self.config.pessimistic(), self.config.show_tips(), self.config.analyze_hidden(),
-            self.config.exclusions(), list(self.config.backports()), list(self.config.features()),
-            self.config.targets(), self.config.eval_annotations(),
+            self.config.exclusions(), self.config.exclusion_regex(),
+            self.config.make_paths_absolute(), list(self.config.backports()),
+            list(self.config.features()), self.config.targets(), self.config.eval_annotations(),
             self.config.only_show_violations(), self.config.parse_comments(),
             self.config.scan_symlink_folders(), self.config.format().name()))
 

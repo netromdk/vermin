@@ -1,4 +1,5 @@
 import os
+import re
 from tempfile import mkdtemp
 from shutil import rmtree
 
@@ -226,51 +227,47 @@ aaa
     self.assertContainsDict({"code": 0}, self.parse_args(["--exclude-file", fn]))
     self.assertEmpty(self.config.exclusions())
 
-  def test_exclude_glob(self):
-    self.assertContainsDict({"code": 1}, self.parse_args(["--exclude-glob"]))  # Needs <glob> part.
-    self.assertEmpty(self.config.exclusion_globs())
+  def test_exclude_regex(self):
+    self.assertContainsDict({"code": 1}, self.parse_args(["--exclude-regex"]))  # Needs <rx> part.
+    self.assertEmpty(self.config.exclusion_regex())
 
-    args = ["--exclude-glob", "*.pyi",
-            "--exclude-glob", "a/b"]
+    args = ["--exclude-regex", r".+\.pyi",
+            "--exclude-regex", "a/b"]
     self.assertContainsDict({"code": 0}, self.parse_args(args))
-    self.assertEqual(["*.pyi", "a/b"], self.config.exclusion_globs())  # Expect it sorted.
-    self.assertFalse(self.config.is_excluded_by_glob("a/b.py"))
-    self.assertTrue(self.config.is_excluded_by_glob("asdf.pyi"))
-    self.assertTrue(self.config.is_excluded_by_glob("a/m.pyi"))
-    self.assertTrue(self.config.is_excluded_by_glob("a/b"))
+    expected = [re.compile(r".+\.pyi"), re.compile("a/b")]
+    self.assertEqual(expected, self.config.exclusion_regex())  # Expect it sorted.
+    self.assertFalse(self.config.is_excluded_by_regex("a/b.py"))
+    self.assertTrue(self.config.is_excluded_by_regex("asdf.pyi"))
+    self.assertTrue(self.config.is_excluded_by_regex("a/m.pyi"))
+    self.assertTrue(self.config.is_excluded_by_regex("a/b"))
 
-    # Glob patterns are applied at each level of directory traversal. If 'a/' is provided on the
-    # command line, then the glob 'a/b' will match the recursive traversal when it encounters the
-    # directory 'a/b', and avoid recursing into that directory. However, a directory pattern without
-    # any '**' components will not itself match files contained within that directory. This makes it
-    # more efficient to use when possible, but more difficult to test in isolation.
-    self.assertFalse(self.config.is_excluded_by_glob("a/b/c.py"))
+    # Regex patterns are applied at each level of directory traversal. If 'a/' is provided on the
+    # command line, then the regex 'a/b' will match the recursive traversal when it encounters the
+    # directory 'a/b', and avoid recursing into that directory. This makes it more efficient to use
+    # when possible, but more difficult to test in isolation. test_exclude_regex_relative() in
+    # general.py tests that 'a/b' excludes e.g. 'a/b/c.py'.
+    self.assertFalse(self.config.is_excluded_by_regex("a/b/c.py"))
 
     self.config.reset()
-    # fnmatch interprets '**' the same as '*', but some users might expect those to work since '**'
-    # is interpreted to mean "0 or more directory components". Let's make sure we at least know how
-    # vermin will interpret those inputs.
-    args = ["--exclude-glob", "a/b/**",
-            "--exclude-glob", "a/**/*.pyi"]
+    args = ["--exclude-regex", "a/b/.+",
+            "--exclude-regex", r"a/.+/.+\.pyi"]
     self.assertContainsDict({"code": 0}, self.parse_args(args))
-    self.assertTrue(self.config.is_excluded_by_glob("a/b/c.py"))
-    self.assertTrue(self.config.is_excluded_by_glob("a/b/c/d.py"))
-    # '*/*.pyi' does not match .pyi files in the top-level directory.
-    self.assertFalse(self.config.is_excluded_by_glob("a/m.pyi"))
-    self.assertTrue(self.config.is_excluded_by_glob("a/d/m.pyi"))
-    self.assertFalse(self.config.is_excluded_by_glob("m.pyi"))
+    self.assertTrue(self.config.is_excluded_by_regex("a/b/c.py"))
+    self.assertTrue(self.config.is_excluded_by_regex("a/b/c/d.py"))
+    # '.+/.+\.pyi' does not match .pyi files in the top-level directory.
+    self.assertFalse(self.config.is_excluded_by_regex("a/m.pyi"))
+    self.assertTrue(self.config.is_excluded_by_regex("a/d/m.pyi"))
+    self.assertFalse(self.config.is_excluded_by_regex("m.pyi"))
 
     self.config.reset()
-    # Use '[!/]' instead of '*' to force only matching files in the top-level. Some users might
-    # expect '*' to work the way it does in the unix shell (not matching directory components), but
-    # we clarify in --help that '[!/]' is required for that.
-    self.assertContainsDict({"code": 0}, self.parse_args(["--exclude-glob", "a/b/[!/].pyi"]))
-    self.assertTrue(self.config.is_excluded_by_glob("a/b/c.pyi"))
-    self.assertFalse(self.config.is_excluded_by_glob("a/b/c.py"))
-    self.assertFalse(self.config.is_excluded_by_glob("a/b/c/d.pyi"))
+    # Use '[^/]+' instead of '.+' to force only matching files in the top-level.
+    self.assertContainsDict({"code": 0}, self.parse_args(["--exclude-regex", r"a/b/[^/]+\.pyi"]))
+    self.assertTrue(self.config.is_excluded_by_regex("a/b/c.pyi"))
+    self.assertFalse(self.config.is_excluded_by_regex("a/b/c.py"))
+    self.assertFalse(self.config.is_excluded_by_regex("a/b/c/d.pyi"))
 
-    self.assertContainsDict({"code": 0}, self.parse_args(["--no-exclude-globs"]))
-    self.assertEmpty(self.config.exclusion_globs())
+    self.assertContainsDict({"code": 0}, self.parse_args(["--no-exclude-regex"]))
+    self.assertEmpty(self.config.exclusion_regex())
 
   def test_make_paths_absolute(self):
     self.assertTrue(self.config.make_paths_absolute())

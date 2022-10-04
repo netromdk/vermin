@@ -1,7 +1,7 @@
 import io
 import sys
 import os
-from fnmatch import fnmatch
+import re
 
 # novm
 try:
@@ -30,7 +30,7 @@ class Config:
     self.__show_tips = True
     self.__analyze_hidden = False
     self.__exclusions = set()
-    self.__exclusion_globs = set()
+    self.__exclusion_regex = set()
     self.__make_paths_absolute = True
     self.__backports = set()
     self.__features = set()
@@ -51,7 +51,7 @@ class Config:
     self.__show_tips = other_config.show_tips()
     self.__analyze_hidden = other_config.analyze_hidden()
     self.__exclusions = set(other_config.exclusions())
-    self.__exclusion_globs = set(other_config.exclusion_globs())
+    self.__exclusion_regex = set(other_config.exclusion_regex())
     self.__make_paths_absolute = other_config.make_paths_absolute()
     self.__backports = other_config.backports()
     self.__features = other_config.features()
@@ -73,7 +73,7 @@ class Config:
   show_tips = {}
   analyze_hidden = {}
   exclusions = {}
-  exclusion_globs = {}
+  exclusion_regex = {}
   make_paths_absolute = {}
   backports = {}
   features = {}
@@ -85,7 +85,7 @@ class Config:
   format = {}
 )""".format(self.__class__.__name__, self.quiet(), self.verbose(), self.print_visits(),
             self.processes(), self.ignore_incomp(), self.pessimistic(), self.show_tips(),
-            self.analyze_hidden(), self.exclusions(), self.exclusion_globs(),
+            self.analyze_hidden(), self.exclusions(), self.exclusion_regex(),
             self.make_paths_absolute(), list(self.backports()), list(self.features()),
             self.targets(), self.eval_annotations(), self.only_show_violations(),
             self.parse_comments(), self.scan_symlink_folders(), self.format().name())
@@ -127,7 +127,7 @@ class Config:
       "show_tips": str(config.show_tips()),
       "analyze_hidden": str(config.analyze_hidden()),
       "exclusions": encode_list(config.exclusions()),
-      "exclusion_globs": encode_list(config.exclusion_globs()),
+      "exclusion_regex": encode_list(config.exclusion_regex()),
       "make_paths_absolute": str(config.make_paths_absolute()),
       "backports": encode_list(config.backports()),
       "features": encode_list(config.features()),
@@ -194,8 +194,8 @@ class Config:
     for exclusion in getstringlist("exclusions"):
       config.add_exclusion(exclusion)
 
-    for exclusion_glob in getstringlist("exclusion_globs"):
-      config.add_exclusion_glob(exclusion_glob)
+    for exclusion_regex in getstringlist("exclusion_regex"):
+      config.add_exclusion_regex(exclusion_regex)
 
     config.set_make_paths_absolute(getbool("make_paths_absolute"))
 
@@ -295,8 +295,8 @@ folders until root or project boundaries are reached. Each candidate is checked 
   def add_exclusion(self, name):
     self.__exclusions.add(name)
 
-  def add_exclusion_glob(self, glob):
-    self.__exclusion_globs.add(glob)
+  def add_exclusion_regex(self, pattern):
+    self.__exclusion_regex.add(re.compile(pattern))
 
   def add_exclusion_file(self, filename):
     try:
@@ -309,17 +309,17 @@ folders until root or project boundaries are reached. Each candidate is checked 
   def clear_exclusions(self):
     self.__exclusions.clear()
 
-  def clear_exclusion_globs(self):
-    self.__exclusion_globs.clear()
+  def clear_exclusion_regex(self):
+    self.__exclusion_regex.clear()
 
   def exclusions(self):
     res = list(self.__exclusions)
     res.sort()
     return res
 
-  def exclusion_globs(self):
-    res = list(self.__exclusion_globs)
-    res.sort()
+  def exclusion_regex(self):
+    res = list(self.__exclusion_regex)
+    res.sort(key=lambda rx: rx.pattern)
     return res
 
   def is_excluded(self, name):
@@ -334,8 +334,13 @@ folders until root or project boundaries are reached. Each candidate is checked 
   def is_excluded_codecs_encoding(self, name):
     return "ce={}".format(name) in self.__exclusions
 
-  def is_excluded_by_glob(self, path):
-    return any(fnmatch(path, glob) for glob in self.__exclusion_globs)
+  def is_excluded_by_regex(self, path):
+    def matches_completely(rx, p):
+      m = rx.match(p)
+      if m is None:
+        return False
+      return m.end() == m.endpos
+    return any(matches_completely(regex, path) for regex in self.__exclusion_regex)
 
   def make_paths_absolute(self):
     return self.__make_paths_absolute
