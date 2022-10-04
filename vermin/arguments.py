@@ -156,14 +156,16 @@ class Arguments:
             "        Use no excludes. Clears any excludes specified before this.")
       print("\n  [--exclude-regex <regex pattern>] ...\n"
             "        Exclude files from analysis by matching a regex pattern against their\n"
-            "        entire path as expanded from the vermin command line.\n\n"
+            "        entire path as expanded from the vermin command line. Patterns are matched\n"
+            "        using re.search(), so '^' or '$' anchors should be applied as needed.\n\n"
             "        Examples:\n"
-            "          Exclude any '.pyi' file:                --exclude-regex '.+\\.pyi'\n\n"
+            "          Exclude any '.pyi' file:                --exclude-regex '\\.pyi$'\n\n"
             "          (Note: the below examples require --no-make-paths-absolute, or prefixing\n"
-            "          the patterns with the absolute path to the current directory.)\n\n"
-            "          Exclude the directory 'a/b/':           --exclude-regex 'a/b'\n"
-            "          Exclude '.pyi' files under 'a/b/':      --exclude-regex 'a/b/.+\\.pyi'\n"
-            "          Exclude '.pyi' files in exactly 'a/b/': --exclude-regex 'a/b/[^/]+\\.pyi'")
+            "          the patterns with the regex-escaped path to the current directory.)\n\n"
+            "          Exclude the directory 'a/b/':           --exclude-regex '^a/b$'\n"
+            "            (This will also exclude any files under 'a/b'.)\n\n"
+            "          Exclude '.pyi' files under 'a/b/':      --exclude-regex '^a/b/.+\\.pyi$'\n"
+            "          Exclude '.pyi' files in exactly 'a/b/': --exclude-regex '^a/b/[^/]+\\.pyi$'")
       print("\n  --no-exclude-regex (default)\n"
             "        Use no exclude patterns. Clears any exclude patterns specified before this.")
       print("\n  --make-paths-absolute (default)\n"

@@ -335,12 +335,7 @@ folders until root or project boundaries are reached. Each candidate is checked 
     return "ce={}".format(name) in self.__exclusions
 
   def is_excluded_by_regex(self, path):
-    def matches_completely(rx, p):
-      m = rx.match(p)
-      if m is None:
-        return False
-      return m.end() == m.endpos
-    return any(matches_completely(regex, path) for regex in self.__exclusion_regex)
+    return any(regex.search(path) for regex in self.__exclusion_regex)
 
   def make_paths_absolute(self):
     return self.__make_paths_absolute

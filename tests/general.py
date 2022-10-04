@@ -322,7 +322,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     # With the default of --make-paths-absolute, this will match .pyi files in any subdirectory. The
     # most common use case for --exclude-regex is expected to be for file extensions, so it's great
     # that that will work regardless of the --make-paths-absolute setting.
-    self.config.add_exclusion_regex(r".+\.pyi")
+    self.config.add_exclusion_regex(r"\.pyi$")
 
     f = touch(tmp_fld, "code.pyi")
     with open_wrapper(f, mode="w", encoding="utf-8") as fp:
@@ -337,7 +337,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     tmp_fld = mkdtemp()
 
     # Excluding the directory .../a should exclude any files recursively beneath it as well.
-    self.config.add_exclusion_regex(re.escape(join(tmp_fld, "a")))
+    self.config.add_exclusion_regex('^' + re.escape(join(tmp_fld, "a")) + '$')
 
     # Create .../a and .../a/b directories.
     os.mkdir(join(tmp_fld, "a"))
@@ -359,8 +359,8 @@ test.py:6:9:2.7:3.2:'argparse' module
 
     # Keep paths relative, and provide patterns matching relative paths.
     self.config.set_make_paths_absolute(False)
-    self.config.add_exclusion_regex("a/b")
-    self.config.add_exclusion_regex("a/[^/]+\.pyi")
+    self.config.add_exclusion_regex("^a/b$")
+    self.config.add_exclusion_regex(r"^a/[^/]+\.pyi$")
 
     # Create .../a and .../a/b directories.
     os.mkdir(join(tmp_fld, "a"))

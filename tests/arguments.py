@@ -231,10 +231,10 @@ aaa
     self.assertContainsDict({"code": 1}, self.parse_args(["--exclude-regex"]))  # Needs <rx> part.
     self.assertEmpty(self.config.exclusion_regex())
 
-    args = ["--exclude-regex", r".+\.pyi",
-            "--exclude-regex", "a/b"]
+    args = ["--exclude-regex", r"\.pyi$",
+            "--exclude-regex", "^a/b$"]
     self.assertContainsDict({"code": 0}, self.parse_args(args))
-    expected = [re.compile(r".+\.pyi"), re.compile("a/b")]
+    expected = [re.compile(r"\.pyi$"), re.compile("^a/b$")]
     self.assertEqual(expected, self.config.exclusion_regex())  # Expect it sorted.
     self.assertFalse(self.config.is_excluded_by_regex("a/b.py"))
     self.assertTrue(self.config.is_excluded_by_regex("asdf.pyi"))
@@ -249,8 +249,9 @@ aaa
     self.assertFalse(self.config.is_excluded_by_regex("a/b/c.py"))
 
     self.config.reset()
-    args = ["--exclude-regex", "a/b/.+",
-            "--exclude-regex", r"a/.+/.+\.pyi"]
+    self.assertEmpty(self.config.exclusion_regex())
+    args = ["--exclude-regex", "^a/b/.+$",
+            "--exclude-regex", r"^a/.+/.+\.pyi$"]
     self.assertContainsDict({"code": 0}, self.parse_args(args))
     self.assertTrue(self.config.is_excluded_by_regex("a/b/c.py"))
     self.assertTrue(self.config.is_excluded_by_regex("a/b/c/d.py"))
@@ -261,7 +262,7 @@ aaa
 
     self.config.reset()
     # Use '[^/]+' instead of '.+' to force only matching files in the top-level.
-    self.assertContainsDict({"code": 0}, self.parse_args(["--exclude-regex", r"a/b/[^/]+\.pyi"]))
+    self.assertContainsDict({"code": 0}, self.parse_args(["--exclude-regex", r"^a/b/[^/]+\.pyi$"]))
     self.assertTrue(self.config.is_excluded_by_regex("a/b/c.pyi"))
     self.assertFalse(self.config.is_excluded_by_regex("a/b/c.py"))
     self.assertFalse(self.config.is_excluded_by_regex("a/b/c/d.pyi"))
