@@ -1,8 +1,9 @@
 import os
+import re
 from tempfile import mkdtemp
 from shutil import rmtree
 
-from vermin import Backports, Config, Features, DEFAULT_PROCESSES, CONFIG_FILE_NAMES
+from vermin import Backports, Features, DEFAULT_PROCESSES, CONFIG_FILE_NAMES
 from vermin.utility import open_wrapper
 import vermin.formats
 
@@ -230,15 +231,11 @@ aaa
     self.assertContainsDict({"code": 1}, self.parse_args(["--exclude-regex"]))  # Needs <rx> part.
     self.assertEmpty(self.config.exclusion_regex())
 
-    # Nothing should be excluded before any regex are added.
-    self.assertFalse(self.config.is_excluded_by_regex("asdf.py"))
-
     args = ["--exclude-regex", r"\.pyi$",
             "--exclude-regex", "^a/b$"]
     self.assertContainsDict({"code": 0}, self.parse_args(args))
-
-    self.assertEqual([r"\.pyi$", "^a/b$"], self.config.exclusion_regex())  # Expect it sorted.
-
+    expected = [re.compile(r"\.pyi$"), re.compile("^a/b$")]
+    self.assertEqual(expected, self.config.exclusion_regex())  # Expect it sorted.
     self.assertFalse(self.config.is_excluded_by_regex("a/b.py"))
     self.assertTrue(self.config.is_excluded_by_regex("asdf.pyi"))
     self.assertTrue(self.config.is_excluded_by_regex("a/m.pyi"))
@@ -272,76 +269,6 @@ aaa
 
     self.assertContainsDict({"code": 0}, self.parse_args(["--no-exclude-regex"]))
     self.assertEmpty(self.config.exclusion_regex())
-
-  def test_exclude_regex_master_invalidation(self):
-    self.assertIsNone(self.config._merged_exclusion_regex)  # pylint: disable=protected-access
-
-    self.config.add_exclusion_regex(r"\.pyi$")
-
-    # The memoized master regex should not be set until a match is attempted.
-    self.assertIsNone(self.config._merged_exclusion_regex)  # pylint: disable=protected-access
-    self.assertTrue(self.config.is_excluded_by_regex("a/b.pyi"))
-    # After matching, the master regex should be memoized.
-    self.assertIsNotNone(self.config._merged_exclusion_regex)  # pylint: disable=protected-access
-
-    merged_rx = self.config._merged_exclusion_regex  # pylint: disable=protected-access
-
-    self.config.add_exclusion_regex(r"\.py$")
-    # After adding a new regex, the memoization should be invalidated.
-    self.assertIsNone(self.config._merged_exclusion_regex)  # pylint: disable=protected-access
-    self.assertTrue(self.config.is_excluded_by_regex("a/b.py"))
-    # The memoization should now be reconstructed after attempting a match.
-    self.assertIsNotNone(self.config._merged_exclusion_regex)  # pylint: disable=protected-access
-
-    # Even though compiled regex are interned, adding a new exclude regex should produce a different
-    # memoized master regex.
-    self.assertNotEqual(
-      merged_rx,
-      self.config._merged_exclusion_regex,  # pylint: disable=protected-access
-    )
-
-    self.config.reset()
-    # After clearing the exclusions, the memoization should be invalidated.
-    self.assertIsNone(self.config._merged_exclusion_regex)  # pylint: disable=protected-access
-
-  def test_exclude_regex_other_config(self):
-    """Test a few properties of regex exclusion with multiple config instances."""
-
-    # Create another config object with its own exclude patterns.
-    other_config = Config()
-    other_config.add_exclusion_regex(r"\.py$")
-
-    # Verify that a memoization is generated for the separate config.
-    self.assertIsNone(other_config._merged_exclusion_regex)  # pylint: disable=protected-access
-    self.assertTrue(other_config.is_excluded_by_regex("a/b.py"))
-    self.assertIsNotNone(other_config._merged_exclusion_regex)  # pylint: disable=protected-access
-
-    # Initialize the current config again, and see that a memoization is generated.
-    self.config.add_exclusion_regex(r"\.py$")
-    self.assertIsNone(self.config._merged_exclusion_regex)  # pylint: disable=protected-access
-    self.assertTrue(self.config.is_excluded_by_regex("a/b.py"))
-    self.assertIsNotNone(self.config._merged_exclusion_regex)  # pylint: disable=protected-access
-
-    # Since the two configs have the same pattern inputs, their memoized regex should also be
-    # the same.
-    self.assertEqual(
-      self.config._merged_exclusion_regex,   # pylint: disable=protected-access
-      other_config._merged_exclusion_regex,  # pylint: disable=protected-access
-    )
-
-    # Clobber the current config and read from the other one.
-    self.config.override_from(other_config)
-    # The memoization should be invalidated after an override_from() call.
-    self.assertIsNone(self.config._merged_exclusion_regex)  # pylint: disable=protected-access
-
-    # Generate the memoization again.
-    self.assertTrue(self.config.is_excluded_by_regex("a/b.py"))
-    self.assertIsNotNone(self.config._merged_exclusion_regex)  # pylint: disable=protected-access
-    # The memoized regex should still be the same as before.
-    self.assertEqual(
-      self.config._merged_exclusion_regex,   # pylint: disable=protected-access
-      other_config._merged_exclusion_regex,  # pylint: disable=protected-access
-    )
 
   def test_make_paths_absolute(self):
     self.assertTrue(self.config.make_paths_absolute())

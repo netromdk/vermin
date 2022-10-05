@@ -31,7 +31,6 @@ class Config:
     self.__analyze_hidden = False
     self.__exclusions = set()
     self.__exclusion_regex = set()
-    self._clear_memoized_master_regex()
     self.__make_paths_absolute = True
     self.__backports = set()
     self.__features = set()
@@ -53,7 +52,6 @@ class Config:
     self.__analyze_hidden = other_config.analyze_hidden()
     self.__exclusions = set(other_config.exclusions())
     self.__exclusion_regex = set(other_config.exclusion_regex())
-    self._clear_memoized_master_regex()
     self.__make_paths_absolute = other_config.make_paths_absolute()
     self.__backports = other_config.backports()
     self.__features = other_config.features()
@@ -297,16 +295,8 @@ folders until root or project boundaries are reached. Each candidate is checked 
   def add_exclusion(self, name):
     self.__exclusions.add(name)
 
-  def _clear_memoized_master_regex(self):
-    """Delete the master regex which joins all exclusion patterns.
-
-    We merge all our regex patterns together as an optimization, but this memoized "master regex" is
-    invalidated whenever the list of exclusion regexes is updated, and must be reset."""
-    self._merged_exclusion_regex = None
-
   def add_exclusion_regex(self, pattern):
-    self._clear_memoized_master_regex()
-    self.__exclusion_regex.add(pattern)
+    self.__exclusion_regex.add(re.compile(pattern))
 
   def add_exclusion_file(self, filename):
     try:
@@ -320,7 +310,6 @@ folders until root or project boundaries are reached. Each candidate is checked 
     self.__exclusions.clear()
 
   def clear_exclusion_regex(self):
-    self._clear_memoized_master_regex()
     self.__exclusion_regex.clear()
 
   def exclusions(self):
@@ -330,7 +319,7 @@ folders until root or project boundaries are reached. Each candidate is checked 
 
   def exclusion_regex(self):
     res = list(self.__exclusion_regex)
-    res.sort()
+    res.sort(key=lambda rx: rx.pattern)
     return res
 
   def is_excluded(self, name):
@@ -346,25 +335,7 @@ folders until root or project boundaries are reached. Each candidate is checked 
     return "ce={}".format(name) in self.__exclusions
 
   def is_excluded_by_regex(self, path):
-    """Check whether `path` matches any of the registered exclusion regex patterns."""
-    # If no regex patterns are provided, then this method never discards any path. This early check
-    # also avoids attempting to construct a merged regex from zero patterns below.
-    if not self.__exclusion_regex:
-      return False
-    # If any regex patterns are provided to exclude files against, we OR them together with '|' and
-    # search against them all at once. This memoization with a private member variable means we
-    # should only compile any regex at most once during vermin's execution, and we can lean on the
-    # regex engine to amortize the work of searching multiple patterns instead of matching regex in
-    # a python loop.
-    if self._merged_exclusion_regex is None:
-      # Because self.exclusion_regex() sorts its output, we should always get the same merged regex
-      # regardless of the order in which exclude patterns are added or the python set iteration
-      # order. We don't rely on that idempotency anywhere, though.
-      self._merged_exclusion_regex = re.compile('|'.join(self.exclusion_regex()))
-    # As described in --help, we match --exclude-regex with re.search(), requiring the user to
-    # provide '^' or '$' anchors to ensure the pattern matches against either end of the string and
-    # not somewhere in the middle.
-    return bool(self._merged_exclusion_regex.search(path))
+    return any(regex.search(path) for regex in self.__exclusion_regex)
 
   def make_paths_absolute(self):
     return self.__make_paths_absolute
