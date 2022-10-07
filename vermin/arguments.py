@@ -26,7 +26,7 @@ class Arguments:
           "  - 'pyc', 'pyd', 'pxd', 'pyx', 'pyo' are ignored (including various other files)\n"
           "  - Magic lines with 'python' are accepted, like: #!/usr/bin/env python\n"
           "  - Files that cannot be opened for reading as text devices are ignored")
-    print("\nHowever, vermin will always attempt to parse any file paths directly specified on\n"
+    print("\nHowever, Vermin will always attempt to parse any file paths directly specified on\n"
           "the command line, even without accepted extensions or heuristics, unless otherwise\n"
           "excluded.")
     print("\nResults interpretation:")
@@ -156,7 +156,7 @@ class Arguments:
             "        Use no excludes. Clears any excludes specified before this.")
       print("\n  [--exclude-regex <regex pattern>] ...\n"
             "        Exclude files from analysis by matching a regex pattern against their\n"
-            "        entire path as expanded from the vermin command line. Patterns are matched\n"
+            "        entire path as expanded from the Vermin command line. Patterns are matched\n"
             "        using re.search(), so '^' or '$' anchors should be applied as needed.\n\n"
             "        Examples:\n"
             "          Exclude any '.pyi' file:                --exclude-regex '\\.pyi$'\n\n"
@@ -327,7 +327,7 @@ class Arguments:
         path_pos += 1
       elif arg == "--exclude-regex":
         if (i + 1) >= len(self.__args):
-          print(r"Exclusion requires a regex! Example: --exclude-regex '.+\.pyi'")
+          print("Exclusion requires a regex! Example: --exclude-regex '\\.pyi$'")
           return {"code": 1}
         config.add_exclusion_regex(self.__args[i + 1])
         path_pos += 2

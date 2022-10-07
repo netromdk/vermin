@@ -321,7 +321,7 @@ test.py:6:9:2.7:3.2:'argparse' module
 
     # With the default of --make-paths-absolute, this will match .pyi files in any subdirectory. The
     # most common use case for --exclude-regex is expected to be for file extensions, so it's great
-    # that that will work regardless of the --make-paths-absolute setting.
+    # that will work regardless of the --make-paths-absolute setting.
     self.config.add_exclusion_regex(r"\.pyi$")
 
     f = touch(tmp_fld, "code.pyi")
