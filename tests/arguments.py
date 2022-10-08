@@ -1,5 +1,4 @@
 import os
-import re
 from tempfile import mkdtemp
 from shutil import rmtree
 
@@ -234,7 +233,7 @@ aaa
     args = ["--exclude-regex", r"\.pyi$",
             "--exclude-regex", "^a/b$"]
     self.assertContainsDict({"code": 0}, self.parse_args(args))
-    expected = [re.compile(r"\.pyi$"), re.compile("^a/b$")]
+    expected = [r"\.pyi$", "^a/b$"]
     self.assertEqual(expected, self.config.exclusion_regex())  # Expect it sorted.
     self.assertFalse(self.config.is_excluded_by_regex("a/b.py"))
     self.assertTrue(self.config.is_excluded_by_regex("asdf.pyi"))

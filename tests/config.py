@@ -1,5 +1,4 @@
 import os
-import re
 from tempfile import mkdtemp
 from shutil import rmtree
 
@@ -345,16 +344,16 @@ exclusion_regex =
 """, []],
     [u"""[vermin]
 exclusion_regex = \\.pyi$
-""", [re.compile(r"\.pyi$")]],
+""", [r"\.pyi$"]],
     [u"""[vermin]
 exclusion_regex = \\.pyi$
   ^a/b$
-""", [re.compile(r"\.pyi$"), re.compile(r"^a/b$")]],
+""", [r"\.pyi$", r"^a/b$"]],
     [u"""[vermin]
 exclusion_regex =
   ^a/b$
   \\.pyi$
-""", [re.compile(r"\.pyi$"), re.compile(r"^a/b$")]],
+""", [r"\.pyi$", r"^a/b$"]],
   ])
   def test_parse_exclusion_regex(self, data, expected):
     config = Config.parse_data(data)

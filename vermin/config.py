@@ -318,8 +318,8 @@ folders until root or project boundaries are reached. Each candidate is checked 
     return res
 
   def exclusion_regex(self):
-    res = list(self.__exclusion_regex)
-    res.sort(key=lambda rx: rx.pattern)
+    res = [p.pattern for p in self.__exclusion_regex]
+    res.sort()
     return res
 
   def is_excluded(self, name):
