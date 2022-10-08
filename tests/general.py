@@ -359,14 +359,18 @@ test.py:6:9:2.7:3.2:'argparse' module
 
     # Keep paths relative, and provide patterns matching relative paths.
     self.config.set_make_paths_absolute(False)
-    self.config.add_exclusion_regex("^a/b$")
-    self.config.add_exclusion_regex(r"^a/[^/]+\.pyi$")
+    self.config.add_exclusion_regex("^a{0}b$".format(re.escape(os.path.sep)))
+    self.config.add_exclusion_regex("^a{0}.+pyi$".format(re.escape(os.path.sep)))
 
     # Create .../a and .../a/b directories.
     os.mkdir(join(tmp_fld, "a"))
-    os.mkdir(join(tmp_fld, "a/b"))
+    os.mkdir(join(tmp_fld, "a", "b"))
 
-    paths = ["a/code.py", "a/code.pyi", "a/b/code.py"]
+    paths = [
+      join("a", "code.py"),
+      join("a", "code.pyi"),
+      join("a", "b", "code.py"),
+    ]
     for p in paths:
       f = touch(tmp_fld, p)
       with open_wrapper(f, mode="w", encoding="utf-8") as fp:
@@ -375,7 +379,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     # Temporarily modify the working directory.
     with working_dir(tmp_fld):
       paths = detect_paths(["a"], config=self.config)
-      self.assertEqual(paths, ["a/code.py"])
+      self.assertEqual(paths, [join("a", "code.py")])
 
     rmtree(tmp_fld)
 
