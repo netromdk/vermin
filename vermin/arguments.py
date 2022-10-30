@@ -22,12 +22,13 @@ class Arguments:
       print("\nFor full help and options, use `-h` or `--help`.")
 
     print("\nHeuristics are employed to determine which files to analyze:\n"
-          "  - 'py', 'py3', 'pyw', 'pyj', 'pyi' are always scanned\n"
+          "  - 'py', 'py3', 'pyw', 'pyj', 'pyi' are always scanned (unless otherwise excluded)\n"
           "  - 'pyc', 'pyd', 'pxd', 'pyx', 'pyo' are ignored (including various other files)\n"
           "  - Magic lines with 'python' are accepted, like: #!/usr/bin/env python\n"
           "  - Files that cannot be opened for reading as text devices are ignored")
-    print("\nHowever, files directly specified are always attempted parsing, even without\n"
-          "accepted extensions or heuristics.")
+    print("\nHowever, Vermin will always attempt to parse any file paths directly specified on\n"
+          "the command line, even without accepted extensions or heuristics, unless otherwise\n"
+          "excluded.")
     print("\nResults interpretation:")
     print("  ~2       No known reason it won't work with py2.")
     print("  !2       It is known that it won't work with py2.")
@@ -153,6 +154,26 @@ class Arguments:
             "        line constitutes an exclusion with the same format as with --exclude.")
       print("\n  --no-exclude (default)\n"
             "        Use no excludes. Clears any excludes specified before this.")
+      print("\n  [--exclude-regex <regex pattern>] ...\n"
+            "        Exclude files from analysis by matching a regex pattern against their\n"
+            "        entire path as expanded from the Vermin command line. Patterns are matched\n"
+            "        using re.search(), so '^' or '$' anchors should be applied as needed.\n\n"
+            "        Examples:\n"
+            "          Exclude any '.pyi' file:                --exclude-regex '\\.pyi$'\n\n"
+            "          (Note: the below examples require --no-make-paths-absolute, or prefixing\n"
+            "          the patterns with the regex-escaped path to the current directory.)\n\n"
+            "          Exclude the directory 'a/b/':           --exclude-regex '^a/b$'\n"
+            "            (This will also exclude any files under 'a/b'.)\n\n"
+            "          Exclude '.pyi' files under 'a/b/':      --exclude-regex '^a/b/.+\\.pyi$'\n"
+            "          Exclude '.pyi' files in exactly 'a/b/': --exclude-regex '^a/b/[^/]+\\.pyi$'")
+      print("\n  --no-exclude-regex (default)\n"
+            "        Use no exclude patterns. Clears any exclude patterns specified before this.")
+      print("\n  --make-paths-absolute (default)\n"
+            "        Convert any relative paths from the command line into absolute paths.\n"
+            "        This affects the path printed to the terminal if a file fails a check,\n"
+            "        and requires --exclude-regex patterns to match absolute paths.")
+      print("\n  --no-make-paths-absolute\n"
+            "        Do not convert relative paths from the command line into absolute paths.")
       print("\n  [--backport <name>] ...\n"
             "        Some features are sometimes backported into packages, in repositories such\n"
             "        as PyPi, that are widely used but aren't in the standard language. If such a\n"
@@ -303,6 +324,21 @@ class Arguments:
         path_pos += 2
       elif arg == "--no-exclude":
         config.clear_exclusions()
+        path_pos += 1
+      elif arg == "--exclude-regex":
+        if (i + 1) >= len(self.__args):
+          print("Exclusion requires a regex! Example: --exclude-regex '\\.pyi$'")
+          return {"code": 1}
+        config.add_exclusion_regex(self.__args[i + 1])
+        path_pos += 2
+      elif arg == "--no-exclude-regex":
+        config.clear_exclusion_regex()
+        path_pos += 1
+      elif arg == "--make-paths-absolute":
+        config.set_make_paths_absolute(True)
+        path_pos += 1
+      elif arg == "--no-make-paths-absolute":
+        config.set_make_paths_absolute(False)
         path_pos += 1
       elif arg == "--backport":
         if (i + 1) >= len(self.__args):

@@ -78,6 +78,8 @@ class VerminConfigTests(VerminTest):
   show_tips = {}
   analyze_hidden = {}
   exclusions = {}
+  exclusion_regex = {}
+  make_paths_absolute = {}
   backports = {}
   features = {}
   targets = {}
@@ -89,8 +91,9 @@ class VerminConfigTests(VerminTest):
 )""".format(self.config.__class__.__name__, self.config.quiet(), self.config.verbose(),
             self.config.print_visits(), self.config.processes(), self.config.ignore_incomp(),
             self.config.pessimistic(), self.config.show_tips(), self.config.analyze_hidden(),
-            self.config.exclusions(), list(self.config.backports()), list(self.config.features()),
-            self.config.targets(), self.config.eval_annotations(),
+            self.config.exclusions(), self.config.exclusion_regex(),
+            self.config.make_paths_absolute(), list(self.config.backports()),
+            list(self.config.features()), self.config.targets(), self.config.eval_annotations(),
             self.config.only_show_violations(), self.config.parse_comments(),
             self.config.scan_symlink_folders(), self.config.format().name()))
 
@@ -193,6 +196,12 @@ print_visits = True
     [u"""[vermin]
 print_visits = False
 """, False],
+    [u"""[vermin]
+print_visits = yes
+""", True],
+    [u"""[vermin]
+print_visits = no
+""", False],
   ])
   def test_parse_print_visits(self, data, expected):
     config = Config.parse_data(data)
@@ -239,6 +248,12 @@ ignore_incomp = True
     [u"""[vermin]
 ignore_incomp = False
 """, False],
+    [u"""[vermin]
+ignore_incomp = yes
+""", True],
+    [u"""[vermin]
+ignore_incomp = no
+""", False],
   ])
   def test_parse_ignore_incomp(self, data, expected):
     config = Config.parse_data(data)
@@ -258,6 +273,12 @@ pessimistic = True
     [u"""[vermin]
 pessimistic = False
 """, False],
+    [u"""[vermin]
+pessimistic = yes
+""", True],
+    [u"""[vermin]
+pessimistic = no
+""", False],
   ])
   def test_parse_pessimistic(self, data, expected):
     config = Config.parse_data(data)
@@ -276,6 +297,12 @@ show_tips = False
 """, False],
     [u"""[vermin]
 show_tips = True
+""", True],
+    [u"""[vermin]
+show_tips = no
+""", False],
+    [u"""[vermin]
+show_tips = yes
 """, True],
   ])
   def test_parse_show_tips(self, data, expected):
@@ -307,6 +334,56 @@ exclusions =
     config = Config.parse_data(data)
     self.assertIsNotNone(config)
     self.assertEqual(config.exclusions(), expected)
+
+  @VerminTest.parameterized_args([
+    [u"""[vermin]
+exclusion_regex =
+""", []],
+    [u"""[vermin]
+#exclusion_regex = \\.pyi$
+""", []],
+    [u"""[vermin]
+exclusion_regex = \\.pyi$
+""", [r"\.pyi$"]],
+    [u"""[vermin]
+exclusion_regex = \\.pyi$
+  ^a/b$
+""", [r"\.pyi$", r"^a/b$"]],
+    [u"""[vermin]
+exclusion_regex =
+  ^a/b$
+  \\.pyi$
+""", [r"\.pyi$", r"^a/b$"]],
+  ])
+  def test_parse_exclusion_regex(self, data, expected):
+    config = Config.parse_data(data)
+    self.assertIsNotNone(config)
+    self.assertEqual(config.exclusion_regex(), expected)
+
+  @VerminTest.parameterized_args([
+    [u"""[vermin]
+make_paths_absolute =
+""", True],
+    [u"""[vermin]
+#make_paths_absolute = False
+""", True],
+    [u"""[vermin]
+make_paths_absolute = yes
+""", True],
+    [u"""[vermin]
+make_paths_absolute = no
+""", False],
+    [u"""[vermin]
+make_paths_absolute = True
+""", True],
+    [u"""[vermin]
+make_paths_absolute = False
+""", False],
+  ])
+  def test_parse_make_paths_absolute(self, data, expected):
+    config = Config.parse_data(data)
+    self.assertIsNotNone(config)
+    self.assertEqual(config.make_paths_absolute(), expected)
 
   def test_parse_backports(self):
     bps = Backports.modules()

@@ -1,6 +1,7 @@
 import io
 import sys
 import os
+import re
 
 # novm
 try:
@@ -29,6 +30,8 @@ class Config:
     self.__show_tips = True
     self.__analyze_hidden = False
     self.__exclusions = set()
+    self.__exclusion_regex = set()
+    self.__make_paths_absolute = True
     self.__backports = set()
     self.__features = set()
     self.__targets = []
@@ -48,6 +51,8 @@ class Config:
     self.__show_tips = other_config.show_tips()
     self.__analyze_hidden = other_config.analyze_hidden()
     self.__exclusions = set(other_config.exclusions())
+    self.__exclusion_regex = set(other_config.exclusion_regex())
+    self.__make_paths_absolute = other_config.make_paths_absolute()
     self.__backports = other_config.backports()
     self.__features = other_config.features()
     self.__targets = other_config.targets()
@@ -68,6 +73,8 @@ class Config:
   show_tips = {}
   analyze_hidden = {}
   exclusions = {}
+  exclusion_regex = {}
+  make_paths_absolute = {}
   backports = {}
   features = {}
   targets = {}
@@ -78,7 +85,8 @@ class Config:
   format = {}
 )""".format(self.__class__.__name__, self.quiet(), self.verbose(), self.print_visits(),
             self.processes(), self.ignore_incomp(), self.pessimistic(), self.show_tips(),
-            self.analyze_hidden(), self.exclusions(), list(self.backports()), list(self.features()),
+            self.analyze_hidden(), self.exclusions(), self.exclusion_regex(),
+            self.make_paths_absolute(), list(self.backports()), list(self.features()),
             self.targets(), self.eval_annotations(), self.only_show_violations(),
             self.parse_comments(), self.scan_symlink_folders(), self.format().name())
 
@@ -119,6 +127,8 @@ class Config:
       "show_tips": str(config.show_tips()),
       "analyze_hidden": str(config.analyze_hidden()),
       "exclusions": encode_list(config.exclusions()),
+      "exclusion_regex": encode_list(config.exclusion_regex()),
+      "make_paths_absolute": str(config.make_paths_absolute()),
       "backports": encode_list(config.backports()),
       "features": encode_list(config.features()),
       "targets": encode_list(config.targets()),
@@ -183,6 +193,11 @@ class Config:
 
     for exclusion in getstringlist("exclusions"):
       config.add_exclusion(exclusion)
+
+    for exclusion_regex in getstringlist("exclusion_regex"):
+      config.add_exclusion_regex(exclusion_regex)
+
+    config.set_make_paths_absolute(getbool("make_paths_absolute"))
 
     for backport in getstringlist("backports"):
       if not config.add_backport(backport):
@@ -280,6 +295,9 @@ folders until root or project boundaries are reached. Each candidate is checked 
   def add_exclusion(self, name):
     self.__exclusions.add(name)
 
+  def add_exclusion_regex(self, pattern):
+    self.__exclusion_regex.add(re.compile(pattern))
+
   def add_exclusion_file(self, filename):
     try:
       with open_wrapper(filename, mode="r", encoding="utf-8") as f:
@@ -291,8 +309,16 @@ folders until root or project boundaries are reached. Each candidate is checked 
   def clear_exclusions(self):
     self.__exclusions.clear()
 
+  def clear_exclusion_regex(self):
+    self.__exclusion_regex.clear()
+
   def exclusions(self):
     res = list(self.__exclusions)
+    res.sort()
+    return res
+
+  def exclusion_regex(self):
+    res = [p.pattern for p in self.__exclusion_regex]
     res.sort()
     return res
 
@@ -307,6 +333,15 @@ folders until root or project boundaries are reached. Each candidate is checked 
 
   def is_excluded_codecs_encoding(self, name):
     return "ce={}".format(name) in self.__exclusions
+
+  def is_excluded_by_regex(self, path):
+    return any(regex.search(path) for regex in self.__exclusion_regex)
+
+  def make_paths_absolute(self):
+    return self.__make_paths_absolute
+
+  def set_make_paths_absolute(self, enable):
+    self.__make_paths_absolute = enable
 
   def add_backport(self, name):
     if not Backports.is_backport(name):

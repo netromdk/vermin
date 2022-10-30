@@ -226,6 +226,58 @@ aaa
     self.assertContainsDict({"code": 0}, self.parse_args(["--exclude-file", fn]))
     self.assertEmpty(self.config.exclusions())
 
+  def test_exclude_regex(self):
+    self.assertContainsDict({"code": 1}, self.parse_args(["--exclude-regex"]))  # Needs <rx> part.
+    self.assertEmpty(self.config.exclusion_regex())
+
+    args = ["--exclude-regex", r"\.pyi$",
+            "--exclude-regex", "^a/b$"]
+    self.assertContainsDict({"code": 0}, self.parse_args(args))
+    expected = [r"\.pyi$", "^a/b$"]
+    self.assertEqual(expected, self.config.exclusion_regex())  # Expect it sorted.
+    self.assertFalse(self.config.is_excluded_by_regex("a/b.py"))
+    self.assertTrue(self.config.is_excluded_by_regex("asdf.pyi"))
+    self.assertTrue(self.config.is_excluded_by_regex("a/m.pyi"))
+    self.assertTrue(self.config.is_excluded_by_regex("a/b"))
+
+    # Regex patterns are applied at each level of directory traversal. If 'a/' is provided on the
+    # command line, then the regex 'a/b' will match the recursive traversal when it encounters the
+    # directory 'a/b', and avoid recursing into that directory. This makes it more efficient to use
+    # when possible, but more difficult to test in isolation. test_exclude_regex_relative() in
+    # general.py tests that 'a/b' excludes e.g. 'a/b/c.py'.
+    self.assertFalse(self.config.is_excluded_by_regex("a/b/c.py"))
+
+    self.config.reset()
+    self.assertEmpty(self.config.exclusion_regex())
+    args = ["--exclude-regex", "^a/b/.+$",
+            "--exclude-regex", r"^a/.+/.+\.pyi$"]
+    self.assertContainsDict({"code": 0}, self.parse_args(args))
+    self.assertTrue(self.config.is_excluded_by_regex("a/b/c.py"))
+    self.assertTrue(self.config.is_excluded_by_regex("a/b/c/d.py"))
+    # '.+/.+\.pyi' does not match .pyi files in the top-level directory.
+    self.assertFalse(self.config.is_excluded_by_regex("a/m.pyi"))
+    self.assertTrue(self.config.is_excluded_by_regex("a/d/m.pyi"))
+    self.assertFalse(self.config.is_excluded_by_regex("m.pyi"))
+
+    self.config.reset()
+    # Use '[^/]+' instead of '.+' to force only matching files in the top-level.
+    self.assertContainsDict({"code": 0}, self.parse_args(["--exclude-regex", r"^a/b/[^/]+\.pyi$"]))
+    self.assertTrue(self.config.is_excluded_by_regex("a/b/c.pyi"))
+    self.assertFalse(self.config.is_excluded_by_regex("a/b/c.py"))
+    self.assertFalse(self.config.is_excluded_by_regex("a/b/c/d.pyi"))
+
+    self.assertContainsDict({"code": 0}, self.parse_args(["--no-exclude-regex"]))
+    self.assertEmpty(self.config.exclusion_regex())
+
+  def test_make_paths_absolute(self):
+    self.assertTrue(self.config.make_paths_absolute())
+
+    self.assertContainsDict({"code": 0}, self.parse_args(["--no-make-paths-absolute"]))
+    self.assertFalse(self.config.make_paths_absolute())
+
+    self.assertContainsDict({"code": 0}, self.parse_args(["--make-paths-absolute"]))
+    self.assertTrue(self.config.make_paths_absolute())
+
   def test_backport(self):
     # Needs <name> part.
     self.assertContainsDict({"code": 1}, self.parse_args(["--backport"]))

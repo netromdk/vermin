@@ -27,7 +27,8 @@ def main():
   # Detect paths, remove duplicates, and sort for deterministic results.
   if not parsable:
     vprint("Detecting python files..", config)
-  paths = [abspath(p) for p in paths]
+  if config.make_paths_absolute():
+    paths = [abspath(p) for p in paths]
 
   # Parsable format ignores paths with ":" in particular because it interferes with the format that
   # uses ":" a lot.

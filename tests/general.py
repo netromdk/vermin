@@ -1,5 +1,6 @@
 import sys
 import os
+import re
 import io
 from os.path import abspath, basename, join, splitext
 from tempfile import NamedTemporaryFile, mkdtemp
@@ -13,7 +14,8 @@ from vermin import combine_versions, InvalidVersionException, detect_paths,\
 from vermin.formats import ParsableFormat
 from vermin.utility import open_wrapper
 
-from .testutils import VerminTest, current_version, ScopedTemporaryFile, detect, visit, touch
+from .testutils import VerminTest, current_version, ScopedTemporaryFile, detect, visit, touch, \
+  working_dir
 
 class VerminGeneralTests(VerminTest):
   def test_detect_without_config(self):
@@ -311,6 +313,73 @@ test.py:6:9:2.7:3.2:'argparse' module
       _, ext = splitext(path)
       found_exts.add(ext[1:])
     self.assertEmpty(found_exts)
+
+    rmtree(tmp_fld)
+
+  def test_exclude_pyi_regex(self):
+    tmp_fld = mkdtemp()
+
+    # With the default of --make-paths-absolute, this will match .pyi files in any subdirectory. The
+    # most common use case for --exclude-regex is expected to be for file extensions, so it's great
+    # that will work regardless of the --make-paths-absolute setting.
+    self.config.add_exclusion_regex(r"\.pyi$")
+
+    f = touch(tmp_fld, "code.pyi")
+    with open_wrapper(f, mode="w", encoding="utf-8") as fp:
+      fp.write("print('this is code')")
+
+    paths = detect_paths([tmp_fld], config=self.config)
+    self.assertEmpty(paths)
+
+    rmtree(tmp_fld)
+
+  def test_exclude_directory_regex(self):
+    tmp_fld = mkdtemp()
+
+    # Excluding the directory .../a should exclude any files recursively beneath it as well.
+    self.config.add_exclusion_regex('^' + re.escape(join(tmp_fld, "a")) + '$')
+
+    # Create .../a and .../a/b directories.
+    os.mkdir(join(tmp_fld, "a"))
+    os.mkdir(join(tmp_fld, "a/b"))
+
+    paths = ["code.py", "a/code.py", "a/b/code.py"]
+    for p in paths:
+      f = touch(tmp_fld, p)
+      with open_wrapper(f, mode="w", encoding="utf-8") as fp:
+        fp.write("print('this is code')")
+
+    paths = detect_paths([tmp_fld], config=self.config)
+    self.assertEqual(paths, [join(tmp_fld, "code.py")])
+
+    rmtree(tmp_fld)
+
+  def test_exclude_regex_relative(self):
+    tmp_fld = mkdtemp()
+
+    # Keep paths relative, and provide patterns matching relative paths.
+    self.config.set_make_paths_absolute(False)
+    self.config.add_exclusion_regex("^a{0}b$".format(re.escape(os.path.sep)))
+    self.config.add_exclusion_regex("^a{0}.+pyi$".format(re.escape(os.path.sep)))
+
+    # Create .../a and .../a/b directories.
+    os.mkdir(join(tmp_fld, "a"))
+    os.mkdir(join(tmp_fld, "a", "b"))
+
+    paths = [
+      join("a", "code.py"),
+      join("a", "code.pyi"),
+      join("a", "b", "code.py"),
+    ]
+    for p in paths:
+      f = touch(tmp_fld, p)
+      with open_wrapper(f, mode="w", encoding="utf-8") as fp:
+        fp.write("print('this is code')")
+
+    # Temporarily modify the working directory.
+    with working_dir(tmp_fld):
+      paths = detect_paths(["a"], config=self.config)
+      self.assertEqual(paths, [join("a", "code.py")])
 
     rmtree(tmp_fld)
 
