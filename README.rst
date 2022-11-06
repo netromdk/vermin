@@ -37,7 +37,7 @@ vanilla Python, and it doesn't have any external dependencies, it works with v2.
 required but detection of 2.x functionality will remain functional.
 
 It functions by parsing Python code into an abstract syntax tree (AST), which it traverses and
-matches against internal dictionaries with **3427** rules, covering v2.0-2.7 and v3.0-3.10, divided
+matches against internal dictionaries with **3427** rules, covering v2.0-2.7 and v3.0-3.11, divided
 into **144** modules, **2356** classes/functions/constants members of modules, **801** kwargs of
 functions, **4** strftime directives, **3** bytes format directives, **2** array typecodes, **3**
 codecs error handler names, **20** codecs encodings, **75** builtin generic annotation types, **9**
