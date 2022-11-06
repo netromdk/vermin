@@ -30,3 +30,9 @@ class VerminBuiltinClassesMemberTests(VerminTest):
 
   def test_long(self):
     self.assertOnlyIn((2, 0), self.detect("long()"))
+
+  def test_ExceptionGroup(self):
+    self.assertOnlyIn((3, 11), self.detect("ExceptionGroup()"))
+
+  def test_BaseExceptionGroup(self):
+    self.assertOnlyIn((3, 11), self.detect("BaseExceptionGroup()"))

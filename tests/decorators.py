@@ -10,6 +10,12 @@ class VerminDecoratorMemberTests(VerminTest):
   def test_asynccontextmanager_of_contextlib(self):
     self.assertOnlyIn((3, 7), self.detect("from contextlib import asynccontextmanager"))
 
+  def test_property_of_enum(self):
+    self.assertOnlyIn((3, 11), self.detect("from enum import property"))
+
+  def test_verify_of_enum(self):
+    self.assertOnlyIn((3, 11), self.detect("from enum import verify"))
+
   def test_cached_property_of_functools(self):
     self.assertOnlyIn((3, 8), self.detect("from functools import cached_property"))
 
@@ -42,6 +48,9 @@ def foo(): pass""")
 
   def test_recursive_repr_of_reprlib(self):
     self.assertOnlyIn((3, 2), self.detect("from reprlib import recursive_repr"))
+
+  def test_dataclass_transform_of_typing(self):
+    self.assertOnlyIn((3, 11), self.detect("from typing import dataclass_transform"))
 
   def test_final_of_typing(self):
     self.assertOnlyIn((3, 8), self.detect("from typing import final"))

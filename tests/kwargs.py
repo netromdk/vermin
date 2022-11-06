@@ -68,10 +68,22 @@ class VerminKwargsTests(VerminTest):
   def test_chars_of_str_strip(self):
     self.assertOnlyIn(((2, 2), (3, 0)), self.detect("str.strip(chars=None)"))
 
+  def test_weights_of_statistics_fmean(self):
+    self.assertOnlyIn((3, 11), self.detect("""
+from statistics import fmean
+fmean(weights=None)
+"""))
+
   def test_weights_of_statistics_harmonic_mean(self):
     self.assertOnlyIn((3, 10), self.detect("""
 from statistics import harmonic_mean
 harmonic_mean(weights=None)
+"""))
+
+  def test_proportional_of_statistics_linear_regression(self):
+    self.assertOnlyIn((3, 11), self.detect("""
+from statistics import linear_regression
+linear_regression(proportional=None)
 """))
 
   def test_start_of_sum(self):
@@ -329,6 +341,10 @@ Signature.from_callable(localns=True)
   def test_write_through_of_TextIOWrapper_from_io(self):
     self.assertOnlyIn((3, 3), self.detect("import io\nio.TextIOWrapper(write_through=True)"))
 
+  def test_encoding_of_TextIOWrapper_reconfigure_from_io(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("import io\nio.TextIOWrapper.reconfigure(encoding=None)"))
+
   def test_func_of_accumulate_from_itertools(self):
     self.assertOnlyIn((3, 3), self.detect("import itertools\nitertools.accumulate(func=None)"))
 
@@ -428,6 +444,22 @@ Signature.from_callable(localns=True)
 
   def test_errors_of_run_from_subprocess(self):
     self.assertOnlyIn((3, 6), self.detect("import subprocess\nsubprocess.run(errors=None)"))
+
+  def test_encoding_of_getoutput_from_subprocess(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("import subprocess\nsubprocess.getoutput(encoding=None)"))
+
+  def test_errors_of_getoutput_from_subprocess(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("import subprocess\nsubprocess.getoutput(errors=None)"))
+
+  def test_encoding_of_getstatusoutput_from_subprocess(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("import subprocess\nsubprocess.getstatusoutput(encoding=None)"))
+
+  def test_errors_of_getstatusoutput_from_subprocess(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("import subprocess\nsubprocess.getstatusoutput(errors=None)"))
 
   def test_encoding_of_check_output_from_subprocess(self):
     self.assertOnlyIn((3, 6), self.detect(
@@ -828,6 +860,12 @@ p.write_text(newline=True)
   def test_backtick_of_binascii_b2a_uu(self):
     self.assertOnlyIn((3, 7), self.detect("import binascii\nbinascii.b2a_uu(backtick=True)"))
 
+  def test_strict_mode_of_binascii_a2b_base64(self):
+    self.assertOnlyIn((3, 11), self.detect("""
+import binascii
+binascii.a2b_base64(strict_mode=True)
+"""))
+
   def test_newline_of_binascii_b2a_base64(self):
     self.assertOnlyIn((3, 6), self.detect("import binascii\nbinascii.b2a_base64(newline=True)"))
 
@@ -954,6 +992,11 @@ p.write_text(newline=True)
                       self.detect("from concurrent.futures import ThreadPoolExecutor\n"
                                   "ThreadPoolExecutor(initargs=0)"))
 
+  def test_max_tasks_per_child_of_concurrent_futures_ProcessPoolExecutor(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from concurrent.futures import ProcessPoolExecutor\n"
+                                  "ProcessPoolExecutor(max_tasks_per_child='123')"))
+
   def test_mp_context_of_concurrent_futures_ProcessPoolExecutor(self):
     self.assertOnlyIn((3, 7),
                       self.detect("from concurrent.futures import ProcessPoolExecutor\n"
@@ -971,6 +1014,24 @@ p.write_text(newline=True)
 
   def test_rounds_of_crypt_mksalt(self):
     self.assertOnlyIn((3, 7), self.detect("import crypt\ncrypt.mksalt(rounds=8)"))
+
+  def test_show_caches_of_dis_Bytecode(self):
+    self.assertOnlyIn((3, 11), self.detect("import dis\ndis.Bytecode(show_caches=True)"))
+
+  def test_show_caches_of_dis_dis(self):
+    self.assertOnlyIn((3, 11), self.detect("import dis\ndis.dis(show_caches=True)"))
+
+  def test_show_caches_of_dis_distb(self):
+    self.assertOnlyIn((3, 11), self.detect("import dis\ndis.distb(show_caches=True)"))
+
+  def test_show_caches_of_dis_disassemble(self):
+    self.assertOnlyIn((3, 11), self.detect("import dis\ndis.disassemble(show_caches=True)"))
+
+  def test_show_caches_of_dis_disco(self):
+    self.assertOnlyIn((3, 11), self.detect("import dis\ndis.disco(show_caches=True)"))
+
+  def test_show_caches_of_dis_get_instructions(self):
+    self.assertOnlyIn((3, 11), self.detect("import dis\ndis.get_instructions(show_caches=True)"))
 
   def test_file_of_dis_show_code(self):
     self.assertOnlyIn((3, 4), self.detect("import dis\ndis.show_code(file=8)"))
@@ -1103,10 +1164,20 @@ p.write_text(newline=True)
                       self.detect("from ast import parse\n"
                                   "parse(type_comments=None)"))
 
+  def test_context_of_Task_from_asyncio(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from asyncio import Task\n"
+                                  "Task(context=None)"))
+
   def test_name_of_Task_from_asyncio(self):
     self.assertOnlyIn((3, 8),
                       self.detect("from asyncio import Task\n"
                                   "Task(name=None)"))
+
+  def test_context_of_create_task_from_asyncio(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from asyncio import create_task\n"
+                                  "create_task(context=None)"))
 
   def test_name_of_create_task_from_asyncio(self):
     self.assertOnlyIn((3, 8),
@@ -1584,6 +1655,11 @@ input(errors=None)
                       self.detect("from glob import glob\n"
                                   "glob(dir_fd=None)"))
 
+  def test_include_hidden_of_glob_from_glob(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from glob import glob\n"
+                                  "glob(include_hidden=None)"))
+
   def test_root_dir_of_glob_from_glob(self):
     self.assertOnlyIn((3, 10),
                       self.detect("from glob import glob\n"
@@ -1593,6 +1669,11 @@ input(errors=None)
     self.assertOnlyIn((3, 10),
                       self.detect("from glob import iglob\n"
                                   "iglob(dir_fd=None)"))
+
+  def test_include_hidden_of_iglob_from_glob(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from glob import iglob\n"
+                                  "iglob(include_hidden=None)"))
 
   def test_root_dir_of_iglob_from_glob(self):
     self.assertOnlyIn((3, 10),
@@ -2296,6 +2377,11 @@ kqueue().control(timeout=1)
                       self.detect("from shutil import move\n"
                                   "move(copy_function=None)"))
 
+  def test_dir_fd_of_rmtree_from_shutil(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from shutil import rmtree\n"
+                                  "rmtree(dir_fd=None)"))
+
   def test_warn_on_full_buffer_of_set_wakeup_fd_from_signal(self):
     self.assertOnlyIn((3, 7),
                       self.detect("from signal import set_wakeup_fd\n"
@@ -2330,6 +2416,11 @@ kqueue().control(timeout=1)
     self.assertOnlyIn(((2, 7), (3, 2)),
                       self.detect("from socket import create_connection\n"
                                   "create_connection(source_address=None)"))
+
+  def test_all_errors_of_create_connection_from_socket(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from socket import create_connection\n"
+                                  "create_connection(all_errors=None)"))
 
   def test_optlen_of_setsockopt_from_socket(self):
     self.assertOnlyIn((3, 6),
@@ -2551,6 +2642,26 @@ kqueue().control(timeout=1)
                       self.detect("from venv import create\n"
                                   "create(upgrade_deps=None)"))
 
+  def test_action_of_catch_warnings_from_warnings(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from warnings import catch_warnings\n"
+                                  "catch_warnings(action=None)"))
+
+  def test_append_of_catch_warnings_from_warnings(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from warnings import catch_warnings\n"
+                                  "catch_warnings(append=None)"))
+
+  def test_category_of_catch_warnings_from_warnings(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from warnings import catch_warnings\n"
+                                  "catch_warnings(category=None)"))
+
+  def test_lineno_of_catch_warnings_from_warnings(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from warnings import catch_warnings\n"
+                                  "catch_warnings(lineno=None)"))
+
   def test_line_of_showwarning_from_warnings(self):
     self.assertOnlyIn(((2, 7), (3, 0)),
                       self.detect("from warnings import showwarning\n"
@@ -2606,6 +2717,11 @@ kqueue().control(timeout=1)
                       self.detect("from zipfile import ZipFile\n"
                                   "ZipFile(compresslevel=None)"))
 
+  def test_metadata_encoding_of_ZipFile_from_zipfile(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from zipfile import ZipFile\n"
+                                  "ZipFile(metadata_encoding=None)"))
+
   def test_strict_timestamps_of_ZipFile_from_zipfile(self):
     self.assertOnlyIn((3, 8),
                       self.detect("from zipfile import ZipFile\n"
@@ -2615,6 +2731,11 @@ kqueue().control(timeout=1)
     self.assertOnlyIn((3, 6),
                       self.detect("from zlib import compress\n"
                                   "compress(level=None)"))
+
+  def test_wbits_of_compress_from_zlib(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from zlib import compress\n"
+                                  "compress(wbits=None)"))
 
   def test_zdict_of_compressobj_from_zlib(self):
     self.assertOnlyIn((3, 3),
@@ -2760,6 +2881,11 @@ kqueue().control(timeout=1)
     self.assertOnlyIn((3, 4),
                       self.detect("from multiprocessing.pool import Pool\n"
                                   "Pool(context=None)"))
+
+  def test_shutdown_timeout_of_BaseManager_from_multiprocessing_managers(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from multiprocessing.managers import BaseManager\n"
+                                  "BaseManager(shutdown_timeout=None)"))
 
   def test_maxtasksperchild_of_Pool_from_multiprocessing_pool(self):
     self.assertOnlyIn(((2, 7), (3, 2)),
@@ -2942,6 +3068,12 @@ kqueue().control(timeout=1)
                                   "x = loop()\n"
                                   "x.connect_accepted_socket(ssl_handshake_timeout=None)"))
 
+  def test_ssl_shutdown_timeout_of_connect_accepted_socket_from_asyncio_loop(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from asyncio import loop\n"
+                                  "x = loop()\n"
+                                  "x.connect_accepted_socket(ssl_shutdown_timeout=None)"))
+
   def test_happy_eyeballs_delay_of_create_connection_from_asyncio_loop(self):
     self.assertOnlyIn((3, 8),
                       self.detect("from asyncio import loop\n"
@@ -2959,6 +3091,12 @@ kqueue().control(timeout=1)
                       self.detect("from asyncio import loop\n"
                                   "x = loop()\n"
                                   "x.create_connection(ssl_handshake_timeout=None)"))
+
+  def test_ssl_shutdown_timeout_of_create_connection_from_asyncio_loop(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from asyncio import loop\n"
+                                  "x = loop()\n"
+                                  "x.create_connection(ssl_shutdown_timeout=None)"))
 
   def test_allow_broadcast_of_create_datagram_endpoint_from_asyncio_loop(self):
     self.assertOnlyIn((3, 4),
@@ -3008,6 +3146,12 @@ kqueue().control(timeout=1)
                                   "x = loop()\n"
                                   "x.create_server(ssl_handshake_timeout=None)"))
 
+  def test_ssl_shutdown_timeout_of_create_server_from_asyncio_loop(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from asyncio import loop\n"
+                                  "x = loop()\n"
+                                  "x.create_server(ssl_shutdown_timeout=None)"))
+
   def test_start_serving_of_create_server_from_asyncio_loop(self):
     self.assertOnlyIn((3, 7),
                       self.detect("from asyncio import loop\n"
@@ -3026,6 +3170,12 @@ kqueue().control(timeout=1)
                                   "x = loop()\n"
                                   "x.create_unix_connection(ssl_handshake_timeout=None)"))
 
+  def test_ssl_shutdown_timeout_of_create_unix_connection_from_asyncio_loop(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from asyncio import loop\n"
+                                  "x = loop()\n"
+                                  "x.create_unix_connection(ssl_shutdown_timeout=None)"))
+
   def test_ssl_handshake_timeout_of_create_unix_server_from_asyncio_loop(self):
     self.assertOnlyIn((3, 7),
                       self.detect("from asyncio import loop\n"
@@ -3037,6 +3187,12 @@ kqueue().control(timeout=1)
                       self.detect("from asyncio import loop\n"
                                   "x = loop()\n"
                                   "x.create_unix_server(start_serving=None)"))
+
+  def test_ssl_shutdown_timeout_of_start_tls_from_asyncio_loop(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from asyncio import loop\n"
+                                  "x = loop()\n"
+                                  "x.start_tls(ssl_shutdown_timeout=None)"))
 
   def test_chars_of_read_from_codecs_StreamReader(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
@@ -3687,6 +3843,26 @@ get_server_certificate(timeout=None)
     self.assertOnlyIn((3, 10),
                       self.detect("from subprocess import Popen\n"
                                   "Popen(pipesize=None)"))
+
+  def test_process_group_of_Popen_from_subprocess(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from subprocess import Popen\n"
+                                  "Popen(process_group=None)"))
+
+  def test_process_group_of_call_from_subprocess(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from subprocess import call\n"
+                                  "call(process_group=None)"))
+
+  def test_process_group_of_check_call_from_subprocess(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from subprocess import check_call\n"
+                                  "check_call(process_group=None)"))
+
+  def test_process_group_of_check_output_from_subprocess(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from subprocess import check_output\n"
+                                  "check_output(process_group=None)"))
 
   def test_encoding_of_call_from_subprocess(self):
     self.assertOnlyIn((3, 6),

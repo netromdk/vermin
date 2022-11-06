@@ -2084,3 +2084,41 @@ class Foo:
 """)
     self.assertFalse(visitor.super_no_args())
     self.assertOnlyIn(((2, 2), (3, 0)), visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 11)
+  def test_except_star(self):
+    visitor = self.visit("""
+try:
+  pass
+except* OSError as ex:
+  pass
+""")
+    self.assertTrue(visitor.except_star())
+    self.assertOnlyIn((3, 11), visitor.minimum_versions())
+
+    visitor = self.visit("""
+try:
+  pass
+except  *  OSError as ex:
+  pass
+""")
+    self.assertTrue(visitor.except_star())
+    self.assertOnlyIn((3, 11), visitor.minimum_versions())
+
+    visitor = self.visit("""
+def foo():
+  try:
+    pass
+  except* OSError as ex:
+    pass
+""")
+    self.assertTrue(visitor.except_star())
+    self.assertOnlyIn((3, 11), visitor.minimum_versions())
+
+    visitor = self.visit("""
+try:
+  pass
+except OSError as ex:
+  pass
+""")
+    self.assertFalse(visitor.except_star())

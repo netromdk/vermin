@@ -37,7 +37,7 @@ vanilla Python, and it doesn't have any external dependencies, it works with v2.
 required but detection of 2.x functionality will remain functional.
 
 It functions by parsing Python code into an abstract syntax tree (AST), which it traverses and
-matches against internal dictionaries with **3427** rules, covering v2.0-2.7 and v3.0-3.10, divided
+matches against internal dictionaries with **3427** rules, covering v2.0-2.7 and v3.0-3.11, divided
 into **144** modules, **2356** classes/functions/constants members of modules, **801** kwargs of
 functions, **4** strftime directives, **3** bytes format directives, **2** array typecodes, **3**
 codecs error handler names, **20** codecs encodings, **75** builtin generic annotation types, **9**
@@ -136,18 +136,20 @@ Features detected include v2/v3 ``print expr`` and ``print(expr)``, ``long``, f-
 (``async`` and ``await``), asynchronous generators (``await`` and ``yield`` in same function),
 asynchronous comprehensions, ``await`` in comprehensions, asynchronous ``for``-loops, boolean
 constants, named expressions, keyword-only parameters, positional-only parameters, ``nonlocal``,
-``yield from``, exception context cause (``raise .. from ..``), ``set`` literals, ``set``
-comprehensions, ``dict`` comprehensions, infix matrix multiplication, ``"..".format(..)``, imports
-(``import X``, ``from X import Y``, ``from X import *``), function calls wrt. name and kwargs,
-``strftime`` + ``strptime`` directives used, function and variable annotations (also ``Final`` and
-``Literal``), ``continue`` in ``finally`` block, modular inverse ``pow()``, array typecodes, codecs
-error handler names, encodings, ``%`` formatting and directives for bytes and bytearray, ``with``
-statement, multiple context expressions in a ``with`` statement, unpacking assignment, generalized
-unpacking, ellipsis literal (`...`) out of slices, dictionary union (``{..} | {..}``), dictionary
-union merge (``a = {..}; a |= {..}``), builtin generic type annotations (``list[str]``), function
-decorators, class decorators, relaxed decorators, pattern matching with ``match``, and union types
-written as ``X | Y``. It tries to detect and ignore user-defined functions, classes, arguments, and
-variables with names that clash with library-defined symbols.
+``yield from``, exception context cause (``raise .. from ..``), ``except*``, ``set`` literals,
+``set`` comprehensions, ``dict`` comprehensions, infix matrix multiplication, ``"..".format(..)``,
+imports (``import X``, ``from X import Y``, ``from X import *``), function calls wrt. name and
+kwargs, ``strftime`` + ``strptime`` directives used, function and variable annotations (also
+``Final`` and ``Literal``), ``continue`` in ``finally`` block, modular inverse ``pow()``, array
+typecodes, codecs error handler names, encodings, ``%`` formatting and directives for bytes and
+bytearray, ``with`` statement, asynchronous ``with`` statement, multiple context expressions in a
+``with`` statement, multiple context expressions in a ``with`` statement grouped with parenthesis,
+unpacking assignment, generalized unpacking, ellipsis literal (``...``) out of slices, dictionary
+union (``{..}  | {..}``), dictionary union merge (``a = {..}; a |= {..}``), builtin generic type
+annotations (``list[str]``), function decorators, class decorators, relaxed decorators, pattern
+matching with ``match``, and union types written as ``X | Y``. It tries to detect and ignore
+user-defined functions, classes, arguments, and variables with names that clash with library-defined
+symbols.
 
 Caveats
 =======

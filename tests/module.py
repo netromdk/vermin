@@ -106,6 +106,9 @@ class VerminModuleTests(VerminTest):
   def test_Tkinter(self):
     self.assertOnlyIn((2, 0), self.detect("import Tkinter"))
 
+  def test_tomllib(self):
+    self.assertOnlyIn((3, 11), self.detect("import tomllib"))
+
   def test_urllib2(self):
     self.assertOnlyIn((2, 0), self.detect("import urllib2"))
 
@@ -364,6 +367,9 @@ class VerminModuleTests(VerminTest):
 
   def test_wsgiref(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("import wsgiref"))
+
+  def test_wsgiref_types(self):
+    self.assertOnlyIn((3, 11), self.detect("import wsgiref.types"))
 
   def test_xml_etree_ElementTree(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("import xml.etree.ElementTree"))
