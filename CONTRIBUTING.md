@@ -16,6 +16,11 @@ Dependencies can also be directly installed via:
 % pip install -r misc/.analysis-requirements.txt
 ```
 
+**Note:** Until the release of Vermin 1.6, it is recommended to use Python 3.10 or lower when
+running analysis checks. This is because Pylint requires an update but doing so makes it
+incompatible with certain versions of Python 2.x. In Vermin 1.6, support for Python 2.7 will be
+removed and dependencies will be updated such that Python 3.11 can be used for analysis checks.
+
 Unittests can be run without installing any dependencies: `make test`
 
 ## Detection Rules
