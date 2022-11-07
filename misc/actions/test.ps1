@@ -30,8 +30,8 @@ else {
   }
 
   # Output debug info to be able to troubleshoot in cases when the Coveralls command beneath fails.
-  coveralls debug
+  coveralls debug --service=github-actions
 
   # Report coverage. Note that it requires COVERALLS_REPO_TOKEN to be set!
-  coveralls
+  coveralls --service=github-actions
 }
