@@ -167,7 +167,7 @@ class VerminClassMemberTests(VerminTest):
     self.assertOnlyIn((3, 7), self.detect("from typing import ForwardRef"))
 
   def test_NamedTuple_of_typing(self):
-    self.assertOnlyIn((3, 11), self.detect("from typing import NamedTuple"))
+    self.assertOnlyIn((3, 5), self.detect("from typing import NamedTuple"))
 
   def test_OrderedDict_of_typing(self):
     self.assertOnlyIn((3, 7), self.detect("from typing import OrderedDict"))

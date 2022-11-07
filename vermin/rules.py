@@ -354,7 +354,7 @@ def MOD_MEM_REQS(config):
     # Notes: `typing.Deque` was added in `typing` backport 3.6.1 (which requires 2.7 or 3.3+).
     "typing.Deque": (None, (3, 5)) if not bp("typing", config) else ((2, 7), (3, 3)),
     "typing.ForwardRef": (None, (3, 7)),
-    "typing.NamedTuple": (None, (3, 11)),
+    "typing.NamedTuple": (None, (3, 5)),
     "typing.OrderedDict": (None, (3, 7)),
     # Notes:
     #  `typing.Protocol` is backported to Python 2.7. For Python 3 it goes to `typing_extensions`.
