@@ -21,6 +21,9 @@ else
 
   make test-coverage
 
+  # Output debug info to be able to troubleshoot in cases when the Coveralls command beneath fails.
+  coveralls debug --service=github-actions
+
   # Note that it requires COVERALLS_REPO_TOKEN to be set!
-  coveralls
+  coveralls --service=github-actions
 fi
