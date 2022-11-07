@@ -21,6 +21,9 @@ else
 
   make test-coverage
 
+  # Output debug info to be able to troubleshoot in cases when the Coveralls command beneath fails.
+  coveralls debug
+
   # Note that it requires COVERALLS_REPO_TOKEN to be set!
   coveralls
 fi
