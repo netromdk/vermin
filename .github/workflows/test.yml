@@ -15,7 +15,7 @@ jobs:
       matrix:
         # Start Linux jobs last since they are fastest to start and complete, and start 3.11 first,
         # since it pairs wiht macOS+Windows jobs.
-        python-version: ['3.11', '3.10', 3.6, 3.7, 3.8, 3.9, 2.7]
+        python-version: ['3.11', '3.10', 3.7, 3.8, 3.9, 2.7]
         os: [windows-latest, macos-latest, ubuntu-latest]
 
         # Choose test script depending on OS.
@@ -32,8 +32,6 @@ jobs:
           - os: macos-latest
             python-version: 2.7
           - os: macos-latest
-            python-version: 3.6
-          - os: macos-latest
             python-version: 3.7
           - os: macos-latest
             python-version: 3.8
@@ -43,8 +41,6 @@ jobs:
             python-version: '3.10'
           - os: windows-latest
             python-version: 2.7
-          - os: windows-latest
-            python-version: 3.6
           - os: windows-latest
             python-version: 3.7
           - os: windows-latest
