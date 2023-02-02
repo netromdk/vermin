@@ -481,7 +481,7 @@ class SourceVisitor(ast.NodeVisitor):
       mins = self.__add_versions_entity(mins, (None, (3, 8)), "self-documenting fstrings")
 
     if self.bool_const():  # pragma: no cover
-      mins = self.__add_versions_entity(mins, ((2, 2), (3, 0)), "'bool' constant")
+      mins = self.__add_versions_entity(mins, ((2, 3), (3, 0)), "'bool' constant")
 
     if self.annotations():
       mins = self.__add_versions_entity(mins, (None, (3, 0)), "annotations")
@@ -1102,6 +1102,9 @@ class SourceVisitor(ast.NodeVisitor):
       else:
         self.__longv2 = True
         self.__vvprint("long is a v2 feature")
+    elif node.id == "True" or node.id == "False":
+      self.__bool_const = True
+      self.__vvvprint("True/False constant", versions=[(2, 3), (3, 0)])
 
   def visit_Print(self, node):  # pragma: no cover
     self.__printv2 = True
@@ -1389,13 +1392,18 @@ ast.Call(func=ast.Name)."""
     self.generic_visit(node)
 
   def visit_Constant(self, node):
-    # From 3.8, Bytes(s=b'%x') is represented as Constant(value=b'%x', kind=None) instead.
-    if hasattr(node, "value") and isinstance(node.value, bytes):
-      self.__bytesv3 = True
-      self.__vvprint("byte string (b'..') or `str` synonym", versions=[(2, 6), (3, 0)])
+    if hasattr(node, "value"):
+      # From 3.8, Bytes(s=b'%x') is represented as Constant(value=b'%x', kind=None) instead.
+      if isinstance(node.value, bytes):
+        self.__bytesv3 = True
+        self.__vvprint("byte string (b'..') or `str` synonym", versions=[(2, 6), (3, 0)])
 
-      for directive in BYTES_DIRECTIVE_REGEX.findall(str(node.value)):
-        self.__add_bytes_directive(directive, node.lineno)
+        for directive in BYTES_DIRECTIVE_REGEX.findall(str(node.value)):
+          self.__add_bytes_directive(directive, node.lineno)
+
+      if node.value is True or node.value is False:
+        self.__bool_const = True
+        self.__vvvprint("True/False constant", versions=[(2, 3), (3, 0)])
 
     # From 3.8, Ellipsis() is represented as Constant(value=Ellipsis)
     if is_ellipsis_node(node):
@@ -1894,7 +1902,7 @@ ast.Call(func=ast.Name)."""
   def visit_NameConstant(self, node):
     if node.value is True or node.value is False:  # pragma: no cover
       self.__bool_const = True
-      self.__vvvprint("True/False constant", versions=[(2, 2), (3, 0)])
+      self.__vvvprint("True/False constant", versions=[(2, 3), (3, 0)])
 
   def visit_NamedExpr(self, node):
     if self.__is_no_line(node.lineno):
