@@ -58,6 +58,12 @@ class VerminModuleTests(VerminTest):
   def test__markupbase(self):
     self.assertOnlyIn((3, 0), self.detect("import _markupbase"))
 
+  def test__thread(self):
+    self.assertOnlyIn((3, 0), self.detect("import _thread"))
+
+  def test_random(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("import random"))
+
   def test_repr(self):
     self.assertOnlyIn((2, 0), self.detect("import repr"))
 
@@ -118,6 +124,9 @@ class VerminModuleTests(VerminTest):
   def test_sets(self):
     self.assertOnlyIn((2, 3), self.detect("import sets"))
 
+  def test_socket(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("import socket"))
+
   def test_new(self):
     self.assertOnlyIn((2, 0), self.detect("import new"))
 
@@ -146,6 +155,15 @@ class VerminModuleTests(VerminTest):
     self.assertOnlyIn((3, 4), self.detect("import asyncio"))
     self.assertTrue(self.config.add_backport("asyncio"))
     self.assertOnlyIn((3, 3), self.detect("import asyncio"))
+
+  def test_asyncore(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import asyncore"))
+
+  def test_atexit(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("import atexit"))
+
+  def test_audioop(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), self.detect("import audioop"))
 
   def test_typing(self):
     self.assertOnlyIn((3, 5), self.detect("import typing"))
@@ -177,6 +195,9 @@ class VerminModuleTests(VerminTest):
   def test_bz2(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("import bz2"))
 
+  def test_calendar(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("import calendar"))
+
   def test_cgitb(self):
     self.assertOnlyIn(((2, 2), (3, 0)), self.detect("import cgitb"))
 
@@ -186,6 +207,9 @@ class VerminModuleTests(VerminTest):
   def test_collections_abc(self):
     self.assertOnlyIn((3, 3), self.detect("import collections.abc"))
 
+  def test_compileall(self):
+    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import compileall"))
+
   def test_contextlib(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("import contextlib"))
 
@@ -194,6 +218,9 @@ class VerminModuleTests(VerminTest):
 
   def test_http_cookiejar(self):
     self.assertOnlyIn((3, 0), self.detect("import http.cookiejar"))
+
+  def test_http_server(self):
+    self.assertOnlyIn((3, 0), self.detect("import http.server"))
 
   def test_cProfile(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("import cProfile"))
@@ -237,6 +264,18 @@ class VerminModuleTests(VerminTest):
   def test_email_header(self):
     self.assertOnlyIn(((2, 2), (3, 0)), self.detect("import email.header"))
 
+  def test_email_errors(self):
+    self.assertOnlyIn(((2, 4), (3, 0)), self.detect("import email.errors"))
+
+  def test_email_message(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), self.detect("import email.message"))
+
+  def test_email_parser(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), self.detect("import email.parser"))
+
+  def test_email_utils(self):
+    self.assertOnlyIn(((2, 2), (3, 0)), self.detect("import email.utils"))
+
   def test_email_charset(self):
     self.assertOnlyIn(((2, 2), (3, 0)), self.detect("import email.charset"))
 
@@ -273,6 +312,12 @@ class VerminModuleTests(VerminTest):
   def test_hotshot(self):
     self.assertOnlyIn((2, 2), self.detect("import hotshot"))
 
+  def test_imghdr(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), self.detect("import imghdr"))
+
+  def test_imp(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("import imp"))
+
   def test_importlib(self):
     self.assertOnlyIn(((2, 7), (3, 1)), self.detect("import importlib"))
     self.assertTrue(self.config.add_backport("importlib"))
@@ -290,8 +335,17 @@ class VerminModuleTests(VerminTest):
   def test_json(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import json"))
 
+  def test_locale(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("import locale"))
+
   def test_logging(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("import logging"))
+
+  def test_logging_config(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), self.detect("import logging.config"))
+
+  def test_logging_handlers(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), self.detect("import logging.handlers"))
 
   def test_modulefinder(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("import modulefinder"))
@@ -319,6 +373,9 @@ class VerminModuleTests(VerminTest):
 
   def test_popen2(self):
     self.assertOnlyIn((2, 0), self.detect("import popen2"))
+
+  def test_pyclbr(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("import pyclbr"))
 
   def test_pydoc(self):
     self.assertOnlyIn(((2, 1), (3, 0)), self.detect("import pydoc"))
@@ -371,11 +428,35 @@ class VerminModuleTests(VerminTest):
   def test_wsgiref_types(self):
     self.assertOnlyIn((3, 11), self.detect("import wsgiref.types"))
 
+  def test_xml_dom(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("import xml.dom"))
+
+  def test_xml_dom_minidom(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("import xml.dom.minidom"))
+
+  def test_xml_dom_pulldom(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("import xml.dom.pulldom"))
+
   def test_xml_etree_ElementTree(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("import xml.etree.ElementTree"))
 
   def test_xml_etree_ElementInclude(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("import xml.etree.ElementInclude"))
+
+  def test_xml_parsers_expat(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("import xml.parsers.expat"))
+
+  def test_xml_sax(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("import xml.sax"))
+
+  def test_xml_sax_handler(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("import xml.sax.handler"))
+
+  def test_xml_sax_saxutils(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("import xml.sax.saxutils"))
+
+  def test_xml_sax_xmlreader(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("import xml.sax.xmlreader"))
 
   def test_xmlrpclib(self):
     self.assertOnlyIn((2, 2), self.detect("import xmlrpclib"))
@@ -392,6 +473,9 @@ class VerminModuleTests(VerminTest):
   def test_pathlib(self):
     self.assertOnlyIn((3, 4), self.detect("import pathlib"))
 
+  def test_pdb(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("import pdb"))
+
   def test_contextvars(self):
     self.assertOnlyIn((3, 7), self.detect("import contextvars"))
     self.assertTrue(self.config.add_backport("contextvars"))
@@ -405,11 +489,17 @@ class VerminModuleTests(VerminTest):
   def test_importlib_resources(self):
     self.assertOnlyIn((3, 7), self.detect("import importlib.resources"))
 
+  def test_importlib_resources_abc(self):
+    self.assertOnlyIn((3, 11), self.detect("import importlib.resources.abc"))
+
   def test_concurrent_futures(self):
     self.assertOnlyIn((3, 2), self.detect("import concurrent.futures"))
 
   def test_importlib_metadata(self):
     self.assertOnlyIn((3, 8), self.detect("import importlib.metadata"))
+
+  def test_multiprocessing_pool(self):
+    self.assertOnlyIn((3, 0), self.detect("import multiprocessing.pool"))
 
   def test_multiprocessing_shared_memory(self):
     self.assertOnlyIn((3, 8), self.detect("import multiprocessing.shared_memory"))

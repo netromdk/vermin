@@ -146,7 +146,7 @@ class VerminExceptionMemberTests(VerminTest):
     self.assertOnlyIn(((2, 7), (3, 1)), self.detect("from unittest import SkipTest"))
 
   def test_ContentTooShortError_of_urllib(self):
-    self.assertOnlyIn((2, 6), self.detect("from urllib import ContentTooShortError"))
+    self.assertOnlyIn((2, 5), self.detect("from urllib import ContentTooShortError"))
 
   def test_DOMException_of_xml_dom(self):
     self.assertOnlyIn(((2, 1), (3, 0)), self.detect("from xml.dom import DOMException"))

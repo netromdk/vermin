@@ -14,6 +14,7 @@ SUITES = (
   "exception",
   "builtin_functions",
   "builtin_constants",
+  "builtin_exceptions",
   "function",
   "constants",
   "decorators",

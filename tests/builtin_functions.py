@@ -189,6 +189,15 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
     self.assertDetectMinVersions(source, min_versions)
 
   @VerminTest.parameterized_args([
+    ("s=\"\"\ns.encode()", ((2, 0), (3, 0))),
+    ("\"\".encode()", ((2, 0), (3, 0))),
+    ("s=str()\ns.encode()", ((2, 0), (3, 0))),
+    ("str().encode()", ((2, 0), (3, 0))),
+  ])
+  def test_encode_of_str(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
+
+  @VerminTest.parameterized_args([
     ("s=\"\"\ns.casefold()", (3, 3)),
     ("\"\".casefold()", (3, 3)),
     ("s=str()\ns.casefold()", (3, 3)),
@@ -458,3 +467,6 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
 
   def test_anext(self):
     self.assertOnlyIn((3, 10), self.detect("anext()"))
+
+  def test_zip(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("zip()"))

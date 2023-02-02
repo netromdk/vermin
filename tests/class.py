@@ -40,6 +40,9 @@ class VerminClassMemberTests(VerminTest):
   def test_Runner_of_asyncio(self):
     self.assertOnlyIn((3, 11), self.detect("from asyncio import Runner"))
 
+  def test_TaskGroup_of_asyncio(self):
+    self.assertOnlyIn((3, 11), self.detect("from asyncio import TaskGroup"))
+
   def test_Calendar_of_calendar(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("from calendar import Calendar"))
 
@@ -96,6 +99,15 @@ class VerminClassMemberTests(VerminTest):
 
   def test_DevpollSelector_of_selectors(self):
     self.assertOnlyIn((3, 5), self.detect("from selectors import DevpollSelector"))
+
+  def test_Handlers_of_signals(self):
+    self.assertOnlyIn((3, 5), self.detect("from signals import Handlers"))
+
+  def test_Sigmasks_of_signals(self):
+    self.assertOnlyIn((3, 5), self.detect("from signals import Sigmasks"))
+
+  def test_Signals_of_signals(self):
+    self.assertOnlyIn((3, 5), self.detect("from signals import Signals"))
 
   def test_Barrier_of_multiprocessing(self):
     self.assertOnlyIn((3, 3), self.detect("from multiprocessing import Barrier"))
@@ -369,6 +381,12 @@ class VerminClassMemberTests(VerminTest):
   def test_TLSVersion_of_ssl(self):
     self.assertOnlyIn((3, 7), self.detect("from ssl import TLSVersion"))
 
+  def test_VerifyFlags_of_ssl(self):
+    self.assertOnlyIn((3, 6), self.detect("from ssl import VerifyFlags"))
+
+  def test_VerifyMode_of_ssl(self):
+    self.assertOnlyIn((3, 6), self.detect("from ssl import VerifyMode"))
+
   def test_Formatter_of_string(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from string import Formatter"))
 
@@ -382,13 +400,25 @@ class VerminClassMemberTests(VerminTest):
     self.assertOnlyIn((3, 5), self.detect("from subprocess import CompletedProcess"))
 
   def test_EnvironmentVarGuard_of_test_support(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from test.support import EnvironmentVarGuard"))
+    self.assertOnlyIn((2, 6), self.detect("from test.support import EnvironmentVarGuard"))
 
   def test_TransientResource_of_test_support(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from test.support import TransientResource"))
+    self.assertOnlyIn((2, 6), self.detect("from test.support import TransientResource"))
 
   def test_WarningsRecorder_of_test_support(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from test.support import WarningsRecorder"))
+    self.assertOnlyIn((2, 6), self.detect("from test.support import WarningsRecorder"))
+
+  def test_EnvironmentVarGuard_of_test_support_os_helper(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from test.support.os_helper import EnvironmentVarGuard"))
+
+  def test_TransientResource_of_test_support_socket_helper(self):
+    self.assertOnlyIn((3, 9),
+                      self.detect("from test.support.socket_helper import TransientResource"))
+
+  def test_WarningsRecorder_of_test_support_warnings_helper(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from test.support.warnings_helper import WarningsRecorder"))
 
   def test_Barrier_of_threading(self):
     self.assertOnlyIn((3, 2), self.detect("from threading import Barrier"))

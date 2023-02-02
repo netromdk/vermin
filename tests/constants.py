@@ -358,7 +358,7 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn(((2, 7), (3, 4)), self.detect("from ssl import OP_NO_TLSv1_2"))
 
   def test_OP_NO_TLSv1_3_of_ssl(self):
-    self.assertOnlyIn(((2, 7), (3, 6)), self.detect("from ssl import OP_NO_TLSv1_3"))
+    self.assertOnlyIn(((2, 7), (3, 7)), self.detect("from ssl import OP_NO_TLSv1_3"))
 
   def test_OP_CIPHER_SERVER_PREFERENCE_of_ssl(self):
     self.assertOnlyIn(((2, 7), (3, 3)), self.detect("from ssl import OP_CIPHER_SERVER_PREFERENCE"))
@@ -493,6 +493,9 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_suffixes_of_Path_of_zipfile(self):
     self.assertOnlyIn((3, 11), self.detect("from zipfile import Path\nPath().suffixes"))
+
+  def test_KW_ONLY_of_dataclasses(self):
+    self.assertOnlyIn((3, 10), self.detect("import dataclasses\ndataclasses.KW_ONLY"))
 
   def test_METHOD_SHA512_of_crypt(self):
     self.assertOnlyIn((3, 3), self.detect("import crypt\ncrypt.METHOD_SHA512"))
@@ -679,6 +682,12 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_MADV_FREE_of_mmap(self):
     self.assertOnlyIn((3, 8), self.detect("import mmap\nmmap.MADV_FREE"))
+
+  def test_MADV_FREE_REUSABLE_of_mmap(self):
+    self.assertOnlyIn((3, 8), self.detect("import mmap\nmmap.MADV_FREE_REUSABLE"))
+
+  def test_MADV_FREE_REUSE_of_mmap(self):
+    self.assertOnlyIn((3, 8), self.detect("import mmap\nmmap.MADV_FREE_REUSE"))
 
   def test_MADV_NOSYNC_of_mmap(self):
     self.assertOnlyIn((3, 8), self.detect("import mmap\nmmap.MADV_NOSYNC"))
@@ -1172,10 +1181,10 @@ class VerminConstantMemberTests(VerminTest):
                       self.detect("from logging import StreamHandler\n"
                                   "StreamHandler().terminator"))
 
-  def test_name_from_logging_handlers_BaseRotatingHandler(self):
+  def test_namer_from_logging_handlers_BaseRotatingHandler(self):
     self.assertOnlyIn((3, 3),
                       self.detect("from logging.handlers import BaseRotatingHandler\n"
-                                  "BaseRotatingHandler().name"))
+                                  "BaseRotatingHandler().namer"))
 
   def test_rotator_from_logging_handlers_BaseRotatingHandler(self):
     self.assertOnlyIn((3, 3),
@@ -1687,6 +1696,12 @@ class VerminConstantMemberTests(VerminTest):
   def test_NOFLAG_of_re(self):
     self.assertOnlyIn((3, 11), self.detect("from re import NOFLAG"))
 
+  def test_U_of_re(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("from re import U"))
+
+  def test_UNICODE_of_re(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("from re import UNICODE"))
+
   def test_colno_from_re_error(self):
     self.assertOnlyIn((3, 5),
                       self.detect("from re import error\n"
@@ -1711,6 +1726,11 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn((3, 5),
                       self.detect("from re import error\n"
                                   "error().pos"))
+
+  def test_fillvalue_from_reprlib_Repr(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from reprlib import Repr\n"
+                                  "Repr().fillvalue"))
 
   def test_maxfrozenset_from_repr_Repr(self):
     self.assertOnlyIn((2, 4),
@@ -2355,6 +2375,11 @@ class VerminConstantMemberTests(VerminTest):
                       self.detect("from sqlite3 import Connection\n"
                                   "Connection().in_transaction"))
 
+  def test_iterdump_from_sqlite3_Connection(self):
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from sqlite3 import Connection\n"
+                                  "Connection().iterdump"))
+
   def test_sqlite_errorcode_from_sqlite3_Error(self):
     self.assertOnlyIn((3, 11),
                       self.detect("from sqlite3 import Error\n"
@@ -2797,6 +2822,11 @@ class VerminConstantMemberTests(VerminTest):
   def test_TYPE_COMMENT_of_token(self):
     self.assertOnlyIn((3, 8), self.detect("from token import TYPE_COMMENT"))
 
+  def test___notes___from_traceback_TracebackException(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from traceback import TracebackException\n"
+                                  "TracebackException().__notes__"))
+
   def test_domain_from_tracemalloc_Filter(self):
     self.assertOnlyIn((3, 6),
                       self.detect("from tracemalloc import Filter\n"
@@ -2836,7 +2866,7 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn(((2, 0), (3, 10)), self.detect("from types import NoneType"))
 
   def test_NotImplementedType_of_types(self):
-    self.assertOnlyIn(((2, 0), (3, 10)), self.detect("from types import NotImplementedType"))
+    self.assertOnlyIn(((2, 5), (3, 10)), self.detect("from types import NotImplementedType"))
 
   def test_EllipsisType_of_types(self):
     self.assertOnlyIn(((2, 0), (3, 10)), self.detect("from types import EllipsisType"))
@@ -2923,7 +2953,7 @@ something.Final
     self.assertOnlyIn((3, 11), self.detect("from typing import Unpack"))
 
   def test_ucd_3_2_0_of_unicodedata(self):
-    self.assertOnlyIn(((2, 3), (3, 0)), self.detect("from unicodedata import ucd_3_2_0"))
+    self.assertOnlyIn(((2, 5), (3, 0)), self.detect("from unicodedata import ucd_3_2_0"))
 
   def test_unidata_version_of_unicodedata(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("from unicodedata import unidata_version"))
