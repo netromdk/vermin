@@ -28,7 +28,7 @@ jobs:
         with:
           node-version: 18
 
-      - uses: actions/cache@c1a5de879eb890d062a85ee0252d6036480b1fe2
+      - uses: actions/cache@627f0f41f6904a5b1efbaed9f96d9eb58e92e920
         with:
           path: ~/.cache/pip
           key: snyk-pip-${{ hashFiles('**/.*-requirements.txt') }}
