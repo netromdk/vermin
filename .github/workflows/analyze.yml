@@ -22,7 +22,7 @@ jobs:
       uses: actions/setup-python@5ccb29d8773c3f3f653e1705f474dfaa8a06a912
       with:
         python-version: ${{ matrix.python-version }}
-    - uses: actions/cache@c1a5de879eb890d062a85ee0252d6036480b1fe2
+    - uses: actions/cache@69d9d449aced6a2ede0bc19182fadc3a0a42d2b0
       with:
         path: ~/.cache/pip
         key: ${{ runner.os}}-pip-${{ hashFiles('**/.*-requirements.txt') }}
