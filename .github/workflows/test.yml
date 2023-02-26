@@ -98,7 +98,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Coveralls Finished
-      uses: coverallsapp/github-action@9ba913c152ae4be1327bfb9085dc806cedb44057
+      uses: coverallsapp/github-action@0363cd28f449b7e5d3b6c6d269d31fe7c1201b68
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         parallel-finished: true
