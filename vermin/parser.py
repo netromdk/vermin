@@ -96,7 +96,7 @@ class Parser:
       min_versions = [(0, 0), (0, 0)]
       if config.pessimistic():
         min_versions[sys.version_info.major - 2] = None
-      versions = version_strings(min_versions) + ":" if parsable else ""
+      versions = version_strings(min_versions, separator=":") + ":" if parsable else ""
       vvprint("{}:{}:{}:{}error: {}: {}".
               format(err.filename, err.lineno, err.offset, versions, err.msg, text), config)
     return (None, min_versions, set())
