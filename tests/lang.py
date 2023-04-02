@@ -2122,3 +2122,9 @@ except OSError as ex:
   pass
 """)
     self.assertFalse(visitor.except_star())
+
+  def test_False_constant(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), self.detect("False"))
+
+  def test_True_constant(self):
+    self.assertOnlyIn(((2, 3), (3, 0)), self.detect("True"))

@@ -89,6 +89,9 @@ linear_regression(proportional=None)
   def test_start_of_sum(self):
     self.assertOnlyIn((3, 8), self.detect("sum(start=None)"))
 
+  def test_platform_version_of_sys_getwindowsversion(self):
+    self.assertOnlyIn((3, 6), self.detect("sys.getwindowsversion(platform_version=None)"))
+
   def test_inheritable_of_dup2_from_os(self):
     self.assertOnlyIn((3, 4), self.detect("import os\nv = os.dup2(inheritable=True)"))
     self.assertOnlyIn((3, 4), self.detect("from os import dup2\nv = dup2(inheritable=True)"))
@@ -399,10 +402,10 @@ Signature.from_callable(localns=True)
                       self.detect("from SimpleXMLRPCServer import SimpleXMLRPCServer\n"
                                   "SimpleXMLRPCServer(encoding=True)"))
 
-  def test_bind_and_active_of_SimpleXMLRPCServer_from_SimpleXMLRPCServer(self):
+  def test_bind_and_activate_of_SimpleXMLRPCServer_from_SimpleXMLRPCServer(self):
     self.assertOnlyIn((2, 6),
                       self.detect("from SimpleXMLRPCServer import SimpleXMLRPCServer\n"
-                                  "SimpleXMLRPCServer(bind_and_active=True)"))
+                                  "SimpleXMLRPCServer(bind_and_activate=True)"))
 
   def test_allow_none_of_CGIXMLRPCRequestHandler_from_SimpleXMLRPCServer(self):
     self.assertOnlyIn((2, 5),
@@ -498,6 +501,30 @@ Signature.from_callable(localns=True)
 
   def test_timeout_of_wait_from_subprocess_Popen(self):
     self.assertOnlyIn((3, 3), self.detect("from subprocess import Popen\nPopen.wait(timeout=None)"))
+
+  def test_stdout_of_CalledProcessError_from_subprocess(self):
+    self.assertOnlyIn((3, 5),
+                      self.detect("""
+from subprocess import CalledProcessError
+CalledProcessError(stdout=None)"""))
+
+  def test_stderr_of_CalledProcessError_from_subprocess(self):
+    self.assertOnlyIn((3, 5),
+                      self.detect("""
+from subprocess import CalledProcessError
+CalledProcessError(stderr=None)"""))
+
+  def test_stdout_of_TimeoutExpired_from_subprocess(self):
+    self.assertOnlyIn((3, 5),
+                      self.detect("""
+from subprocess import TimeoutExpired
+TimeoutExpired(stdout=None)"""))
+
+  def test_stderr_of_TimeoutExpired_from_subprocess(self):
+    self.assertOnlyIn((3, 5),
+                      self.detect("""
+from subprocess import TimeoutExpired
+TimeoutExpired(stderr=None)"""))
 
   def test_timeout_of_communicate_from_subprocess_Popen(self):
     self.assertOnlyIn((3, 3),
@@ -689,6 +716,10 @@ Signature.from_callable(localns=True)
   def test_start_of_enumerate(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("enumerate(start=None)"))
 
+  @VerminTest.skipUnlessVersion(3)
+  def test_closure_of_exec(self):
+    self.assertOnlyIn((3, 11), self.detect("exec(closure=None)"))
+
   def test_key_of_max(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("max(key=None)"))
 
@@ -770,6 +801,10 @@ Signature.from_callable(localns=True)
   def test_charset_of_email_utils_formatdate(self):
     self.assertOnlyIn((3, 3), self.detect(
       "import email.utils\nemail.utils.formatdate(charset=None)"))
+
+  def test_charset_of_email_utils_formataddr(self):
+    self.assertOnlyIn((3, 3), self.detect(
+      "import email.utils\nemail.utils.formataddr(charset=None)"))
 
   def test_strict_of_email_message_from_string(self):
     self.assertOnlyIn(((2, 2), (3, 0)),
@@ -854,6 +889,12 @@ p.write_text(newline=True)
     self.assertOnlyIn((3, 9),
                       self.detect("import argparse\nargparse.ArgumentParser(exit_on_error=True)"))
 
+  def test_start_on_index_of_array_array(self):
+    self.assertOnlyIn((3, 10), self.detect("import array\narray.array.index(start=None)"))
+
+  def test_stop_on_index_of_array_array(self):
+    self.assertOnlyIn((3, 10), self.detect("import array\narray.array.index(stop=None)"))
+
   def test_skip_of_bdb_Bdb(self):
     self.assertOnlyIn(((2, 7), (3, 1)), self.detect("import bdb\nbdb.Bdb(skip=True)"))
 
@@ -928,6 +969,11 @@ binascii.a2b_base64(strict_mode=True)
     self.assertOnlyIn((3, 9),
                       self.detect("import compileall\n"
                                   "compileall.compile_dir(hardlink_dupes=None)"))
+
+  def test_workers_of_compileall_compile_dir(self):
+    self.assertOnlyIn((3, 5),
+                      self.detect("import compileall\n"
+                                  "compileall.compile_dir(workers=None)"))
 
   def test_legacy_of_compileall_compile_path(self):
     self.assertOnlyIn((3, 2), self.detect(
@@ -1194,6 +1240,11 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from asyncio import open_unix_connection\n"
                                   "open_unix_connection(ssl_handshake_timeout=None)"))
 
+  def test_path_of_open_unix_connection_from_asyncio(self):
+    self.assertOnlyIn((3, 7),
+                      self.detect("from asyncio import open_unix_connection\n"
+                                  "open_unix_connection(path=None)"))
+
   def test_ssl_handshake_timeout_of_start_server_from_asyncio(self):
     self.assertOnlyIn((3, 7),
                       self.detect("from asyncio import start_server\n"
@@ -1213,6 +1264,11 @@ binascii.a2b_base64(strict_mode=True)
     self.assertOnlyIn((3, 7),
                       self.detect("from asyncio import start_unix_server\n"
                                   "start_unix_server(start_serving=None)"))
+
+  def test_path_of_start_unix_server_from_asyncio(self):
+    self.assertOnlyIn((3, 7),
+                      self.detect("from asyncio import start_unix_server\n"
+                                  "start_unix_server(path=None)"))
 
   def test_bytes_per_sep_of_b2a_hex_from_binascii(self):
     self.assertOnlyIn((3, 8),
@@ -1764,6 +1820,11 @@ input(errors=None)
     self.assertOnlyIn(((2, 6), (3, 0)),
                       self.detect("from logging import FileHandler\n"
                                   "FileHandler(delay=None)"))
+
+  def test_errors_of_FileHandler_from_logging(self):
+    self.assertOnlyIn((3, 9),
+                      self.detect("from logging import FileHandler\n"
+                                  "FileHandler(errors=None)"))
 
   def test_validate_of_Formatter_from_logging(self):
     self.assertOnlyIn((3, 8),
@@ -2772,6 +2833,21 @@ kqueue().control(timeout=1)
                       self.detect("from email.parser import Parser\n"
                                   "Parser(policy=None)"))
 
+  def test_strict_of_Parser_from_email_parser(self):
+    self.assertOnlyIn(((2, 2), (3, 0)),
+                      self.detect("from email.parser import Parser\n"
+                                  "Parser(strict=None)"))
+
+  def test_headersonly_of_parse_from_email_parser_Parser(self):
+    self.assertOnlyIn(((2, 2), (3, 0)),
+                      self.detect("from email.parser import Parser\n"
+                                  "Parser().parse(headersonly=None)"))
+
+  def test_headersonly_of_parsestr_from_email_parser_Parser(self):
+    self.assertOnlyIn(((2, 2), (3, 0)),
+                      self.detect("from email.parser import Parser\n"
+                                  "Parser().parsestr(headersonly=None)"))
+
   def test_mangle_from__of_Policy_from_email_policy(self):
     self.assertOnlyIn((3, 5),
                       self.detect("from email.policy import Policy\n"
@@ -2888,7 +2964,7 @@ kqueue().control(timeout=1)
                                   "BaseManager(shutdown_timeout=None)"))
 
   def test_maxtasksperchild_of_Pool_from_multiprocessing_pool(self):
-    self.assertOnlyIn(((2, 7), (3, 2)),
+    self.assertOnlyIn((3, 2),
                       self.detect("from multiprocessing.pool import Pool\n"
                                   "Pool(maxtasksperchild=None)"))
 
@@ -3026,6 +3102,11 @@ kqueue().control(timeout=1)
                                   "x = lock()\n"
                                   "x.acquire(timeout=None)"))
 
+  def test_signum_of_interrupt_main_from__thread(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from _thread import interrupt_main\n"
+                                  "interrupt_main(signum=None)"))
+
   def test_required_of_add_subparsers_from_argparse_ArgumentParser(self):
     self.assertOnlyIn((3, 7),
                       self.detect("from argparse import ArgumentParser\n"
@@ -3141,7 +3222,7 @@ kqueue().control(timeout=1)
                                   "x.create_datagram_endpoint(sock=None)"))
 
   def test_ssl_handshake_timeout_of_create_server_from_asyncio_loop(self):
-    self.assertOnlyIn((3, 7),
+    self.assertOnlyIn((3, 6),
                       self.detect("from asyncio import loop\n"
                                   "x = loop()\n"
                                   "x.create_server(ssl_handshake_timeout=None)"))
@@ -3153,7 +3234,7 @@ kqueue().control(timeout=1)
                                   "x.create_server(ssl_shutdown_timeout=None)"))
 
   def test_start_serving_of_create_server_from_asyncio_loop(self):
-    self.assertOnlyIn((3, 7),
+    self.assertOnlyIn((3, 6),
                       self.detect("from asyncio import loop\n"
                                   "x = loop()\n"
                                   "x.create_server(start_serving=None)"))
@@ -3163,6 +3244,12 @@ kqueue().control(timeout=1)
                       self.detect("from asyncio import loop\n"
                                   "x = loop()\n"
                                   "x.create_task(name=None)"))
+
+  def test_context_of_create_task_from_asyncio_loop(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from asyncio import loop\n"
+                                  "x = loop()\n"
+                                  "x.create_task(context=None)"))
 
   def test_ssl_handshake_timeout_of_create_unix_connection_from_asyncio_loop(self):
     self.assertOnlyIn((3, 7),
@@ -3176,6 +3263,12 @@ kqueue().control(timeout=1)
                                   "x = loop()\n"
                                   "x.create_unix_connection(ssl_shutdown_timeout=None)"))
 
+  def test_path_of_create_unix_connection_from_asyncio_loop(self):
+    self.assertOnlyIn((3, 7),
+                      self.detect("from asyncio import loop\n"
+                                  "x = loop()\n"
+                                  "x.create_unix_connection(path=None)"))
+
   def test_ssl_handshake_timeout_of_create_unix_server_from_asyncio_loop(self):
     self.assertOnlyIn((3, 7),
                       self.detect("from asyncio import loop\n"
@@ -3187,6 +3280,18 @@ kqueue().control(timeout=1)
                       self.detect("from asyncio import loop\n"
                                   "x = loop()\n"
                                   "x.create_unix_server(start_serving=None)"))
+
+  def test_path_of_create_unix_server_from_asyncio_loop(self):
+    self.assertOnlyIn((3, 7),
+                      self.detect("from asyncio import loop\n"
+                                  "x = loop()\n"
+                                  "x.create_unix_server(path=None)"))
+
+  def test_ssl_shutdown_timeout_of_create_unix_server_from_asyncio_loop(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from asyncio import loop\n"
+                                  "x = loop()\n"
+                                  "x.create_unix_server(ssl_shutdown_timeout=None)"))
 
   def test_ssl_shutdown_timeout_of_start_tls_from_asyncio_loop(self):
     self.assertOnlyIn((3, 11),

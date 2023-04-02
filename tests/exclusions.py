@@ -5,6 +5,7 @@ class VerminExclusionsTests(VerminTest):
     visitor = self.visit("from email.parser import FeedParser")
     self.assertEqual([(2, 4), (3, 0)], visitor.minimum_versions())
 
+    self.config.add_exclusion("email.parser")
     self.config.add_exclusion("email.parser.FeedParser")
     visitor = self.visit("from email.parser import FeedParser")
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())

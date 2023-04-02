@@ -10,6 +10,15 @@ class VerminDecoratorMemberTests(VerminTest):
   def test_asynccontextmanager_of_contextlib(self):
     self.assertOnlyIn((3, 7), self.detect("from contextlib import asynccontextmanager"))
 
+  def test_global_enum_of_enum(self):
+    self.assertOnlyIn((3, 11), self.detect("from enum import global_enum"))
+
+  def test_member_of_enum(self):
+    self.assertOnlyIn((3, 11), self.detect("from enum import member"))
+
+  def test_nonmember_of_enum(self):
+    self.assertOnlyIn((3, 11), self.detect("from enum import nonmember"))
+
   def test_property_of_enum(self):
     self.assertOnlyIn((3, 11), self.detect("from enum import property"))
 

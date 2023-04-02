@@ -133,6 +133,9 @@ class VerminFunctionMemberTests(VerminTest):
   def test_splice_of_os(self):
     self.assertOnlyIn((3, 10), self.detect("from os import splice"))
 
+  def test_startfile_of_os(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("from os import startfile"))
+
   def test_eventfd_of_os(self):
     self.assertOnlyIn((3, 10), self.detect("from os import eventfd"))
 
@@ -164,6 +167,14 @@ class VerminFunctionMemberTests(VerminTest):
   def test_starmap_async_of_multiprocessing_Pool(self):
     self.assertOnlyIn((3, 3), self.detect(
       "from multiprocessing import Pool\np = Pool()\np.starmap_async()"))
+
+  def test_starmap_of_multiprocessing_pool_Pool(self):
+    self.assertOnlyIn((3, 3), self.detect(
+        "from multiprocessing.pool import Pool\np = Pool()\np.starmap()"))
+
+  def test_starmap_async_of_multiprocessing_pool_Pool(self):
+    self.assertOnlyIn((3, 3), self.detect(
+      "from multiprocessing.pool import Pool\np = Pool()\np.starmap_async()"))
 
   def test_wait_of_multiprocessing_connection(self):
     self.assertOnlyIn((3, 3), self.detect(
@@ -261,9 +272,9 @@ IsolatedAsyncioTestCase.enterAsyncContext()
     self.assertOnlyIn(((2, 7), (3, 1)),
                       self.detect("from unittest import TestCase\nTestCase.addTypeEqualityFunc()"))
 
-  def test_assertMultilineEqual_of_unittest_TestCase(self):
+  def test_assertMultiLineEqual_of_unittest_TestCase(self):
     self.assertOnlyIn(((2, 7), (3, 1)),
-                      self.detect("from unittest import TestCase\nTestCase.assertMultilineEqual()"))
+                      self.detect("from unittest import TestCase\nTestCase.assertMultiLineEqual()"))
 
   def test_assertSequenceEqual_of_unittest_TestCase(self):
     self.assertOnlyIn(((2, 7), (3, 1)),
@@ -669,6 +680,9 @@ c.total()
   def test_ismemberdescriptor_from_inspect(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("import inspect\ninspect.ismemberdescriptor()"))
 
+  def test_ismethodwrapper_from_inspect(self):
+    self.assertOnlyIn((3, 11), self.detect("import inspect\ninspect.ismethodwrapper()"))
+
   def test_cleandoc_from_inspect(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import inspect\ninspect.cleandoc()"))
 
@@ -764,6 +778,10 @@ c.total()
 
   def test_compress_from_itertools(self):
     self.assertOnlyIn(((2, 7), (3, 1)), self.detect("import itertools\nitertools.compress()"))
+
+  def test_from_iterable_from_itertools_chain(self):
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from itertools import chain\nchain.from_iterable()"))
 
   def test_groupby_from_itertools(self):
     self.assertOnlyIn(((2, 4), (3, 0)), self.detect("import itertools\nitertools.groupby()"))
@@ -1241,6 +1259,9 @@ c.total()
   def test_format_datetime_from_email_utils(self):
     self.assertOnlyIn((3, 3), self.detect("import email.utils\nemail.utils.format_datetime()"))
 
+  def test_show_flag_values_from_enum(self):
+    self.assertOnlyIn((3, 11), self.detect("from enum import show_flag_values"))
+
   def test_copysign_from_math(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import math\nmath.copysign()"))
 
@@ -1484,6 +1505,12 @@ p.hardlink_to()
   def test_run_coroutine_threadsafe_of_asyncio(self):
     self.assertOnlyIn((3, 5), self.detect("import asyncio\nasyncio.run_coroutine_threadsafe()"))
 
+  def test_timeout_of_asyncio(self):
+    self.assertOnlyIn((3, 11), self.detect("import asyncio\nasyncio.timeout()"))
+
+  def test_timeout_at_of_asyncio(self):
+    self.assertOnlyIn((3, 11), self.detect("import asyncio\nasyncio.timeout_at()"))
+
   def test_create_task_of_asyncio(self):
     self.assertOnlyIn((3, 7), self.detect("import asyncio\nasyncio.create_task()"))
 
@@ -1505,6 +1532,12 @@ p.hardlink_to()
 
   def test_byteswap_of_audioop(self):
     self.assertOnlyIn((3, 4), self.detect("import audioop\naudioop.byteswap()"))
+
+  def test_alaw2lin_of_audioop(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), self.detect("import audioop\naudioop.alaw2lin()"))
+
+  def test_lin2alaw_of_audioop(self):
+    self.assertOnlyIn(((2, 5), (3, 0)), self.detect("import audioop\naudioop.lin2alaw()"))
 
   def test_a85encode_of_base64(self):
     self.assertOnlyIn((3, 4), self.detect("import base64\nbase64.a85encode()"))
@@ -1855,6 +1888,10 @@ p.hardlink_to()
     self.assertOnlyIn(((2, 7), (3, 2)), self.detect(
         "import logging.config\nlogging.config.dictConfig()"))
 
+  def test_adjust_int_max_str_digits_from_test_support(self):
+    self.assertOnlyIn((3, 11), self.detect(
+        "import test.support\ntest.support.adjust_int_max_str_digits()"))
+
   def test_captured_stdout_from_test_support(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect(
         "import test.support\ntest.support.captured_stdout()"))
@@ -2040,6 +2077,11 @@ p.hardlink_to()
                       self.detect("from asyncio import Task\n"
                                   "Task().get_coro()"))
 
+  def test_cancelling_from_asyncio_Task(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from asyncio import Task\n"
+                                  "Task().cancelling()"))
+
   def test_get_name_from_asyncio_Task(self):
     self.assertOnlyIn((3, 8),
                       self.detect("from asyncio import Task\n"
@@ -2049,6 +2091,11 @@ p.hardlink_to()
     self.assertOnlyIn((3, 8),
                       self.detect("from asyncio import Task\n"
                                   "Task().set_name()"))
+
+  def test_uncancel_from_asyncio_Task(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from asyncio import Task\n"
+                                  "Task().uncancel()"))
 
   def test_when_from_asyncio_TimerHandle(self):
     self.assertOnlyIn((3, 7),
@@ -2128,6 +2175,10 @@ p.hardlink_to()
 
   def test_to_thread_from_asyncio(self):
     self.assertOnlyIn((3, 9), self.detect("from asyncio import to_thread"))
+
+  def test_handle_accepted_from_asyncore_dispatcher(self):
+    self.assertOnlyIn((3, 2),
+                      self.detect("import asyncore\nasyncore.dispatcher.handle_accepted()"))
 
   def test_b85decode_from_base64(self):
     self.assertOnlyIn((3, 4), self.detect("import base64\nbase64.b85decode()"))
@@ -2868,11 +2919,23 @@ p.hardlink_to()
   def test_format_string_from_locale(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("import locale\nlocale.format_string()"))
 
+  def test_getdefaultlocale_from_locale(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("import locale\nlocale.getdefaultlocale()"))
+
   def test_getencoding_from_locale(self):
     self.assertOnlyIn((3, 11), self.detect("import locale\nlocale.getencoding()"))
 
+  def test_getlocale_from_locale(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("import locale\nlocale.getlocale()"))
+
   def test_getpreferredencoding_from_locale(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("import locale\nlocale.getpreferredencoding()"))
+
+  def test_normalize_from_locale(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("import locale\nlocale.normalize()"))
+
+  def test_resetlocale_from_locale(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("import locale\nlocale.resetlocale()"))
 
   def test_getEffectiveLevel_from_logging_LoggerAdapter(self):
     self.assertOnlyIn((3, 2),
@@ -3025,6 +3088,9 @@ p.hardlink_to()
                       self.detect("from nntplib import NNTP\n"
                                   "NNTP().starttls()"))
 
+  def test___call___from_operator(self):
+    self.assertOnlyIn((3, 11), self.detect("import operator\noperator.__call__()"))
+
   def test___eq___from_operator(self):
     self.assertOnlyIn(((2, 2), (3, 0)), self.detect("import operator\noperator.__eq__()"))
 
@@ -3112,6 +3178,9 @@ p.hardlink_to()
   def test_attrgetter_from_operator(self):
     self.assertOnlyIn(((2, 4), (3, 0)), self.detect("import operator\noperator.attrgetter()"))
 
+  def test_call_from_operator(self):
+    self.assertOnlyIn((3, 11), self.detect("import operator\noperator.call()"))
+
   def test_eq_from_operator(self):
     self.assertOnlyIn(((2, 2), (3, 0)), self.detect("import operator\noperator.eq()"))
 
@@ -3176,7 +3245,7 @@ p.hardlink_to()
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("import operator\noperator.isub()"))
 
   def test_itemgetter_from_operator(self):
-    self.assertOnlyIn(((2, 5), (3, 0)), self.detect("import operator\noperator.itemgetter()"))
+    self.assertOnlyIn(((2, 4), (3, 0)), self.detect("import operator\noperator.itemgetter()"))
 
   def test_itruediv_from_operator(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("import operator\noperator.itruediv()"))
@@ -3776,6 +3845,12 @@ Template().is_valid()
   def test_get_coroutine_origin_tracking_depth_from_sys(self):
     self.assertOnlyIn((3, 7), self.detect("import sys\nsys.get_coroutine_origin_tracking_depth()"))
 
+  def test_get_int_max_str_digits_from_sys(self):
+    self.assertOnlyIn((3, 11), self.detect("import sys\nsys.get_int_max_str_digits()"))
+
+  def test_set_int_max_str_digits_from_sys(self):
+    self.assertOnlyIn((3, 11), self.detect("import sys\nsys.set_int_max_str_digits()"))
+
   def test_getallocatedblocks_from_sys(self):
     self.assertOnlyIn((3, 4), self.detect("import sys\nsys.getallocatedblocks()"))
 
@@ -3905,6 +3980,13 @@ Template().is_valid()
     self.assertOnlyIn((3, 11), self.detect("""
 from traceback import StackSummary
 StackSummary().format_frame_summary()
+"""))
+
+  @VerminTest.skipUnlessVersion(3)
+  def test_print_from_traceback_TracebackException(self):
+    self.assertOnlyIn((3, 11), self.detect("""
+from traceback import TracebackException
+TracebackException().print()
 """))
 
   def test_clear_frames_from_traceback(self):
@@ -4135,25 +4217,50 @@ StackSummary().format_frame_summary()
                       self.detect("from xml.etree.ElementTree import TreeBuilder\n"
                                   "TreeBuilder().pi()"))
 
-  def test_EntityDeclHandler_from_xml_parsers_expat_XMLParserType(self):
+  def test_EntityDeclHandler_from_xml_parsers_expat_xmlparser(self):
     self.assertOnlyIn(((2, 1), (3, 0)),
-                      self.detect("from xml.parsers.expat import XMLParserType\n"
-                                  "XMLParserType().EntityDeclHandler()"))
+                      self.detect("from xml.parsers.expat import xmlparser\n"
+                                  "xmlparser().EntityDeclHandler()"))
 
-  def test_GetInputContext_from_xml_parsers_expat_XMLParserType(self):
+  def test_GetInputContext_from_xml_parsers_expat_xmlparser(self):
     self.assertOnlyIn(((2, 1), (3, 0)),
-                      self.detect("from xml.parsers.expat import XMLParserType\n"
-                                  "XMLParserType().GetInputContext()"))
+                      self.detect("from xml.parsers.expat import xmlparser\n"
+                                  "xmlparser().GetInputContext()"))
 
-  def test_UseForeignDTD_from_xml_parsers_expat_XMLParserType(self):
+  def test_UseForeignDTD_from_xml_parsers_expat_xmlparser(self):
     self.assertOnlyIn(((2, 3), (3, 0)),
-                      self.detect("from xml.parsers.expat import XMLParserType\n"
-                                  "XMLParserType().UseForeignDTD()"))
+                      self.detect("from xml.parsers.expat import xmlparser\n"
+                                  "xmlparser().UseForeignDTD()"))
 
-  def test_XmlDeclHandler_from_xml_parsers_expat_XMLParserType(self):
+  def test_XmlDeclHandler_from_xml_parsers_expat_xmlparser(self):
     self.assertOnlyIn(((2, 1), (3, 0)),
-                      self.detect("from xml.parsers.expat import XMLParserType\n"
-                                  "XMLParserType().XmlDeclHandler()"))
+                      self.detect("from xml.parsers.expat import xmlparser\n"
+                                  "xmlparser().XmlDeclHandler()"))
+
+  def test_buffer_size_from_xml_parsers_expat_xmlparser(self):
+    self.assertOnlyIn(((2, 3), (3, 0)),
+                      self.detect("from xml.parsers.expat import xmlparser\n"
+                                  "xmlparser().buffer_size()"))
+
+  def test_buffer_text_from_xml_parsers_expat_xmlparser(self):
+    self.assertOnlyIn(((2, 3), (3, 0)),
+                      self.detect("from xml.parsers.expat import xmlparser\n"
+                                  "xmlparser().buffer_text()"))
+
+  def test_buffer_used_from_xml_parsers_expat_xmlparser(self):
+    self.assertOnlyIn(((2, 3), (3, 0)),
+                      self.detect("from xml.parsers.expat import xmlparser\n"
+                                  "xmlparser().buffer_used()"))
+
+  def test_ordered_attributes_from_xml_parsers_expat_xmlparser(self):
+    self.assertOnlyIn(((2, 1), (3, 0)),
+                      self.detect("from xml.parsers.expat import xmlparser\n"
+                                  "xmlparser().ordered_attributes()"))
+
+  def test_specified_attributes_from_xml_parsers_expat_xmlparser(self):
+    self.assertOnlyIn(((2, 1), (3, 0)),
+                      self.detect("from xml.parsers.expat import xmlparser\n"
+                                  "xmlparser().specified_attributes()"))
 
   def test_copy_from_zlib_Compress(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
@@ -4229,3 +4336,9 @@ from test.support import check_disallow_instantiation
 
   def test_packages_distributions_from_importlib_metadata(self):
     self.assertOnlyIn((3, 10), self.detect("from importlib.metadata import packages_distributions"))
+
+  def test___notes___from_BaseException(self):
+    self.assertOnlyIn((3, 11), self.detect("BaseException.__notes__()"))
+
+  def test_add_note_from_BaseException(self):
+    self.assertOnlyIn((3, 11), self.detect("BaseException.add_note()"))
