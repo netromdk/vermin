@@ -83,7 +83,7 @@ class Arguments:
       print("  --no-dump (default)\n"
             "        Don't dump AST node visits.")
       print("\n  --help | -h\n"
-            "        Shows this information and exists.")
+            "        Shows this information and exits.")
       print("\n  --version | -V\n"
             "        Shows version number and exits.")
       print("\n  --config-file <path> | -c <path>\n"
