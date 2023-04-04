@@ -955,7 +955,7 @@ class SourceVisitor(ast.NodeVisitor):
       else:
         self.__s.longv2 = True
         self.__vvprint("long is a v2 feature")
-    elif node.id == "True" or node.id == "False":
+    elif node.id in ("True", "False"):
       self.__s.bool_const = True
       self.__vvvprint("True/False constant", versions=[(2, 3), (3, 0)])
 
