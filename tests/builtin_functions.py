@@ -53,6 +53,9 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
     # Calling without arguments requires v3 (`SourceVisitor.super_no_args()`).
     self.assertOnlyIn(((2, 2), (3, 0)), self.detect("super(SomeType)"))
 
+  def test_type(self):
+    self.assertOnlyIn(((2, 0), (3, 0)), self.detect("type()"))
+
   def test_unichr(self):
     self.assertOnlyIn((2, 0), self.detect("unichr()"))
 

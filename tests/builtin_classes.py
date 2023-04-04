@@ -22,9 +22,6 @@ class VerminBuiltinClassesMemberTests(VerminTest):
   def test_dict(self):
     self.assertOnlyIn(((2, 2), (3, 0)), self.detect("dict()"))
 
-  def test_type(self):
-    self.assertOnlyIn(((2, 2), (3, 0)), self.detect("type()"))
-
   def test_memoryview(self):
     self.assertOnlyIn(((2, 7), (3, 0)), self.detect("memoryview()"))
 

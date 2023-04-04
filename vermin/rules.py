@@ -206,7 +206,6 @@ def MOD_MEM_REQS(config):
     "object": ((2, 2), (3, 0)),
     "set": ((2, 4), (3, 0)),
     "dict": ((2, 2), (3, 0)),
-    "type": ((2, 2), (3, 0)),
     "long": ((2, 0), None),
 
     # Classes
@@ -635,6 +634,7 @@ def MOD_MEM_REQS(config):
     "str.zfill": ((2, 2), (3, 0)),
     "sum": ((2, 3), (3, 0)),
     "super": ((2, 2), (3, 0)),
+    "type": ((2, 0), (3, 0)),
     "unichr": ((2, 0), None),
     "unicode": ((2, 0), None),
     "unicode.isdecimal": ((2, 0), None),
