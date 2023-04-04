@@ -2128,3 +2128,13 @@ except OSError as ex:
 
   def test_True_constant(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("True"))
+
+  def test_issue_168_keyword_values(self):
+    visitor = self.visit("""
+ret = subparser.add_parser("qemu")
+ret.add_argument("--efi", action=argparse.BooleanOptionalAction, help="...")
+""")
+
+    # `argparse.BooleanOptionalAction` requires !2, 3.9 but the keyword values weren't visited
+    # before.
+    self.assertOnlyIn((3, 9), visitor.minimum_versions())

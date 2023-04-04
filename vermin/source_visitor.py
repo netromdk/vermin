@@ -769,16 +769,17 @@ class SourceVisitor(ast.NodeVisitor):
   def __add_kwargs(self, function, keyword, line=None, col=None):
     if function in self.__user_defs:  # pragma: no cover
       self.__vvvvprint("Ignoring function '{}' because it's user-defined!".format(function))
-      return
+      return False
 
     if self.__config.is_excluded_kwarg(function, keyword):
       self.__vvprint("Excluding kwarg: {}({})".format(function, keyword))
-      return
+      return False
 
     fn_kw = (function, keyword)
     if fn_kw not in self.__kwargs:
       self.__kwargs.append(fn_kw)
       self.__add_line_col(fn_kw, line, col)
+    return True
 
   def __add_user_func_deco(self, ufd, line=None, col=None):
     if ufd in self.__user_defs:
@@ -1268,6 +1269,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.generic_visit(node)
 
   def visit_keyword(self, node):
+    added = False
     for func_name in self.__function_name_stack:
       # kwarg related.
       exp_name = func_name.split(".")
@@ -1275,28 +1277,32 @@ class SourceVisitor(ast.NodeVisitor):
       # Check if function is imported from module.
       if func_name in self.__import_mem_mod:
         mod = self.__import_mem_mod[func_name]
-        self.__add_kwargs(dotted_name([mod, func_name]), node.arg, self.__line)
+        added |= self.__add_kwargs(dotted_name([mod, func_name]), node.arg, self.__line)
 
       # When having "ElementTree.tostringlist", for instance, and include mapping "{'ElementTree':
       # 'xml.etree'}" then try piecing them together to form a match.
       elif exp_name[0] in self.__import_mem_mod:
         mod = self.__import_mem_mod[exp_name[0]]
-        self.__add_kwargs(dotted_name([mod, func_name]), node.arg, self.__line)
+        added |= self.__add_kwargs(dotted_name([mod, func_name]), node.arg, self.__line)
 
       # Lookup indirect names via variables.
       elif exp_name[0] in self.__name_res:
         res = self.__name_res[exp_name[0]]
         if res in self.__import_mem_mod:
           mod = self.__import_mem_mod[res]
-          self.__add_kwargs(dotted_name([mod, res, exp_name[1:]]), node.arg, self.__line)
+          added |= self.__add_kwargs(dotted_name([mod, res, exp_name[1:]]), node.arg, self.__line)
 
         # Try as FQN.
         else:
-          self.__add_kwargs(dotted_name([res, exp_name[1:]]), node.arg, self.__line)
+          added |= self.__add_kwargs(dotted_name([res, exp_name[1:]]), node.arg, self.__line)
 
       # Only add direct function if not found via module/class/member.
       else:
-        self.__add_kwargs(func_name, node.arg, self.__line)
+        added |= self.__add_kwargs(func_name, node.arg, self.__line)
+
+    # If not excluded or ignored then visit keyword values also.
+    if added:
+      self.generic_visit(node)
 
   def visit_Bytes(self, node):
     self.__bytesv3 = True
