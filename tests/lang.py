@@ -1939,6 +1939,37 @@ if (global_byte | local_byte) != global_byte:
     self.assertFalse(visitor.union_types())
 
     if current_version() >= (3, 10):
+      # Issue 159: Attributes can also be used for union types.
+      visitor = self.visit("""
+def function(argument: ipaddress.IPv4Interface | ipaddress.IPv6Interface):
+    if isinstance(argument, ipaddress.IPv4Address):
+        print("We got an IPv4")
+    elif isinstance(argument, ipaddress.IPv6Address):
+        print("We got an IPv6")
+    else:
+        print(f"We got type {type(argument)}")
+""")
+      self.assertTrue(visitor.union_types())
+      self.assertOnlyIn((3, 10), visitor.minimum_versions())
+      visitor = self.visit("""
+def function(argument: ipaddress.IPv4Interface | None):
+    pass
+""")
+      self.assertTrue(visitor.union_types())
+      self.assertOnlyIn((3, 10), visitor.minimum_versions())
+      visitor = self.visit("""
+def function(argument: None | ipaddress.IPv4Interface):
+    pass
+""")
+      self.assertTrue(visitor.union_types())
+      self.assertOnlyIn((3, 10), visitor.minimum_versions())
+      visitor = self.visit("""
+def function(argument: str | ipaddress.IPv4Interface):
+    pass
+""")
+      self.assertTrue(visitor.union_types())
+      self.assertOnlyIn((3, 10), visitor.minimum_versions())
+
       # Issue 109: When not evaluating annotations, returns annotations must not be visited.
       self.config.set_eval_annotations(False)
       visitor = self.visit("""
