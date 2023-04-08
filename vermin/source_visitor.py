@@ -193,6 +193,10 @@ class SourceVisitor(ast.NodeVisitor):
     # incorrectly marks some source code as using fstring self-doc when only using general fstring.
     self.__fstring_self_doc_enabled = self.__config.has_feature("fstring-self-doc")
 
+    # Default to disabling union types detection because it sometimes fails to report it correctly
+    # due to using heuristics.
+    self.__union_types_enabled = self.__config.has_feature("union-types")
+
     # Used for incompatible versions texts.
     self.__info_versions = {}
 
@@ -1396,7 +1400,7 @@ ast.Call(func=ast.Name)."""
         return name is not None and \
           ((name not in self.__name_res and name not in self.__user_defs) or
            (name in self.__name_res_type))
-      if is_none_or_name(node.left) and is_none_or_name(node.right):
+      if self.__union_types_enabled and is_none_or_name(node.left) and is_none_or_name(node.right):
         self.__union_types = True
         self.__vvprint("union types as `X | Y`", line=node.lineno, versions=[None, (3, 10)],
                        plural=True)
@@ -1710,7 +1714,7 @@ ast.Call(func=ast.Name)."""
       # AugAssign(target=Name(id='a', ctx=Store()),
       #           op=BitOr(),
       #           value=Name(id='int', ctx=Load()))
-      elif is_union_type(node.target) and is_union_type(node.value):
+      elif self.__union_types_enabled and is_union_type(node.target) and is_union_type(node.value):
         self.__union_types = True
         self.__vvprint("union types as `a = X; a |= Y`", line=node.lineno, versions=[None, (3, 10)],
                        plural=True)

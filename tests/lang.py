@@ -1851,7 +1851,8 @@ def http_error(status):
 """)
     self.assertTrue(visitor.pattern_matching())
 
-  def test_union_types(self):
+  def test_union_types_enabled(self):
+    self.config.enable_feature("union-types")
     visitor = self.visit("int | float")
     self.assertTrue(visitor.union_types())
     self.assertOnlyIn((3, 10), visitor.minimum_versions())
@@ -2096,6 +2097,82 @@ c: a | b = 1  # though in this case `b` is a Name and not Constant.
       self.assertTrue(visitor.union_types())
       self.assertFalse(visitor.maybe_annotations())
       self.assertOnlyIn((3, 10), visitor.minimum_versions())
+
+  def test_union_types_disabled(self):
+    self.assertFalse(self.config.has_feature("union-types"))
+
+    # --- Normally true but false because the feature is disabled. ---
+
+    visitor = self.visit("int | float")
+    self.assertFalse(visitor.union_types())
+
+    visitor = self.visit('isinstance("", int | str)')
+    self.assertFalse(visitor.union_types())
+
+    visitor = self.visit("issubclass(bool, int | float)")
+    self.assertFalse(visitor.union_types())
+
+    visitor = self.visit("""
+a = str
+a |= int
+""")
+    self.assertFalse(visitor.union_types())
+
+    visitor = self.visit("""
+class Foo: pass
+class Bar: pass
+a = Foo | Bar
+""")
+    self.assertFalse(visitor.union_types())
+
+    if current_version() >= (3, 10):
+      # Issue 159: Attributes can also be used for union types.
+      visitor = self.visit("""
+def function(argument: ipaddress.IPv4Interface | ipaddress.IPv6Interface):
+    if isinstance(argument, ipaddress.IPv4Address):
+        print("We got an IPv4")
+    elif isinstance(argument, ipaddress.IPv6Address):
+        print("We got an IPv6")
+    else:
+        print(f"We got type {type(argument)}")
+""")
+      self.assertFalse(visitor.union_types())
+
+    # --- False in all cases, disabled or not. ---
+
+    visitor = self.visit("a = 1 | 0")
+    self.assertFalse(visitor.union_types())
+
+    visitor = self.visit("""
+a = {'x':1}
+b = {'y':2}
+a | b
+""")
+    self.assertFalse(visitor.union_types())
+
+    visitor = self.visit("""
+a = str
+a |= "test"
+""")
+    self.assertFalse(visitor.union_types())
+
+    visitor = self.visit("""
+a = "test"
+a |= int
+""")
+    self.assertFalse(visitor.union_types())
+
+    # Issue 103: Don't judge `|` operator applied to values, and not types, as a union of types.
+    visitor = self.visit("""
+index = 0
+c_bitmap = [42]
+exec_result = [42]
+global_byte = c_bitmap[index]
+local_byte = exec_result[index]
+if (global_byte | local_byte) != global_byte:
+  pass
+""")
+    self.assertFalse(visitor.union_types())
 
   def test_super_no_args(self):
     # Without arguments, it's v3.0.

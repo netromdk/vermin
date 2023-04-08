@@ -163,6 +163,12 @@ distinguish ``f'{a=}'`` from ``f'a={a}'``, for instance, since it optimizes some
 code as using fstring self-doc when only using general fstring. To enable (unstable) fstring
 self-doc detection, use ``--feature fstring-self-doc``.
 
+Detecting union types (``X | Y`` `PEP 604 <https://www.python.org/dev/peps/pep-0604/>`__) can be
+tricky because Vermin doesn't know all underlying details of constants and types since it parses and
+traverses the AST. For this reason, heuristics are employed and this can sometimes yield incorrect
+results (`#103 <https://github.com/netromdk/vermin/issues/103>`__). To enable (unstable) union types
+detection, use ``--feature union-types``.
+
 Function and variable annotations aren't evaluated at definition time when ``from __future__ import
 annotations`` is used (`PEP 563 <https://www.python.org/dev/peps/pep-0563/>`__). This is why
 ``--no-eval-annotations`` is on by default (since v1.1.1, `#66
