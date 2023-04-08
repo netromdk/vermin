@@ -71,11 +71,14 @@ Table of Contents
 Usage
 =====
 
-It is fairly straightforward to use Vermin::
+It is fairly straightforward to use Vermin.
 
-  ./vermin.py /path/to/your/project
+Running it from the repository either directly or through specific interpreter::
 
-Or via `PyPi <https://pypi.python.org/pypi/vermin/>`__::
+  % ./vermin.py /path/to/your/project        # (1) executing via `/usr/bin/env python`
+  % python3 vermin.py /path/to/your/project  # (2) specifically `python3`
+
+Or if installed via `PyPi <https://pypi.python.org/pypi/vermin/>`__::
 
   % pip install vermin
   % vermin /path/to/your/project
