@@ -5,6 +5,10 @@ FEATURES = (
     "[Unstable] Detect self-documenting fstrings. Can in",
     "some cases wrongly report fstrings as self-documenting."
   ]),
+  ("union-types", [
+    "[Unstable] Detect union types `X | Y`. Can in some cases",
+    "wrongly report union types due to having to employ heuristics."
+  ]),
 )
 
 class Features:
