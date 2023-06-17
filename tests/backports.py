@@ -20,6 +20,7 @@ class VerminBackportsTests(VerminTest):
       "typing_extensions==4.0",
       "typing_extensions==4.3",
       "typing_extensions",
+      "zoneinfo",
     ), Backports.modules())
 
   def test_is_backport(self):
@@ -41,7 +42,8 @@ class VerminBackportsTests(VerminTest):
    typing                 - https://pypi.org/project/typing/ (2.7, 3.2)
    typing_extensions==4.0 - https://pypi.org/project/typing-extensions/4.0.0/ (!2, 3.6)
    typing_extensions==4.3 - https://pypi.org/project/typing-extensions/4.3.0/ (!2, 3.7)
-   typing_extensions      - https://pypi.org/project/typing-extensions/4.3.0/ (!2, 3.7)""",
+   typing_extensions      - https://pypi.org/project/typing-extensions/4.3.0/ (!2, 3.7)
+   zoneinfo               - https://pypi.org/project/backports.zoneinfo/ (!2, 3.6)""",
                      Backports.str(3))
 
   def test_version_filter(self):
@@ -66,6 +68,7 @@ class VerminBackportsTests(VerminTest):
       "statistics",
       "typing",
       "typing_extensions",
+      "zoneinfo",
     ], Backports.unversioned_filter(Backports.modules()))
 
   def test_expand_versions(self):

@@ -27,6 +27,8 @@ BACKPORTS = (
   ("typing_extensions==4.0", ["https://pypi.org/project/typing-extensions/4.0.0/"], (None, (3, 6))),
   ("typing_extensions==4.3", ["https://pypi.org/project/typing-extensions/4.3.0/"], (None, (3, 7))),
   ("typing_extensions", ["https://pypi.org/project/typing-extensions/4.3.0/"], (None, (3, 7))),
+
+  ("zoneinfo", ["https://pypi.org/project/backports.zoneinfo/"], (None, (3, 6))),
 )
 
 class Backports:

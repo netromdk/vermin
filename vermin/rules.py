@@ -192,7 +192,7 @@ def MOD_REQS(config):
     "xmlrpclib": ((2, 2), None),
     "zipapp": (None, (3, 5)),
     "zipimport": ((2, 3), (3, 0)),
-    "zoneinfo": (None, (3, 9)),
+    "zoneinfo": bpv("zoneinfo", (None, (3, 9)), config),
    }
 
 # Module member requirements: member -> (module, requirements)
