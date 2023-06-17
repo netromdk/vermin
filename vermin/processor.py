@@ -18,6 +18,17 @@ class ProcessResult:
     # Potential generic/literal annotations used.
     self.maybe_annotations = False
 
+  def __repr__(self):
+    return """{} at 0x{:x}
+path={}
+node={}
+mins={}
+text={}
+novermin={}
+bps={}
+maybe_annotations={}""".format(self.__class__.__name__, id(self), self.path, self.node, self.mins,
+                               self.text, self.novermin, self.bps, self.maybe_annotations)
+
 # NOTE: This function isn't in the Processor class because Python 2's multiprocessing.pool doesn't
 # like it being an instance method:
 #
