@@ -87,6 +87,17 @@ starts with the provided value, like 'win32' or 'darwin'."""
     return decorator
 
   @staticmethod
+  def skipPlatform(platform):
+    """Decorator that runs test if executing not on specified platform. It checks that the platform
+starts with the provided value, like 'win32' or 'darwin'."""
+    def decorator(func):
+      def wrapper(self, *args, **kwargs):
+        if not sys.platform.lower().startswith(platform.strip().lower()):
+          func(self, *args, **kwargs)
+      return wrapper
+    return decorator
+
+  @staticmethod
   def parameterized_args(tuple_args):
     """Decorator accepting a list of tuples of arguments."""
     def decorator(func):
