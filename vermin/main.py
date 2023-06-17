@@ -22,7 +22,7 @@ def main():
     sys.exit(args["code"])  # pragma: no cover
 
   paths = args["paths"]
-  parsable = (config.format().name() == "parsable")
+  parsable = config.format().name() == "parsable"
 
   # Detect paths, remove duplicates, and sort for deterministic results.
   if not parsable:

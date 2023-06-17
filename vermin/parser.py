@@ -73,7 +73,7 @@ class Parser:
     except SyntaxError as err:
       text = err.text.strip() if err.text is not None else ""
       lmsg = err.msg.lower()  # pylint: disable=no-member
-      parsable = (config.format().name() == "parsable")
+      parsable = config.format().name() == "parsable"
       if parsable:  # pragma: no cover
         text = text.replace("\n", "\\n")
 

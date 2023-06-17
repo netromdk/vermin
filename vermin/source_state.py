@@ -10,7 +10,7 @@ class SourceState:
   def __init__(self, config, path=None, source=None):
     assert config is not None, "Config must be specified!"
     self.config = config
-    self.parsable = (config.format().name() == "parsable")
+    self.parsable = config.format().name() == "parsable"
 
     self.path = "<unknown>" if path is None else path
 
@@ -23,7 +23,7 @@ class SourceState:
       for c in (":", "\n"):
         assert c not in self.path, "Path '{}' cannot contain '{}'".format(self.path, c)
 
-    self.is_init_file = (os.path.basename(self.path) == "__init__.py")
+    self.is_init_file = os.path.basename(self.path) == "__init__.py"
 
     self.depth = 0
     self.line = 1
