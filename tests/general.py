@@ -811,6 +811,9 @@ test.py:6:9:2.7:3.2:'argparse' module
     self.assertEmpty(proc_res.text)
     self.assertEmpty(proc_res.bps)
 
+  # This test is ignored on Windows for now because it does not yield the value error that other
+  # platforms do.
+  @VerminTest.skipPlatform("win32")
   def test_process_value_error(self):
     # (Py3) ValueError: source code string cannot contain null bytes
     # (Py2) TypeError: compile() expected string without null bytes
