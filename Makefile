@@ -5,7 +5,7 @@ MODULES=vermin tests
 TOP_LEVEL_FILES=${MODULES} vermin.py runtests.py ${OTHER_FILES}
 
 self-test:
-	./vermin.py --violations -q -t=2.7 -t=3 ${VERMIN_FILES}
+	./vermin.py --violations -q -t=3 ${VERMIN_FILES}
 
 test: self-test
 	./runtests.py
@@ -23,16 +23,13 @@ count:
 setup-venv: clean-venv
 	virtualenv -p python3 .venv
 
-setup-misc: clean
-	pip install -r misc/.misc-requirements.txt
-
 setup-coverage: clean
 	pip install -r misc/.coverage-requirements.txt
 
 setup-analysis: clean
 	pip install -r misc/.analysis-requirements.txt
 
-setup: setup-venv setup-misc setup-coverage setup-analysis
+setup: setup-venv setup-analysis
 
 install-deps:
 	python -m pip install --upgrade pip virtualenv
@@ -55,9 +52,6 @@ dist-clean: clean clean-venv clean-pypi
 pypi-dist: clean-pypi
 	python setup.py bdist_wheel --universal
 
-update-misc-requirements: setup-venv setup-misc
-	pip freeze > misc/.misc-requirements.txt
-
 update-coverage-requirements: setup-venv setup-coverage
 	pip freeze > misc/.coverage-requirements.txt
 
@@ -77,7 +71,7 @@ security-check:
 	bandit -r -s B101 ${MODULES}
 
 lint:
-	pylint -j 0 --disable=C,W0201,W0311,W0621,W0703,W0707,R0801,R0902,R0903,R0904,R0911,R0913,R0914,R0915,R0916,R1702,R1725,E0611,E1136\
+	pylint -j 0 --disable=C0103,C0114,C0115,C0116,C0209,C0302,W0201,W0311,W0621,W0703,R0801,R0902,R0903,R0904,R0911,R0912,R0913,R0914,R0915,R0916,R1702,E1136\
 		${TOP_LEVEL_FILES}
 
 check-pypi:
@@ -90,7 +84,7 @@ check-all: check security-check
 
 test-coverage:
 	coverage run --source=vermin,tests runtests.py
-	coverage run --append --source=vermin ./vermin.py -v -t=2.7 -t=3 vermin.py vermin
+	coverage run --append --source=vermin ./vermin.py -v -t=3 vermin.py vermin
 
 coverage-report:
 	coverage report -m

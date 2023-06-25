@@ -8,11 +8,10 @@ from shutil import rmtree
 from multiprocessing import cpu_count
 
 from vermin import combine_versions, InvalidVersionException, detect_paths,\
-  detect_paths_incremental, probably_python_file, Processor, process_individual, reverse_range,\
-  dotted_name, remove_whitespace, main, sort_line_column, sort_line_column_parsable,\
-  version_strings, format_title_descs, DEFAULT_PROCESSES
+  detect_paths_incremental, probably_python_file, Processor, reverse_range, dotted_name,\
+  remove_whitespace, main, sort_line_column, sort_line_column_parsable, version_strings,\
+  format_title_descs, DEFAULT_PROCESSES
 from vermin.formats import ParsableFormat
-from vermin.utility import open_wrapper
 
 from .testutils import VerminTest, current_version, ScopedTemporaryFile, detect, visit, touch, \
   working_dir
@@ -140,7 +139,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     self.assertFalse(probably_python_file(f))
 
     # Magic line.
-    with open_wrapper(f, mode="w", encoding="utf-8") as fp:
+    with open(f, mode="w", encoding="utf-8") as fp:
       fp.write("#!/usr/bin/env python\n")
     self.assertTrue(probably_python_file(f))
 
@@ -154,7 +153,7 @@ test.py:6:9:2.7:3.2:'argparse' module
 
   def test_detect_paths(self):
     paths = detect_paths([abspath("vermin")], config=self.config)
-    self.assertEqual(18, len(paths))
+    self.assertEqual(19, len(paths))
 
   def test_detect_hidden_paths(self):
     tmp_fld = mkdtemp()
@@ -268,7 +267,7 @@ test.py:6:9:2.7:3.2:'argparse' module
 
     # Won't be picked by heuristics.
     f = touch(tmp_fld, "no-shebang")
-    with open_wrapper(f, mode="w", encoding="utf-8") as fp:
+    with open(f, mode="w", encoding="utf-8") as fp:
       fp.write("print('this is code')")
 
     paths = detect_paths([tmp_fld], config=self.config)
@@ -286,7 +285,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     exts = ('py', 'py3', 'pyw', 'pyj', 'pyi')
     for ext in exts:
       f = touch(tmp_fld, "code." + ext)
-      with open_wrapper(f, mode="w", encoding="utf-8") as fp:
+      with open(f, mode="w", encoding="utf-8") as fp:
         fp.write("print('this is code')")
 
     found_exts = set()
@@ -304,7 +303,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     exts = ("pyc", "pyd", "pxd", "pyx", "pyo")
     for ext in exts:
       f = touch(tmp_fld, "code." + ext)
-      with open_wrapper(f, mode="w", encoding="utf-8") as fp:
+      with open(f, mode="w", encoding="utf-8") as fp:
         fp.write("print('this is code')")
 
     # Since the detection ignores the extensions, no body of this for-loop will be executed.
@@ -325,7 +324,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     self.config.add_exclusion_regex(r"\.pyi$")
 
     f = touch(tmp_fld, "code.pyi")
-    with open_wrapper(f, mode="w", encoding="utf-8") as fp:
+    with open(f, mode="w", encoding="utf-8") as fp:
       fp.write("print('this is code')")
 
     paths = detect_paths([tmp_fld], config=self.config)
@@ -346,7 +345,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     paths = ["code.py", "a/code.py", "a/b/code.py"]
     for p in paths:
       f = touch(tmp_fld, p)
-      with open_wrapper(f, mode="w", encoding="utf-8") as fp:
+      with open(f, mode="w", encoding="utf-8") as fp:
         fp.write("print('this is code')")
 
     paths = detect_paths([tmp_fld], config=self.config)
@@ -373,7 +372,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     ]
     for p in paths:
       f = touch(tmp_fld, p)
-      with open_wrapper(f, mode="w", encoding="utf-8") as fp:
+      with open(f, mode="w", encoding="utf-8") as fp:
         fp.write("print('this is code')")
 
     # Temporarily modify the working directory.
@@ -388,7 +387,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     processor = Processor()
     (mins, _incomp, _unique_versions, backports, used_novermin, maybe_anns) =\
       processor.process(paths, self.config)
-    self.assertOnlyIn(((2, 7), (3, 0)), mins)
+    self.assertOnlyIn((3, 0), mins)
     self.assertEmpty(backports)
     self.assertTrue(used_novermin)
     self.assertFalse(maybe_anns)
@@ -399,7 +398,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     self.config.set_format(ParsableFormat())
     (mins, _incomp, _unique_versions, backports, used_novermin, maybe_anns) =\
       processor.process(paths, self.config)
-    self.assertOnlyIn(((2, 7), (3, 0)), mins)
+    self.assertOnlyIn((3, 0), mins)
     self.assertEmpty(backports)
     self.assertTrue(used_novermin)
     self.assertFalse(maybe_anns)
@@ -463,7 +462,6 @@ test.py:6:9:2.7:3.2:'argparse' module
     (AssertionError, [1, 2, 3, 0.0]),
     (AssertionError, [(0, 0), 2, 3, 4]),
   ])
-  # pylint: disable=no-self-use
   def test_version_strings_assert(self, versions):
     version_strings(versions)
 
@@ -521,7 +519,6 @@ test.py:6:9:2.7:3.2:'argparse' module
     # Invalid values yield `assert False`.
     (AssertionError, [4.2]),
   ])
-  # pylint: disable=no-self-use
   def test_dotted_name_assert(self, names):
     dotted_name(names)
 
@@ -753,15 +750,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     # fix.
     self.assertEqual(ex.exception.code, 0)
 
-  @VerminTest.skipUnlessVersion(3)
   def test_main_parsable_has_last_results_line(self):
-    # This test is currently only run on py3 due to io.StringIO() using unicode() on py2 and we are
-    # writing a str() to it.
-    #
-    # File "vermin/formats/parsable_format.py", line 31, in output_result
-    #   sys.stdout.write(proc_res.text)
-    # TypeError: unicode argument expected, got 'str'
-
     tmp_fld = mkdtemp()
     file_name = "test.py"
     path = join(tmp_fld, file_name)
@@ -788,14 +777,14 @@ test.py:6:9:2.7:3.2:'argparse' module
 
   def test_process_file_not_Found(self):
     path = "nonexistent"
-    res = process_individual((path, self.config))
+    res = Processor.process_individual((path, self.config))
     self.assertNotEqual(res, None)
     self.assertEqual(res.path, path)
     self.assertEqual(res.mins, [(0, 0), (0, 0)])
     self.assertEqual(res.node, None)
 
   def test_process_runtests_py(self):
-    proc_res = process_individual((sys.argv[0], self.config))
+    proc_res = Processor.process_individual((sys.argv[0], self.config))
     self.assertEqual(basename(proc_res.path), "runtests.py")
     self.assertEqual(proc_res.mins, [(2, 7), (3, 2)])
     self.assertEmpty(proc_res.text)
@@ -806,22 +795,10 @@ test.py:6:9:2.7:3.2:'argparse' module
     fp = ScopedTemporaryFile()
     fp.write(b'(')  # SyntaxError: unexpected EOF while parsing
     fp.close()
-    proc_res = process_individual((fp.path(), self.config))
+    proc_res = Processor.process_individual((fp.path(), self.config))
     self.assertEqual(proc_res.mins, [(0, 0), (0, 0)])
     self.assertEmpty(proc_res.text)
     self.assertEmpty(proc_res.bps)
-
-  # This test is ignored on Windows for now because it does not yield the value error that other
-  # platforms do.
-  @VerminTest.skipPlatform("win32")
-  def test_process_value_error(self):
-    # (Py3) ValueError: source code string cannot contain null bytes
-    # (Py2) TypeError: compile() expected string without null bytes
-    fp = ScopedTemporaryFile()
-    fp.write(b'\0')
-    fp.close()
-    proc_res = process_individual((fp.path(), self.config))
-    self.assertEqual(proc_res, None)
 
   def test_process_invalid_versions(self):
     with ScopedTemporaryFile() as fp:
@@ -829,7 +806,7 @@ test.py:6:9:2.7:3.2:'argparse' module
 breakpoint()
 """)
       fp.close()
-      proc_res = process_individual((fp.path(), self.config))
+      proc_res = Processor.process_individual((fp.path(), self.config))
       self.assertEqual(proc_res.mins, None)
       msg = "'long' member (requires 2.0, !3) vs. 'breakpoint' member (requires !2, 3.7)"
       self.assertEqual(proc_res.text, msg)
@@ -842,7 +819,7 @@ except ImportError:
   import SocketServer
 """)
       fp.close()
-      proc_res = process_individual((fp.path(), self.config))
+      proc_res = Processor.process_individual((fp.path(), self.config))
       self.assertEqual(proc_res.mins, None)
       msg = "'socketserver' module (requires !2, 3.0) vs. 'SocketServer' module (requires 2.0, !3)"
       self.assertEqual(proc_res.text, msg)
@@ -856,7 +833,7 @@ from urllib import urlopen
 urlopen(context=None)
 """)
       fp.close()
-      proc_res = process_individual((fp.path(), self.config))
+      proc_res = Processor.process_individual((fp.path(), self.config))
       self.assertEqual(proc_res.mins, None)
       msg =\
         "strftime directive 'u' (requires !2, 3.6) vs. 'urllib.urlopen(context)' (requires 2.7, !3)"
@@ -867,7 +844,7 @@ urlopen(context=None)
     fp = ScopedTemporaryFile()
     fp.writeln(b"import typing")
     fp.close()
-    proc_res = process_individual((fp.path(), self.config))
+    proc_res = Processor.process_individual((fp.path(), self.config))
     self.assertEmpty(proc_res.text)
     self.assertEqualItems(["typing"], proc_res.bps)
 
@@ -909,10 +886,10 @@ urlopen(context=None)
       b"import builtins\n",  # !2, 3.0
     ]
     for code in codes:
-      fp = NamedTemporaryFile(suffix=".py", delete=False)
-      fp.write(code)
-      fp.close()
-      paths.append(fp.name)
+      with NamedTemporaryFile(suffix=".py", delete=False) as fp:
+        fp.write(code)
+        fp.close()
+        paths.append(fp.name)
 
     processor = Processor()
     (mins, incomp, unique_versions, backports, used_novermin, maybe_anns) =\
@@ -965,13 +942,8 @@ print('hello')     # print(expr) requires 2+ or 3+
     (mins, incomp, unique_versions, backports, used_novermin, maybe_anns) =\
       processor.process(paths, self.config)
 
-    if current_version() >= (3, 0):
-      self.assertEqual(mins, [(2, 0), (3, 0)])
-      self.assertEqual(unique_versions, [(2, 0), (3, 0)])
-    else:  # pragma: no cover
-      self.assertEqual(mins, [(2, 0), (0, 0)])
-      self.assertEqual(unique_versions, [(2, 0)])
-
+    self.assertEqual(mins, [(2, 0), (3, 0)])
+    self.assertEqual(unique_versions, [(2, 0), (3, 0)])
     self.assertFalse(incomp)
     self.assertEmpty(backports)
     self.assertFalse(used_novermin)

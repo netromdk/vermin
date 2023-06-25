@@ -1,11 +1,9 @@
 from .testutils import VerminTest
 
 class VerminModuleTests(VerminTest):
-  @VerminTest.skipUnlessVersion(3)
   def test_return_annotation(self):
     self.assertOnlyIn((3, 0), self.detect("def foo() -> str:\n\treturn ''"))
 
-  @VerminTest.skipUnlessVersion(3)
   def test_arg_annotation(self):
     self.assertOnlyIn((3, 0), self.detect("def foo(bar: int):\n\tpass"))
 
@@ -47,3 +45,11 @@ class VerminModuleTests(VerminTest):
     visitor = self.visit("def foo(x: L[1], y: L[1], z: Literal[4]):\n\treturn z")
     self.assertTrue(visitor.literal_annotations())
     self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 6)
+  def test_maybe_Literal_annotation(self):
+    self.config.set_eval_annotations(False)
+    visitor = self.visit("def only_four(x: Literal[4]):\n\treturn x")
+    self.assertFalse(visitor.literal_annotations())
+    self.assertTrue(visitor.maybe_annotations())
+    self.assertOnlyIn((3, 0), visitor.minimum_versions())

@@ -30,11 +30,8 @@ Vermin
 ******
 
 Concurrently detect the minimum Python versions needed to run code. Additionally, since the code is
-vanilla Python, and it doesn't have any external dependencies, it works with v2.7+ and v3+.
-
-*Note: Vermin 1.6 will end support for running via Python 2.7* which has been `sunset
-<https://www.python.org/doc/sunset-python-2/>`__ since January 1, 2020. Python 3.x is going to be
-required but detection of 2.x functionality will remain functional.
+vanilla Python, and it doesn't have any external dependencies, it can be run with v3+ but still
+includes detection of v2.x functionality.
 
 It functions by parsing Python code into an abstract syntax tree (AST), which it traverses and
 matches against internal dictionaries with **3676** rules, covering v2.0-2.7 and v3.0-3.11, divided
@@ -149,10 +146,10 @@ bytearray, ``with`` statement, asynchronous ``with`` statement, multiple context
 ``with`` statement, multiple context expressions in a ``with`` statement grouped with parenthesis,
 unpacking assignment, generalized unpacking, ellipsis literal (``...``) out of slices, dictionary
 union (``{..}  | {..}``), dictionary union merge (``a = {..}; a |= {..}``), builtin generic type
-annotations (``list[str]``), function decorators, class decorators, relaxed decorators, pattern
-matching with ``match``, and union types written as ``X | Y``. It tries to detect and ignore
-user-defined functions, classes, arguments, and variables with names that clash with library-defined
-symbols.
+annotations (``list[str]``), function decorators, class decorators, relaxed decorators,
+``metaclass`` class keyword, pattern matching with ``match``, and union types written as ``X | Y``.
+It tries to detect and ignore user-defined functions, classes, arguments, and variables with names
+that clash with library-defined symbols.
 
 Caveats
 =======
@@ -210,16 +207,19 @@ Examples
 .. code-block:: console
 
   % ./vermin.py vermin
-  Minimum required versions: 2.7, 3.0
+  Minimum required versions: 3.0
+  Incompatible versions:     2
 
-  % ./vermin.py -t=2.7 -t=3.3 vermin
-  Minimum required versions: 2.7, 3.0
-  Target versions not met:   2.7, 3.3
+  % ./vermin.py -t=3.3 vermin
+  Minimum required versions: 3.0
+  Incompatible versions:     2
+  Target versions not met:   3.3
   % echo $?
   1
 
   % ./vermin.py --versions vermin
-  Minimum required versions: 2.7, 3.0
+  Minimum required versions: 3.0
+  Incompatible versions:     2
   Version range:             2.0, 2.6, 2.7, 3.0
 
   % ./vermin.py -v examples
@@ -435,5 +435,5 @@ Contributing
 ============
 
 Contributions are very welcome, especially adding and updating detection rules of modules,
-functions, classes etc. to cover as many Python versions as possible. See
-`CONTRIBUTING.md <CONTRIBUTING.md>`__ for more information.
+functions, classes etc. to cover as many Python versions as possible. See `CONTRIBUTING.md
+<CONTRIBUTING.md>`__ for more information.

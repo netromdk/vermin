@@ -716,7 +716,6 @@ TimeoutExpired(stderr=None)"""))
   def test_start_of_enumerate(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("enumerate(start=None)"))
 
-  @VerminTest.skipUnlessVersion(3)
   def test_closure_of_exec(self):
     self.assertOnlyIn((3, 11), self.detect("exec(closure=None)"))
 
@@ -758,7 +757,6 @@ TimeoutExpired(stderr=None)"""))
   def test_opener_of_open(self):
     self.assertOnlyIn((3, 3), self.detect("open(opener=None)"))
 
-  @VerminTest.skipUnlessVersion(3)
   def test_flush_of_print(self):
     # `print()` is not a function in v2.
     self.assertOnlyIn((3, 3), self.detect("print(flush=None)"))

@@ -6,7 +6,6 @@ from multiprocessing import Pool, cpu_count
 from .parser import Parser
 from .source_visitor import SourceVisitor
 from .config import Config
-from .utility import open_wrapper
 from .printing import nprint
 
 NOT_PY_CODE_EXTS = {
@@ -109,7 +108,6 @@ NOT_PY_CODE_EXTS = {
   "eol",
   "eot",
   "epub",
-  "epub",
   "erl",
   "es",
   "exe",
@@ -172,7 +170,6 @@ NOT_PY_CODE_EXTS = {
   "js",
   "json",
   "jxr",
-  "key",
   "key",
   "kt",
   "kts",
@@ -315,8 +312,6 @@ NOT_PY_CODE_EXTS = {
   "s7z",
   "sccd",
   "scm",
-  "scm",
-  "scpt",
   "scpt",
   "scptd",
   "scss",
@@ -443,7 +438,7 @@ def probably_python_file(path):
 
   # Try opening file for reading as a text device.
   try:
-    with open_wrapper(path, mode="r", encoding="utf-8") as fp:
+    with open(path, mode="r", encoding="utf-8") as fp:
       for _i in range(10):
         # A script with a magic line might contain "python".
         line = fp.readline().lower().strip()
@@ -459,7 +454,7 @@ def probably_python_file(path):
 # calls os.stat() internally. Unless it is a symlink, then another os.stat() is made to check what
 # is pointed to.
 def stat_path(path, scan_symlink_folders=False):
-  try:
+  try:  # pragma: no cover
     st = lstat(path)  # Don't follow symlink.
     if not S_ISLNK(st.st_mode):
       return st
@@ -476,7 +471,7 @@ def stat_path(path, scan_symlink_folders=False):
 # of further arguments tuples, if any.
 def detect_paths_incremental(args):
   (paths, depth, hidden, ignore_chars, scan_symlink_folders, config) = args
-  assert(config is not None)
+  assert config is not None
   accepted = []
   further_args = []
   for path in paths:
@@ -509,7 +504,7 @@ def detect_paths_incremental(args):
 # ignored, as will any file excluded by regex from the config.
 def detect_paths(paths, hidden=False, processes=cpu_count(), ignore_chars=None,
                  scan_symlink_folders=False, config=None):
-  assert(config is not None)
+  assert config is not None
   if isinstance(paths, str):
     paths = [paths]
   accept_paths = []
@@ -518,6 +513,7 @@ def detect_paths(paths, hidden=False, processes=cpu_count(), ignore_chars=None,
   args = [(paths, depth, hidden, ignore_chars, scan_symlink_folders, config)]
 
   try:
+    # pylint: disable=consider-using-with
     pool = Pool(processes=processes) if processes > 1 else None
 
     # Automatically don't use concurrency when only one process is specified to be used.

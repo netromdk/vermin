@@ -3,17 +3,13 @@ import sys
 import os
 import re
 
-# novm
-try:
-  from configparser import ConfigParser, ParsingError
-except ImportError:
-  from ConfigParser import SafeConfigParser as ConfigParser, ParsingError
+from configparser import ConfigParser, ParsingError  # novm
 
 from .backports import Backports
 from .features import Features
 from .formats import Format, DefaultFormat
 from .constants import DEFAULT_PROCESSES, CONFIG_FILE_NAMES, CONFIG_SECTION, PROJECT_BOUNDARIES
-from .utility import open_wrapper, parse_target
+from .utility import parse_target
 from . import formats
 
 class Config:
@@ -93,7 +89,7 @@ class Config:
   @staticmethod
   def parse_file(path):
     try:
-      return Config.parse_fp(open_wrapper(path, mode="r", encoding="utf-8"), filename=path)
+      return Config.parse_fp(open(path, mode="r", encoding="utf-8"), filename=path)
     except Exception as ex:
       print("Could not load config file: {}".format(path))
       print(ex)
@@ -117,7 +113,7 @@ class Config:
       return "\n".join(iterable)
 
     # Parser with default values from initial instance.
-    parser = ConfigParser({
+    args = {
       "quiet": str(config.quiet()),
       "verbose": str(config.verbose()),
       "print_visits": str(config.print_visits()),
@@ -137,11 +133,15 @@ class Config:
       "parse_comments": str(config.parse_comments()),
       "scan_symlink_folders": str(config.scan_symlink_folders()),
       "format": config.format().name(),
-    }, allow_no_value=True)
+    }
+    if sys.version_info < (3, 2):  # pragma: no cover
+      parser = ConfigParser(args)
+    else:
+      parser = ConfigParser(args, allow_no_value=True)  # novm
 
     try:
-      if sys.version_info < (3, 2):
-        parser.readfp(fp, filename=filename)  # pylint: disable=deprecated-method
+      if sys.version_info < (3, 2):  # pragma: no cover
+        parser.readfp(fp, filename=filename)  # pylint: disable=deprecated-method  # novm
       else:
         # `read_file` supercedes `readfp` since 3.2.
         def readline_generator(fp):
@@ -149,7 +149,7 @@ class Config:
           while line:
             yield line
             line = fp.readline()
-        parser.read_file(readline_generator(fp), source=filename)
+        parser.read_file(readline_generator(fp), source=filename)  # novm
     except Exception as ex:
       print("Could not load config: {}".format(filename))
       print(ex)
@@ -237,10 +237,10 @@ folders until root or project boundaries are reached. Each candidate is checked 
           try:
             cp = ConfigParser()
             parse_success_files = cp.read(look_for) if sys.version_info < (3, 2) \
-              else cp.read(look_for, encoding="utf-8")
+              else cp.read(look_for, encoding="utf-8")  # novm
             if look_for in parse_success_files and cp.has_section(CONFIG_SECTION):
               return look_for
-          except ParsingError:
+          except ParsingError:  # pragma: no cover
             pass
 
       # Stop if didn't find config and is at project boundary, which means it has ".git/" or
@@ -257,7 +257,7 @@ folders until root or project boundaries are reached. Each candidate is checked 
       # Go up one level and stop at root.
       old_folder = folder
       folder = os.path.abspath(os.path.join(folder, ".."))
-      if folder == old_folder:
+      if folder == old_folder:  # pragma: no cover
         break
 
     return None
@@ -300,7 +300,7 @@ folders until root or project boundaries are reached. Each candidate is checked 
 
   def add_exclusion_file(self, filename):
     try:
-      with open_wrapper(filename, mode="r", encoding="utf-8") as f:
+      with open(filename, mode="r", encoding="utf-8") as f:
         for line in f.readlines():
           self.add_exclusion(line.strip())
     except Exception as ex:
@@ -371,7 +371,7 @@ folders until root or project boundaries are reached. Each candidate is checked 
     return self.__features
 
   def set_format(self, fmt):
-    assert(isinstance(fmt, Format))
+    assert isinstance(fmt, Format)
     fmt.set_config(self)
     self.__format = fmt
 
@@ -397,9 +397,9 @@ folders until root or project boundaries are reached. Each candidate is checked 
     return self.__analyze_hidden
 
   def add_target(self, target, exact=True):
-    """Adds a target. If target is a string it is parsed, otherwise it is required to be exactness bool
-and a version tuple: [exact, (x, y)]. But it can also be a version tuple (x, y) in which case the
-`exact` argument is supplied for exactness."""
+    """Adds a target. If target is a string it is parsed, otherwise it is required to be exactness
+bool and a version tuple: [exact, (x, y)]. But it can also be a version tuple (x, y) in which case
+the `exact` argument is supplied for exactness."""
     if len(self.targets()) == 2:
       print("A maximum of two targets can be specified!")
       return False
@@ -410,9 +410,7 @@ and a version tuple: [exact, (x, y)]. But it can also be a version tuple (x, y) 
     if isinstance(target, tuple) and len(target) == 2:
       target = [exact, target]
 
-    # pylint: disable=undefined-variable
-    if isinstance(target, str) or\
-       (sys.version_info.major == 2 and isinstance(target, unicode)):  # novm
+    if isinstance(target, str):
       target = parse_target(target)
       if target is None:
         return None

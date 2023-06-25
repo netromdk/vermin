@@ -2,7 +2,7 @@ from .main import main
 from .detection import detect, visit, detect_paths, detect_paths_incremental, probably_python_file
 from .source_visitor import SourceVisitor
 from .parser import Parser
-from .processor import Processor, process_individual
+from .processor import Processor
 from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, BYTES_REQS,\
   ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS, CODECS_ENCODINGS, BUILTIN_GENERIC_ANNOTATION_TYPES,\
   DICT_UNION_SUPPORTED_TYPES, DICT_UNION_MERGE_SUPPORTED_TYPES, DECORATOR_USER_FUNCTIONS
@@ -49,7 +49,6 @@ __all__ = [
   "formats",
   "main",
   "probably_python_file",
-  "process_individual",
   "remove_whitespace",
   "reverse_range",
   "sort_line_column",

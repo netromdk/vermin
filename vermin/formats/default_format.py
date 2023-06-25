@@ -4,7 +4,7 @@ from ..printing import vprint
 
 class DefaultFormat(Format):
   def __init__(self):
-    super(DefaultFormat, self).__init__("default")
+    super().__init__("default")
 
   @Format.require_config
   def skip_output_line(self):

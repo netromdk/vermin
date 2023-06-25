@@ -3982,7 +3982,6 @@ from traceback import StackSummary
 StackSummary().format_frame_summary()
 """))
 
-  @VerminTest.skipUnlessVersion(3)
   def test_print_from_traceback_TracebackException(self):
     self.assertOnlyIn((3, 11), self.detect("""
 from traceback import TracebackException

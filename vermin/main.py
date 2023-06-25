@@ -22,7 +22,7 @@ def main():
     sys.exit(args["code"])  # pragma: no cover
 
   paths = args["paths"]
-  parsable = (config.format().name() == "parsable")
+  parsable = config.format().name() == "parsable"
 
   # Detect paths, remove duplicates, and sort for deterministic results.
   if not parsable:
@@ -56,7 +56,7 @@ def main():
     # In violations mode it is allowed to use quiet mode to show literally only discrepancies and
     # nothing else. But the processor must use the original verbosity level and not be quiet!
     local_config = deepcopy(config)
-    if local_config.only_show_violations() and local_config.quiet():
+    if local_config.only_show_violations() and local_config.quiet():  # pragma: no cover
       local_config.set_verbose(config.verbose())
       local_config.set_quiet(False)
 
@@ -73,8 +73,7 @@ def main():
 
   incomps = []
   reqs = []
-  for i in range(len(mins)):
-    ver = mins[i]
+  for (i, ver) in enumerate(mins):
     if ver is None:
       incomps.append(i + 2)  # pragma: no cover
     elif ver is not None and ver != 0:

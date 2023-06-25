@@ -14,8 +14,10 @@ jobs:
     strategy:
       matrix:
         # Start Linux jobs last since they are fastest to start and complete, and start 3.11 first,
-        # since it pairs wiht macOS+Windows jobs.
-        python-version: ['3.11', '3.10', 3.7, 3.8, 3.9, 2.7]
+        # since it pairs wiht macOS+Windows jobs, and 3.5 and 3.6 last since they only run tests and
+        # don't use venv. 3.4 is not supported on GitHub anymore and 3.5 and 3.6 for x64 isn't
+        # produced for ubuntu 22.04.
+        python-version: ['3.11', '3.10', 3.7, 3.8, 3.9, 3.5, 3.6]
         os: [windows-latest, macos-latest, ubuntu-latest]
 
         # Choose test script depending on OS.
@@ -27,10 +29,13 @@ jobs:
           - os: windows-latest
             test_script_name: ./misc/actions/test.ps1
 
-        # Only test on macOS and Windows with Python 3.11.
         exclude:
-          - os: macos-latest
-            python-version: 2.7
+          # Only test on macOS and Windows with Python 3.11.
+          # But do test 3.5 and 3.6 on macOS because they aren't compiled for x64 on Ubuntu 22.04.
+          # - os: macos-latest
+          #   python-version: 3.5
+          # - os: macos-latest
+          #   python-version: 3.6
           - os: macos-latest
             python-version: 3.7
           - os: macos-latest
@@ -39,8 +44,11 @@ jobs:
             python-version: 3.9
           - os: macos-latest
             python-version: '3.10'
+
           - os: windows-latest
-            python-version: 2.7
+            python-version: 3.5
+          - os: windows-latest
+            python-version: 3.6
           - os: windows-latest
             python-version: 3.7
           - os: windows-latest
@@ -49,6 +57,13 @@ jobs:
             python-version: 3.9
           - os: windows-latest
             python-version: '3.10'
+
+          # Ignore 3.5 and 3.6 on Linux because it isn't compiled for x64 on Ubuntu 22.04.
+          # Test on macOS instead.
+          - os: ubuntu-latest
+            python-version: 3.5
+          - os: ubuntu-latest
+            python-version: 3.6
 
     steps:
     - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9

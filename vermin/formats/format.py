@@ -1,12 +1,8 @@
 from abc import ABCMeta, abstractmethod
 
-class Format:
+class Format(metaclass=ABCMeta):
   """Format encapsulates a format for presenting minimum versions and related information during
 processing."""
-
-  # Can't use `class Format(metaclass=ABCMeta)` in py2.
-  __metaclass__ = ABCMeta
-
   def __init__(self, name):
     self.__name = name
     self.__config = None
@@ -24,7 +20,7 @@ processing."""
   def require_config(funcobj):
     """Decorator that checks config is not None."""
     def _require_config(self, *args, **kwargs):
-      assert(self.config() is not None)
+      assert self.config() is not None
       return funcobj(self, *args, **kwargs)
     return _require_config
 

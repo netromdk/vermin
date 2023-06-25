@@ -6,17 +6,15 @@ from os.path import join
 from tempfile import NamedTemporaryFile
 
 from vermin import Config, Arguments, detect, visit
-from vermin.utility import open_wrapper
 
 def current_version():
   return sys.version_info
 
 def touch(fld, name, contents=None):
   filename = join(fld, name)
-  fp = open_wrapper(filename, mode="w", encoding="utf-8")
-  if contents is not None:
-    fp.write(contents)
-  fp.close()
+  with open(filename, mode="w", encoding="utf-8") as fp:
+    if contents is not None:
+      fp.write(contents)
   return filename
 
 @contextmanager
@@ -32,7 +30,7 @@ class VerminTest(unittest.TestCase):
   """General test case class for all Vermin tests."""
 
   def __init__(self, methodName):
-    super(VerminTest, self).__init__(methodName)
+    super().__init__(methodName)
 
     # Allow test diffs of any size (instead of 640 char max).
     self.maxDiff = None
@@ -61,16 +59,6 @@ class VerminTest(unittest.TestCase):
     def decorator(func):
       def wrapper(self, *args, **kwargs):
         if current_version() >= (major_version, minor_version):
-          func(self, *args, **kwargs)
-      return wrapper
-    return decorator
-
-  @staticmethod
-  def skipUnlessLowerVersion(major_version, minor_version=0):
-    """Decorator that only runs test if lower than the specified Python version is being used."""
-    def decorator(func):
-      def wrapper(self, *args, **kwargs):
-        if current_version() < (major_version, minor_version):
           func(self, *args, **kwargs)
       return wrapper
     return decorator
@@ -119,9 +107,10 @@ expected to be raised."""
             func(self, *args[1:])
           except args[0]:
             continue
-          except Exception as ex:
+          except Exception as ex:  # pragma: no cover
             raise AssertionError("Raised {} instead of {} for args: {}".
-                                 format(type(ex), args[0], args[1:]))
+                                 format(type(ex), args[0], args[1:])) from ex
+          # pragma: no cover
           raise AssertionError("Didn't raise {} for args: {}".format(args[0], args[1:]))
       return wrapper
     return decorator
@@ -191,6 +180,7 @@ The difference to NamedTemporaryFile is that it isn't deleted when closing the f
   """
 
   def __init__(self, suffix=".py"):
+    # pylint: disable=consider-using-with
     self.__fp = NamedTemporaryFile(suffix=suffix, delete=False)
 
   def __del__(self):

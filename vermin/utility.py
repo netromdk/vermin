@@ -1,5 +1,4 @@
 import re
-import sys
 from math import floor
 from functools import reduce
 
@@ -32,7 +31,7 @@ def dotted_name(names):
 
 def float_version(f):
   """Converts a float X.Y into (X, Y)."""
-  assert(not f < 0)
+  assert not f < 0
   major = floor(f)
   minor = int((f - major) * 10)
   return (major, minor)
@@ -72,7 +71,7 @@ def combine_versions(list1, list2, config, version_refs=None):
       return float_version(v)
     return v
 
-  for i in range(len(list1)):
+  for i in range(len(list1)):  # pylint: disable=consider-using-enumerate
     v1 = fixup(list1[i])
     v2 = fixup(list2[i])
     if v1 is None or v2 is None:
@@ -86,9 +85,9 @@ def version_strings(versions, separator=None):
 values can be specified, otherwise any number is allowed. A None separator means ', '."""
   separator = separator or ", "
   amount = len(versions)
-  assert(amount > 0)
+  assert amount > 0
   if any(v in (0, (0, 0)) for v in versions):
-    assert(amount < 3)
+    assert amount < 3
   res = []
   for i in range(amount):
     version = versions[i]
@@ -172,7 +171,7 @@ def parse_target(target):
   if len(elms) != 1 and len(elms) != 2:
     return None
 
-  for h in range(len(elms)):
+  for h in range(len(elms)):  # pylint: disable=consider-using-enumerate
     try:
       n = int(elms[h])
       if n < 0:
@@ -186,14 +185,7 @@ def parse_target(target):
     elms.append(0)
 
   elms = tuple(elms)
-  if not ((2, 0) <= elms < (4, 0)):
+  if not (2, 0) <= elms < (4, 0):
     return None
 
   return (exact, elms)
-
-def open_wrapper(file, mode='r', buffering=-1, encoding=None, errors=None, newline=None,
-                 closefd=True):
-  if sys.version_info.major < 3:  # pragma: no cover
-    return open(file, mode, buffering=buffering)
-  return open(file, mode, buffering=buffering, encoding=encoding, errors=errors,  # novm
-              newline=newline, closefd=closefd)
