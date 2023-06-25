@@ -185,7 +185,8 @@ reached. However, if ``--config-file`` is specified, no config is auto-detected 
 
 Config file names being looked for: ``vermin.ini``, ``vermin.conf``, ``.vermin``, ``setup.cfg``
 
-Project boundary files/folders: ``.git``, ``.svn``, ``.hg``, ``.bzr``, ``_darcs``, ``.fslckout``
+Project boundary files/folders: ``.git``, ``.svn``, ``.hg``, ``.bzr``, ``_darcs``, ``.fslckout``,
+``.p4root``, ``.pijul``
 
 A sample config file can be found `here <sample.vermin.ini>`__.
 
