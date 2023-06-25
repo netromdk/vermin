@@ -4,4 +4,14 @@ VERSION = "1.5.2"
 DEFAULT_PROCESSES = cpu_count()
 CONFIG_FILE_NAMES = ["vermin.ini", "vermin.conf", ".vermin", "setup.cfg"]
 CONFIG_SECTION = "vermin"
-PROJECT_BOUNDARIES = [".git", ".svn", ".hg", ".bzr", "_darcs", ".fslckout"]
+
+PROJECT_BOUNDARIES = [
+  ".bzr",       # Bazaar
+  ".fslckout",  # Fossil
+  ".git",       # Git
+  ".hg",        # Mercurial
+  ".p4root",    # Perforce Helix Core
+  ".pijul",     # Pijul
+  ".svn",       # Subversion
+  "_darcs",     # Darcs
+]
