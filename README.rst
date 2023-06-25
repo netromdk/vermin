@@ -157,6 +157,9 @@ symbols.
 Caveats
 =======
 
+For frequently asked questions, check out the `FAQ discussions
+<https://github.com/netromdk/vermin/discussions/categories/faq>`__.
+
 Self-documenting fstrings detection has been disabled by default because the built-in AST cannot
 distinguish ``f'{a=}'`` from ``f'a={a}'``, for instance, since it optimizes some information away
 (`#39 <https://github.com/netromdk/vermin/issues/39>`__). And this incorrectly marks some source
