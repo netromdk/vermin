@@ -1043,6 +1043,41 @@ L2: multiple context expressions in a `with` statement with parentheses require 
     self.assertTrue(visitor.ellipsis_out_of_slices())
     self.assertOnlyIn((3, 0), visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3, 12)
+  def test_type_alias_statement(self):
+    visitor = self.visit('type X = int')
+    self.assertTrue(visitor.type_alias_statement())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
+
+    visitor = self.visit('type Point = tuple[float, float]')
+    self.assertTrue(visitor.type_alias_statement())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
+
+    visitor = self.visit('type(X)')
+    self.assertFalse(visitor.type_alias_statement())
+
+    # Plain syntax errors.
+    visitor = self.visit('type "X = int"')
+    self.assertEqual([(0, 0), (0, 0)], visitor)
+
+    visitor = self.visit('type "Point = tuple[float, float]"')
+    self.assertEqual([(0, 0), (0, 0)], visitor)
+
+    visitor = self.visit('type "Po_int = tuple[float, float]"')
+    self.assertEqual([(0, 0), (0, 0)], visitor)
+
+  def test_type_alias_statement_invalid_syntax(self):
+    """Prior to 3.12 it would yield SyntaxError: invalid syntax for type alias statements."""
+    cv = current_version()
+    if cv.major == 3 and cv.minor <= 11:
+      self.assertOnlyIn((3, 12), self.detect("type X = int"))
+      self.assertOnlyIn((3, 12), self.detect("type Point = tuple[float, float]"))
+
+      # Plain syntax errors.
+      self.assertEqual([(0, 0), (0, 0)], self.detect("type 'X = int'"))
+      self.assertEqual([(0, 0), (0, 0)], self.detect("type 'Point = tuple[float, float]'"))
+      self.assertEqual([(0, 0), (0, 0)], self.detect("type 'Po_int = tuple[float, float]'"))
+
   @VerminTest.skipUnlessVersion(3, 5)
   def test_bytes_format(self):
     visitor = self.visit("b'%x' % 10")

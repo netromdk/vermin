@@ -1,10 +1,14 @@
 import ast
 import io
 import sys
+import re
 from tokenize import generate_tokens, COMMENT, NEWLINE, NL, STRING
 
 from .printing import vvprint
 from .utility import version_strings
+
+# 'type' identifier [type_params] "=" expression
+TYPE_ALIAS_STMT = re.compile(r"type\s+(\w+)\s+(\[.+?\]\s+)?=\s+(.+)")
 
 class Parser:
   def __init__(self, source, path=None):
@@ -84,6 +88,14 @@ class Parser:
         vvprint("{}:{}:{}:{}info: `{}` requires 2.0".
                 format(err.filename, err.lineno, err.offset, versions, text), config)
         return (None, [(2, 0), None], set())
+
+      # Type alias statements.
+      # NOTE: This is only triggered with Python 3.11 or older.
+      if lmsg == "invalid syntax" and TYPE_ALIAS_STMT.match(text) is not None:
+        versions = "!2:3.12:" if parsable else ""
+        vvprint("{}:{}:{}:{}info: type alias statement `{}` requires !2, 3.12".
+                format(err.filename, err.lineno, err.offset, versions, text), config)
+        return (None, [None, (3, 12)], set())
 
       min_versions = [(0, 0), (0, 0)]
       if config.pessimistic():

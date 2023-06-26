@@ -105,6 +105,9 @@ class SourceState:
     self.except_star = False
     self.metaclass_class_keyword = False
 
+    # `type X = SomeType`.
+    self.type_alias_statement = False
+
     # Imported members of modules, like "exc_clear" of "sys".
     self.import_mem_mod = {}
 
