@@ -46,6 +46,9 @@ class VerminClassMemberTests(VerminTest):
   def test_Calendar_of_calendar(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("from calendar import Calendar"))
 
+  def test_Day_of_calendar(self):
+    self.assertOnlyIn((3, 12), self.detect("from calendar import Day"))
+
   def test_HTMLCalendar_of_calendar(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("from calendar import HTMLCalendar"))
 
@@ -54,6 +57,9 @@ class VerminClassMemberTests(VerminTest):
 
   def test_LocaleTextCalendar_of_calendar(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("from calendar import LocaleTextCalendar"))
+
+  def test_Month_of_calendar(self):
+    self.assertOnlyIn((3, 12), self.detect("from calendar import Month"))
 
   def test_TextCalendar_of_calendar(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("from calendar import TextCalendar"))
@@ -284,6 +290,9 @@ class VerminClassMemberTests(VerminTest):
   def test_AsyncGenerator_of_collections_abc(self):
     self.assertOnlyIn((3, 6), self.detect("from collections.abc import AsyncGenerator"))
 
+  def test_Buffer_of_collections_abc(self):
+    self.assertOnlyIn((3, 12), self.detect("from collections.abc import Buffer"))
+
   def test_AbstractContextManager_of_contextlib(self):
     self.assertOnlyIn((3, 6), self.detect("from contextlib import AbstractContextManager"))
 
@@ -331,6 +340,9 @@ class VerminClassMemberTests(VerminTest):
 
   def test_BoundArguments_of_inspect(self):
     self.assertOnlyIn((3, 3), self.detect("from inspect import BoundArguments"))
+
+  def test_BufferFlags_of_inspect(self):
+    self.assertOnlyIn((3, 12), self.detect("from inspect import BufferFlags"))
 
   def test_LoggerAdapter_of_logging(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from logging import LoggerAdapter"))
@@ -634,6 +646,9 @@ class VerminClassMemberTests(VerminTest):
 
   def test_ParamSpec_of_typing(self):
     self.assertOnlyIn((3, 10), self.detect("from typing import ParamSpec"))
+
+  def test_TypeAliasType_of_typing(self):
+    self.assertOnlyIn((3, 12), self.detect("from typing import TypeAliasType"))
 
   def test_SMTP_SSL_of_smtplib(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from smtplib import SMTP_SSL"))

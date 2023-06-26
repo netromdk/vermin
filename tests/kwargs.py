@@ -569,6 +569,12 @@ TimeoutExpired(stderr=None)"""))
     self.assertOnlyIn((3, 5), self.detect(
       "from tarfile import TarFile\ntf = TarFile()\ntf.list(members=None)"))
 
+  def test_filter_of_extractall_from_tarfile_TarFile(self):
+    self.assertOnlyIn((3, 12),
+                      self.detect("from tarfile import TarFile\n"
+                                  "tf = TarFile()\n"
+                                  "tf.extractall(filter=None)"))
+
   def test_numeric_owner_of_extractall_from_tarfile_TarFile(self):
     self.assertOnlyIn((3, 5),
                       self.detect("from tarfile import TarFile\n"
@@ -580,6 +586,12 @@ TimeoutExpired(stderr=None)"""))
                       self.detect("from tarfile import TarFile\n"
                                   "tf = TarFile()\n"
                                   "tf.extract(set_attrs=None)"))
+
+  def test_filter_of_extract_from_tarfile_TarFile(self):
+    self.assertOnlyIn((3, 12),
+                      self.detect("from tarfile import TarFile\n"
+                                  "tf = TarFile()\n"
+                                  "tf.extract(filter=None)"))
 
   def test_numeric_owner_of_extract_from_tarfile_TarFile(self):
     self.assertOnlyIn((3, 5),
@@ -845,6 +857,9 @@ TimeoutExpired(stderr=None)"""))
   def test_base_of_math_log(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("import math\nmath.log(base=None)"))
 
+  def test_steps_of_math_nextafter(self):
+    self.assertOnlyIn((3, 12), self.detect("import math\nmath.nextafter(steps=None)"))
+
   def test_exit_ok_of_path_mkdir(self):
     self.assertOnlyIn(
         (3, 5), self.detect("from pathlib import Path\np=Path('foo')\np.mkdir(exist_ok=True)"))
@@ -860,6 +875,27 @@ p=Path('foo')
 p.chmod(follow_symlinks=True)
 """))
 
+  def test_follow_symlinks_of_path_exists(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from pathlib import Path
+p=Path('foo')
+p.exists(follow_symlinks=True)
+"""))
+
+  def test_case_sensitive_of_path_glob(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from pathlib import Path
+p=Path('foo')
+p.glob(case_sensitive=True)
+"""))
+
+  def test_case_sensitive_of_path_rglob(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from pathlib import Path
+p=Path('foo')
+p.rglob(case_sensitive=True)
+"""))
+
   def test_follow_symlinks_of_path_stat(self):
     self.assertOnlyIn((3, 10), self.detect("""
 from pathlib import Path
@@ -872,6 +908,20 @@ p.stat(follow_symlinks=True)
 from pathlib import Path
 p=Path('foo')
 p.write_text(newline=True)
+"""))
+
+  def test_case_sensitive_of_purepath_match(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from pathlib import PurePath
+p=PurePath('foo')
+p.match(case_sensitive=True)
+"""))
+
+  def test_walk_up_of_purepath_relative_to(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from pathlib import PurePath
+p=PurePath('foo')
+p.relative_to(walk_up=True)
 """))
 
   def test_optimization_of_importlib_util_cache_from_source(self):
@@ -1213,6 +1263,11 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from asyncio import Task\n"
                                   "Task(context=None)"))
 
+  def test_eager_start_of_Task_from_asyncio(self):
+    self.assertOnlyIn((3, 12),
+                      self.detect("from asyncio import Task\n"
+                                  "Task(eager_start=None)"))
+
   def test_name_of_Task_from_asyncio(self):
     self.assertOnlyIn((3, 8),
                       self.detect("from asyncio import Task\n"
@@ -1242,6 +1297,11 @@ binascii.a2b_base64(strict_mode=True)
     self.assertOnlyIn((3, 7),
                       self.detect("from asyncio import open_unix_connection\n"
                                   "open_unix_connection(path=None)"))
+
+  def test_loop_factory_of_run_from_asyncio(self):
+    self.assertOnlyIn((3, 12),
+                      self.detect("from asyncio import run\n"
+                                  "run(loop_factory=None)"))
 
   def test_ssl_handshake_timeout_of_start_server_from_asyncio(self):
     self.assertOnlyIn((3, 7),
@@ -2441,6 +2501,16 @@ kqueue().control(timeout=1)
                       self.detect("from shutil import rmtree\n"
                                   "rmtree(dir_fd=None)"))
 
+  def test_onexc_of_rmtree_from_shutil(self):
+    self.assertOnlyIn((3, 12),
+                      self.detect("from shutil import rmtree\n"
+                                  "rmtree(onexc=None)"))
+
+  def test_filter_of_unpack_archive_from_shutil(self):
+    self.assertOnlyIn((3, 12),
+                      self.detect("from shutil import unpack_archive\n"
+                                  "unpack_archive(filter=None)"))
+
   def test_warn_on_full_buffer_of_set_wakeup_fd_from_signal(self):
     self.assertOnlyIn((3, 7),
                       self.detect("from signal import set_wakeup_fd\n"
@@ -2485,6 +2555,11 @@ kqueue().control(timeout=1)
     self.assertOnlyIn((3, 6),
                       self.detect("from socket import setsockopt\n"
                                   "setsockopt(optlen=None)"))
+
+  def test_autocommit_of_connect_from_sqlite3(self):
+    self.assertOnlyIn((3, 12),
+                      self.detect("from sqlite3 import connect\n"
+                                  "connect(autocommit=None)"))
 
   def test_uri_of_connect_from_sqlite3(self):
     self.assertOnlyIn((3, 4),
@@ -2546,6 +2621,11 @@ kqueue().control(timeout=1)
                       self.detect("from tempfile import NamedTemporaryFile\n"
                                   "NamedTemporaryFile(errors=None)"))
 
+  def test_delete_on_close_of_NamedTemporaryFile_from_tempfile(self):
+    self.assertOnlyIn((3, 12),
+                      self.detect("from tempfile import NamedTemporaryFile\n"
+                                  "NamedTemporaryFile(delete_on_close=None)"))
+
   def test_errors_of_SpooledTemporaryFile_from_tempfile(self):
     self.assertOnlyIn((3, 8),
                       self.detect("from tempfile import SpooledTemporaryFile\n"
@@ -2555,6 +2635,11 @@ kqueue().control(timeout=1)
     self.assertOnlyIn((3, 8),
                       self.detect("from tempfile import TemporaryFile\n"
                                   "TemporaryFile(errors=None)"))
+
+  def test_delete_of_TemporaryDirectory_from_tempfile(self):
+    self.assertOnlyIn((3, 12),
+                      self.detect("from tempfile import TemporaryDirectory\n"
+                                  "TemporaryDirectory(delete=None)"))
 
   def test_ignore_cleanup_errors_of_TemporaryDirectory_from_tempfile(self):
     self.assertOnlyIn((3, 10),
@@ -3518,6 +3603,12 @@ kqueue().control(timeout=1)
                       self.detect("from sqlite3 import Connection\n"
                                   "x = Connection()\n"
                                   "x.create_function(deterministic=None)"))
+
+  def test_entrypoint_of_load_extension_from_sqlite3_Connection(self):
+    self.assertOnlyIn((3, 12),
+                      self.detect("from sqlite3 import Connection\n"
+                                  "x = Connection()\n"
+                                  "x.load_extension(entrypoint=None)"))
 
   def test_session_of_wrap_bio_from_ssl_SSLContext(self):
     self.assertOnlyIn((3, 6),
