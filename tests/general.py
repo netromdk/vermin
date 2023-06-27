@@ -807,6 +807,17 @@ test.py:6:9:2.7:3.2:'argparse' module
     self.assertEmpty(proc_res.text)
     self.assertEmpty(proc_res.bps)
 
+  @VerminTest.skipUnlessVersion(3, 12)
+  def test_process_syntax_error_null_bytes(self):
+    # SyntaxError: source code string cannot contain null bytes
+    fp = ScopedTemporaryFile()
+    fp.write(b'\0')
+    fp.close()
+    proc_res = Processor.process_individual((fp.path(), self.config))
+    self.assertEqual(proc_res.mins, [(0, 0), (0, 0)])
+    self.assertEmpty(proc_res.text)
+    self.assertEmpty(proc_res.bps)
+
   def test_process_invalid_versions(self):
     with ScopedTemporaryFile() as fp:
       fp.write(b"""long(42)
