@@ -4,12 +4,14 @@ OTHER_FILES=count.py
 MODULES=vermin tests
 TOP_LEVEL_FILES=${MODULES} vermin.py runtests.py ${OTHER_FILES}
 
-self-test:
+test-self:
 	./vermin.py --violations -q -t=3 ${VERMIN_FILES}
 
-test: self-test
-	./runtests.py
+test-tests:
+	./vermin.py --violations -q -t=3.2- ${TEST_FILES}
 
+test: test-self test-tests
+	./runtests.py
 
 count:
 	./count.py
