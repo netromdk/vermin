@@ -10,9 +10,6 @@ self-test:
 test: self-test
 	./runtests.py
 
-test-all: self-test
-	python2 ./runtests.py
-	python3 ./runtests.py
 
 count:
 	./count.py
