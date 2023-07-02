@@ -1,9 +1,13 @@
 name: Test
 
-# On all pushes to branches and pull requests in general.
+# On all pushes to PRs or pushes to specific branches. Not on ALL pushes in general because it will
+# double if pushing to a PR.
 on:
-  push:
   pull_request:
+  push:
+    branches:
+      - 'master'
+      - 'dev'
 
 permissions:
   contents: read
