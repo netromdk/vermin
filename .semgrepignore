@@ -1,0 +1,7 @@
+.semgrep
+.semgrep_logs/
+.venv/
+.hypothesis/
+build/
+dist/
+examples/
