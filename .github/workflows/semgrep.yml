@@ -8,6 +8,9 @@ on:
       - dev
     paths:
       - .github/workflows/semgrep.yml
+  # Run every sunday at 3:12.
+  schedule:
+    - cron: '12 3 * * 6'
 jobs:
   semgrep:
     name: semgrep/ci
