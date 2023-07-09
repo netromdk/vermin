@@ -37,7 +37,9 @@ jobs:
       - name: Upgrade Pip
         run: pip3 install --upgrade pip
       - name: Install requirements
-        run: python3 -m pip install -r misc/.${{matrix.requirements}}-requirements.txt
+        env:
+          reqs: ${{ matrix.requirements }}
+        run: python3 -m pip install -r misc/.$reqs-requirements.txt
 
       - name: Install Snyk
         run: npm install -g snyk
@@ -47,4 +49,5 @@ jobs:
           FORCE_COLOR: 2
           SNYK_INTEGRATION_NAME: GITHUB_ACTIONS
           SNYK_INTEGRATION_VERSION: python
-        run: snyk test --project-name=vermin --package-manager=pip --file=misc/.${{matrix.requirements}}-requirements.txt --command=python3 --show-vulnerable-paths=all --print-deps
+          reqs: ${{ matrix.requirements }}
+        run: snyk test --project-name=vermin --package-manager=pip --file=misc/.$reqs-requirements.txt --command=python3 --show-vulnerable-paths=all --print-deps
