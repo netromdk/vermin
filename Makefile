@@ -3,6 +3,7 @@ TEST_FILES=tests runtests.py
 OTHER_FILES=count.py
 MODULES=vermin tests
 TOP_LEVEL_FILES=${MODULES} vermin.py runtests.py ${OTHER_FILES}
+SEMGREP_CMD=semgrep ci --metrics off --timeout 60 --verbose
 
 test-self:
 	./vermin.py --violations -q -t=3 ${VERMIN_FILES}
@@ -70,7 +71,10 @@ security-check:
 	bandit -r -s B101 ${MODULES}
 
 semgrep:
-	semgrep ci --timeout 60 --verbose
+	${SEMGREP_CMD}
+
+semgrep-dry-run:
+	${SEMGREP_CMD} --dry-run
 
 lint:
 	pylint -j 0 --disable=C0103,C0114,C0115,C0116,C0209,C0302,W0201,W0311,W0621,W0703,R0801,R0902,R0903,R0904,R0911,R0912,R0913,R0914,R0915,R0916,R1702,E1136\
