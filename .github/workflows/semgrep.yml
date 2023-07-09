@@ -8,6 +8,9 @@ on:
       - dev
     paths:
       - .github/workflows/semgrep.yml
+  # Run every sunday at 3:12.
+  schedule:
+    - cron: '12 3 * * 6'
 jobs:
   semgrep:
     name: semgrep/ci
@@ -19,4 +22,5 @@ jobs:
     if: (github.actor != 'dependabot[bot]')
     steps:
       - uses: actions/checkout@v3
-      - run: semgrep ci
+        # It takes some time to scan "vermin/rules.py". More than the default 30s timeout.
+      - run: semgrep ci --timeout 60 --verbose
