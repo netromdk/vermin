@@ -102,8 +102,7 @@ jobs:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         COVERALLS_FLAG_NAME: ${{ matrix.os }}-${{ matrix.python-version }}
         COVERALLS_PARALLEL: true
-        test_script_name: ${{ matrix.test_script_name }}
-      run: $test_script_name
+      run: ${{ matrix.test_script_name }}
 
   # When all parallel tests are done and uploaded, the coveralls session can be signalled as
   # finished.
