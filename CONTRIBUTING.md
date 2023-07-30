@@ -7,7 +7,7 @@ detection of v2.x functionality.
 
 ## Dependencies
 Install development and analysis dependencies via `make setup`. It will setup a `virtualenv` in
-`.venv` and install necessary depencencies.
+`.venv` and install necessary dependencies.
 
 Dependencies can also be directly installed via:
 ```shell
