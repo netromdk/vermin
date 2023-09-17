@@ -74,21 +74,21 @@ jobs:
 
     # The caches need to have the python version included since the
     # "misc/.coverage-requirements.txt" does not have version-pinning.
-    - uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8
+    - uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84
       if: startsWith(matrix.os, 'ubuntu-latest')
       with:
         path: ~/.cache/pip
         key: ${{ matrix.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/.*-requirements.txt') }}
         restore-keys: |
           ${{ matrix.os }}-pip-${{ matrix.python-version }}-
-    - uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8
+    - uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84
       if: startsWith(matrix.os, 'macos-latest')
       with:
         path: ~/Library/Caches/pip
         key: ${{ matrix.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/.*-requirements.txt') }}
         restore-keys: |
           ${{ matrix.os }}-pip-${{ matrix.python-version }}-
-    - uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8
+    - uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84
       if: startsWith(matrix.os, 'windows-latest')
       with:
         path: ~\AppData\Local\pip\Cache
