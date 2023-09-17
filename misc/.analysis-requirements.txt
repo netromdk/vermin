@@ -4,7 +4,7 @@ bandit==1.7.5
 boltons==21.0.0
 bracex==2.3.post1
 build==0.10.0
-certifi==2023.5.7
+certifi==2023.7.22
 charset-normalizer==3.1.0
 click==8.1.4
 click-option-group==0.5.6
@@ -15,7 +15,7 @@ docutils==0.20.1
 face==22.0.0
 flake8==6.0.0
 gitdb==4.0.10
-GitPython==3.1.31
+GitPython==3.1.36
 glom==22.1.0
 idna==3.4
 isort==5.12.0
