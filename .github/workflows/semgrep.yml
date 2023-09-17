@@ -21,6 +21,6 @@ jobs:
       image: returntocorp/semgrep
     if: (github.actor != 'dependabot[bot]')
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac
         # It takes some time to scan "vermin/rules.py". More than the default 30s timeout.
       - run: semgrep ci --timeout 60 --verbose
