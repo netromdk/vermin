@@ -189,3 +189,20 @@ def parse_target(target):
     return None
 
   return (exact, elms)
+
+def compare_requirements(reqs, targets):
+  maj_to_req = {ver[0]: ver for ver in reqs}
+  maj_to_target = {ver[0]: (exact, ver) for (exact, ver) in targets}
+  common_major_versions = set(maj_to_req.keys()) & set(maj_to_target.keys())
+  if not common_major_versions:
+    return False
+  if set(maj_to_target.keys()) - common_major_versions:
+    return False  # target major version missing from the requirements
+  for maj in common_major_versions:
+    exact, target = maj_to_target[maj]
+    req = maj_to_req[maj]
+    if exact and target != req:
+      return False
+    if not exact and target < req:
+      return False
+  return True

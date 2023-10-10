@@ -7,7 +7,7 @@ from .printing import nprint, vprint
 from .detection import detect_paths
 from .processor import Processor
 from .arguments import Arguments
-from .utility import version_strings, dotted_name
+from .utility import version_strings, dotted_name, compare_requirements
 from .backports import Backports
 
 def main():
@@ -144,16 +144,10 @@ def main():
     # don't fail wrt. targets.
     all_inconclusive = config.only_show_violations() and len(reqs) > 0 and \
       all(req == (0, 0) for req in reqs)
-    if not all_inconclusive and\
-       not (len(reqs) == len(targets) and
-            all(((exact and target == req) or (not exact and target >= req)) for
-                ((exact, target), req) in zip(targets, reqs))):
+    if not all_inconclusive and not compare_requirements(reqs, targets):
       if not parsable:
         vers = ["{}{}".format(dotted_name(t), "-" if not e else "") for (e, t) in targets]
         nprint("Target versions not met:   {}".format(version_strings(vers)), config)
-        if len(targets) < len(reqs):
-          nprint("Note: Number of specified targets ({}) doesn't match number of detected minimum "
-                 "versions ({}).".format(len(targets), len(reqs)), config)
       sys.exit(1)
 
   sys.exit(0)
