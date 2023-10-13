@@ -54,6 +54,6 @@ jobs:
         run: snyk test --project-name=vermin --package-manager=pip --file=misc/.$reqs-requirements.txt --command=python3 --sarif-file-output=snyk-$reqs.sarif --show-vulnerable-paths=all --print-deps
 
       - name: Upload result to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@04daf014b50eaf774287bf3f0f1869d4b4c4b913
+        uses: github/codeql-action/upload-sarif@0116bc2df50751f9724a2e35ef1f24d22f90e4e1
         with:
           sarif_file: snyk-${{matrix.requirements}}.sarif
