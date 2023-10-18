@@ -12,6 +12,7 @@ from vermin import combine_versions, InvalidVersionException, detect_paths,\
   remove_whitespace, main, sort_line_column, sort_line_column_parsable, version_strings,\
   format_title_descs, DEFAULT_PROCESSES
 from vermin.formats import ParsableFormat
+from vermin.utility import compare_requirements
 
 from .testutils import VerminTest, current_version, ScopedTemporaryFile, detect, visit, touch, \
   working_dir
@@ -1054,3 +1055,79 @@ three - three.one
 
   def test_default_processes(self):
     self.assertEqual(cpu_count(), DEFAULT_PROCESSES)
+
+  def test_compare_requirements_py2_and_py3_compatible(self):
+    reqs = [(2, 7), (3, 6)]
+
+    # User provides only one target
+    self.assertFalse(compare_requirements(reqs, [(True, (2, 6))]))
+    self.assertFalse(compare_requirements(reqs, [(False, (2, 6))]))
+    self.assertTrue(compare_requirements(reqs, [(True, (2, 7))]))
+    self.assertTrue(compare_requirements(reqs, [(False, (2, 7))]))
+    self.assertFalse(compare_requirements(reqs, [(True, (3, 3))]))
+    self.assertFalse(compare_requirements(reqs, [(False, (3, 3))]))
+    self.assertTrue(compare_requirements(reqs, [(True, (3, 6))]))
+    self.assertTrue(compare_requirements(reqs, [(False, (3, 6))]))
+    self.assertFalse(compare_requirements(reqs, [(True, (3, 7))]))
+    self.assertTrue(compare_requirements(reqs, [(False, (3, 7))]))
+
+    # Missing and invalid targets
+    self.assertFalse(compare_requirements(reqs, []))
+    self.assertFalse(compare_requirements(reqs, [(True, (4, 1))]))
+
+    # User provides multiple valid requirements, return true when both are
+    # satisfied.
+    self.assertTrue(compare_requirements(reqs, [(True, (2, 7)), (False, (3, 7))]))
+    self.assertFalse(compare_requirements(reqs, [(True, (2, 7)), (True, (3, 7))]))
+
+    # User provides valid along with invalid version: fail because the target
+    # major version is missing
+    self.assertFalse(compare_requirements(reqs, [(True, (2, 7)), (False, (4, 7))]))
+    self.assertFalse(compare_requirements(reqs, [(True, (2, 7)), (True, (4, 7))]))
+
+  def test_compare_requirements_py2_only(self):
+    reqs = [(2, 7)]
+
+    # Correct major version, compare against minor version
+    self.assertFalse(compare_requirements(reqs, [(True, (2, 6))]))
+    self.assertFalse(compare_requirements(reqs, [(False, (2, 6))]))
+    self.assertTrue(compare_requirements(reqs, [(True, (2, 7))]))
+    self.assertTrue(compare_requirements(reqs, [(False, (2, 7))]))
+
+    # The user specifies the wrong major version: this will always fail
+    self.assertFalse(compare_requirements(reqs, [(True, (3, 3))]))
+    self.assertFalse(compare_requirements(reqs, [(False, (3, 3))]))
+    self.assertFalse(compare_requirements(reqs, [(True, (3, 6))]))
+    self.assertFalse(compare_requirements(reqs, [(False, (3, 6))]))
+    self.assertFalse(compare_requirements(reqs, [(True, (3, 7))]))
+    self.assertFalse(compare_requirements(reqs, [(False, (3, 7))]))
+    self.assertFalse(compare_requirements(reqs, [(True, (4, 1))]))
+
+    # Missing target: fail
+    self.assertFalse(compare_requirements(reqs, []))
+
+    # Multiple targets: fail because one target major version is missing
+    self.assertFalse(compare_requirements(reqs, [(False, (2, 7)), (False, (3, 6))]))
+
+  def test_compare_requirements_py3_only(self):
+    reqs = [(3, 6)]
+    # The user specifies the wrong major version: this will always fail
+    self.assertFalse(compare_requirements(reqs, [(True, (2, 6))]))
+    self.assertFalse(compare_requirements(reqs, [(False, (2, 6))]))
+    self.assertFalse(compare_requirements(reqs, [(True, (2, 7))]))
+    self.assertFalse(compare_requirements(reqs, [(False, (2, 7))]))
+    self.assertFalse(compare_requirements(reqs, [(True, (4, 1))]))
+
+    # Correct major version, compare against minor version
+    self.assertFalse(compare_requirements(reqs, [(True, (3, 3))]))
+    self.assertFalse(compare_requirements(reqs, [(False, (3, 3))]))
+    self.assertTrue(compare_requirements(reqs, [(True, (3, 6))]))
+    self.assertTrue(compare_requirements(reqs, [(False, (3, 6))]))
+    self.assertFalse(compare_requirements(reqs, [(True, (3, 7))]))
+    self.assertTrue(compare_requirements(reqs, [(False, (3, 7))]))
+
+    # Missing and invalid requirements
+    self.assertFalse(compare_requirements(reqs, []))
+
+    # Multiple targets: fail because one target amjor version is missing
+    self.assertFalse(compare_requirements(reqs, [(False, (2, 7)), (False, (3, 6))]))
