@@ -47,7 +47,7 @@ class Config:
     self.__show_tips = other_config.show_tips()
     self.__analyze_hidden = other_config.analyze_hidden()
     self.__exclusions = set(other_config.exclusions())
-    self.__exclusion_regex = set(other_config.exclusion_regex())
+    self.__exclusion_regex = {re.compile(r) for r in other_config.exclusion_regex()}
     self.__make_paths_absolute = other_config.make_paths_absolute()
     self.__backports = other_config.backports()
     self.__features = other_config.features()
