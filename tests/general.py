@@ -380,7 +380,13 @@ test.py:6:9:2.7:3.2:'argparse' module
       paths = detect_paths(["a"], config=self.config)
       self.assertEqual(paths, [join("a", "code.py")])
 
-    rmtree(tmp_fld)
+    # When running on Windows, this can sometimes fail:
+    #   PermissionError: [WinError 32] The process cannot access the file because it is being used
+    #                    by another process:
+    #                    'C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\tmpAAAANNNN'
+    # But we can ignore that since the files reside in a temporary folder anyway, and the
+    # folders/files aren't being used any longer either.
+    rmtree(tmp_fld, ignore_errors=True)
 
   def test_detect_vermin_min_versions(self):
     paths = detect_paths([abspath("vermin")], config=self.config)
