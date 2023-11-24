@@ -147,9 +147,9 @@ bytearray, ``with`` statement, asynchronous ``with`` statement, multiple context
 unpacking assignment, generalized unpacking, ellipsis literal (``...``) out of slices, dictionary
 union (``{..}  | {..}``), dictionary union merge (``a = {..}; a |= {..}``), builtin generic type
 annotations (``list[str]``), function decorators, class decorators, relaxed decorators,
-``metaclass`` class keyword, pattern matching with ``match``, and union types written as ``X | Y``.
-It tries to detect and ignore user-defined functions, classes, arguments, and variables with names
-that clash with library-defined symbols.
+``metaclass`` class keyword, pattern matching with ``match``, union types written as ``X | Y``, and
+type alias statements (``type X = SomeType``). It tries to detect and ignore user-defined functions,
+classes, arguments, and variables with names that clash with library-defined symbols.
 
 Caveats
 =======

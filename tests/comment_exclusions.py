@@ -501,3 +501,9 @@ def foo():
 """)
     self.assertIn(5, visitor.no_lines())
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 12)
+  def test_type_alias_statement(self):
+    visitor = self.visit("type X = int  #novm")
+    self.assertIn(1, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())

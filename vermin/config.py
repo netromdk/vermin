@@ -141,7 +141,8 @@ class Config:
 
     try:
       if sys.version_info < (3, 2):  # pragma: no cover
-        parser.readfp(fp, filename=filename)  # pylint: disable=deprecated-method  # novm
+        # pylint: disable=deprecated-method disable=no-member # novm
+        parser.readfp(fp, filename=filename)
       else:
         # `read_file` supercedes `readfp` since 3.2.
         def readline_generator(fp):

@@ -71,6 +71,18 @@ class VerminConstantMemberTests(VerminTest):
   def test_PRIO_PROCESS_of_os(self):
     self.assertOnlyIn((3, 3), self.detect("from os import PRIO_PROCESS"))
 
+  def test_PRIO_DARWIN_BG_of_os(self):
+    self.assertOnlyIn((3, 12), self.detect("from os import PRIO_DARWIN_BG"))
+
+  def test_PRIO_DARWIN_NONUI_of_os(self):
+    self.assertOnlyIn((3, 12), self.detect("from os import PRIO_DARWIN_NONUI"))
+
+  def test_PRIO_DARWIN_PROCESS_of_os(self):
+    self.assertOnlyIn((3, 12), self.detect("from os import PRIO_DARWIN_PROCESS"))
+
+  def test_PRIO_DARWIN_THREAD_of_os(self):
+    self.assertOnlyIn((3, 12), self.detect("from os import PRIO_DARWIN_THREAD"))
+
   def test_PRIO_PGRP_of_os(self):
     self.assertOnlyIn((3, 3), self.detect("from os import PRIO_PGRP"))
 
@@ -110,6 +122,9 @@ class VerminConstantMemberTests(VerminTest):
   def test_O_NOFOLLOW_ANY_of_os(self):
     self.assertOnlyIn((3, 10), self.detect("from os import O_NOFOLLOW_ANY"))
 
+  def test_PIDFD_NONBLOCK_of_os(self):
+    self.assertOnlyIn((3, 12), self.detect("from os import PIDFD_NONBLOCK"))
+
   def test_POSIX_FADV_NORMAL_of_os(self):
     self.assertOnlyIn((3, 3), self.detect("from os import POSIX_FADV_NORMAL"))
 
@@ -145,6 +160,9 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_float_repr_style_of_sys(self):
     self.assertOnlyIn(((2, 7), (3, 1)), self.detect("from sys import float_repr_style"))
+
+  def test_last_exc_of_sys(self):
+    self.assertOnlyIn((3, 12), self.detect("from sys import last_exc"))
 
   def test_long_info_of_sys(self):
     self.assertOnlyIn((2, 7), self.detect("from sys import long_info"))
@@ -472,6 +490,10 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect(
         "from tarfile import TarInfo\nTarInfo.pax_headers"))
 
+  def test_extraction_filter_of_tarfile_TarFile(self):
+    self.assertOnlyIn((3, 12), self.detect(
+        "from tarfile import TarFile\nTarFile.extraction_filter"))
+
   def test_args_of_subprocess_Popen(self):
     self.assertOnlyIn((3, 3), self.detect("from subprocess import Popen\nPopen.args"))
 
@@ -610,6 +632,177 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn((3, 7),
                       self.detect("from calendar import HTMLCalendar\n"
                                   "c=HTMLCalendar()\nc.cssclass_year_head"))
+
+  def test_MONDAY_of_calendar_Day(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from calendar import Day
+day = Day.MONDAY
+"""))
+
+  def test_TUESDAY_of_calendar_Day(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from calendar import Day
+day = Day.TUESDAY
+"""))
+
+  def test_WEDNESDAY_of_calendar_Day(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from calendar import Day
+day = Day.WEDNESDAY
+"""))
+
+  def test_THURSDAY_of_calendar_Day(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from calendar import Day
+day = Day.THURSDAY
+"""))
+
+  def test_FRIDAY_of_calendar_Day(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from calendar import Day
+day = Day.FRIDAY
+"""))
+
+  def test_SATURDAY_of_calendar_Day(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from calendar import Day
+day = Day.SATURDAY
+"""))
+
+  def test_SUNDAY_of_calendar_Day(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from calendar import Day
+day = Day.SUNDAY
+"""))
+
+  def test_MONDAY_of_calendar(self):
+    self.assertOnlyIn((3, 10), self.detect("from calendar import MONDAY"))
+
+  def test_TUESDAY_of_calendar(self):
+    self.assertOnlyIn((3, 10), self.detect("from calendar import TUESDAY"))
+
+  def test_WEDNESDAY_of_calendar(self):
+    self.assertOnlyIn((3, 10), self.detect("from calendar import WEDNESDAY"))
+
+  def test_THURSDAY_of_calendar(self):
+    self.assertOnlyIn((3, 10), self.detect("from calendar import THURSDAY"))
+
+  def test_FRIDAY_of_calendar(self):
+    self.assertOnlyIn((3, 10), self.detect("from calendar import FRIDAY"))
+
+  def test_SATURDAY_of_calendar(self):
+    self.assertOnlyIn((3, 10), self.detect("from calendar import SATURDAY"))
+
+  def test_SUNDAY_of_calendar(self):
+    self.assertOnlyIn((3, 10), self.detect("from calendar import SUNDAY"))
+
+  def test_JANUARY_of_calendar_Month(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from calendar import Month
+month = Month.JANUARY
+"""))
+
+  def test_FEBRUARY_of_calendar_Month(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from calendar import Month
+month = Month.FEBRUARY
+"""))
+
+  def test_MARCH_of_calendar_Month(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from calendar import Month
+month = Month.MARCH
+"""))
+
+  def test_APRIL_of_calendar_Month(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from calendar import Month
+month = Month.APRIL
+"""))
+
+  def test_MAY_of_calendar_Month(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from calendar import Month
+month = Month.MAY
+"""))
+
+  def test_JUNE_of_calendar_Month(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from calendar import Month
+month = Month.JUNE
+"""))
+
+  def test_JULY_of_calendar_Month(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from calendar import Month
+month = Month.JULY
+"""))
+
+  def test_AUGUST_of_calendar_Month(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from calendar import Month
+month = Month.AUGUST
+"""))
+
+  def test_SEPTEMBER_of_calendar_Month(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from calendar import Month
+month = Month.SEPTEMBER
+"""))
+
+  def test_OCTOBER_of_calendar_Month(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from calendar import Month
+month = Month.OCTOBER
+"""))
+
+  def test_NOVEMBER_of_calendar_Month(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from calendar import Month
+month = Month.NOVEMBER
+"""))
+
+  def test_DECEMBER_of_calendar_Month(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from calendar import Month
+month = Month.DECEMBER
+"""))
+
+  def test_JANUARY_of_calendar(self):
+    self.assertOnlyIn((3, 12), self.detect("from calendar import JANUARY"))
+
+  def test_FEBRUARY_of_calendar(self):
+    self.assertOnlyIn((3, 12), self.detect("from calendar import FEBRUARY"))
+
+  def test_MARCH_of_calendar(self):
+    self.assertOnlyIn((3, 12), self.detect("from calendar import MARCH"))
+
+  def test_APRIL_of_calendar(self):
+    self.assertOnlyIn((3, 12), self.detect("from calendar import APRIL"))
+
+  def test_MAY_of_calendar(self):
+    self.assertOnlyIn((3, 12), self.detect("from calendar import MAY"))
+
+  def test_JUNE_of_calendar(self):
+    self.assertOnlyIn((3, 12), self.detect("from calendar import JUNE"))
+
+  def test_JULY_of_calendar(self):
+    self.assertOnlyIn((3, 12), self.detect("from calendar import JULY"))
+
+  def test_AUGUST_of_calendar(self):
+    self.assertOnlyIn((3, 12), self.detect("from calendar import AUGUST"))
+
+  def test_SEPTEMBER_of_calendar(self):
+    self.assertOnlyIn((3, 12), self.detect("from calendar import SEPTEMBER"))
+
+  def test_OCTOBER_of_calendar(self):
+    self.assertOnlyIn((3, 12), self.detect("from calendar import OCTOBER"))
+
+  def test_NOVEMBER_of_calendar(self):
+    self.assertOnlyIn((3, 12), self.detect("from calendar import NOVEMBER"))
+
+  def test_DECEMBER_of_calendar(self):
+    self.assertOnlyIn((3, 12), self.detect("from calendar import DECEMBER"))
 
   def test_tau_of_cmath(self):
     self.assertOnlyIn((3, 6), self.detect("from cmath import tau"))
@@ -968,6 +1161,12 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn(((2, 5), (3, 0)),
                       self.detect("from csv import csvreader\n"
                                   "csvreader().line_num"))
+
+  def test_QUOTE_NOTNULL_from_csv(self):
+    self.assertOnlyIn((3, 12), self.detect("from csv import QUOTE_NOTNULL"))
+
+  def test_QUOTE_STRINGS_from_csv(self):
+    self.assertOnlyIn((3, 12), self.detect("from csv import QUOTE_STRINGS"))
 
   def test_encoding_from_curses_window(self):
     self.assertOnlyIn((3, 3),
@@ -1479,6 +1678,11 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn(((2, 5), (3, 0)),
                       self.detect("from os import stat\n"
                                   "stat().st_birthtime"))
+
+  def test_st_birthtime_ns_from_os_stat(self):
+    self.assertOnlyIn((3, 12),
+                      self.detect("from os import stat\n"
+                                  "stat().st_birthtime_ns"))
 
   def test_st_blksize_from_os_stat(self):
     self.assertOnlyIn(((2, 2), (3, 0)),
@@ -2370,15 +2574,10 @@ class VerminConstantMemberTests(VerminTest):
                       self.detect("from socketserver import ThreadingMixIn\n"
                                   "ThreadingMixIn().block_on_close"))
 
-  def test_in_transaction_from_sqlite3_Connection(self):
-    self.assertOnlyIn((3, 2),
+  def test_autocommit_from_sqlite3_Connection(self):
+    self.assertOnlyIn((3, 12),
                       self.detect("from sqlite3 import Connection\n"
-                                  "Connection().in_transaction"))
-
-  def test_iterdump_from_sqlite3_Connection(self):
-    self.assertOnlyIn(((2, 6), (3, 0)),
-                      self.detect("from sqlite3 import Connection\n"
-                                  "Connection().iterdump"))
+                                  "Connection().autocommit"))
 
   def test_sqlite_errorcode_from_sqlite3_Error(self):
     self.assertOnlyIn((3, 11),
@@ -2389,6 +2588,58 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn((3, 11),
                       self.detect("from sqlite3 import Error\n"
                                   "Error().sqlite_errorname"))
+
+  def test_SQLITE_DBCONFIG_DEFENSIVE_from_sqlite3(self):
+    self.assertOnlyIn((3, 12), self.detect("from sqlite3 import SQLITE_DBCONFIG_DEFENSIVE"))
+
+  def test_SQLITE_DBCONFIG_DQS_DDL_from_sqlite3(self):
+    self.assertOnlyIn((3, 12), self.detect("from sqlite3 import SQLITE_DBCONFIG_DQS_DDL"))
+
+  def test_SQLITE_DBCONFIG_DQS_DML_from_sqlite3(self):
+    self.assertOnlyIn((3, 12), self.detect("from sqlite3 import SQLITE_DBCONFIG_DQS_DML"))
+
+  def test_SQLITE_DBCONFIG_ENABLE_FKEY_from_sqlite3(self):
+    self.assertOnlyIn((3, 12), self.detect("from sqlite3 import SQLITE_DBCONFIG_ENABLE_FKEY"))
+
+  def test_SQLITE_DBCONFIG_ENABLE_FTS3_TOKENIZER_from_sqlite3(self):
+    self.assertOnlyIn((3, 12),
+                      self.detect("from sqlite3 import SQLITE_DBCONFIG_ENABLE_FTS3_TOKENIZER"))
+
+  def test_SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION_from_sqlite3(self):
+    self.assertOnlyIn((3, 12),
+                      self.detect("from sqlite3 import SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION"))
+
+  def test_SQLITE_DBCONFIG_ENABLE_QPSG_from_sqlite3(self):
+    self.assertOnlyIn((3, 12), self.detect("from sqlite3 import SQLITE_DBCONFIG_ENABLE_QPSG"))
+
+  def test_SQLITE_DBCONFIG_ENABLE_TRIGGER_from_sqlite3(self):
+    self.assertOnlyIn((3, 12), self.detect("from sqlite3 import SQLITE_DBCONFIG_ENABLE_TRIGGER"))
+
+  def test_SQLITE_DBCONFIG_ENABLE_VIEW_from_sqlite3(self):
+    self.assertOnlyIn((3, 12), self.detect("from sqlite3 import SQLITE_DBCONFIG_ENABLE_VIEW"))
+
+  def test_SQLITE_DBCONFIG_LEGACY_ALTER_TABLE_from_sqlite3(self):
+    self.assertOnlyIn((3, 12),
+                      self.detect("from sqlite3 import SQLITE_DBCONFIG_LEGACY_ALTER_TABLE"))
+
+  def test_SQLITE_DBCONFIG_LEGACY_FILE_FORMAT_from_sqlite3(self):
+    self.assertOnlyIn((3, 12),
+                      self.detect("from sqlite3 import SQLITE_DBCONFIG_LEGACY_FILE_FORMAT"))
+
+  def test_SQLITE_DBCONFIG_NO_CKPT_ON_CLOSE_from_sqlite3(self):
+    self.assertOnlyIn((3, 12), self.detect("from sqlite3 import SQLITE_DBCONFIG_NO_CKPT_ON_CLOSE"))
+
+  def test_SQLITE_DBCONFIG_RESET_DATABASE_from_sqlite3(self):
+    self.assertOnlyIn((3, 12), self.detect("from sqlite3 import SQLITE_DBCONFIG_RESET_DATABASE"))
+
+  def test_SQLITE_DBCONFIG_TRIGGER_EQP_from_sqlite3(self):
+    self.assertOnlyIn((3, 12), self.detect("from sqlite3 import SQLITE_DBCONFIG_TRIGGER_EQP"))
+
+  def test_SQLITE_DBCONFIG_TRUSTED_SCHEMA_from_sqlite3(self):
+    self.assertOnlyIn((3, 12), self.detect("from sqlite3 import SQLITE_DBCONFIG_TRUSTED_SCHEMA"))
+
+  def test_SQLITE_DBCONFIG_WRITABLE_SCHEMA_from_sqlite3(self):
+    self.assertOnlyIn((3, 12), self.detect("from sqlite3 import SQLITE_DBCONFIG_WRITABLE_SCHEMA"))
 
   def test_ALERT_DESCRIPTION_ACCESS_DENIED_of_ssl(self):
     self.assertOnlyIn(((2, 7), (3, 4)), self.detect(

@@ -210,6 +210,9 @@ class SourceVisitor(ast.NodeVisitor):
   def ellipsis_out_of_slices(self):
     return self.__s.ellipsis_out_of_slices
 
+  def type_alias_statement(self):
+    return self.__s.type_alias_statement
+
   def bytes_format(self):
     return self.__s.bytes_format
 
@@ -442,6 +445,10 @@ class SourceVisitor(ast.NodeVisitor):
     if self.ellipsis_out_of_slices():
       mins = self.__add_versions_entity(mins, (None, (3, 0)),
                                         "ellipsis literal (`...`) out of slices", plural=False)
+
+    if self.type_alias_statement():
+      mins = self.__add_versions_entity(mins, (None, (3, 12)),
+                                        "type alias statement (`type X = SomeType`)", plural=False)
 
     if self.bytes_format():
       # Since byte strings are a `str` synonym as of 2.6+, and thus also supports `%` formatting,
@@ -2173,6 +2180,13 @@ ast.Call(func=ast.Name)."""
       self.__s.ellipsis_out_of_slices = True
       self.__vvprint("ellipsis literal (`...`) out of slices", versions=[None, (3, 0)],
                      plural=False)
+
+  def visit_TypeAlias(self, node):
+    if not self.__is_no_line(node.lineno):
+      self.__s.type_alias_statement = True
+      self.__vvprint("type alias statement (`type X = SomeType`)", versions=[None, (3, 12)],
+                     plural=False)
+      self.generic_visit(node)
 
   # Ignore unused nodes as a speed optimization.
 

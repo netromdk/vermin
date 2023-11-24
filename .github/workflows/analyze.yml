@@ -1,9 +1,13 @@
 name: Analyze
 
-# On all pushes to branches and pull requests in general.
+# On all pushes to PRs or pushes to specific branches. Not on ALL pushes in general because it will
+# double if pushing to a PR.
 on:
-  push:
   pull_request:
+  push:
+    branches:
+      - 'master'
+      - 'dev'
 
 permissions:
   contents: read
@@ -14,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.11']
+        python-version: ['3.12']
 
     steps:
     - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11

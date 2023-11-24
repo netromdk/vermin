@@ -28,11 +28,29 @@ class VerminFunctionMemberTests(VerminTest):
   def test_getwindowsversion_of_sys(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("from sys import getwindowsversion"))
 
+  def test_getunicodeinternedsize_of_sys(self):
+    self.assertOnlyIn((3, 12), self.detect("from sys import getunicodeinternedsize"))
+
+  def test_activate_stack_trampoline_of_sys(self):
+    self.assertOnlyIn((3, 12), self.detect("from sys import activate_stack_trampoline"))
+
+  def test_deactivate_stack_trampoline_of_sys(self):
+    self.assertOnlyIn((3, 12), self.detect("from sys import deactivate_stack_trampoline"))
+
+  def test_is_stack_trampoline_active_of_sys(self):
+    self.assertOnlyIn((3, 12), self.detect("from sys import is_stack_trampoline_active"))
+
   def test_commonpath_of_os_path(self):
     self.assertOnlyIn((3, 5), self.detect("from os.path import commonpath"))
 
   def test_getctime_of_os_path(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("from os.path import getctime"))
+
+  def test_isdevdrive_of_os_path(self):
+    self.assertOnlyIn((3, 12), self.detect("from os.path import isdevdrive"))
+
+  def test_isjunction_of_os_path(self):
+    self.assertOnlyIn((3, 12), self.detect("from os.path import isjunction"))
 
   def test_ismount_of_os_path(self):
     self.assertOnlyIn((3, 4), self.detect("from os.path import ismount"))
@@ -45,6 +63,9 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_relpath_of_os_path(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from os.path import relpath"))
+
+  def test_splitroot_of_os_path(self):
+    self.assertOnlyIn((3, 12), self.detect("from os.path import splitroot"))
 
   def test_getpgid_of_os(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("from os import getpgid"))
@@ -63,6 +84,9 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_setgroups_of_os(self):
     self.assertOnlyIn(((2, 2), (3, 0)), self.detect("from os import setgroups"))
+
+  def test_setns_of_os(self):
+    self.assertOnlyIn((3, 12), self.detect("from os import setns"))
 
   def test_setresgid_of_os(self):
     self.assertOnlyIn(((2, 7), (3, 2)), self.detect("from os import setresgid"))
@@ -707,6 +731,15 @@ c.total()
   def test_signature_from_inspect(self):
     self.assertOnlyIn((3, 3), self.detect("import inspect\ninspect.signature()"))
 
+  def test_markcoroutinefunction_from_inspect(self):
+    self.assertOnlyIn((3, 12), self.detect("import inspect\ninspect.markcoroutinefunction()"))
+
+  def test_getasyncgenstate_from_inspect(self):
+    self.assertOnlyIn((3, 12), self.detect("import inspect\ninspect.getasyncgenstate()"))
+
+  def test_getasyncgenlocals_from_inspect(self):
+    self.assertOnlyIn((3, 12), self.detect("import inspect\ninspect.getasyncgenlocals()"))
+
   def test_apply_defaults_from_inspect_BoundArguments(self):
     self.assertOnlyIn((3, 5), self.detect("from inspect import BoundArguments\n"
                                           "ba = BoundArguments()\n"
@@ -803,6 +836,9 @@ c.total()
 
   def test_accumulate_from_itertools(self):
     self.assertOnlyIn((3, 2), self.detect("import itertools\nitertools.accumulate()"))
+
+  def test_batched_from_itertools(self):
+    self.assertOnlyIn((3, 12), self.detect("from itertools import batched"))
 
   def test_getChild_from_logging_Logger(self):
     self.assertOnlyIn(((2, 7), (3, 2)), self.detect(
@@ -909,17 +945,41 @@ c.total()
                                   "conn = Connection()\n"
                                   "conn.load_extension()"))
 
+  def test_in_transaction_from_sqlite3_Connection(self):
+    self.assertOnlyIn((3, 2),
+                      self.detect("from sqlite3 import Connection\n"
+                                  "conn = Connection()\n"
+                                  "conn.in_transaction()"))
+
   def test_iter_dump_from_sqlite3_Connection(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
                       self.detect("from sqlite3 import Connection\n"
                                   "conn = Connection()\n"
                                   "conn.iter_dump()"))
 
+  def test_iterdump_from_sqlite3_Connection(self):
+    self.assertOnlyIn(((2, 6), (3, 0)),
+                      self.detect("from sqlite3 import Connection\n"
+                                  "conn = Connection()\n"
+                                  "conn.iterdump()"))
+
   def test_set_trace_callback_from_sqlite3_Connection(self):
     self.assertOnlyIn((3, 3),
                       self.detect("from sqlite3 import Connection\n"
                                   "conn = Connection()\n"
                                   "conn.set_trace_callback()"))
+
+  def test_getconfig_from_sqlite3_Connection(self):
+    self.assertOnlyIn((3, 12),
+                      self.detect("from sqlite3 import Connection\n"
+                                  "conn = Connection()\n"
+                                  "conn.getconfig()"))
+
+  def test_setconfig_from_sqlite3_Connection(self):
+    self.assertOnlyIn((3, 12),
+                      self.detect("from sqlite3 import Connection\n"
+                                  "conn = Connection()\n"
+                                  "conn.setconfig()"))
 
   def test_keys_from_sqlite3_Row(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
@@ -1038,6 +1098,9 @@ c.total()
   def test_fromtarfile_from_tarfile_TarInfo(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
                       self.detect("from tarfile import TarInfo\nTarInfo.fromtarfile()"))
+
+  def test_replace_from_tarfile_TarInfo(self):
+    self.assertOnlyIn((3, 12), self.detect("from tarfile import TarInfo\nTarInfo.replace()"))
 
   def test_shorten_from_textwrap(self):
     self.assertOnlyIn((3, 4), self.detect("import textwrap\ntextwrap.shorten()"))
@@ -1340,6 +1403,9 @@ c.total()
   def test_remainder_from_math(self):
     self.assertOnlyIn((3, 7), self.detect("import math\nmath.remainder()"))
 
+  def test_sumprod_from_math(self):
+    self.assertOnlyIn((3, 12), self.detect("import math\nmath.sumprod()"))
+
   def test_home_from_path(self):
     self.assertOnlyIn((3, 5), self.detect("from pathlib import Path\np=Path('foo')\np.home()"))
 
@@ -1351,6 +1417,13 @@ c.total()
     self.assertOnlyIn((3, 5), self.detect(
       "from pathlib import Path\np=Path('foo')\np.read_bytes()"))
 
+  def test_is_junction_from_path(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from pathlib import Path
+p=Path('foo')
+p.is_junction()
+"""))
+
   def test_is_mount_from_path(self):
     self.assertOnlyIn((3, 7), self.detect("from pathlib import Path\np=Path('foo')\np.is_mount()"))
 
@@ -1359,6 +1432,9 @@ c.total()
 
   def test_samefile_from_path(self):
     self.assertOnlyIn((3, 5), self.detect("from pathlib import Path\np=Path('foo')\np.samefile()"))
+
+  def test_walk_from_path(self):
+    self.assertOnlyIn((3, 12), self.detect("from pathlib import Path\np=Path('foo')\np.walk()"))
 
   def test_write_bytes_from_path(self):
     self.assertOnlyIn((3, 5), self.detect(
@@ -1386,6 +1462,12 @@ p.hardlink_to()
                       self.detect("from pathlib import PurePath\n"
                                   "p = PurePath()\n"
                                   "p.is_relative_to()"))
+
+  def test_with_segments_from_pathlib_PurePath(self):
+    self.assertOnlyIn((3, 12),
+                      self.detect("from pathlib import PurePath\n"
+                                  "p = PurePath()\n"
+                                  "p.with_segments()"))
 
   def test_with_stem_from_pathlib_PurePath(self):
     self.assertOnlyIn((3, 9),
@@ -1631,13 +1713,24 @@ p.hardlink_to()
   def test_stack_effect_of_dis(self):
     self.assertOnlyIn((3, 4), self.detect("import dis\ndis.stack_effect()"))
 
-  def test_as_integer_ratio_of_franctions_Fraction(self):
+  def test_as_integer_ratio_of_fractions_Fraction(self):
     self.assertOnlyIn((3, 8),
                       self.detect("from fractions import Fraction\n"
                                   "Fraction(42).as_integer_ratio()"))
     self.assertOnlyIn((3, 8),
                       self.detect("from fractions import Fraction\n"
                                   "f=Fraction(42)\nf.as_integer_ratio()"))
+
+  def test_is_integer_of_fractions_Fraction(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from fractions import Fraction
+Fraction(42).is_integer()
+"""))
+    self.assertOnlyIn((3, 12), self.detect("""
+from fractions import Fraction
+f=Fraction(42)
+f.is_integer()
+"""))
 
   def test_pgettext_of_gettext(self):
     self.assertOnlyIn((3, 8), self.detect("import gettext\ngettext.pgettext()"))
@@ -2082,6 +2175,11 @@ p.hardlink_to()
                       self.detect("from asyncio import Task\n"
                                   "Task().cancelling()"))
 
+  def test_get_context_from_asyncio_Task(self):
+    self.assertOnlyIn((3, 12),
+                      self.detect("from asyncio import Task\n"
+                                  "Task().get_context()"))
+
   def test_get_name_from_asyncio_Task(self):
     self.assertOnlyIn((3, 8),
                       self.detect("from asyncio import Task\n"
@@ -2175,6 +2273,12 @@ p.hardlink_to()
 
   def test_to_thread_from_asyncio(self):
     self.assertOnlyIn((3, 9), self.detect("from asyncio import to_thread"))
+
+  def test_eager_task_factory_from_asyncio(self):
+    self.assertOnlyIn((3, 12), self.detect("from asyncio import eager_task_factory"))
+
+  def test_create_eager_task_factory_from_asyncio(self):
+    self.assertOnlyIn((3, 12), self.detect("from asyncio import create_eager_task_factory"))
 
   def test_handle_accepted_from_asyncore_dispatcher(self):
     self.assertOnlyIn((3, 2),
@@ -3280,6 +3384,12 @@ p.hardlink_to()
   def test_truediv_from_operator(self):
     self.assertOnlyIn(((2, 2), (3, 0)), self.detect("import operator\noperator.truediv()"))
 
+  def test_is_junction_from_os_DirEntry(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from os import DirEntry
+DirEntry().is_junction()
+"""))
+
   def test_WCOREDUMP_from_os(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("import os\nos.WCOREDUMP()"))
 
@@ -3327,6 +3437,15 @@ p.hardlink_to()
 
   def test_lchown_from_os(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("import os\nos.lchown()"))
+
+  def test_listdrives_from_os(self):
+    self.assertOnlyIn((3, 12), self.detect("import os\nos.listdrives()"))
+
+  def test_listmounts_from_os(self):
+    self.assertOnlyIn((3, 12), self.detect("import os\nos.listmounts()"))
+
+  def test_listvolumes_from_os(self):
+    self.assertOnlyIn((3, 12), self.detect("import os\nos.listvolumes()"))
 
   def test_major_from_os(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("import os\nos.major()"))
@@ -3406,6 +3525,9 @@ s.replace()
   def test_truncate_from_os(self):
     self.assertOnlyIn((3, 3), self.detect("import os\nos.truncate()"))
 
+  def test_unshare_from_os(self):
+    self.assertOnlyIn((3, 12), self.detect("import os\nos.unshare()"))
+
   def test_urandom_from_os(self):
     self.assertOnlyIn(((2, 4), (3, 0)), self.detect("import os\nos.urandom()"))
 
@@ -3458,6 +3580,9 @@ s.replace()
 
   def test_pp_from_pprint(self):
     self.assertOnlyIn((3, 8), self.detect("import pprint\npprint.pp()"))
+
+  def test_binomialvariate_from_random(self):
+    self.assertOnlyIn((3, 12), self.detect("import random\nrandom.binomialvariate()"))
 
   def test_choices_from_random(self):
     self.assertOnlyIn((3, 6), self.detect("import random\nrandom.choices()"))
@@ -3956,6 +4081,9 @@ Template().is_valid()
   def test_setprofile_from_threading(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("import threading\nthreading.setprofile()"))
 
+  def test_setprofile_all_threads_from_threading(self):
+    self.assertOnlyIn((3, 12), self.detect("import threading\nthreading.setprofile_all_threads()"))
+
   def test_getprofile_from_threading(self):
     self.assertOnlyIn((3, 10), self.detect("import threading\nthreading.getprofile()"))
 
@@ -3964,6 +4092,9 @@ Template().is_valid()
 
   def test_settrace_from_threading(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("import threading\nthreading.settrace()"))
+
+  def test_settrace_all_threads_from_threading(self):
+    self.assertOnlyIn((3, 12), self.detect("import threading\nthreading.settrace_all_threads()"))
 
   def test_stack_size_from_threading(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("import threading\nthreading.stack_size()"))
@@ -4015,6 +4146,9 @@ TracebackException().print()
 
   def test_coroutine_from_types(self):
     self.assertOnlyIn((3, 5), self.detect("import types\ntypes.coroutine()"))
+
+  def test_get_original_bases_from_types(self):
+    self.assertOnlyIn((3, 12), self.detect("import types\ntypes.get_original_bases()"))
 
   def test_new_class_from_types(self):
     self.assertOnlyIn((3, 3), self.detect("import types\ntypes.new_class()"))

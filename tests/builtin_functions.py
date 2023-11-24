@@ -347,6 +347,10 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
     self.assertOnlyIn((3, 10), self.detect("(42).bit_count()"))
     self.assertOnlyIn((3, 10), self.detect("n=42\nn.bit_count()"))
 
+  def test_is_integer_of_int(self):
+    self.assertOnlyIn((3, 12), self.detect("(42).is_integer()"))
+    self.assertOnlyIn((3, 12), self.detect("n=42\nn.is_integer()"))
+
   def test_to_bytes_of_int(self):
     self.assertOnlyIn((3, 2), self.detect("(42).to_bytes()"))
     self.assertOnlyIn((3, 2), self.detect("n=42\nn.to_bytes()"))
