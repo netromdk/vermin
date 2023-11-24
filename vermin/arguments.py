@@ -63,10 +63,11 @@ class Arguments:
       print("  --target=V | -t=V\n"
             "        Target version that files must abide by. Can be specified once or twice.\n"
             "        A '-' can be appended to match target version or smaller, like '-t=3.5-'.\n"
-            "        If not met Vermin will exit with code 1. Note that the amount of target\n"
-            "        versions must match the amount of minimum required versions detected.\n"
-            "        However, if used in conjunction with --violations, and no rules are\n"
-            "        triggered, it will exit with code 0.\n")
+            "        If not met Vermin will exit with code 1. Vermin will only compare target\n"
+            "        versions with the same major version, so if you do not care about Python\n"
+            "        2, you can just specify one target for Python 3. However, if used in\n"
+            "        conjunction with --violations, and no rules are triggered, it will exit\n"
+            "        with code 0.\n")
       print("  --no-target (default)\n"
             "        Don't expect certain target version(s).\n")
       print("  --processes=N | -p=N\n"
