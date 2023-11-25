@@ -50,6 +50,8 @@ clean-pypi:
 dist-clean: clean clean-venv clean-pypi
 
 pypi-dist: clean-pypi
+	python -m pip install --upgrade wheel twine
+	python setup.py sdist
 	python setup.py bdist_wheel --universal
 
 update-coverage-requirements: setup-venv setup-coverage
