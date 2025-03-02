@@ -106,6 +106,9 @@ class VerminBuiltinExceptionsMemberTests(VerminTest):
 
   def test_ProcessLookupError(self):
     self.assertOnlyIn((3, 3), self.detect("ProcessLookupError()"))
+  
+  def test_PythonFinalizationError(self):
+    self.assertOnlyIn((3, 13), self.detect("PythonFinalizationError()"))
 
   def test_RecursionError(self):
     self.assertOnlyIn((3, 5), self.detect("RecursionError()"))

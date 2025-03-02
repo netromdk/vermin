@@ -513,6 +513,9 @@ class VerminClassMemberTests(VerminTest):
   def test_EnumCheck_of_enum(self):
     self.assertOnlyIn((3, 11), self.detect("from enum import EnumCheck"))
 
+  def test_EnumDict_of_enum(self):
+    self.assertOnlyIn((3, 13), self.detect("from enum import EnumDict"))
+
   def test_Flag_of_enum(self):
     self.assertOnlyIn((3, 6), self.detect("from enum import Flag"))
 
@@ -638,6 +641,15 @@ class VerminClassMemberTests(VerminTest):
 
   def test_NormalDist_of_statistics(self):
     self.assertOnlyIn((3, 8), self.detect("from statistics import NormalDist"))
+
+  def test_NoDefault_of_typing(self):
+    self.assertOnlyIn((3, 13), self.detect("from typing import NoDefault"))
+
+  def test_ReadOnly_of_typing(self):
+    self.assertOnlyIn((3, 13), self.detect("from typing import ReadOnly"))
+
+  def test_TypeIs_of_typing(self):
+    self.assertOnlyIn((3, 13), self.detect("from typing import TypeIs"))
 
   def test_TypedDict_of_typing(self):
     self.assertOnlyIn((3, 8), self.detect("from typing import TypedDict"))
