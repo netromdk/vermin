@@ -54,7 +54,7 @@ class VerminFunctionMemberTests(VerminTest):
 
   def test_ismount_of_os_path(self):
     self.assertOnlyIn((3, 4), self.detect("from os.path import ismount"))
-  
+
   def test_isreserved_of_os_path(self):
     self.assertOnlyIn((3, 13), self.detect("from os.path import isreserved"))
 
@@ -1160,7 +1160,7 @@ c.total()
 
   def test_flush_from_xml_etree_ElementTree_XMLPullParser(self):
     self.assertOnlyIn((3, 13), self.detect("from xml.etree import ElementTree\n"
-                                           "ElementTree().XMLParser().flush()"))
+                                           "ElementTree().XMLPullParser().flush()"))
 
   def test_fromstringlist_from_xml_etree_ElementTree(self):
     self.assertOnlyIn(((2, 7), (3, 2)),
@@ -1440,7 +1440,7 @@ p.is_junction()
 
   def test_is_mount_from_path(self):
     self.assertOnlyIn((3, 7), self.detect("from pathlib import Path\np=Path('foo')\np.is_mount()"))
-  
+
   def test_from_uri_from_path(self):
     self.assertOnlyIn((3, 13), self.detect("from pathlib import Path\np=Path.from_uri()"))
 
@@ -1784,7 +1784,7 @@ f.is_integer()
 
   def test_madvise_of_mmap_mmap(self):
     self.assertOnlyIn((3, 8), self.detect("from mmap import mmap\nmmap.madvise()"))
-  
+
   def test_seekable_of_mmap_mmap(self):
     self.assertOnlyIn((3, 13), self.detect("from mmap import mmap\nmmap.seekable()"))
 
@@ -1799,22 +1799,22 @@ f.is_integer()
 
   def test_setxattr_of_os(self):
     self.assertOnlyIn((3, 3), self.detect("from os import setxattr"))
-  
+
   def test_timerfd_create_of_os(self):
     self.assertOnlyIn((3, 13), self.detect("from os import timerfd_create"))
-  
+
   def test_timerfd_settime_of_os(self):
     self.assertOnlyIn((3, 13), self.detect("from os import timerfd_settime"))
-  
+
   def test_timerfd_settime_ns_of_os(self):
     self.assertOnlyIn((3, 13), self.detect("from os import timerfd_settime_ns"))
-  
+
   def test_timerfd_gettime_of_os(self):
     self.assertOnlyIn((3, 13), self.detect("from os import timerfd_gettime"))
-  
+
   def test_timerfd_gettime_ns_of_os(self):
     self.assertOnlyIn((3, 13), self.detect("from os import timerfd_gettime_ns"))
-  
+
   def test_process_cpu_count_of_os(self):
     self.assertOnlyIn((3, 13), self.detect("from os import process_cpu_count"))
 
@@ -1968,7 +1968,7 @@ f.is_integer()
 
   def test_clear_overloads_of_typing(self):
     self.assertOnlyIn((3, 11), self.detect("from typing import clear_overloads"))
-  
+
   def test_get_protocol_members_of_typing(self):
     self.assertOnlyIn((3, 13), self.detect("from typing import get_protocol_members"))
 
@@ -1983,7 +1983,7 @@ f.is_integer()
 
   def test_is_typeddict_of_typing(self):
     self.assertOnlyIn((3, 10), self.detect("from typing import is_typeddict"))
-  
+
   def test_is_protocol_of_typing(self):
     self.assertOnlyIn((3, 13), self.detect("from typing import is_protocol"))
 
@@ -2109,7 +2109,7 @@ f.is_integer()
     self.assertOnlyIn((2, 5),
                       self.detect("from Queue import Queue\n"
                                   "Queue().join()"))
-  
+
   def test_shutodown_from_queue_Queue(self):
     self.assertOnlyIn((3, 13),
                       self.detect("from queue import Queue\n"
@@ -2195,7 +2195,7 @@ f.is_integer()
     self.assertOnlyIn((3, 13),
                       self.detect("from asyncio import Server\n"
                                   "Server().abort_clients()"))
-  
+
   def test_close_clients_from_asyncio_Server(self):
     self.assertOnlyIn((3, 13),
                       self.detect("from asyncio import Server\n"
@@ -2376,7 +2376,7 @@ f.is_integer()
 
   def test_b32hexdecode_from_base64(self):
     self.assertOnlyIn((3, 10), self.detect("import base64\nbase64.b32hexdecode()"))
-  
+
   def test_z85decode_from_base64(self):
     self.assertOnlyIn((3, 13), self.detect("import base64\nbase64.z85decode()"))
 
@@ -2527,7 +2527,7 @@ f.is_integer()
     self.assertOnlyIn(((2, 6), (3, 0)),
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser().read_string()"))
-  
+
   def test_replace_from_copy(self):
     self.assertOnlyIn((3, 13), self.detect("import copy\ncopy.replace()"))
 
@@ -2829,7 +2829,7 @@ f.is_integer()
 
   def test_iglob_from_glob(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("import glob\nglob.iglob()"))
-  
+
   def test_translate_from_glob(self):
     self.assertOnlyIn((3, 13), self.detect("import glob\nglob.translate()"))
 
@@ -3192,7 +3192,7 @@ f.is_integer()
 
   def test_factorial_from_math(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import math\nmath.factorial()"))
-  
+
   def test_fma_from_math(self):
     self.assertOnlyIn((3, 13), self.detect("import math\nmath.fma()"))
 
@@ -4065,7 +4065,7 @@ Template().is_valid()
 
   def test__enablelegacywindowsfsencoding_from_sys(self):
     self.assertOnlyIn((3, 6), self.detect("import sys\nsys._enablelegacywindowsfsencoding()"))
-  
+
   def test__is_interned_from_sys(self):
     self.assertOnlyIn((3, 13), self.detect("import sys\nsys._is_interned()"))
 
@@ -4546,7 +4546,7 @@ from test.support import check_disallow_instantiation
   def test_zscore_from_statistics_NormalDist(self):
     self.assertOnlyIn((3, 9),
                       self.detect("from statistics import NormalDist\nNormalDist().zscore()"))
-  
+
   def test_kde_from_statistics(self):
     self.assertOnlyIn((3, 13),
                       self.detect("import statistics\nstatistics.kde()"))
