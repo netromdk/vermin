@@ -17,11 +17,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # Start Linux jobs last since they are fastest to start and complete, and start 3.12 first,
+        # Start Linux jobs last since they are fastest to start and complete, and start 3.13 first,
         # since it pairs wiht macOS+Windows jobs, and 3.5 and 3.6 last since they only run tests and
         # don't use venv. 3.4 is not supported on GitHub anymore and 3.5 and 3.6 for x64 isn't
         # produced for ubuntu 22.04.
-        python-version: ['3.12', '3.11', '3.10', 3.9, 3.8, 3.7, 3.6, 3.5]
+        python-version: ['3.13', '3.12', '3.11', '3.10', 3.9, 3.8, 3.7, 3.6, 3.5]
         os: [windows-latest, macos-latest, ubuntu-latest]
 
         # Choose test script depending on OS.

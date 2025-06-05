@@ -82,6 +82,9 @@ class VerminModuleTests(VerminTest):
   def test_dbm_struct(self):
     self.assertOnlyIn((3, 0), self.detect("import dbm.struct"))
 
+  def test_dbm_sqlite3(self):
+    self.assertOnlyIn((3, 13), self.detect("import dbm.sqlite3"))
+
   def test_dbm_sys(self):
     self.assertOnlyIn((3, 0), self.detect("import dbm.sys"))
 
