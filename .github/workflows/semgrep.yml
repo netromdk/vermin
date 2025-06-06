@@ -23,4 +23,4 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         # It takes some time to scan "vermin/rules.py". More than the default 30s timeout.
-      - run: semgrep ci --timeout 60 --verbose
+      - run: semgrep ci --timeout 120 --verbose
