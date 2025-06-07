@@ -44,6 +44,9 @@ def main():
   amount = len(paths)
   if amount == 0:
     nprint("No files specified to analyze!", config)
+    if config.show_tips() and not config.make_paths_absolute() \
+       and any(p.startswith(".") for p in args["paths"]):
+      nprint("Tip: Maybe use the --hidden argument to analyze hidden files.", config)
     sys.exit(1)
 
   msg = "Analyzing"
