@@ -15,7 +15,7 @@ docutils==0.20.1
 face==22.0.0
 flake8==6.0.0
 gitdb==4.0.10
-GitPython==3.1.36
+GitPython==3.1.44
 glom==22.1.0
 idna==3.4
 isort==5.12.0
