@@ -4,7 +4,7 @@ bandit==1.7.5
 boltons==21.0.0
 bracex==2.3.post1
 build==0.10.0
-certifi==2023.7.22
+certifi==2025.4.26
 charset-normalizer==3.1.0
 click==8.1.4
 click-option-group==0.5.6
