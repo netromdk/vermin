@@ -46,7 +46,7 @@ rpds-py==0.8.10
 ruamel.yaml==0.17.35
 ruamel.yaml.clib==0.2.8
 semgrep==1.31.1
-setuptools==68.2.2
+setuptools==80.9.0
 six==1.16.0
 smmap==5.0.0
 stevedore==5.1.0
