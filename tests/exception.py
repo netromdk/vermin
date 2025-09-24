@@ -126,13 +126,13 @@ class VerminExceptionMemberTests(VerminTest):
 
   def test_JSONDecodeError_of_json(self):
     self.assertOnlyIn((3, 5), self.detect("from json import JSONDecodeError"))
-  
+
   def test_UnsupportedOperation_of_pathlib(self):
     self.assertOnlyIn((3, 13), self.detect("from pathlib import UnsupportedOperation"))
-  
+
   def test_ShutDown_of_queue(self):
     self.assertOnlyIn((3, 13), self.detect("from queue import ShutDown"))
-  
+
   def test_PatternError_of_re(self):
     self.assertOnlyIn((3, 13), self.detect("from re import PatternError"))
 

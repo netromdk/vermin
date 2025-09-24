@@ -54,10 +54,10 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_stop_of_range(self):
     self.assertOnlyIn((3, 3), self.detect("range.stop"))
-  
+
   def test__field_types_of_ast_AST(self):
     self.assertOnlyIn((3, 13), self.detect("from ast import AST\nAST._field_types"))
-  
+
   def test__align__of_ctypes_Structure(self):
     self.assertOnlyIn((3, 13), self.detect("from ctypes import Structure\nStructure._align_"))
 
@@ -89,13 +89,18 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn((3, 13), self.detect("from dis import Instruction\nInstruction.cache_info"))
 
   def test_skips_of_doctest_DocTestRunner(self):
-    self.assertOnlyIn((3, 13), self.detect("from doctest import DocTestRunner\nDocTestRunner.skips"))
+    self.assertOnlyIn((3, 13),
+                      self.detect("from doctest import DocTestRunner\nDocTestRunner.skips"))
 
   def test_skipped_of_doctest_DocTestRunner(self):
-    self.assertOnlyIn((3, 13), self.detect("from doctest import DocTestRunner\nDocTestRunner.skipped"))
+    self.assertOnlyIn((3, 13),
+                      self.detect("from doctest import DocTestRunner\nDocTestRunner.skipped"))
 
   def test_verify_generated_headers_of_email_policy_Policy(self):
-    self.assertOnlyIn((3, 13), self.detect("from email.policy import Policy\nPolicy.verify_generated_headers"))
+    self.assertOnlyIn((3, 13), self.detect("""
+from email.policy import Policy
+Policy.verify_generated_headers
+"""))
 
   def test_mode_of_lzma_LZMAFile(self):
     self.assertOnlyIn((3, 13), self.detect("from lzma import LZMAFile\nLZMAFile.mode"))
@@ -124,7 +129,7 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_TFD_TIMER_ABSTIME_of_os(self):
     self.assertOnlyIn((3, 13), self.detect("from os import TFD_TIMER_ABSTIME"))
-  
+
   def test_TFD_TIMER_CANCEL_ON_SET_of_os(self):
     self.assertOnlyIn((3, 13), self.detect("from os import TFD_TIMER_CANCEL_ON_SET"))
 
@@ -240,7 +245,10 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn(((2, 0), (3, 0)), self.detect("from sys import version_info"))
 
   def test_exc_type_str_of_traceback_TracebackException(self):
-    self.assertOnlyIn((3, 13), self.detect("from traceback import TracebackException\nTracebackException.exc_type_str"))
+    self.assertOnlyIn((3, 13), self.detect("""
+from traceback import TracebackException
+TracebackException.exc_type_str
+"""))
 
   def test_sentinel_of_multiprocessing_Process(self):
     self.assertOnlyIn((3, 3),

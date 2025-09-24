@@ -2541,11 +2541,11 @@ f.is_integer()
                       self.detect("from datetime import datetime\n"
                                   "datetime().strptime()"))
 
-    def test_clear_from_dbm_gdbm(self):
-      self.assertOnlyIn((3, 13), self.detect("from dbm import gdbm\ngdbm.clear()"))
+  def test_clear_from_dbm_gdbm(self):
+    self.assertOnlyIn((3, 13), self.detect("from dbm import gdbm\ngdbm.clear()"))
 
-    def test_clear_from_dbm_ndbm(self):
-      self.assertOnlyIn((3, 13), self.detect("from dbm import ndbm\ndbm.clear()"))
+  def test_clear_from_dbm_ndbm(self):
+    self.assertOnlyIn((3, 13), self.detect("from dbm import ndbm\ndbm.clear()"))
 
   def test_DocFileSuite_from_doctest(self):
     self.assertOnlyIn(((2, 4), (3, 0)), self.detect("import doctest\ndoctest.DocFileSuite()"))
