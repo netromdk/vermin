@@ -10,9 +10,11 @@ click==8.1.8
 click-option-group==0.5.6
 colorama==0.4.6
 defusedxml==0.7.1
-dill==0.3.9
+dill==0.3.6
+distlib==0.4.0
 docutils==0.20.1
 face==22.0.0
+filelock==3.19.1
 flake8==6.0.0
 gitdb==4.0.12
 GitPython==3.1.44
@@ -29,7 +31,7 @@ packaging==23.1
 pbr==5.11.1
 peewee==3.16.2
 pep517==0.13.1
-platformdirs==3.5.3
+platformdirs==3.9.1
 pycodestyle==2.10.0
 pyflakes==3.0.1
 Pygments==2.15.1
@@ -43,8 +45,8 @@ referencing==0.29.1
 requests==2.32.3
 rich==13.4.2
 rpds-py==0.8.10
-ruamel.yaml==0.17.35
-ruamel.yaml.clib==0.2.12
+ruamel.yaml==0.17.40
+ruamel.yaml.clib==0.2.14
 semgrep==1.31.1
 setuptools==80.9.0
 six==1.16.0
@@ -55,8 +57,9 @@ tomli==2.0.1
 tomlkit==0.11.8
 trove-classifiers==2023.5.24
 typing_extensions==4.7.1
-ujson==5.8.0
+ujson==5.11.0
 urllib3==1.26.20
+virtualenv==20.34.0
 vulture==2.7
 wcmatch==8.4.1
 wrapt==1.15.0
