@@ -2,6 +2,7 @@ import sys
 import os
 from collections import deque
 
+from .formats import ParsableFormat
 from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS
 
 class SourceState:
@@ -10,7 +11,7 @@ class SourceState:
   def __init__(self, config, path=None, source=None):
     assert config is not None, "Config must be specified!"
     self.config = config
-    self.parsable = config.format().name() == "parsable"
+    self.parsable = isinstance(config.format(), ParsableFormat)
 
     self.path = "<unknown>" if path is None else path
 

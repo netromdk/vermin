@@ -4,8 +4,8 @@ from .format import Format
 from ..utility import version_strings, sort_line_column_parsable
 
 class ParsableFormat(Format):
-  def __init__(self):
-    super().__init__("parsable")
+  def __init__(self, name="parsable"):
+    super().__init__(name)
 
   def set_config(self, config):
     config.set_verbose(max(3, config.verbose()))

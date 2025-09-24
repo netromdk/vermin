@@ -1,6 +1,7 @@
 from .format import Format
 from .default_format import DefaultFormat
 from .parsable_format import ParsableFormat
+from .github_format import GitHubFormat
 from ..utility import format_title_descs
 
 FORMATS = (
@@ -11,7 +12,13 @@ FORMATS = (
     "minimum py2 and py3 versions. Minimum verbosity level is set to",
     "3 but can be increased. Tips, hints, incompatible versions, and",
     "`--versions` are disabled. File paths containing ':' are ignored."
-  ])
+  ]),
+  ("github", [
+    "Same as parsable format, but each result is formatted as a GitHub",
+    "Actions annotation. This is intended to be used for checking"
+    "violations in a GitHub Actions pipeline, with annotations marked"
+    "as errors."
+  ]),
 )
 
 def names():
@@ -22,6 +29,8 @@ def from_name(name):
     return DefaultFormat()
   if name == "parsable":
     return ParsableFormat()
+  if name == "github":
+    return GitHubFormat()
   return None
 
 def help_str(indent=0):
@@ -31,6 +40,7 @@ __all__ = [
   "DefaultFormat",
   "Format",
   "ParsableFormat",
+  "GitHubFormat",
   "from_name",
   "help_str",
   "names",

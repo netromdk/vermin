@@ -564,6 +564,10 @@ class SourceVisitor(ast.NodeVisitor):
       text += "\n"
     return text
 
+  def add_error_message(self, line):
+    """Manually add an error message line to the output text."""
+    self.__s.output_text.append(line)
+
   def set_no_lines(self, lines):
     self.__no_lines = lines
 

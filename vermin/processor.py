@@ -103,11 +103,12 @@ class Processor:
     res = ProcessResult(path)
 
     source = None
+    err_msg = None
     try:
       with open(path, mode="rb") as fp:
         source = fp.read()
         parser = Parser(source, path)
-        (res.node, res.mins, res.novermin) = parser.detect(config)
+        (res.node, res.mins, res.novermin, err_msg) = parser.detect(config)
     except KeyboardInterrupt:  # pragma: no cover
       return res
 
@@ -120,29 +121,32 @@ class Processor:
       return None
 
     except Exception as ex:  # pragma: no cover
-      res.text = "{}: {}, {}".format(path, type(ex), ex)
+      res.text = config.format().format_output_line("{}, {}".format(type(ex), ex), path=path)
       res.mins = [(0, 0), (0, 0)]
-
-    if res.node is None:
-      return res
 
     visitor = SourceVisitor(config, path, source)
     visitor.set_no_lines(res.novermin)
+    if err_msg is not None:
+      visitor.add_error_message(err_msg)
+
+    # node is None if there was a syntax error; we don't process the AST, but we keep all other
+    # logic so that it logs the syntax exception in the appropriate format
+    if res.node is not None:
+      try:
+        visitor.tour(res.node)
+      except KeyboardInterrupt:  # pragma: no cover
+        return res
 
     try:
-      visitor.tour(res.node)
-    except KeyboardInterrupt:  # pragma: no cover
-      return res
-
-    try:
-      res.mins = visitor.minimum_versions()
+      if res.node is not None:
+        res.mins = visitor.minimum_versions()
+        for m in visitor.modules():
+          if Backports.is_backport(m):
+            res.bps.add(m)
+        res.maybe_annotations = visitor.maybe_annotations()
       res.text = visitor.output_text()
-      for m in visitor.modules():
-        if Backports.is_backport(m):
-          res.bps.add(m)
-      res.maybe_annotations = visitor.maybe_annotations()
     except InvalidVersionException as ex:
       res.mins = None
-      res.text = str(ex)
+      res.text = config.format().format_output_line(str(ex), path=path)
 
     return res

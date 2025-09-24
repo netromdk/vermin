@@ -3,6 +3,7 @@ from os.path import abspath
 from copy import deepcopy
 
 from .config import Config
+from .formats import ParsableFormat
 from .printing import nprint, vprint
 from .detection import detect_paths
 from .processor import Processor
@@ -22,7 +23,7 @@ def main():
     sys.exit(args["code"])  # pragma: no cover
 
   paths = args["paths"]
-  parsable = config.format().name() == "parsable"
+  parsable = isinstance(config.format(), ParsableFormat)
 
   # Detect paths, remove duplicates, and sort for deterministic results.
   if not parsable:

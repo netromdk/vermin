@@ -337,22 +337,23 @@ aaa
       self.assertContainsDict({"code": 0}, self.parse_args(["--format", fmt]))
       self.assertEqual(fmt, self.config.format().name())
 
-    # Parsable verbose level 3, no tips, ignore incompatible versions, no `--versions`.
-    for args in (["--format", "parsable"], ["--format", "parsable", "--verbose"],
-                 ["--format", "parsable", "--versions"]):
+    for fmt in ("parsable", "github"):
+      # Parsable verbose level 3, no tips, ignore incompatible versions, no `--versions`.
+      for args in (["--format", fmt], ["--format", fmt, "--verbose"],
+                  ["--format", fmt, "--versions"]):
+        self.config.reset()
+        self.assertContainsDict({"code": 0, "versions": False}, self.parse_args(args))
+        self.assertEqual(3, self.config.verbose())
+        self.assertTrue(self.config.ignore_incomp())
+        self.assertFalse(self.config.show_tips())
+
+      # Verbosity can be higher for parsable
       self.config.reset()
-      self.assertContainsDict({"code": 0, "versions": False}, self.parse_args(args))
-      self.assertEqual(3, self.config.verbose())
+      self.assertContainsDict({"code": 0, "versions": False},
+                              self.parse_args(["--format", fmt, "-vvvv"]))
+      self.assertEqual(4, self.config.verbose())
       self.assertTrue(self.config.ignore_incomp())
       self.assertFalse(self.config.show_tips())
-
-    # Verbosity can be higher for parsable.
-    self.config.reset()
-    self.assertContainsDict({"code": 0, "versions": False},
-                            self.parse_args(["--format", "parsable", "-vvvv"]))
-    self.assertEqual(4, self.config.verbose())
-    self.assertTrue(self.config.ignore_incomp())
-    self.assertFalse(self.config.show_tips())
 
   def test_pessimistic(self):
     self.assertFalse(self.config.pessimistic())
