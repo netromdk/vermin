@@ -2545,7 +2545,7 @@ f.is_integer()
     self.assertOnlyIn((3, 13), self.detect("from dbm import gdbm\ngdbm.clear()"))
 
   def test_clear_from_dbm_ndbm(self):
-    self.assertOnlyIn((3, 13), self.detect("from dbm import ndbm\ndbm.clear()"))
+    self.assertOnlyIn((3, 13), self.detect("from dbm import ndbm\nndbm.clear()"))
 
   def test_DocFileSuite_from_doctest(self):
     self.assertOnlyIn(((2, 4), (3, 0)), self.detect("import doctest\ndoctest.DocFileSuite()"))
