@@ -11,7 +11,7 @@ from vermin import combine_versions, InvalidVersionException, detect_paths,\
   detect_paths_incremental, probably_python_file, Processor, reverse_range, dotted_name,\
   remove_whitespace, main, sort_line_column, sort_line_column_parsable, version_strings,\
   format_title_descs, DEFAULT_PROCESSES
-from vermin.formats import ParsableFormat
+from vermin.formats import ParsableFormat, GitHubFormat
 from vermin.utility import compare_requirements
 
 from .testutils import VerminTest, current_version, ScopedTemporaryFile, detect, visit, touch, \
@@ -87,6 +87,37 @@ test.py:6:9:2.7:3.2:'argparse' module
       with self.assertRaises(AssertionError):
         self.visit(src, path="te\nst.py")
 
+  def test_visit_output_text_has_correct_lines_github(self):
+    self.config.set_format(GitHubFormat())
+
+    src = """a = 1
+import abc
+b = 2
+if 1:
+  import zoneinfo
+  import argparse
+c = 3
+"""
+
+    visitor = self.visit(src)
+    self.assertEqual(visitor.output_text(), """::error file=<unknown>,line=2,col=7,title=Requires Python 2.6, 3.0::'abc' module
+::error file=<unknown>,line=5,col=9,title=Requires Python !2, 3.9::'zoneinfo' module
+::error file=<unknown>,line=6,col=9,title=Requires Python 2.7, 3.2::'argparse' module
+""")
+
+    visitor = self.visit(src, path="test.py")
+    self.assertEqual(visitor.output_text(), """::error file=test.py,line=2,col=7,title=Requires Python 2.6, 3.0::'abc' module
+::error file=test.py,line=5,col=9,title=Requires Python !2, 3.9::'zoneinfo' module
+::error file=test.py,line=6,col=9,title=Requires Python 2.7, 3.2::'argparse' module
+""")
+
+    # subclasses ParsableFormat, so should also reject these paths
+    if not sys.platform.startswith("win32"):
+      with self.assertRaises(AssertionError):
+        self.visit(src, path="te:st.py")
+      with self.assertRaises(AssertionError):
+        self.visit(src, path="te\nst.py")
+
   def test_format(self):
     # Empty field name requires 2.7+
     visitor = self.visit("print('{}'.format(42))")
@@ -154,7 +185,7 @@ test.py:6:9:2.7:3.2:'argparse' module
 
   def test_detect_paths(self):
     paths = detect_paths([abspath("vermin")], config=self.config)
-    self.assertEqual(19, len(paths))
+    self.assertEqual(20, len(paths))
 
   def test_detect_hidden_paths(self):
     tmp_fld = mkdtemp()
@@ -804,7 +835,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     fp.close()
     proc_res = Processor.process_individual((fp.path(), self.config))
     self.assertEqual(proc_res.mins, [(0, 0), (0, 0)])
-    self.assertEmpty(proc_res.text)
+    self.assertTrue(proc_res.text.startswith("error: "))
     self.assertEmpty(proc_res.bps)
 
   @VerminTest.skipUnlessVersion(3, 12)
@@ -815,7 +846,7 @@ test.py:6:9:2.7:3.2:'argparse' module
     fp.close()
     proc_res = Processor.process_individual((fp.path(), self.config))
     self.assertEqual(proc_res.mins, [(0, 0), (0, 0)])
-    self.assertEmpty(proc_res.text)
+    self.assertTrue(proc_res.text.startswith("error: "))
     self.assertEmpty(proc_res.bps)
 
   def test_process_invalid_versions(self):

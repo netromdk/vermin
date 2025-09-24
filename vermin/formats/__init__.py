@@ -15,9 +15,9 @@ FORMATS = (
   ]),
   ("github", [
     "Same as parsable format, but each result is formatted as a GitHub",
-    "Actions annotation. This is intended to be used for checking"
-    "violations in a GitHub Actions pipeline, with annotations marked"
-    "as errors."
+    "Actions annotation. Minimum version messages are annotated as",
+    "errors, and all other verbose messages as notices. The intent is"
+    "that it be used for linting in a GitHub Actions pipeline."
   ]),
 )
 
