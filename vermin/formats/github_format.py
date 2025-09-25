@@ -1,6 +1,15 @@
 from ..utility import bounded_str_hash, version_strings
 from .parsable_format import ParsableFormat
 
+def escape(value):
+    """Escape special characters in GitHub Actions annotations."""
+    return (value
+        .replace('%', '%25') # must be first
+        .replace(',', '%2C')
+        .replace(':', '%3A')
+        .replace('\n', '%0A')
+        .replace('\r', '%0D')
+    )
 
 class GitHubFormat(ParsableFormat):
     """Variant of ParsableFormat which outputs as Github Actions annotations."""
@@ -19,7 +28,7 @@ class GitHubFormat(ParsableFormat):
         title = "Python version requirement analysis"
         level = "error"
         if versions is None:
-            # indicates verbosity 4+
+            # missing versions indicates verbosity 4+
             level = "notice"
         else:
             versions = version_strings(versions)
@@ -32,16 +41,14 @@ class GitHubFormat(ParsableFormat):
                 msg = "Minimum Python version required across all files: {}".format(versions)
             else:
                 msg = "Minimum Python version required for this file: {}".format(versions)
-        else:
-            msg = msg.replace("\n", "\\n")
         vals = {
             "file": path,
             "line": line,
             "col": col,
             "title": title,
         }
-        args = ",".join("{}={}".format(k, v) for k, v in vals.items() if v is not None)
-        out = "::{} {}::{}".format(level, args, msg)
+        args = ",".join("{}={}".format(k, escape(v)) for k, v in vals.items() if v is not None)
+        out = "::{} {}::{}".format(level, args, escape(msg))
 
         # pre-calculate sort order
         order = (line or 0) + (float(col or 0) + bounded_str_hash(title + "\n" + msg)) / 1000
