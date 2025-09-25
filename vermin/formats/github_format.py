@@ -3,7 +3,8 @@ from .parsable_format import ParsableFormat
 
 def escape(value):
     """Escape special characters in GitHub Actions annotations."""
-    return (value
+    return (
+        str(value)
         .replace('%', '%25') # must be first
         .replace(',', '%2C')
         .replace(':', '%3A')
