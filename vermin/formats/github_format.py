@@ -1,15 +1,16 @@
+import re
+from pathlib import Path
+
 from ..utility import bounded_str_hash, version_strings
 from .parsable_format import ParsableFormat
 
 def escape(value):
-    """Escape special characters in GitHub Actions annotations."""
+    """Escape special characters in GitHub Actions annotations. Not to be used for messages."""
     return (
         str(value)
         .replace('%', '%25') # must be first
         .replace(',', '%2C')
         .replace(':', '%3A')
-        .replace('\n', '%0A')
-        .replace('\r', '%0D')
     )
 
 class GitHubFormat(ParsableFormat):
@@ -23,6 +24,8 @@ class GitHubFormat(ParsableFormat):
 		so caching their order uses minimal extra memory and avoids a fragile parse of the already
 		serialized data to extract its sort order
 		"""
+        self.cwd = Path.cwd()
+        """current working directory, to relativize paths"""
 
     def format_output_line(self, msg, path=None, line=None, col=None, versions=None, plural=None):
         # default title is for generic analysis errors/notices
@@ -42,6 +45,16 @@ class GitHubFormat(ParsableFormat):
                 msg = "Minimum Python version required across all files: {}".format(versions)
             else:
                 msg = "Minimum Python version required for this file: {}".format(versions)
+        # github actions can't display multiline messages
+        if msg is not None:
+            msg = re.sub(r'(\r\n|\r|\n)', ' | ', str(msg))
+        # relativize path so github can link to it in a PR
+        if path is not None:
+            try:
+                path = Path(path).resolve()
+                path = path.relative_to(self.cwd)
+            except ValueError:
+                pass
         vals = {
             "file": path,
             "line": line,
@@ -49,7 +62,7 @@ class GitHubFormat(ParsableFormat):
             "title": title,
         }
         args = ",".join("{}={}".format(k, escape(v)) for k, v in vals.items() if v is not None)
-        out = "::{} {}::{}".format(level, args, escape(msg))
+        out = "::{} {}::{}".format(level, args, msg)
 
         # pre-calculate sort order
         order = (line or 0) + (float(col or 0) + bounded_str_hash(title + "\n" + msg)) / 1000
