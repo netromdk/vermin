@@ -1,5 +1,5 @@
+import os
 import re
-from pathlib import Path
 
 from ..utility import bounded_str_hash, version_strings
 from .parsable_format import ParsableFormat
@@ -21,10 +21,10 @@ class GitHubFormat(ParsableFormat):
         self.order = {}
         """cache sort order of lines; SourceVisitor maintains an internal list of outputs from
 		format_output_line; these are later dedulicated in a set, then passed to sort_output_lines;
-		so caching their order uses minimal extra memory and avoids a fragile parse of the already
+        so caching their order uses minimal extra memory and avoids a fragile parse of the already
 		serialized data to extract its sort order
 		"""
-        self.cwd = Path.cwd()
+        self.cwd = os.getcwd()
         """current working directory, to relativize paths"""
 
     def format_output_line(self, msg, path=None, line=None, col=None, versions=None, plural=None):
@@ -51,8 +51,8 @@ class GitHubFormat(ParsableFormat):
         # relativize path so github can link to it in a PR
         if path is not None:
             try:
-                path = Path(path).resolve()
-                path = path.relative_to(self.cwd)
+                path = os.path.abspath(path)
+                path = os.path.relpath(path, self.cwd)
             except ValueError:
                 pass
         vals = {
