@@ -73,10 +73,11 @@ class Parser:
       return (node, [], novermin, None)
     except SyntaxError as err:
       def format_error(msg, versions):
-        """Generate a __vvprint message, as would be deone by the SourceVisitor."""
+        """Generate an error message, as would be done by the SourceVisitor."""
         nonlocal err
-        return config.format().format_output_line(
-          msg, path=err.filename, line=err.lineno, col=err.offset, versions=versions)
+        return config.format()\
+          .format_output_line(msg, path=err.filename, line=err.lineno, col=err.offset,
+                              versions=versions, violation=True)
 
       text = err.text.strip() if err.text is not None else ""
       lmsg = err.msg.lower()  # pylint: disable=no-member

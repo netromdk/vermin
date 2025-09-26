@@ -17,7 +17,8 @@ class ParsableFormat(Format):
     """Never skip."""
     return False
 
-  def format_output_line(self, msg, path=None, line=None, col=None, versions=None, plural=None):
+  def format_output_line(self, msg, path=None, line=None, col=None,
+                         versions=None, plural=None, violation=False):
     vers = version_strings(versions, ":") if versions is not None else ":"
     if msg is None:
       msg = ""
@@ -31,7 +32,8 @@ class ParsableFormat(Format):
     sys.stdout.write(proc_res.text)
 
     # Then output summary of the file with no line/col numbers and no description.
-    summary = self.format_output_line(msg=None, path=proc_res.path, versions=proc_res.mins)
+    summary = self.format_output_line(msg=None, path=proc_res.path, versions=proc_res.mins,
+                                      violation=proc_res.violation)
     sys.stdout.write("{}\n".format(summary))
 
   def sort_output_lines(self, lines):

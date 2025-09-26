@@ -8,12 +8,13 @@ from .backports import Backports
 
 class ProcessResult:
   def __init__(self, path):
-    self.path = path       # Path of processed file.
-    self.node = None       # AST root node.
-    self.mins = None       # Minimum versions detected.
-    self.text = ""         # Output or exception text.
-    self.novermin = set()  # novermin/novm lines.
-    self.bps = set()       # Potential backport modules used.
+    self.path = path        # Path of processed file.
+    self.node = None        # AST root node.
+    self.mins = None        # Minimum versions detected.
+    self.text = ""          # Output or exception text.
+    self.novermin = set()   # novermin/novm lines.
+    self.bps = set()        # Potential backport modules used.
+    self.violation = False  # Whether a violation was detected.
 
     # Potential generic/literal annotations used.
     self.maybe_annotations = False
@@ -121,8 +122,10 @@ class Processor:
       return None
 
     except Exception as ex:  # pragma: no cover
-      res.text = config.format().format_output_line("{}, {}".format(type(ex), ex), path=path)
       res.mins = [(0, 0), (0, 0)]
+      res.violation = True
+      res.text = config.format()\
+        .format_output_line("{}, {}".format(type(ex), ex), path=path, violation=True)
 
     visitor = SourceVisitor(config, path, source)
     visitor.set_no_lines(res.novermin)
@@ -144,9 +147,11 @@ class Processor:
           if Backports.is_backport(m):
             res.bps.add(m)
         res.maybe_annotations = visitor.maybe_annotations()
+      res.violation = visitor.found_violation()
       res.text = visitor.output_text()
     except InvalidVersionException as ex:
       res.mins = None
-      res.text = config.format().format_output_line(str(ex), path=path)
+      res.violation = True
+      res.text = config.format().format_output_line(str(ex), path=path, violation=True)
 
     return res

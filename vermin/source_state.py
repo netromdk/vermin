@@ -33,6 +33,9 @@ class SourceState:
     # List of lines of output text.
     self.output_text = []
 
+    # Whether violations were found while visiting
+    self.found_violation = False
+
     # Line/column of entities for vvv-printing.
     self.line_col_entities = {}
 

@@ -27,14 +27,12 @@ class GitHubFormat(ParsableFormat):
     self.cwd = os.getcwd()
     """current working directory, to relativize paths"""
 
-  def format_output_line(self, msg, path=None, line=None, col=None, versions=None, plural=None):
+  def format_output_line(self, msg, path=None, line=None, col=None,
+                         versions=None, plural=None, violation=False):
     # default title is for generic analysis errors/notices
     title = "Python version requirement analysis"
-    level = "error"
-    if versions is None:
-      # missing versions indicates verbosity 4+
-      level = "notice"
-    else:
+    level = "error" if violation else "notice"
+    if versions is not None:
       versions = version_strings(versions)
       title = "Requires Python {}".format(versions)
     if msg is None:
@@ -42,8 +40,6 @@ class GitHubFormat(ParsableFormat):
         msg = "user-defined symbols being ignored"
       # msg is None when providing a summary
       elif path is None:
-        # minimum version across all files is always reported, regardless of lint errors
-        level = "notice"
         msg = "Minimum Python version required across all files: {}".format(versions)
       else:
         msg = "Minimum Python version required for this file: {}".format(versions)

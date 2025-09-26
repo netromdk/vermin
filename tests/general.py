@@ -89,6 +89,10 @@ test.py:6:9:2.7:3.2:'argparse' module
 
   def test_visit_output_text_has_correct_lines_github(self):
     self.config.set_format(GitHubFormat())
+    # error level for target violations only
+    self.config.add_target((3, 4), False)
+
+    # example cwd
 
     src = """a = 1
 import abc
@@ -99,19 +103,13 @@ if 1:
 c = 3
 """
 
-    visitor = self.visit(src)
-    self.assertEqual(visitor.output_text(), (
-      """::error file=<unknown>,line=2,col=7,title=Requires Python 2.6%2C 3.0::'abc' module
-::error file=<unknown>,line=5,col=9,title=Requires Python !2%2C 3.9::'zoneinfo' module
-::error file=<unknown>,line=6,col=9,title=Requires Python 2.7%2C 3.2::'argparse' module
-"""))
-
-    visitor = self.visit(src, path="test.py")
-    self.assertEqual(visitor.output_text(), (
-      """::error file=test.py,line=2,col=7,title=Requires Python 2.6%2C 3.0::'abc' module
-::error file=test.py,line=5,col=9,title=Requires Python !2%2C 3.9::'zoneinfo' module
-::error file=test.py,line=6,col=9,title=Requires Python 2.7%2C 3.2::'argparse' module
-"""))
+    for path, path_str in (None, "<unknown>"), ("test.py", "test.py"):
+      visitor = self.visit(src, path=path)
+      self.assertEqual(visitor.output_text(), (
+        """::notice file={path},line=2,col=7,title=Requires Python 2.6%2C 3.0::'abc' module
+::error file={path},line=5,col=9,title=Requires Python !2%2C 3.9::'zoneinfo' module
+::notice file={path},line=6,col=9,title=Requires Python 2.7%2C 3.2::'argparse' module
+""".format(path=path_str)))
 
     # subclasses ParsableFormat, so should also reject these paths
     if not sys.platform.startswith("win32"):

@@ -121,8 +121,19 @@ def main():
       if len(reqs) > 0:
         nprint("", config)
 
+  # determine if any targets were unmet
+  unmet_targets = False
+  targets = config.targets()
+  if len(targets) > 0:
+    # For violations mode, if all findings are inconclusive, like empty files or no rules triggered,
+    # don't fail wrt. targets.
+    all_inconclusive = config.only_show_violations() and len(reqs) > 0 and \
+      all(req == (0, 0) for req in reqs)
+    unmet_targets = not all_inconclusive and not compare_requirements(reqs, targets)
+
   if parsable:  # pragma: no cover
-    print(config.format().format_output_line(msg=None, path=None, versions=mins))
+    print(config.format()
+          .format_output_line(msg=None, path=None, versions=mins, violation=unmet_targets))
   elif len(reqs) > 0:
     nprint("Minimum required versions: {}".format(version_strings(reqs)), config)
     if any(req == (0, 0) for req in reqs):
@@ -142,16 +153,10 @@ def main():
   if args["versions"] and len(unique_versions) > 0:
     nprint("Version range:             {}".format(version_strings(unique_versions)), config)
 
-  targets = config.targets()
-  if len(targets) > 0:
-    # For violations mode, if all findings are inconclusive, like empty files or no rules triggered,
-    # don't fail wrt. targets.
-    all_inconclusive = config.only_show_violations() and len(reqs) > 0 and \
-      all(req == (0, 0) for req in reqs)
-    if not all_inconclusive and not compare_requirements(reqs, targets):
-      if not parsable:
-        vers = ["{}{}".format(dotted_name(t), "-" if not e else "") for (e, t) in targets]
-        nprint("Target versions not met:   {}".format(version_strings(vers)), config)
-      sys.exit(1)
+  if unmet_targets:
+    if not parsable:
+      vers = ["{}{}".format(dotted_name(t), "-" if not e else "") for (e, t) in targets]
+      nprint("Target versions not met:   {}".format(version_strings(vers)), config)
+    sys.exit(1)
 
   sys.exit(0)

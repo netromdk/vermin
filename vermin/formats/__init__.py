@@ -6,6 +6,7 @@ from ..utility import format_title_descs
 
 FORMATS = (
   ("default", ["Default formatting."]),
+  ("colored", ["Same as default, but prints with ANSI styling."]),
   ("parsable", [
     "Each result is on form 'file:line:column:py2:py3:feature'. The",
     "last line has no path or line/column numbers and contains the",
@@ -27,6 +28,8 @@ def names():
 def from_name(name):
   if name == "default":
     return DefaultFormat()
+  if name == "colored":
+    return DefaultFormat(colored=True)
   if name == "parsable":
     return ParsableFormat()
   if name == "github":

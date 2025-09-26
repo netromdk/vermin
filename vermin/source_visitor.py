@@ -7,7 +7,8 @@ from .rules import STRFTIME_REQS, BYTES_REQS, ARRAY_TYPECODE_REQS, CODECS_ERROR_
   CODECS_ERRORS_INDICES, CODECS_ENCODINGS, CODECS_ENCODINGS_INDICES,\
   BUILTIN_GENERIC_ANNOTATION_TYPES, DICT_UNION_SUPPORTED_TYPES, DICT_UNION_MERGE_SUPPORTED_TYPES,\
   DECORATOR_USER_FUNCTIONS
-from .utility import dotted_name, reverse_range, combine_versions, remove_whitespace
+from .utility import dotted_name, reverse_range, combine_versions, compare_requirements,\
+  remove_whitespace
 
 STRFTIME_DIRECTIVE_REGEX = re.compile(r"%(?:[-\.\d#\s\+])*(\w)")
 BYTES_DIRECTIVE_REGEX = STRFTIME_DIRECTIVE_REGEX
@@ -281,37 +282,43 @@ class SourceVisitor(ast.NodeVisitor):
   def except_star(self):
     return self.__s.except_star
 
-  def __violates_target_versions(self, versions):
-    # If only violations isn't turned on then fake violations because it means it will show the
-    # rule.
-    if versions is None or not self.__s.config.only_show_violations():
-      return True
+  def __is_violation(self, versions):
+    """Check if versions violate targets. Versions being None indicates a verbose message, and
+    version violations are not checked.
+    """
+    # versions none indicates verbose message, not that no compatible versions found
+    if versions is None:
+      return False
+    # compare_requirements considers violation if no targets, which we don't want
+    targets = self.__s.config.targets()
+    if not targets:
+      return False
+    # exactness only relevant after performing a min-reduction across all found requirements
+    violation = not compare_requirements(versions, targets, ignore_exact=True)
+    if violation:
+      self.__s.found_violation = True
+    return violation
 
-    targets = [t for (e, t) in self.__s.config.targets()]
-    if len(targets) == 1:
-      if targets[0][0] < 3:
-        targets.append(None)
-      else:
-        targets = [None, targets[0]]
+  def found_violation(self):
+    """Whether any violations were found during the visit."""
+    return self.__s.found_violation
 
-    for i in (0, 1):
-      if targets[i] is not None and (versions[i] is None or versions[i] > targets[i]):
-        return True
-    return False
+  def __show_analysis(self, violation):
+    """Whether to show analysis results. We only show violations in show-only-violations mode."""
+    return violation or not self.__s.config.only_show_violations()
 
   def __add_versions_entity(self, mins, versions, info=None, vvprint=False, entity=None,
                             plural=None):
-    # Whether to show verbose print/version info. If there are violations in show-only-violations
-    # mode, then show results. Otherwise, if it isn't that mode, it will fake being "violated" to
-    # ensure the rules are shown.
-    show = self.__violates_target_versions(versions)
+    # Whether to show verbose print/version info
+    violation = self.__is_violation(versions)
+    show = self.__show_analysis(violation)
     if show and info is not None:
       if versions in self.__s.info_versions:
         self.__s.info_versions[versions].append(info)
       else:
         self.__s.info_versions[versions] = [info]
       if vvprint:
-        self.__vvprint(info, entity=entity, versions=versions, plural=plural)
+        self.__vvprint(info, entity=entity, versions=versions, plural=plural, violation=violation)
     return combine_versions(mins, versions, self.__s.config, self.__s.info_versions)
 
   def minimum_versions(self):
@@ -566,6 +573,8 @@ class SourceVisitor(ast.NodeVisitor):
 
   def add_error_message(self, line):
     """Manually add an error message line to the output text."""
+    # treat as a violation
+    self.__s.found_violation = True
     self.__s.output_text.append(line)
 
   def set_no_lines(self, lines):
@@ -579,10 +588,12 @@ class SourceVisitor(ast.NodeVisitor):
       self.__s.output_text.append(msg)
 
   # pragma: no cover
-  def __verbose_print(self, msg, level, entity=None, line=None, versions=None, plural=None):
-    # If there aren't any violations in show-only-violations mode, then return. Note that if it
-    # isn't that mode, it will fake being "violated" to ensure the rules are shown.
-    if not self.__violates_target_versions(versions):
+  def __verbose_print(self, msg, level, entity=None, line=None,
+                      versions=None, plural=None, violation=None):
+    """Violation bool is inferred if not provided."""
+    if violation is None:
+      violation = self.__is_violation(versions)
+    if not self.__show_analysis(violation):
       return
 
     fmt = self.__s.config.format()
@@ -602,18 +613,21 @@ class SourceVisitor(ast.NodeVisitor):
     elif line is None and config_level > 2:
       line = self.__s.line
 
-    msg = fmt.format_output_line(msg, self.__s.path, line, col, versions, plural)
+    msg = fmt.format_output_line(msg, self.__s.path, line, col, versions, plural, violation)
     self.__s.output_text.append(msg)
 
-  def __vvprint(self, msg, entity=None, line=None, versions=None, plural=None):  # pragma: no cover
-    self.__verbose_print(msg, 2, entity, line, versions, plural=plural)
+  def __vvprint(self, msg, entity=None, line=None,
+                versions=None, plural=None, violation=None):  # pragma: no cover
+    self.__verbose_print(msg, 2, entity, line, versions, plural=plural, violation=violation)
 
-  def __vvvprint(self, msg, entity=None, line=None, versions=None, plural=None):  # pragma: no cover
-    self.__verbose_print(msg, 3, entity, line, versions, plural=plural)
+  def __vvvprint(self, msg, entity=None, line=None,
+                 versions=None, plural=None, violation=None):  # pragma: no cover
+    self.__verbose_print(msg, 3, entity, line, versions, plural=plural, violation=violation)
 
   # pragma: no cover
-  def __vvvvprint(self, msg, entity=None, line=None, versions=None, plural=None):
-    self.__verbose_print(msg, 4, entity, line, versions, plural=plural)
+  def __vvvvprint(self, msg, entity=None, line=None,
+                  versions=None, plural=None, violation=None):
+    self.__verbose_print(msg, 4, entity, line, versions, plural=plural, violation=violation)
 
   def __add_module(self, module, line=None, col=None):
     if module in self.__s.user_defs:  # pragma: no cover
