@@ -33,5 +33,13 @@ else {
   coveralls debug --service=github-actions
 
   # Report coverage. Note that it requires COVERALLS_REPO_TOKEN to be set!
-  coveralls --service=github-actions
+  for ($i = 0; $i -lt 5; $i++) {
+    $result = coveralls --service=github-actions
+    $exitCode = $LASTEXITCODE
+    Write-Host "Coveralls exit code: $exitCode"
+    if ($exitCode -eq 0) {
+      break
+    }
+    Start-Sleep -Seconds 10
+  }
 }
