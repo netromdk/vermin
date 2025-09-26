@@ -4,10 +4,11 @@ name: "CodeQL"
 # required and otherwise it'll run two times: once for the PR and again when the accepted PR is
 # merged to master.
 on:
-  pull_request:
-    branches: [ master ]
-  schedule:
-    - cron: '34 2 * * 6'
+  workflow_dispatch: {}
+  # pull_request:
+  #   branches: [ master ]
+  # schedule:
+  #   - cron: '34 2 * * 6'
 
 permissions:
   contents: read

@@ -1,16 +1,16 @@
 name: Semgrep
 on:
   workflow_dispatch: {}
-  pull_request: {}
-  push:
-    branches:
-      - master
-      - dev
-    paths:
-      - .github/workflows/semgrep.yml
-  # Run every sunday at 3:12.
-  schedule:
-    - cron: '12 3 * * 6'
+  # pull_request: {}
+  # push:
+  #   branches:
+  #     - master
+  #     - dev
+  #   paths:
+  #     - .github/workflows/semgrep.yml
+  # # Run every sunday at 3:12.
+  # schedule:
+  #   - cron: '12 3 * * 6'
 jobs:
   semgrep:
     name: semgrep/ci

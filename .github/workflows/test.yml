@@ -3,11 +3,12 @@ name: Test
 # On all pushes to PRs or pushes to specific branches. Not on ALL pushes in general because it will
 # double if pushing to a PR.
 on:
-  pull_request:
-  push:
-    branches:
-      - 'master'
-      - 'dev'
+  workflow_dispatch: {}
+  # pull_request:
+  # push:
+  #   branches:
+  #     - 'master'
+  #     - 'dev'
 
 permissions:
   contents: read
