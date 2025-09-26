@@ -190,19 +190,32 @@ def parse_target(target):
 
   return (exact, elms)
 
-def compare_requirements(reqs, targets):
-  maj_to_req = {ver[0]: ver for ver in reqs}
-  maj_to_target = {ver[0]: (exact, ver) for (exact, ver) in targets}
-  common_major_versions = set(maj_to_req.keys()) & set(maj_to_target.keys())
-  if not common_major_versions:
+def compare_requirements(reqs, targets, ignore_exact=False):
+  """Check if requirements satisfy targets: A matching major version must be found for each target
+  If the target is exact, the requirement must match exactly. Otherwise the requirement must not be
+  greater. If there are no targets, False is returned.
+
+  :param reqs: iterable[tuple[major, minor] | None] | None
+  :param targets: list[list[exact, (major, minor)]], sorted by version
+  :param ignore_exact: if True, ignore exactness of targets, just checking if not greater
+  :returns: True if requirements satisfy targets, False otherwise
+  """
+  if not targets:
     return False
-  if set(maj_to_target.keys()) - common_major_versions:
-    return False  # target major version missing from the requirements
-  for maj in common_major_versions:
-    exact, target = maj_to_target[maj]
-    req = maj_to_req[maj]
-    if exact and target != req:
-      return False
-    if not exact and target < req:
-      return False
+  for exact, (tmaj, tmin) in targets:
+    exact &= not ignore_exact
+    # reqs is 1 or 2 elements when provided, so linear search is fastest
+    for req in reqs or ():
+      if req is not None:
+        rmaj, rmin = req
+        if rmaj == tmaj:
+          # target unsatisfied
+          if (rmin != tmin) if exact else (rmin > tmin):
+            return False
+          # target satisfied
+          break
+    # matching version not found
+    else:
+        return False
+  # all targets satisfied
   return True

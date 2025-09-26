@@ -4,9 +4,6 @@ import sys
 import re
 from tokenize import generate_tokens, COMMENT, NEWLINE, NL, STRING
 
-from .printing import vvprint
-from .utility import version_strings
-
 # 'type' identifier [type_params] "=" expression
 TYPE_ALIAS_STMT = re.compile(r"type\s+(\w+)\s+(\[.+?\]\s+)?=\s+(.+)")
 
@@ -73,34 +70,34 @@ class Parser:
     assert config is not None
     try:
       (node, novermin) = self.parse(config.parse_comments())
-      return (node, [], novermin)
+      return (node, [], novermin, None)
     except SyntaxError as err:
+      def format_error(msg, versions):
+        """Generate an error message, as would be done by the SourceVisitor."""
+        nonlocal err
+        return config.format()\
+          .format_output_line(msg, path=err.filename, line=err.lineno, col=err.offset,
+                              versions=versions, violation=True)
+
       text = err.text.strip() if err.text is not None else ""
       lmsg = err.msg.lower()  # pylint: disable=no-member
-      parsable = config.format().name() == "parsable"
-      if parsable:  # pragma: no cover
-        text = text.replace("\n", "\\n")
 
       # `print expr` is a Python 2 construct, in v3 it's `print(expr)`.
       # NOTE: This is only triggered when running a python 3 on v2 code!
       if lmsg.find("missing parentheses in call to 'print'") != -1:
-        versions = "2.0:!3:" if parsable else ""
-        vvprint("{}:{}:{}:{}info: `{}` requires 2.0".
-                format(err.filename, err.lineno, err.offset, versions, text), config)
-        return (None, [(2, 0), None], set())
+        msg = "info: `{}` requires 2.0".format(text)
+        versions = [(2, 0), None]
+        return (None, versions, set(), format_error(msg, versions))
 
       # Type alias statements.
       # NOTE: This is only triggered with Python 3.11 or older.
       if lmsg == "invalid syntax" and TYPE_ALIAS_STMT.match(text) is not None:
-        versions = "!2:3.12:" if parsable else ""
-        vvprint("{}:{}:{}:{}info: type alias statement `{}` requires !2, 3.12".
-                format(err.filename, err.lineno, err.offset, versions, text), config)
-        return (None, [None, (3, 12)], set())
+        msg = "info: type alias statement `{}` requires !2, 3.12".format(text)
+        versions = [None, (3, 12)]
+        return (None, versions, set(), format_error(msg, versions))
 
       min_versions = [(0, 0), (0, 0)]
       if config.pessimistic():
         min_versions[sys.version_info.major - 2] = None
-      versions = version_strings(min_versions, separator=":") + ":" if parsable else ""
-      vvprint("{}:{}:{}:{}error: {}: {}".
-              format(err.filename, err.lineno, err.offset, versions, err.msg, text), config)
-    return (None, min_versions, set())
+      msg = "error: {}: {}".format(err.msg, text)
+      return (None, min_versions, set(), format_error(msg, min_versions))

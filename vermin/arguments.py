@@ -4,6 +4,7 @@ import os
 from .constants import VERSION, DEFAULT_PROCESSES, CONFIG_FILE_NAMES, PROJECT_BOUNDARIES
 from .backports import Backports
 from .features import Features
+from .formats import ParsableFormat
 from .config import Config
 from .printing import nprint
 from . import formats
@@ -415,7 +416,7 @@ class Arguments:
       print("Cannot use quiet and verbose modes together!")
       return {"code": 1}
 
-    parsable = config.format().name() == "parsable"
+    parsable = isinstance(config.format(), ParsableFormat)
     if parsable:
       versions = False
 

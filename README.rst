@@ -63,6 +63,7 @@ Table of Contents
 * `API (experimental) <#api-experimental>`__
 * `Analysis Exclusions <#analysis-exclusions>`__
 * `Parsable Output <#parsable-output>`__
+* `GitHub Output <#github-output>`__
 * `Contributing <#contributing>`__
 
 Usage
@@ -431,6 +432,19 @@ That means that the final result is ``!2`` and ``3.4``, which is shown by the la
 .. code-block::
 
   :::!2:3.4:
+
+GitHub Output
+=============
+
+The GitHub output format has the same output as `parsable <#parsable-output>`__, but the lines are
+formatted as GitHub Actions annotations. This let's you see minimum version violations as annotated
+errors directly from a GitHub pipeline.
+
+For annotations to appear in a pull request:
+
+- Vermin must be called from a GitHub Actions workflow triggered by a PR
+- Vermin must be called with current working directory as the root of the repository
+- Only violations found in files changed in the PR will show up
 
 Contributing
 ============

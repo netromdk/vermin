@@ -29,9 +29,12 @@ processing."""
     """Whether or not to skip outputting a line."""
 
   @abstractmethod
-  def format_output_line(self, msg, path=None, line=None, col=None, versions=None, plural=None):
+  def format_output_line(self, msg, path=None, line=None, col=None,
+                         versions=None, plural=None, violation=False):
     """Yield formatted output line given file name, line, column, text, minimum versions. The
-    plurality can be overridden but will otherwise be controlled by ending with 's' or not.
+    plurality can be overridden but will otherwise be controlled by ending with 's' or not. The
+    final violation flag indicates whether the message indicates a version target violation or an
+    exception during analysis.
     """
 
   @abstractmethod

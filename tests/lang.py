@@ -11,7 +11,7 @@ class VerminLanguageTests(VerminTest):
 
     source = "print 'hello'"
     parser = Parser(source)
-    (node, mins, _novermin) = parser.detect(self.config)
+    (node, mins, _novermin, _err_msg) = parser.detect(self.config)
     v = current_version()
     if v >= (3, 4):
       self.assertEqual(node, None)
