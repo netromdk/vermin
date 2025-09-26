@@ -20,7 +20,7 @@ class GitHubFormat(ParsableFormat):
     super().__init__(name)
     self.order = {}
     """cache sort order of lines; SourceVisitor maintains an internal list of outputs from
-    format_output_line; these are later dedulicated in a set, then passed to sort_output_lines;
+    format_output_line; these are later deduplicated in a set, then passed to sort_output_lines;
     so caching their order uses minimal extra memory and avoids a fragile parse of the already
     serialized data to extract its sort order
     """
@@ -42,6 +42,8 @@ class GitHubFormat(ParsableFormat):
         msg = "user-defined symbols being ignored"
       # msg is None when providing a summary
       elif path is None:
+        # minimum version across all files is always reported, regardless of lint errors
+        level = "notice"
         msg = "Minimum Python version required across all files: {}".format(versions)
       else:
         msg = "Minimum Python version required for this file: {}".format(versions)
