@@ -2,9 +2,8 @@ name: Snyk Schedule
 
 # Run every sunday at 2:14.
 on:
-  workflow_dispatch: {}
-  # schedule:
-  #   - cron: '14 2 * * 6'
+  schedule:
+    - cron: '14 2 * * 6'
 
 permissions:
   contents: read

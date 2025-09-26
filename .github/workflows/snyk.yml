@@ -2,9 +2,8 @@ name: Snyk
 
 # On all pushes/PRs.
 on:
-  workflow_dispatch: {}
-  # push:
-  # pull_request:
+  push:
+  pull_request:
 
 permissions:
   contents: read
