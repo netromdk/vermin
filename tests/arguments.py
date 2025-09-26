@@ -340,7 +340,7 @@ aaa
     for fmt in ("parsable", "github"):
       # Parsable verbose level 3, no tips, ignore incompatible versions, no `--versions`.
       for args in (["--format", fmt], ["--format", fmt, "--verbose"],
-                  ["--format", fmt, "--versions"]):
+                   ["--format", fmt, "--versions"]):
         self.config.reset()
         self.assertContainsDict({"code": 0, "versions": False}, self.parse_args(args))
         self.assertEqual(3, self.config.verbose())

@@ -100,16 +100,18 @@ c = 3
 """
 
     visitor = self.visit(src)
-    self.assertEqual(visitor.output_text(), """::error file=<unknown>,line=2,col=7,title=Requires Python 2.6%2C 3.0::'abc' module
+    self.assertEqual(visitor.output_text(), (
+      """::error file=<unknown>,line=2,col=7,title=Requires Python 2.6%2C 3.0::'abc' module
 ::error file=<unknown>,line=5,col=9,title=Requires Python !2%2C 3.9::'zoneinfo' module
 ::error file=<unknown>,line=6,col=9,title=Requires Python 2.7%2C 3.2::'argparse' module
-""")
+"""))
 
     visitor = self.visit(src, path="test.py")
-    self.assertEqual(visitor.output_text(), """::error file=test.py,line=2,col=7,title=Requires Python 2.6%2C 3.0::'abc' module
+    self.assertEqual(visitor.output_text(), (
+      """::error file=test.py,line=2,col=7,title=Requires Python 2.6%2C 3.0::'abc' module
 ::error file=test.py,line=5,col=9,title=Requires Python !2%2C 3.9::'zoneinfo' module
 ::error file=test.py,line=6,col=9,title=Requires Python 2.7%2C 3.2::'argparse' module
-""")
+"""))
 
     # subclasses ParsableFormat, so should also reject these paths
     if not sys.platform.startswith("win32"):

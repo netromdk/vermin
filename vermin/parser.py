@@ -4,9 +4,6 @@ import sys
 import re
 from tokenize import generate_tokens, COMMENT, NEWLINE, NL, STRING
 
-from .printing import vvprint
-from .utility import version_strings
-
 # 'type' identifier [type_params] "=" expression
 TYPE_ALIAS_STMT = re.compile(r"type\s+(\w+)\s+(\[.+?\]\s+)?=\s+(.+)")
 
