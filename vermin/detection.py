@@ -6,7 +6,7 @@ from multiprocessing import Pool, cpu_count
 from .parser import Parser
 from .source_visitor import SourceVisitor
 from .config import Config
-from .printing import nprint
+from .printing import nprint, vvprint
 
 NOT_PY_CODE_EXTS = {
   "3dm",
@@ -541,14 +541,18 @@ it, or the code calling it, must be done within it instead.""", config)
 def visit(source, config=None, path=None):
   """Analyze source code and yield source code visitor instance which can be queried for further
 information. A default config will be used if it isn't specified. If path is specified, it will
-occur in errors instead of the default '<unknown>'.
+occur in errors instead of the default '<unknown>'. If the source cannot be parsed, the minimum
+versions required to parse it will be returned instead of a visitor.
   """
   if config is None:
     config = Config()
 
   parser = Parser(source, path)
-  (node, mins, novermin) = parser.detect(config)
+  (node, mins, novermin, err_msg) = parser.detect(config)
+  # cannot parse; mins gives minimum version to successfully parse
   if node is None:
+    if err_msg is not None:
+      vvprint(err_msg, config)
     return mins
 
   visitor = SourceVisitor(config=config, path=path, source=source)
@@ -567,4 +571,5 @@ def detect(source, config=None, path=None):
   visitor = visit(source, config, path)
   if isinstance(visitor, SourceVisitor):
     return visitor.minimum_versions()
+  # cannot parse; mins gives minimum version to successfully parse
   return visitor
