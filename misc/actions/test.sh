@@ -28,5 +28,11 @@ else
   coveralls debug --service=github-actions
 
   # Note that it requires COVERALLS_REPO_TOKEN to be set!
-  coveralls --service=github-actions
+  for i in {1..5}; do
+    coveralls --service=github-actions
+    CODE=$?
+    echo "Coveralls exit code: $CODE"
+    if [ $CODE -eq 0 ]; then break; fi
+    sleep 10
+  done
 fi
