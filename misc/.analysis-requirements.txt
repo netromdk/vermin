@@ -42,7 +42,7 @@ pyroma==4.2
 python-lsp-jsonrpc==1.0.0
 PyYAML==6.0.2
 referencing==0.29.1
-requests==2.32.3
+requests==2.32.5
 rich==13.4.2
 rpds-py==0.8.10
 ruamel.yaml==0.17.40
