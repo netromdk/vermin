@@ -11,7 +11,7 @@ from vermin import combine_versions, InvalidVersionException, detect_paths,\
   detect_paths_incremental, probably_python_file, Processor, reverse_range, dotted_name,\
   remove_whitespace, main, sort_line_column, sort_line_column_parsable, version_strings,\
   format_title_descs, DEFAULT_PROCESSES
-from vermin.formats import ParsableFormat, GitHubFormat
+from vermin.formats import DefaultFormat, ParsableFormat, GitHubFormat
 from vermin.utility import compare_requirements
 
 from .testutils import VerminTest, current_version, ScopedTemporaryFile, detect, visit, touch, \
@@ -92,7 +92,9 @@ test.py:6:9:2.7:3.2:'argparse' module
     # error level for target violations only
     self.config.add_target((3, 4), False)
 
-    # example cwd
+    # path should be relativized to cwd
+    test_cwd_rel = os.path.join("sub", "test.py")
+    test_cwd_abs = os.path.join(os.path.abspath(os.getcwd()), test_cwd_rel)
 
     src = """a = 1
 import abc
@@ -103,7 +105,8 @@ if 1:
 c = 3
 """
 
-    for path, path_str in (None, "<unknown>"), ("test.py", "test.py"):
+    paths = (None, "<unknown>"), ("test.py", "test.py"), (test_cwd_abs, test_cwd_rel)
+    for path, path_str in paths:
       visitor = self.visit(src, path=path)
       self.assertEqual(visitor.output_text(), (
         """::notice file={path},line=2,col=7,title=Requires Python 2.6%2C 3.0::'abc' module
@@ -117,6 +120,29 @@ c = 3
         self.visit(src, path="te:st.py")
       with self.assertRaises(AssertionError):
         self.visit(src, path="te\nst.py")
+
+  def test_visit_output_text_has_correct_lines_colored(self):
+    self.config.set_format(DefaultFormat(colored=True))
+    self.config.set_verbose(3)
+    # error coloring for target violations only
+    self.config.add_target((3, 4), False)
+
+    # example cwd
+
+    src = """a = 1
+import abc
+b = 2
+if 1:
+  import zoneinfo
+  import argparse
+c = 3
+"""
+    visitor = self.visit(src, path="test.py")
+    self.assertEqual(visitor.output_text(), (
+      """\033[92mL2 C7: 'abc' module requires 2.6, 3.0\033[0m
+\033[91mL5 C9: 'zoneinfo' module requires !2, 3.9\033[0m
+\033[92mL6 C9: 'argparse' module requires 2.7, 3.2\033[0m
+"""))
 
   def test_format(self):
     # Empty field name requires 2.7+
