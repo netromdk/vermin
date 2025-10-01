@@ -210,18 +210,18 @@ Examples
 
   % ./vermin.py vermin
   Minimum required versions: 3.0
-  Incompatible versions:     2
+  Incompatible versions:     2.x
 
   % ./vermin.py -t=3.3 vermin
   Minimum required versions: 3.0
-  Incompatible versions:     2
+  Incompatible versions:     2.x
   Target versions not met:   3.3
   % echo $?
   1
 
   % ./vermin.py --versions vermin
   Minimum required versions: 3.0
-  Incompatible versions:     2
+  Incompatible versions:     2.x
   Version range:             2.0, 2.6, 2.7, 3.0
 
   % ./vermin.py -v examples
@@ -234,7 +234,7 @@ Examples
   !2, 3.4      /path/to/examples/abc.py
                /path/to/examples/unknown.py
   Minimum required versions:   3.4
-  Incompatible versions:         2
+  Incompatible versions:       2.x
 
   % ./vermin.py -vv /path/to/examples/abc.py
   Detecting python files..
@@ -244,7 +244,7 @@ Examples
     'abc.ABC' requires !2, 3.4
 
   Minimum required versions: 3.4
-  Incompatible versions:     2
+  Incompatible versions:     2.x
 
   % ./vermin.py -vvv /path/to/examples/abc.py
   Detecting python files..
@@ -254,7 +254,7 @@ Examples
     L2: 'abc.ABC' requires !2, 3.4
 
   Minimum required versions: 3.4
-  Incompatible versions:     2
+  Incompatible versions:     2.x
 
   % ./vermin.py -f parsable /path/to/examples/abc.py
   /path/to/examples/abc.py:1:7:2.6:3.0:'abc' module
