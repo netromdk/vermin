@@ -148,6 +148,11 @@ def main():
   # not to show incompatible versions with -i specified.
   if len(incomps) > 0 and (not parsable and (not config.ignore_incomp() or len(reqs) == 0)):
     # pragma: no cover
+    # Improve readability by using, for example, (2, 'x') instead of (2,) such that it reports:
+    #   Incompatible versions:     2.x
+    # Over:
+    #   Incompatible versions:     2
+    incomps = [(v, 'x') if isinstance(v, int) else v for v in incomps]
     nprint("Incompatible versions:     {}".format(version_strings(incomps)), config)
 
   if args["versions"] and len(unique_versions) > 0:
