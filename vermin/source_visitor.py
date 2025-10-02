@@ -1,6 +1,7 @@
 import ast
 import re
 from collections import deque
+import sys
 
 from .source_state import SourceState
 from .rules import STRFTIME_REQS, BYTES_REQS, ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS,\
@@ -15,14 +16,24 @@ STR_27_FORMAT_REGEX = re.compile(r"(?<!{){}(?!})")
 WITH_PAREN_REGEX = re.compile(r"with[\s\\]*\(")
 
 def is_int_node(node):
-  return (isinstance(node, ast.Num) and isinstance(node.n, int)) or \
-    (isinstance(node, ast.UnaryOp) and isinstance(node.operand, ast.Num) and
-     isinstance(node.operand.n, int))
+  if sys.version_info >= (3, 8):
+    return (isinstance(node, ast.Num) and isinstance(node.value, int)) or \
+      (isinstance(node, ast.UnaryOp) and isinstance(node.operand, ast.Num) and
+       isinstance(node.operand.value, int))
+  else:
+    return (isinstance(node, ast.Num) and isinstance(node.n, int)) or \
+      (isinstance(node, ast.UnaryOp) and isinstance(node.operand, ast.Num) and
+       isinstance(node.operand.n, int))
 
 def is_neg_int_node(node):
-  return (isinstance(node, ast.Num) and isinstance(node.n, int) and node.n < 0) or \
-    (isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub) and
-     isinstance(node.operand, ast.Num) and isinstance(node.operand.n, int))
+  if sys.version_info >= (3, 8):
+    return (isinstance(node, ast.Num) and isinstance(node.value, int) and node.value < 0) or \
+      (isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub) and
+       isinstance(node.operand, ast.Num) and isinstance(node.operand.value, int))
+  else:
+    return (isinstance(node, ast.Num) and isinstance(node.n, int) and node.n < 0) or \
+      (isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub) and
+       isinstance(node.operand, ast.Num) and isinstance(node.operand.n, int))
 
 def is_none_node(node):  # pragma: no cover
   if isinstance(node, ast.Name) and node.id == 'None':
@@ -789,7 +800,10 @@ class SourceVisitor(ast.NodeVisitor):
         if len(full_name) == 0 or (full_name[0] != name and len(full_name) == 1):
           full_name.append(name)
       elif not primi_type and isinstance(attr, ast.Num):
-        t = type(attr.n)
+        if sys.version_info >= (3, 8):
+          t = type(attr.value)
+        else:
+          t = type(attr.n)
         name = None
         if t == int:
           name = "int"
@@ -831,7 +845,10 @@ class SourceVisitor(ast.NodeVisitor):
     elif isinstance(node.value, ast.Str):
       value_name = "str"
     elif isinstance(node.value, ast.Num):
-      n = node.value.n
+      if sys.version_info >= (3, 8):
+        n = node.value.value
+      else:
+        n = node.value.n
       if isinstance(n, int):
         value_name = "int"
       elif isinstance(n, float):
@@ -1189,7 +1206,10 @@ class SourceVisitor(ast.NodeVisitor):
     elif isinstance(node, ast.Subscript):
       n = None
       if isinstance(node.slice, ast.Index) and isinstance(node.slice.value, ast.Num):
-        n = node.slice.value.n
+        if sys.version_info >= (3, 8):
+          n = node.slice.value.value
+        else:
+          n = node.slice.value.n
       elif hasattr(ast, "Constant") and isinstance(node.slice, ast.Constant):
         n = node.slice.value
       if isinstance(n, int):
