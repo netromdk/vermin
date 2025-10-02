@@ -786,35 +786,36 @@ class SourceVisitor(ast.NodeVisitor):
       elif isinstance(attr, ast.Call):
         if hasattr(attr, "func") and hasattr(attr.func, "id"):
           full_name.append(attr.func.id)
-      elif not primi_type and isinstance(attr, ast.Dict):
-        if len(full_name) == 0 or (full_name[0] != "dict" and full_name[-1] != "dict"):
-          full_name.append("dict")
-      elif not primi_type and isinstance(attr, ast.Set):
-        if len(full_name) == 0 or (full_name[0] != "set" and full_name[-1] != "set"):
-          full_name.append("set")
-      elif not primi_type and isinstance(attr, ast.List):
-        if len(full_name) == 0 or (full_name[0] != "list" and full_name[-1] != "list"):
-          full_name.append("list")
-      elif not primi_type and isinstance(attr, ast.Str):
-        name = "str"
-        if len(full_name) == 0 or (full_name[0] != name and len(full_name) == 1):
-          full_name.append(name)
-      elif not primi_type and isinstance(attr, ast.Num):
-        if sys.version_info >= (3, 8):
-          t = type(attr.value)
-        else:
-          t = type(attr.n)
-        name = None
-        if t == int:
-          name = "int"
-        elif t == float:
-          name = "float"
-        if name is not None and len(full_name) == 0 or \
-          (full_name[0] != name and len(full_name) == 1):
-          full_name.append(name)
-      elif not primi_type and hasattr(ast, "Bytes") and isinstance(attr, ast.Bytes):
-        if len(full_name) == 0 or (full_name[0] != "bytes" and len(full_name) == 1):
-          full_name.append("bytes")
+      elif not primi_type:
+        if isinstance(attr, ast.Dict):
+          if len(full_name) == 0 or (full_name[0] != "dict" and full_name[-1] != "dict"):
+            full_name.append("dict")
+        elif isinstance(attr, ast.Set):
+          if len(full_name) == 0 or (full_name[0] != "set" and full_name[-1] != "set"):
+            full_name.append("set")
+        elif isinstance(attr, ast.List):
+          if len(full_name) == 0 or (full_name[0] != "list" and full_name[-1] != "list"):
+            full_name.append("list")
+        elif isinstance(attr, ast.Str):
+          name = "str"
+          if len(full_name) == 0 or (full_name[0] != name and len(full_name) == 1):
+            full_name.append(name)
+        elif isinstance(attr, ast.Num):
+          if sys.version_info >= (3, 8):
+            t = type(attr.value)
+          else:
+            t = type(attr.n)
+          name = None
+          if t == int:
+            name = "int"
+          elif t == float:
+            name = "float"
+          if name is not None and len(full_name) == 0 or \
+            (full_name[0] != name and len(full_name) == 1):
+            full_name.append(name)
+        elif hasattr(ast, "Bytes") and isinstance(attr, ast.Bytes):
+          if len(full_name) == 0 or (full_name[0] != "bytes" and len(full_name) == 1):
+            full_name.append("bytes")
     full_name.reverse()
     return full_name
 
