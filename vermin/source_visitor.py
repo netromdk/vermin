@@ -17,8 +17,8 @@ WITH_PAREN_REGEX = re.compile(r"with[\s\\]*\(")
 
 def is_int_node(node):
   if sys.version_info >= (3, 8):
-    return (isinstance(node, ast.Num) and isinstance(node.value, int)) or \
-      (isinstance(node, ast.UnaryOp) and isinstance(node.operand, ast.Num) and
+    return (isinstance(node, ast.Constant) and isinstance(node.value, int)) or \
+      (isinstance(node, ast.UnaryOp) and isinstance(node.operand, ast.Constant) and
        isinstance(node.operand.value, int))
   else:
     return (isinstance(node, ast.Num) and isinstance(node.n, int)) or \
@@ -27,9 +27,9 @@ def is_int_node(node):
 
 def is_neg_int_node(node):
   if sys.version_info >= (3, 8):
-    return (isinstance(node, ast.Num) and isinstance(node.value, int) and node.value < 0) or \
+    return (isinstance(node, ast.Constant) and isinstance(node.value, int) and node.value < 0) or \
       (isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub) and
-       isinstance(node.operand, ast.Num) and isinstance(node.operand.value, int))
+       isinstance(node.operand, ast.Constant) and isinstance(node.operand.value, int))
   else:
     return (isinstance(node, ast.Num) and isinstance(node.n, int) and node.n < 0) or \
       (isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub) and
@@ -45,12 +45,10 @@ def is_none_node(node):  # pragma: no cover
   return False
 
 def is_ellipsis_node(node):  # pragma: no cover
-  if hasattr(ast, 'Ellipsis') and isinstance(node, ast.Ellipsis):
-    return True
-  if hasattr(ast, 'Constant') and isinstance(node, ast.Constant) and \
-    isinstance(node.value, type(Ellipsis)):
-    return True
-  return False
+  if sys.version_info >= (3, 8):
+    return isinstance(node, ast.Constant) and isinstance(node.value, type(Ellipsis))
+  else:
+    return hasattr(ast, 'Ellipsis') and isinstance(node, ast.Ellipsis)
 
 # Generalized unpacking, or starred expressions, are allowed when used with assignment targets prior
 # to 3.5. That means that generalized unpacking expressions are only on the right-hand side of the
@@ -796,26 +794,38 @@ class SourceVisitor(ast.NodeVisitor):
         elif isinstance(attr, ast.List):
           if len(full_name) == 0 or (full_name[0] != "list" and full_name[-1] != "list"):
             full_name.append("list")
-        elif isinstance(attr, ast.Str):
-          name = "str"
-          if len(full_name) == 0 or (full_name[0] != name and len(full_name) == 1):
-            full_name.append(name)
-        elif isinstance(attr, ast.Num):
-          if sys.version_info >= (3, 8):
-            t = type(attr.value)
-          else:
+        elif sys.version_info >= (3, 8):
+          if isinstance(attr, ast.Constant):
+            if isinstance(attr.value, str):
+              name = "str"
+              if len(full_name) == 0 or (full_name[0] != name and len(full_name) == 1):
+                full_name.append(name)
+            elif isinstance(attr.value, (int, float)):
+              name = "int" if isinstance(attr.value, int) else "float"
+              if name is not None and (len(full_name) == 0 or
+                                      (full_name[0] != name and len(full_name) == 1)):
+                full_name.append(name)
+            elif isinstance(attr.value, bytes):
+              if len(full_name) == 0 or (full_name[0] != "bytes" and len(full_name) == 1):
+                full_name.append("bytes")
+        else:
+          if isinstance(attr, ast.Str):
+            name = "str"
+            if len(full_name) == 0 or (full_name[0] != name and len(full_name) == 1):
+              full_name.append(name)
+          elif isinstance(attr, ast.Num):
             t = type(attr.n)
-          name = None
-          if t == int:
-            name = "int"
-          elif t == float:
-            name = "float"
-          if name is not None and len(full_name) == 0 or \
-            (full_name[0] != name and len(full_name) == 1):
-            full_name.append(name)
-        elif hasattr(ast, "Bytes") and isinstance(attr, ast.Bytes):
-          if len(full_name) == 0 or (full_name[0] != "bytes" and len(full_name) == 1):
-            full_name.append("bytes")
+            name = None
+            if t is int:
+              name = "int"
+            elif t is float:
+              name = "float"
+            if name is not None and (len(full_name) == 0 or
+                                     (full_name[0] != name and len(full_name) == 1)):
+              full_name.append(name)
+          elif hasattr(ast, "Bytes") and isinstance(attr, ast.Bytes):
+            if len(full_name) == 0 or (full_name[0] != "bytes" and len(full_name) == 1):
+              full_name.append("bytes")
     full_name.reverse()
     return full_name
 
@@ -843,31 +853,35 @@ class SourceVisitor(ast.NodeVisitor):
       value_name = "set"
     elif isinstance(node.value, ast.List):
       value_name = "list"
-    elif isinstance(node.value, ast.Str):
-      value_name = "str"
-    elif isinstance(node.value, ast.Num):
-      if sys.version_info >= (3, 8):
-        n = node.value.value
-      else:
-        n = node.value.n
-      if isinstance(n, int):
-        value_name = "int"
-      elif isinstance(n, float):
-        value_name = "float"
-    elif hasattr(ast, "Bytes") and isinstance(node.value, ast.Bytes):
-      value_name = "bytes"
-    elif hasattr(ast, "Constant") and isinstance(node.value, ast.Constant):
-      v = node.value.value
-      if isinstance(v, int):
-        value_name = "int"
-      elif isinstance(v, float):
-        value_name = "float"
-      elif v is None:
-        type_name = "None"
 
     # When a type name is used, and not a type instance.
     elif isinstance(node.value, ast.Name):
       type_name = node.value.id
+
+    elif sys.version_info >= (3, 8):
+      if isinstance(node.value, ast.Constant):
+        v = node.value.value
+        if isinstance(v, str):
+          value_name = "str"
+        elif isinstance(v, int):
+          value_name = "int"
+        elif isinstance(v, float):
+          value_name = "float"
+        elif isinstance(v, bytes):
+          value_name = "bytes"
+        elif v is None:
+          type_name = "None"
+    else:
+      if isinstance(node.value, ast.Str):
+        value_name = "str"
+      elif isinstance(node.value, ast.Num):
+        n = node.value.n
+        if isinstance(n, int):
+          value_name = "int"
+        elif isinstance(n, float):
+          value_name = "float"
+      elif hasattr(ast, "Bytes") and isinstance(node.value, ast.Bytes):
+        value_name = "bytes"
 
     if value_name is None and type_name is None:
       return
@@ -1074,9 +1088,14 @@ class SourceVisitor(ast.NodeVisitor):
              (func.id in self.__s.module_as_name and
               self.__s.module_as_name[func.id] == "array.array"):
           for arg in node.args:
-            if isinstance(arg, ast.Str) and hasattr(arg, "s"):
-              # "array" = 5 + 1 = 6
-              self.__add_array_typecode(arg.s, node.lineno, node.col_offset + 6)
+            if sys.version_info >= (3, 8):
+              if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+                # "array" = 5 + 1 = 6
+                self.__add_array_typecode(arg.value, node.lineno, node.col_offset + 6)
+            else:
+              if isinstance(arg, ast.Str) and hasattr(arg, "s"):
+                # "array" = 5 + 1 = 6
+                self.__add_array_typecode(arg.s, node.lineno, node.col_offset + 6)
         elif func.id == "pow" and len(node.args) == 3:
           # Check if the second of three arguments of pow() is negative.
           if is_int_node(node.args[0]) and is_neg_int_node(node.args[1]) and \
@@ -1088,11 +1107,15 @@ class SourceVisitor(ast.NodeVisitor):
           self.__vvprint("super() without arguments", versions=[None, (3, 0)], plural=False)
       elif hasattr(func, "attr"):
         attr = func.attr
-        if attr == "format" and hasattr(func, "value") and isinstance(func.value, ast.Str) and \
-           "{}" in func.value.s:
+        if (sys.version_info >= (3, 8) and attr == "format" and hasattr(func, "value") and isinstance(func.value, ast.Constant) and isinstance(func.value.value, str) and \
+            "{}" in func.value.value) \
+           or \
+           (sys.version_info < (3, 8) and attr == "format" and hasattr(func, "value") and isinstance(func.value, ast.Str) and \
+            "{}" in func.value.s):
           # There cannot be "{" before or "}" after an occurrence of "{}" since "{{}}" means simply
           # an escaped "{}" and won't be replaced.
-          if STR_27_FORMAT_REGEX.search(func.value.s) is not None:
+          if (sys.version_info >= (3, 8) and STR_27_FORMAT_REGEX.search(func.value.value) is not None) or \
+             (sys.version_info < (3, 8) and STR_27_FORMAT_REGEX.search(func.value.s) is not None):
             self.__vvprint("`\"..{}..\".format(..)`", versions=[(2, 7), (3, 0)])
             self.__s.format27 = True
         elif attr in ("strftime", "strptime") and hasattr(node, "args"):
@@ -1106,9 +1129,14 @@ class SourceVisitor(ast.NodeVisitor):
         self.__check_codecs_function(self.__s.function_name, node)
         if self.__s.function_name == "array.array":
           for arg in node.args:
-            if isinstance(arg, ast.Str) and hasattr(arg, "s"):
-              # "array.array" = 5 + 1 + 5 + 1 = 12
-              self.__add_array_typecode(arg.s, node.lineno, node.col_offset + 12)
+            if sys.version_info >= (3, 8):
+              if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+                # "array.array" = 5 + 1 + 5 + 1 = 12
+                self.__add_array_typecode(arg.value, node.lineno, node.col_offset + 12)
+            else:
+              if isinstance(arg, ast.Str) and hasattr(arg, "s"):
+                # "array.array" = 5 + 1 + 5 + 1 = 12
+                self.__add_array_typecode(arg.s, node.lineno, node.col_offset + 12)
 
     self.__check_generalized_unpacking(node)
     self.generic_visit(node)
@@ -1206,13 +1234,13 @@ class SourceVisitor(ast.NodeVisitor):
         return True
     elif isinstance(node, ast.Subscript):
       n = None
-      if isinstance(node.slice, ast.Index) and isinstance(node.slice.value, ast.Num):
-        if sys.version_info >= (3, 8):
+      if sys.version_info >= (3, 8):
+        if isinstance(node.slice, ast.Index) and isinstance(node.slice.value, ast.Constant) and \
+           isinstance(node.slice.value.value, int):
           n = node.slice.value.value
-        else:
+      else:
+        if isinstance(node.slice, ast.Index) and isinstance(node.slice.value, ast.Num):
           n = node.slice.value.n
-      elif hasattr(ast, "Constant") and isinstance(node.slice, ast.Constant):
-        n = node.slice.value
       if isinstance(n, int):
         for tup in ast.iter_fields(node.value):
           if (tup[0] == "elts" or tup[0] == "values") and n < len(tup[1]) and\
@@ -1241,8 +1269,11 @@ ast.Call(func=ast.Name)."""
     #   BinOp(left=Bytes(s=b'%4x'), op=Mod(), right=Num(n=10))
     #   BinOp(left=Call(func=Name(id='bytearray', ctx=Load()), args=[Bytes(s=b'%x')], keywords=[]),
     #         op=Mod(), right=Num(n=10))
-    if (hasattr(ast, "Bytes") and isinstance(node.left, ast.Bytes))\
-       and isinstance(node.op, ast.Mod):
+    if (sys.version_info >= (3, 8) and isinstance(node.left, ast.Constant) and isinstance(node.left.value, bytes) \
+        and isinstance(node.op, ast.Mod)) \
+       or \
+       (sys.version_info < (3, 8) and hasattr(ast, "Bytes") and isinstance(node.left, ast.Bytes)\
+        and isinstance(node.op, ast.Mod)):
       self.__s.bytes_format = True
       self.__vvprint("bytes `%` formatting or `str` synonym", versions=[(2, 6), (3, 5)])
 
