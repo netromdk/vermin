@@ -20,20 +20,18 @@ def is_int_node(node):
     return (isinstance(node, ast.Constant) and isinstance(node.value, int)) or \
       (isinstance(node, ast.UnaryOp) and isinstance(node.operand, ast.Constant) and
        isinstance(node.operand.value, int))
-  else:
-    return (isinstance(node, ast.Num) and isinstance(node.n, int)) or \
-      (isinstance(node, ast.UnaryOp) and isinstance(node.operand, ast.Num) and
-       isinstance(node.operand.n, int))
+  return (isinstance(node, ast.Num) and isinstance(node.n, int)) or \
+    (isinstance(node, ast.UnaryOp) and isinstance(node.operand, ast.Num) and
+      isinstance(node.operand.n, int))
 
 def is_neg_int_node(node):
   if sys.version_info >= (3, 8):
     return (isinstance(node, ast.Constant) and isinstance(node.value, int) and node.value < 0) or \
       (isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub) and
        isinstance(node.operand, ast.Constant) and isinstance(node.operand.value, int))
-  else:
-    return (isinstance(node, ast.Num) and isinstance(node.n, int) and node.n < 0) or \
-      (isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub) and
-       isinstance(node.operand, ast.Num) and isinstance(node.operand.n, int))
+  return (isinstance(node, ast.Num) and isinstance(node.n, int) and node.n < 0) or \
+    (isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub) and
+      isinstance(node.operand, ast.Num) and isinstance(node.operand.n, int))
 
 def is_none_node(node):  # pragma: no cover
   if isinstance(node, ast.Name) and node.id == 'None':
@@ -49,8 +47,7 @@ def is_none_node(node):  # pragma: no cover
 def is_ellipsis_node(node):  # pragma: no cover
   if sys.version_info >= (3, 8):
     return isinstance(node, ast.Constant) and isinstance(node.value, type(Ellipsis))
-  else:
-    return hasattr(ast, 'Ellipsis') and isinstance(node, ast.Ellipsis)
+  return hasattr(ast, 'Ellipsis') and isinstance(node, ast.Ellipsis)
 
 # Generalized unpacking, or starred expressions, are allowed when used with assignment targets prior
 # to 3.5. That means that generalized unpacking expressions are only on the right-hand side of the
