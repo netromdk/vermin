@@ -805,7 +805,7 @@ class SourceVisitor(ast.NodeVisitor):
             elif isinstance(attr.value, (int, float)):
               name = "int" if isinstance(attr.value, int) else "float"
               if name is not None and (len(full_name) == 0 or
-                                      (full_name[0] != name and len(full_name) == 1)):
+                                       (full_name[0] != name and len(full_name) == 1)):
                 full_name.append(name)
             elif isinstance(attr.value, bytes):
               if len(full_name) == 0 or (full_name[0] != "bytes" and len(full_name) == 1):
@@ -1109,15 +1109,19 @@ class SourceVisitor(ast.NodeVisitor):
           self.__vvprint("super() without arguments", versions=[None, (3, 0)], plural=False)
       elif hasattr(func, "attr"):
         attr = func.attr
-        if (sys.version_info >= (3, 8) and attr == "format" and hasattr(func, "value") and isinstance(func.value, ast.Constant) and isinstance(func.value.value, str) and \
-            "{}" in func.value.value) \
+        if (sys.version_info >= (3, 8) and attr == "format" and hasattr(func, "value") and
+             isinstance(func.value, ast.Constant) and isinstance(func.value.value, str) and
+             "{}" in func.value.value) \
            or \
-           (sys.version_info < (3, 8) and attr == "format" and hasattr(func, "value") and isinstance(func.value, ast.Str) and \
-            "{}" in func.value.s):
+           (sys.version_info < (3, 8) and attr == "format" and hasattr(func, "value") and
+             isinstance(func.value, ast.Str) and
+             "{}" in func.value.s):
           # There cannot be "{" before or "}" after an occurrence of "{}" since "{{}}" means simply
           # an escaped "{}" and won't be replaced.
-          if (sys.version_info >= (3, 8) and STR_27_FORMAT_REGEX.search(func.value.value) is not None) or \
-             (sys.version_info < (3, 8) and STR_27_FORMAT_REGEX.search(func.value.s) is not None):
+          if (sys.version_info >= (3, 8) and
+              STR_27_FORMAT_REGEX.search(func.value.value) is not None) \
+               or \
+               (sys.version_info < (3, 8) and STR_27_FORMAT_REGEX.search(func.value.s) is not None):
             self.__vvprint("`\"..{}..\".format(..)`", versions=[(2, 7), (3, 0)])
             self.__s.format27 = True
         elif attr in ("strftime", "strptime") and hasattr(node, "args"):
@@ -1278,11 +1282,12 @@ ast.Call(func=ast.Name)."""
     #   BinOp(left=Bytes(s=b'%4x'), op=Mod(), right=Num(n=10))
     #   BinOp(left=Call(func=Name(id='bytearray', ctx=Load()), args=[Bytes(s=b'%x')], keywords=[]),
     #         op=Mod(), right=Num(n=10))
-    if (sys.version_info >= (3, 8) and isinstance(node.left, ast.Constant) and isinstance(node.left.value, bytes) \
-        and isinstance(node.op, ast.Mod)) \
-       or \
-       (sys.version_info < (3, 8) and hasattr(ast, "Bytes") and isinstance(node.left, ast.Bytes)\
-        and isinstance(node.op, ast.Mod)):
+    if (sys.version_info >= (3, 8) and isinstance(node.left, ast.Constant) and
+         isinstance(node.left.value, bytes) and
+         isinstance(node.op, ast.Mod)) or \
+       (sys.version_info < (3, 8) and
+         hasattr(ast, "Bytes") and isinstance(node.left, ast.Bytes) and
+         isinstance(node.op, ast.Mod)):
       self.__s.bytes_format = True
       self.__vvprint("bytes `%` formatting or `str` synonym", versions=[(2, 6), (3, 5)])
 
@@ -1513,7 +1518,11 @@ ast.Call(func=ast.Name)."""
         value.append("{" + kvs + "}")
         break
 
-      elif sys.version_info >= (3, 9) and isinstance(n, (ast.Constant, ast.Name, ast.Slice, ast.Tuple)):  # a[0] or a[i] or a[0:1] or a[(0,1)]
+      elif sys.version_info >= (3, 9) \
+           and isinstance(
+             n,
+             (ast.Constant, ast.Name, ast.Slice, ast.Tuple)  # a[0] or a[i] or a[0:1] or a[(0,1)]
+           ):
         val = self.__extract_fstring_value(n)
         value.append(val)
         break
