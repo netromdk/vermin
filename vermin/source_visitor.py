@@ -2145,12 +2145,8 @@ ast.Call(func=ast.Name)."""
         if is_ellipsis_node(n):
           self.__s.ellipsis_nodes_in_slices.add(n)
     else:
-      if sys.version_info >= (3, 9):
-        if isinstance(slices_node, (ast.Constant, ast.Name, ast.Slice, ast.Tuple)):  # a[0] or a[i] or a[0:1] or a[(0,1)]
-          slices_node = slices_node
-      else:
-        if hasattr(ast, 'Index') and isinstance(slices_node, ast.Index):
-          slices_node = slices_node.value
+      if sys.version_info < (3, 9) and hasattr(ast, 'Index') and isinstance(slices_node, ast.Index):
+        slices_node = slices_node.value
       if is_ellipsis_node(slices_node):
         self.__s.ellipsis_nodes_in_slices.add(slices_node)
       if isinstance(slices_node, ast.Tuple):
