@@ -38,10 +38,12 @@ def is_neg_int_node(node):
 def is_none_node(node):  # pragma: no cover
   if isinstance(node, ast.Name) and node.id == 'None':
     return True
-  if hasattr(ast, 'NameConstant') and isinstance(node, ast.NameConstant) and node.value is None:
-    return True
-  if hasattr(ast, 'Constant') and isinstance(node, ast.Constant) and node.value is None:
-    return True
+  if sys.version_info >= (3, 8):
+    if isinstance(node, ast.Constant) and node.value is None:
+      return True
+  elif sys.version_info >= (3, 4):
+    if isinstance(node, ast.NameConstant) and node.value is None:
+      return True
   return False
 
 def is_ellipsis_node(node):  # pragma: no cover
