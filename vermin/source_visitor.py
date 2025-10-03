@@ -1217,9 +1217,13 @@ class SourceVisitor(ast.NodeVisitor):
     self.__s.bytesv3 = True
     self.__vvprint("byte string (b'..') or `str` synonym", versions=[(2, 6), (3, 0)])
 
-    if hasattr(node, "s"):
-      for directive in BYTES_DIRECTIVE_REGEX.findall(str(node.s)):
+    if sys.version_info >= (3, 12):
+      for directive in BYTES_DIRECTIVE_REGEX.findall(str(node.value)):
         self.__add_bytes_directive(directive, node.lineno)
+    else:
+      if hasattr(node, "s"):
+        for directive in BYTES_DIRECTIVE_REGEX.findall(str(node.s)):
+          self.__add_bytes_directive(directive, node.lineno)
 
   def __is_dict(self, node):
     """Checks if node is a dict either by direct instance, name, constructor, function/lambda body,
