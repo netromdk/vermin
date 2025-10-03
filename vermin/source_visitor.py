@@ -1234,7 +1234,10 @@ class SourceVisitor(ast.NodeVisitor):
         return True
     elif isinstance(node, ast.Subscript):
       n = None
-      if sys.version_info >= (3, 8):
+      if sys.version_info >= (3, 9):
+        if isinstance(node.slice, ast.Constant) and isinstance(node.slice.value, int):
+          n = node.slice.value
+      elif sys.version_info >= (3, 8):
         if isinstance(node.slice, ast.Index) and isinstance(node.slice.value, ast.Constant) and \
            isinstance(node.slice.value.value, int):
           n = node.slice.value.value
@@ -1504,7 +1507,11 @@ ast.Call(func=ast.Name)."""
         value.append("{" + kvs + "}")
         break
 
-      elif isinstance(n, ast.Index):
+      elif sys.version_info >= (3, 9) and isinstance(n, (ast.Constant, ast.Name, ast.Slice, ast.Tuple)):  # a[0] or a[i] or a[0:1] or a[(0,1)]
+        val = self.__extract_fstring_value(n)
+        value.append(val)
+        break
+      elif sys.version_info < (3, 9) and isinstance(n, ast.Index):
         val = self.__extract_fstring_value(n.value)
         value.append(val)
         break
@@ -2132,8 +2139,12 @@ ast.Call(func=ast.Name)."""
         if is_ellipsis_node(n):
           self.__s.ellipsis_nodes_in_slices.add(n)
     else:
-      if hasattr(ast, 'Index') and isinstance(slices_node, ast.Index):
-        slices_node = slices_node.value
+      if sys.version_info >= (3, 9):
+        if isinstance(slices_node, (ast.Constant, ast.Name, ast.Slice, ast.Tuple)):  # a[0] or a[i] or a[0:1] or a[(0,1)]
+          slices_node = slices_node
+      else:
+        if hasattr(ast, 'Index') and isinstance(slices_node, ast.Index):
+          slices_node = slices_node.value
       if is_ellipsis_node(slices_node):
         self.__s.ellipsis_nodes_in_slices.add(slices_node)
       if isinstance(slices_node, ast.Tuple):
