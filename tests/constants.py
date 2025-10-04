@@ -491,6 +491,9 @@ TracebackException.exc_type_str
   def test_HAS_TLSv1_3_of_ssl(self):
     self.assertOnlyIn(((2, 7), (3, 7)), self.detect("from ssl import HAS_TLSv1_3"))
 
+  def test_HAS_PSK_ssl(self):
+    self.assertOnlyIn((3, 13), self.detect("from ssl import HAS_PSK"))
+
   def test_HAS_NEVER_CHECK_COMMON_NAME_of_ssl(self):
     self.assertOnlyIn((3, 7), self.detect("from ssl import HAS_NEVER_CHECK_COMMON_NAME"))
 
