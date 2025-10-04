@@ -1062,6 +1062,18 @@ c.total()
                                   "ctx = SSLContext()\n"
                                   "ctx.set_ecdh_curve()"))
 
+  def test_set_psk_client_callback_from_ssl_SSLContext(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from ssl import SSLContext\n"
+                                  "ctx = SSLContext()\n"
+                                  "ctx.set_psk_client_callback()"))
+
+  def test_set_psk_server_callback_from_ssl_SSLContext(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from ssl import SSLContext\n"
+                                  "ctx = SSLContext()\n"
+                                  "ctx.set_psk_server_callback()"))
+
   def test_set_servername_callback_from_ssl_SSLContext(self):
     self.assertOnlyIn(((2, 7), (3, 4)),
                       self.detect("from ssl import SSLContext\n"
@@ -1959,6 +1971,24 @@ f.is_integer()
 
   def test_open_of_tokenize(self):
     self.assertOnlyIn((3, 2), self.detect("from tokenize import open"))
+
+  def test_has_default_of_typing_ParamSpec(self):
+    self.assertOnlyIn((3, 13), self.detect("""
+from typing import ParamSpec
+ParamSpec().has_default()
+"""))
+
+  def test_has_default_of_typing_TypeVar(self):
+    self.assertOnlyIn((3, 13), self.detect("""
+from typing import TypeVar
+TypeVar().has_default()
+"""))
+
+  def test_has_default_of_typing_TypeVarTuple(self):
+    self.assertOnlyIn((3, 13), self.detect("""
+from typing import TypeVarTuple
+TypeVarTuple().has_default()
+"""))
 
   def test_assert_never_of_typing(self):
     self.assertOnlyIn((3, 11), self.detect("from typing import assert_never"))
@@ -3994,6 +4024,16 @@ s.replace()
     self.assertOnlyIn(((2, 7), (3, 3)),
                       self.detect("from ssl import SSLSocket\n"
                                   "SSLSocket().get_channel_binding()"))
+
+  def test_get_unverified_chain_from_ssl_SSLSocket(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from ssl import SSLSocket\n"
+                                  "SSLSocket().get_unverified_chain()"))
+
+  def test_get_verified_chain_from_ssl_SSLSocket(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from ssl import SSLSocket\n"
+                                  "SSLSocket().get_verified_chain()"))
 
   def test_selected_alpn_protocol_from_ssl_SSLSocket(self):
     self.assertOnlyIn(((2, 7), (3, 5)),
