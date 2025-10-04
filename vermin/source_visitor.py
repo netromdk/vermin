@@ -1516,10 +1516,8 @@ ast.Call(func=ast.Name)."""
         break
 
       elif sys.version_info >= (3, 9) \
-           and isinstance(
-             n,
-             (ast.Constant, ast.Name, ast.Slice, ast.Tuple)  # a[0] or a[i] or a[0:1] or a[(0,1)]
-           ):
+           and isinstance(n, (ast.Constant, ast.Name, ast.Slice, ast.Tuple)):
+        # Check on slice indices like a[0] or a[i] or a[0:1] or a[(0,1)]
         val = self.__extract_fstring_value(n)
         value.append(val)
         break
