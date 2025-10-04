@@ -853,6 +853,17 @@ class SourceVisitor(ast.NodeVisitor):
     elif isinstance(node.value, ast.List):
       value_name = "list"
 
+    # If rvalue is None
+    elif sys.version_info >= (3, 8) and \
+         isinstance(node.value, ast.Constant) and node.value.value is None:
+      type_name = "None"
+    elif ((3, 8) > sys.version_info >= (3, 4)) and \
+         isinstance(node.value, ast.NameConstant) and node.value.value is None:
+      type_name = "None"
+    elif ((3, 4) > sys.version_info) and \
+         isinstance(node.value, ast.Name) and node.value.id == "None":
+      type_name = "None"
+
     # When a type name is used, and not a type instance.
     elif isinstance(node.value, ast.Name):
       type_name = node.value.id
@@ -868,8 +879,6 @@ class SourceVisitor(ast.NodeVisitor):
           value_name = "float"
         elif isinstance(v, bytes):
           value_name = "bytes"
-        elif v is None:
-          type_name = "None"
     else:
       if isinstance(node.value, ast.Str):
         value_name = "str"
