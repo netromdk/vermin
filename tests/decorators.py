@@ -118,3 +118,6 @@ from functools import lru_cache
 def foo(): pass""")
     self.assertEmpty(visitor.user_function_decorators())
     self.assertOnlyIn((3, 2), visitor.minimum_versions())
+
+  def test_deprecated_of_warnings(self):
+    self.assertOnlyIn((3, 13), self.detect("from warnings import deprecated"))

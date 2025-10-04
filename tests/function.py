@@ -1062,6 +1062,18 @@ c.total()
                                   "ctx = SSLContext()\n"
                                   "ctx.set_ecdh_curve()"))
 
+  def test_set_psk_client_callback_from_ssl_SSLContext(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from ssl import SSLContext\n"
+                                  "ctx = SSLContext()\n"
+                                  "ctx.set_psk_client_callback()"))
+
+  def test_set_psk_server_callback_from_ssl_SSLContext(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from ssl import SSLContext\n"
+                                  "ctx = SSLContext()\n"
+                                  "ctx.set_psk_server_callback()"))
+
   def test_set_servername_callback_from_ssl_SSLContext(self):
     self.assertOnlyIn(((2, 7), (3, 4)),
                       self.detect("from ssl import SSLContext\n"
@@ -1119,9 +1131,6 @@ c.total()
 
   def test_info_patchlevel_from_tkinter(self):
     self.assertOnlyIn((3, 11), self.detect("import tkinter\ntkinter.info_patchlevel()"))
-
-  def test_deprecated_from_warnings(self):
-    self.assertOnlyIn((3, 13), self.detect("from warnings import deprecated"))
 
   def test_warnpy3k_from_warnings(self):
     self.assertOnlyIn((2, 6), self.detect("import warnings\nwarnings.warnpy3k()"))
@@ -1338,6 +1347,12 @@ c.total()
 
   def test_show_flag_values_from_enum(self):
     self.assertOnlyIn((3, 11), self.detect("from enum import show_flag_values"))
+
+  def test__add_alias__from_enum_Enum(self):
+    self.assertOnlyIn((3, 13), self.detect("from enum import Enum\nEnum._add_alias_"))
+
+  def test__add_value_alias__from_enum_Enum(self):
+    self.assertOnlyIn((3, 13), self.detect("from enum import Enum\nEnum._add_value_alias_"))
 
   def test_copysign_from_math(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import math\nmath.copysign()"))
@@ -1797,6 +1812,9 @@ f.is_integer()
   def test_getxattr_of_os(self):
     self.assertOnlyIn((3, 3), self.detect("from os import getxattr"))
 
+  def test_grantpt_of_os(self):
+    self.assertOnlyIn((3, 13), self.detect("from os import grantpt"))
+
   def test_setxattr_of_os(self):
     self.assertOnlyIn((3, 3), self.detect("from os import setxattr"))
 
@@ -1960,6 +1978,24 @@ f.is_integer()
   def test_open_of_tokenize(self):
     self.assertOnlyIn((3, 2), self.detect("from tokenize import open"))
 
+  def test_has_default_of_typing_ParamSpec(self):
+    self.assertOnlyIn((3, 13), self.detect("""
+from typing import ParamSpec
+ParamSpec().has_default()
+"""))
+
+  def test_has_default_of_typing_TypeVar(self):
+    self.assertOnlyIn((3, 13), self.detect("""
+from typing import TypeVar
+TypeVar().has_default()
+"""))
+
+  def test_has_default_of_typing_TypeVarTuple(self):
+    self.assertOnlyIn((3, 13), self.detect("""
+from typing import TypeVarTuple
+TypeVarTuple().has_default()
+"""))
+
   def test_assert_never_of_typing(self):
     self.assertOnlyIn((3, 11), self.detect("from typing import assert_never"))
 
@@ -2001,6 +2037,9 @@ f.is_integer()
 
   def test_copy_file_range_of_os(self):
     self.assertOnlyIn((3, 8), self.detect("from os import copy_file_range"))
+
+  def test_posix_openpt_of_os(self):
+    self.assertOnlyIn((3, 13), self.detect("from os import posix_openpt"))
 
   def test_posix_spawn_of_os(self):
     self.assertOnlyIn((3, 8), self.detect("from os import posix_spawn"))
@@ -3213,6 +3252,12 @@ f.is_integer()
   def test_guess_file_type_from_mimetypes(self):
     self.assertOnlyIn((3, 13), self.detect("import mimetypes\nmimetypes.guess_file_type()"))
 
+  def test_guess_file_type_from_mimetypes_MimeTypes(self):
+    self.assertOnlyIn((3, 13), self.detect("""
+from mimetypes import MimeTypes
+MimeTypes().guess_file_type()
+"""))
+
   def test_Close_from_msilib_Database(self):
     self.assertOnlyIn((3, 7),
                       self.detect("from msilib import Database\n"
@@ -3576,6 +3621,9 @@ DirEntry().is_junction()
   def test_preadv_from_os(self):
     self.assertOnlyIn((3, 7), self.detect("import os\nos.preadv()"))
 
+  def test_ptsname_from_os(self):
+    self.assertOnlyIn((3, 13), self.detect("import os\nos.ptsname()"))
+
   def test_pwritev_from_os(self):
     self.assertOnlyIn((3, 7), self.detect("import os\nos.pwritev()"))
 
@@ -3629,6 +3677,9 @@ s.replace()
 
   def test_truncate_from_os(self):
     self.assertOnlyIn((3, 3), self.detect("import os\nos.truncate()"))
+
+  def test_unlockpt_from_os(self):
+    self.assertOnlyIn((3, 13), self.detect("import os\nos.unlockpt()"))
 
   def test_unshare_from_os(self):
     self.assertOnlyIn((3, 12), self.detect("import os\nos.unshare()"))
@@ -3995,6 +4046,16 @@ s.replace()
                       self.detect("from ssl import SSLSocket\n"
                                   "SSLSocket().get_channel_binding()"))
 
+  def test_get_unverified_chain_from_ssl_SSLSocket(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from ssl import SSLSocket\n"
+                                  "SSLSocket().get_unverified_chain()"))
+
+  def test_get_verified_chain_from_ssl_SSLSocket(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from ssl import SSLSocket\n"
+                                  "SSLSocket().get_verified_chain()"))
+
   def test_selected_alpn_protocol_from_ssl_SSLSocket(self):
     self.assertOnlyIn(((2, 7), (3, 5)),
                       self.detect("from ssl import SSLSocket\n"
@@ -4054,6 +4115,9 @@ Template().is_valid()
                       self.detect("from symtable import Symbol\n"
                                   "Symbol().is_annotated()"))
 
+  def test__clear_internal_caches_from_sys(self):
+    self.assertOnlyIn((3, 13), self.detect("import sys\nsys._clear_internal_caches()"))
+
   def test__clear_type_cache_from_sys(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import sys\nsys._clear_type_cache()"))
 
@@ -4065,6 +4129,9 @@ Template().is_valid()
 
   def test__enablelegacywindowsfsencoding_from_sys(self):
     self.assertOnlyIn((3, 6), self.detect("import sys\nsys._enablelegacywindowsfsencoding()"))
+
+  def test__is_gil_enabled_from_sys(self):
+    self.assertOnlyIn((3, 13), self.detect("import sys\nsys._is_gil_enabled()"))
 
   def test__is_interned_from_sys(self):
     self.assertOnlyIn((3, 13), self.detect("import sys\nsys._is_interned()"))
@@ -4523,6 +4590,11 @@ TracebackException().print()
     self.assertOnlyIn((3, 9),
                       self.detect("from venv import EnvBuilder\n"
                                   "EnvBuilder().upgrade_dependencies()"))
+
+  def test_create_git_ignore_file_from_venv_EnvBuilder(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from venv import EnvBuilder\n"
+                                  "EnvBuilder().create_git_ignore_file()"))
 
   def test_issoftkeyword_from_keyword(self):
     self.assertOnlyIn((3, 9), self.detect("from keyword import issoftkeyword"))

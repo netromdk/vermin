@@ -230,6 +230,9 @@ class VerminClassMemberTests(VerminTest):
   def test_AsyncIterator_of_typing(self):
     self.assertOnlyIn((3, 5), self.detect("from typing import AsyncIterator"))
 
+  def test_CapsuleType_of_types(self):
+    self.assertOnlyIn((3, 13), self.detect("from types import CapsuleType"))
+
   def test_GenericAlias_of_types(self):
     self.assertOnlyIn((3, 9), self.detect("from types import GenericAlias"))
 

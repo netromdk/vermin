@@ -28,6 +28,9 @@ class VerminExceptionMemberTests(VerminTest):
   def test_HeaderError_of_tarfile(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from tarfile import HeaderError"))
 
+  def test_LinkFallbackError_of_tarfile(self):
+    self.assertOnlyIn((3, 13), self.detect("from tarfile import LinkFallbackError"))
+
   def test_BadZipFile_of_zipfile(self):
     self.assertOnlyIn((3, 2), self.detect("from zipfile import BadZipFile"))
 
@@ -68,6 +71,9 @@ class VerminExceptionMemberTests(VerminTest):
 
   def test_InterpolationSyntaxError_of_ConfigParser(self):
     self.assertOnlyIn((2, 3), self.detect("from ConfigParser import InterpolationSyntaxError"))
+
+  def test_MultilineContinuationError_of_configparser(self):
+    self.assertOnlyIn((3, 13), self.detect("from configparser import MultilineContinuationError"))
 
   def test_BrokenExecutor_of_concurrent_futures(self):
     self.assertOnlyIn((3, 7), self.detect("from concurrent.futures import BrokenExecutor"))
