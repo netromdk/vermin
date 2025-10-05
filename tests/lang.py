@@ -1078,6 +1078,44 @@ L2: multiple context expressions in a `with` statement with parentheses require 
       self.assertEqual([(0, 0), (0, 0)], self.detect("type 'Point = tuple[float, float]'"))
       self.assertEqual([(0, 0), (0, 0)], self.detect("type 'Po_int = tuple[float, float]'"))
 
+  @VerminTest.skipUnlessVersion(3, 12)
+  def test_type_alias_statement_class_scope_lambda(self):
+    # Type alias not in a class scope.
+    visitor = self.visit("type Alias = lambda: T")
+    self.assertTrue(visitor.type_alias_statement())
+    self.assertFalse(visitor.type_alias_statement_class_scope_lambda())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
+    visitor = self.visit("type Alias = [l for l in [lambda: T]]")
+    self.assertTrue(visitor.type_alias_statement())
+    self.assertFalse(visitor.type_alias_statement_class_scope_lambda())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
+
+    # Type alias with lambda not in a class scope but with a nested one without.
+    visitor = self.visit("""
+type Alias = lambda: T
+class A[T]:
+  type Alias = T
+""")
+    self.assertTrue(visitor.type_alias_statement())
+    self.assertFalse(visitor.type_alias_statement_class_scope_lambda())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
+
+    # Type alias in a class scope.
+    visitor = self.visit("""
+class A[T]:
+  type Alias = lambda: T
+""")
+    self.assertTrue(visitor.type_alias_statement())
+    self.assertTrue(visitor.type_alias_statement_class_scope_lambda())
+    self.assertOnlyIn((3, 13), visitor.minimum_versions())
+    visitor = self.visit("""
+class A[T]:
+  type Alias = [l for l in [lambda: T]]
+""")
+    self.assertTrue(visitor.type_alias_statement())
+    self.assertTrue(visitor.type_alias_statement_class_scope_lambda())
+    self.assertOnlyIn((3, 13), visitor.minimum_versions())
+
   @VerminTest.skipUnlessVersion(3, 5)
   def test_bytes_format(self):
     visitor = self.visit("b'%x' % 10")

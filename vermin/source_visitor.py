@@ -214,6 +214,9 @@ class SourceVisitor(ast.NodeVisitor):
   def type_alias_statement(self):
     return self.__s.type_alias_statement
 
+  def type_alias_statement_class_scope_lambda(self):
+    return self.__s.type_alias_statement_class_scope_lambda
+
   def bytes_format(self):
     return self.__s.bytes_format
 
@@ -456,6 +459,11 @@ class SourceVisitor(ast.NodeVisitor):
     if self.type_alias_statement():
       mins = self.__add_versions_entity(mins, (None, (3, 12)),
                                         "type alias statement (`type X = SomeType`)", plural=False)
+
+    if self.type_alias_statement_class_scope_lambda():
+      mins = self.__add_versions_entity(mins, (None, (3, 13)),
+                                        "type alias statement using lambda/comp in class scope",
+                                        plural=False)
 
     if self.bytes_format():
       # Since byte strings are a `str` synonym as of 2.6+, and thus also supports `%` formatting,
@@ -1796,10 +1804,12 @@ ast.Call(func=ast.Name)."""
           self.__s.metaclass_class_keyword = True
           self.__vvprint("'metaclass' class keyword", versions=[None, (3, 0)])
 
+    self.__s.seen_class += 1
     self.generic_visit(node)
     # Some nodes aren't visited via `self.generic_visit(node)` so it is done explicitly.
     for n in node.body:
       self.generic_visit(n)
+    self.__s.seen_class -= 1
 
   def visit_NameConstant(self, node):
     if node.value is True or node.value is False:  # pragma: no cover
@@ -2204,6 +2214,14 @@ ast.Call(func=ast.Name)."""
       self.__s.type_alias_statement = True
       self.__vvprint("type alias statement (`type X = SomeType`)", versions=[None, (3, 12)],
                      plural=False)
+      if self.__s.seen_class > 0:
+        for n in ast.walk(node.value):
+          if isinstance(n, ast.Lambda) or \
+            (hasattr(ast, "comprehension") and isinstance(n, ast.comprehension)):
+            self.__s.type_alias_statement_class_scope_lambda = True
+            self.__vvprint("type alias statement using lambda/comp in class scope",
+                           versions=[None, (3, 13)], plural=False)
+            break
       self.generic_visit(node)
 
   # Ignore unused nodes as a speed optimization.

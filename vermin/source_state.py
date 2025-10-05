@@ -74,6 +74,7 @@ class SourceState:
     self.continue_in_finally = False
     self.seen_for = 0
     self.seen_while = 0
+    self.seen_class = 0
     self.try_finally = []
     self.mod_inverse_pow = False
     self.function_name = None
@@ -111,6 +112,10 @@ class SourceState:
 
     # `type X = SomeType`.
     self.type_alias_statement = False
+
+    # `type X = SomeType` with lambda or comprehension in `SomeType` with the annotation being
+    # defined in a class scope.
+    self.type_alias_statement_class_scope_lambda = False
 
     # Imported members of modules, like "exc_clear" of "sys".
     self.import_mem_mod = {}
