@@ -347,6 +347,9 @@ TracebackException.exc_type_str
   def test_PyCF_TYPE_COMMENTS_of_ast(self):
     self.assertOnlyIn((3, 8), self.detect("from ast import PyCF_TYPE_COMMENTS"))
 
+  def test_PyCF_OPTIMIZED_AST_of_ast(self):
+    self.assertOnlyIn((3, 13), self.detect("from ast import PyCF_OPTIMIZED_AST"))
+
   def test_eof_of_bz2_BZ2Decompressor(self):
     self.assertOnlyIn((3, 3),
                       self.detect("from bz2 import BZ2Decompressor\nd = BZ2Decompressor()\nd.eof"))
@@ -356,6 +359,18 @@ TracebackException.exc_type_str
                       self.detect("from bz2 import BZ2Decompressor\n"
                                   "d = BZ2Decompressor()\n"
                                   "d.needs_input"))
+
+  def test_mode_of_bz2_BZ2File(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from bz2 import BZ2File\n"
+                                  "d = BZ2File()\n"
+                                  "d.mode"))
+
+  def test_name_of_bz2_BZ2File(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from bz2 import BZ2File\n"
+                                  "d = BZ2File()\n"
+                                  "d.name"))
 
   def test_maxlen_of_collections_deque(self):
     self.assertOnlyIn(((2, 7), (3, 1)),
@@ -490,6 +505,9 @@ TracebackException.exc_type_str
 
   def test_HAS_TLSv1_3_of_ssl(self):
     self.assertOnlyIn(((2, 7), (3, 7)), self.detect("from ssl import HAS_TLSv1_3"))
+
+  def test_HAS_PSK_ssl(self):
+    self.assertOnlyIn((3, 13), self.detect("from ssl import HAS_PSK"))
 
   def test_HAS_NEVER_CHECK_COMMON_NAME_of_ssl(self):
     self.assertOnlyIn((3, 7), self.detect("from ssl import HAS_NEVER_CHECK_COMMON_NAME"))
@@ -658,6 +676,9 @@ TracebackException.exc_type_str
   def test_CLOCK_MONOTONIC_RAW_of_time(self):
     self.assertOnlyIn((3, 3), self.detect("from time import CLOCK_MONOTONIC_RAW"))
 
+  def test_CLOCK_MONOTONIC_RAW_APPROX_of_time(self):
+    self.assertOnlyIn((3, 13), self.detect("from time import CLOCK_MONOTONIC_RAW_APPROX"))
+
   def test_CLOCK_PROCESS_CPUTIME_ID_of_time(self):
     self.assertOnlyIn((3, 3), self.detect("from time import CLOCK_PROCESS_CPUTIME_ID"))
 
@@ -672,6 +693,9 @@ TracebackException.exc_type_str
 
   def test_CLOCK_UPTIME_RAW_of_time(self):
     self.assertOnlyIn((3, 8), self.detect("from time import CLOCK_UPTIME_RAW"))
+
+  def test_CLOCK_UPTIME_RAW_APPROX_of_time(self):
+    self.assertOnlyIn((3, 13), self.detect("from time import CLOCK_UPTIME_RAW_APPROX"))
 
   def test_CLOCK_REALTIME_of_time(self):
     self.assertOnlyIn((3, 3), self.detect("from time import CLOCK_REALTIME"))
@@ -974,6 +998,39 @@ month = Month.DECEMBER
   def test_MAP_STACK_of_mmap(self):
     self.assertOnlyIn((3, 11), self.detect("import mmap\nmmap.MAP_STACK"))
 
+  def test_MAP_32BIT_of_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("import mmap\nmmap.MAP_32BIT"))
+
+  def test_MAP_HASSEMAPHORE_of_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("import mmap\nmmap.MAP_HASSEMAPHORE"))
+
+  def test_MAP_JIT_of_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("import mmap\nmmap.MAP_JIT"))
+
+  def test_MAP_NOCACHE_of_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("import mmap\nmmap.MAP_NOCACHE"))
+
+  def test_MAP_NOEXTEND_of_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("import mmap\nmmap.MAP_NOEXTEND"))
+
+  def test_MAP_NORESERVE_of_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("import mmap\nmmap.MAP_NORESERVE"))
+
+  def test_MAP_RESILIENT_CODESIGN_of_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("import mmap\nmmap.MAP_RESILIENT_CODESIGN"))
+
+  def test_MAP_RESILIENT_MEDIA_of_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("import mmap\nmmap.MAP_RESILIENT_MEDIA"))
+
+  def test_MAP_TPRO_of_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("import mmap\nmmap.MAP_TPRO"))
+
+  def test_MAP_TRANSLATED_ALLOW_EXECUTE_of_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("import mmap\nmmap.MAP_TRANSLATED_ALLOW_EXECUTE"))
+
+  def test_MAP_UNIX03_of_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("import mmap\nmmap.MAP_UNIX03"))
+
   def test_MFD_CLOEXEC_of_os(self):
     self.assertOnlyIn((3, 8), self.detect("from os import MFD_CLOEXEC"))
 
@@ -1150,6 +1207,12 @@ month = Month.DECEMBER
 
   def test_REALTIME_PRIORITY_CLASS_of_subprocess(self):
     self.assertOnlyIn((3, 7), self.detect("from subprocess import REALTIME_PRIORITY_CLASS"))
+
+  def test_STARTF_FORCEONFEEDBACK_of_subprocess(self):
+    self.assertOnlyIn((3, 13), self.detect("from subprocess import STARTF_FORCEONFEEDBACK"))
+
+  def test_STARTF_FORCEOFFFEEDBACK_of_subprocess(self):
+    self.assertOnlyIn((3, 13), self.detect("from subprocess import STARTF_FORCEOFFFEEDBACK"))
 
   def test_CREATE_NO_WINDOW_of_subprocess(self):
     self.assertOnlyIn((3, 7), self.detect("from subprocess import CREATE_NO_WINDOW"))
@@ -2957,6 +3020,26 @@ month = Month.DECEMBER
     self.assertOnlyIn((3, 7),
                       self.detect("from sys import flags\n"
                                   "flags().utf8_mode"))
+
+  def test_gil_from_sys_flags(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from sys import flags\n"
+                                  "flags().gil"))
+
+  def test_int_max_str_digits_from_sys_flags(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from sys import flags\n"
+                                  "flags().int_max_str_digits"))
+
+  def test_safe_path_from_sys_flags(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from sys import flags\n"
+                                  "flags().safe_path"))
+
+  def test_warn_default_encoding_from_sys_flags(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from sys import flags\n"
+                                  "flags().warn_default_encoding"))
 
   def test_build_from_sys_getwindowsversion(self):
     self.assertOnlyIn(((2, 7), (3, 0)),
