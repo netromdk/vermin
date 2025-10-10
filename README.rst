@@ -85,7 +85,7 @@ Or if installed via `PyPi <https://pypi.python.org/pypi/vermin/>`__::
 
   % brew install vermin
 
-`Spack <https://spack.io>`__ (`pkg <https://github.com/spack/spack/blob/develop/var/spack/repos/builtin/packages/py-vermin/package.py>`__)::
+`Spack <https://spack.io>`__ (`pkg <https://github.com/spack/spack-packages/blob/develop/repos/spack_repo/builtin/packages/py_vermin/package.py>`__)::
 
   % git clone https://github.com/spack/spack.git
   % . spack/share/spack/setup-env.sh  # depending on shell
