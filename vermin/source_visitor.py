@@ -4,11 +4,11 @@ from collections import deque
 import sys
 
 from .source_state import SourceState
-from .rules import STRFTIME_REQS, BYTES_REQS, ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS,\
-  CODECS_ERRORS_INDICES, CODECS_ENCODINGS, CODECS_ENCODINGS_INDICES,\
-  BUILTIN_GENERIC_ANNOTATION_TYPES, DICT_UNION_SUPPORTED_TYPES, DICT_UNION_MERGE_SUPPORTED_TYPES,\
+from .rules import STRFTIME_REQS, BYTES_REQS, ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS, \
+  CODECS_ERRORS_INDICES, CODECS_ENCODINGS, CODECS_ENCODINGS_INDICES, \
+  BUILTIN_GENERIC_ANNOTATION_TYPES, DICT_UNION_SUPPORTED_TYPES, DICT_UNION_MERGE_SUPPORTED_TYPES, \
   DECORATOR_USER_FUNCTIONS
-from .utility import dotted_name, reverse_range, combine_versions, compare_requirements,\
+from .utility import dotted_name, reverse_range, combine_versions, compare_requirements, \
   remove_whitespace
 
 STRFTIME_DIRECTIVE_REGEX = re.compile(r"%(?:[-\.\d#\s\+])*(\w)")
@@ -1662,7 +1662,7 @@ ast.Call(func=ast.Name)."""
             # AugAssign: both variable names are the same so require two types.
             (name in self.__s.name_res_type and len(self.__s.name_res_type[name]) > 1) or
             # Unless it's the target value, then require not name res, is user def and res type.
-            (name not in self.__s.name_res and name in self.__s.user_defs and \
+            (name not in self.__s.name_res and name in self.__s.user_defs and
              name in self.__s.name_res_type))
 
       # Example:

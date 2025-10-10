@@ -3128,7 +3128,7 @@ def KWARGS_REQS(config):
     ("concurrent.futures.ThreadPoolExecutor", "initializer"): (None, (3, 7)),
     ("concurrent.futures.ThreadPoolExecutor", "thread_name_prefix"): (None, (3, 6)),
     ("configparser.ConfigParser", "allow_no_value"): bpv("configparser", (None, (3, 2)), config),
-    ("configparser.ConfigParser", "allow_unnamed_section"): \
+    ("configparser.ConfigParser", "allow_unnamed_section"):
     bpv("configparser", (None, (3, 13)), config),
     ("configparser.ConfigParser", "comment_prefixes"): bpv("configparser", (None, (3, 2)), config),
     ("configparser.ConfigParser", "converters"): bpv("configparser", (None, (3, 5)), config),
@@ -3140,7 +3140,7 @@ def KWARGS_REQS(config):
     ("configparser.ConfigParser", "strict"): bpv("configparser", (None, (3, 2)), config),
     ("configparser.ConfigParser.read", "encoding"): bpv("configparser", (None, (3, 2)), config),
     ("configparser.RawConfigParser", "allow_no_value"): bpv("configparser", (None, (3, 2)), config),
-    ("configparser.RawConfigParser", "allow_unnamed_section"): \
+    ("configparser.RawConfigParser", "allow_unnamed_section"):
     bpv("configparser", (None, (3, 13)), config),
     ("configparser.RawConfigParser", "comment_prefixes"): bpv("configparser", (None, (3, 2)),
                                                               config),
