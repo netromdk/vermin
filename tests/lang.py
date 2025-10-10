@@ -2293,3 +2293,29 @@ class Foo:
 """)
     self.assertFalse(visitor.metaclass_class_keyword())
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 12)
+  def test_generic_class_keyword(self):
+    visitor = self.visit("""
+class Foo[T]:
+  pass
+""")
+    self.assertTrue(visitor.generic_class())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
+
+    visitor = self.visit("""
+class Car[Tire]:
+  def __init__(self, tire: Tire):
+    self.tire = tire
+
+  def change_tire(self, tire: Tire):
+    self.tire = tire
+""")
+    self.assertTrue(visitor.generic_class())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
+
+    visitor = self.visit("""
+class Foo:
+  pass
+""")
+    self.assertFalse(visitor.generic_class())
