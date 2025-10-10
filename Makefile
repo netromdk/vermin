@@ -45,14 +45,13 @@ clean-venv:
 	rm -fr .venv
 
 clean-pypi:
-	rm -fr build dist *.egg-info
+	rm -fr build dist *.egg-info vermin/*.egg-info
 
 dist-clean: clean clean-venv clean-pypi
 
 pypi-dist: clean-pypi
-	python -m pip install --upgrade wheel twine
-	python setup.py sdist
-	python setup.py bdist_wheel --universal
+	python -m pip install --upgrade build wheel twine
+	python -m build
 
 update-coverage-requirements: setup-venv setup-coverage
 	pip freeze > misc/.coverage-requirements.txt
