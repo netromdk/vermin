@@ -87,7 +87,9 @@ check-pypi:
 check: check-style check-pypi static-analysis lint
 
 # NOTE: `check` doesn't check all because bandit doesn't run on py37+ yet.
-check-all: check security-check
+#check-all: check security-check
+# TODO: disable bandit while it gets support for 3.14!
+check-all: check
 
 test-coverage:
 	coverage run --source=vermin,tests runtests.py
