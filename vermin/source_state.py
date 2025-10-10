@@ -117,6 +117,9 @@ class SourceState:
     # defined in a class scope.
     self.type_alias_statement_class_scope_lambda = False
 
+    # `class C[T]: ...`
+    self.generic_class = False
+
     # Imported members of modules, like "exc_clear" of "sys".
     self.import_mem_mod = {}
 

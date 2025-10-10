@@ -270,6 +270,9 @@ class SourceVisitor(ast.NodeVisitor):
   def metaclass_class_keyword(self):
     return self.__s.metaclass_class_keyword
 
+  def generic_class(self):
+    return self.__s.generic_class
+
   def __get_source_line(self, line, col=0):
     if self.__s.source is None:
       return None  # pragma: no cover
@@ -514,6 +517,9 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.metaclass_class_keyword():
       mins = self.__add_versions_entity(mins, (None, (3, 0)), "'metaclass' class keyword")
+
+    if self.generic_class():
+      mins = self.__add_versions_entity(mins, (None, (3, 12)), "generic class `class C[T]: ...`")
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
@@ -1881,6 +1887,10 @@ ast.Call(func=ast.Name)."""
         if keyword.arg == "metaclass":
           self.__s.metaclass_class_keyword = True
           self.__vvprint("'metaclass' class keyword", versions=[None, (3, 0)])
+
+    if sys.version_info >= (3, 12) and len(node.type_params) > 0:
+      self.__s.generic_class = True
+      self.__vvprint("generic class `class C[T]: ...`", versions=[None, (3, 12)])
 
     self.__s.seen_class += 1
     self.generic_visit(node)

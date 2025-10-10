@@ -149,9 +149,9 @@ unpacking assignment, generalized unpacking, ellipsis literal (``...``) out of s
 union (``{..}  | {..}``), dictionary union merge (``a = {..}; a |= {..}``), builtin generic type
 annotations (``list[str]``), function decorators, class decorators, relaxed decorators,
 ``metaclass`` class keyword, pattern matching with ``match``, union types written as ``X | Y``, type
-alias statements (``type X = SomeType``), and type alias statements with lambdas/comprehensions in
-class scopes. It tries to detect and ignore user-defined functions, classes, arguments, and
-variables with names that clash with library-defined symbols.
+alias statements (``type X = SomeType``), type alias statements with lambdas/comprehensions in class
+scopes, and generic classes (``class C[T]: ...``). It tries to detect and ignore user-defined
+functions, classes, arguments, and variables with names that clash with library-defined symbols.
 
 Caveats
 =======
