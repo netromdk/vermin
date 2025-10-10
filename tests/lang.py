@@ -1,4 +1,4 @@
-from vermin import BUILTIN_GENERIC_ANNOTATION_TYPES, DICT_UNION_SUPPORTED_TYPES,\
+from vermin import BUILTIN_GENERIC_ANNOTATION_TYPES, DICT_UNION_SUPPORTED_TYPES, \
   DICT_UNION_MERGE_SUPPORTED_TYPES, dotted_name, Parser, InvalidVersionException
 
 from .testutils import VerminTest, current_version
