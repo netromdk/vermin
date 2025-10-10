@@ -55,6 +55,59 @@ class VerminConstantMemberTests(VerminTest):
   def test_stop_of_range(self):
     self.assertOnlyIn((3, 3), self.detect("range.stop"))
 
+  def test__field_types_of_ast_AST(self):
+    self.assertOnlyIn((3, 13), self.detect("from ast import AST\nAST._field_types"))
+
+  def test__align__of_ctypes_Structure(self):
+    self.assertOnlyIn((3, 13), self.detect("from ctypes import Structure\nStructure._align_"))
+
+  def test_start_offset_of_dis_Instruction(self):
+    self.assertOnlyIn((3, 13), self.detect("from dis import Instruction\nInstruction.start_offset"))
+
+  def test_cache_offset_of_dis_Instruction(self):
+    self.assertOnlyIn((3, 13), self.detect("from dis import Instruction\nInstruction.cache_offset"))
+
+  def test_end_offset_of_dis_Instruction(self):
+    self.assertOnlyIn((3, 13), self.detect("from dis import Instruction\nInstruction.end_offset"))
+
+  def test_baseopname_of_dis_Instruction(self):
+    self.assertOnlyIn((3, 13), self.detect("from dis import Instruction\nInstruction.baseopname"))
+
+  def test_baseopcode_of_dis_Instruction(self):
+    self.assertOnlyIn((3, 13), self.detect("from dis import Instruction\nInstruction.baseopcode"))
+
+  def test_jump_target_of_dis_Instruction(self):
+    self.assertOnlyIn((3, 13), self.detect("from dis import Instruction\nInstruction.jump_target"))
+
+  def test_oparg_of_dis_Instruction(self):
+    self.assertOnlyIn((3, 13), self.detect("from dis import Instruction\nInstruction.oparg"))
+
+  def test_line_number_of_dis_Instruction(self):
+    self.assertOnlyIn((3, 13), self.detect("from dis import Instruction\nInstruction.line_number"))
+
+  def test_cache_info_of_dis_Instruction(self):
+    self.assertOnlyIn((3, 13), self.detect("from dis import Instruction\nInstruction.cache_info"))
+
+  def test_skips_of_doctest_DocTestRunner(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from doctest import DocTestRunner\nDocTestRunner.skips"))
+
+  def test_skipped_of_doctest_DocTestRunner(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from doctest import DocTestRunner\nDocTestRunner.skipped"))
+
+  def test_verify_generated_headers_of_email_policy_Policy(self):
+    self.assertOnlyIn((3, 13), self.detect("""
+from email.policy import Policy
+Policy.verify_generated_headers
+"""))
+
+  def test_mode_of_lzma_LZMAFile(self):
+    self.assertOnlyIn((3, 13), self.detect("from lzma import LZMAFile\nLZMAFile.mode"))
+
+  def test_name_of_lzma_LZMAFile(self):
+    self.assertOnlyIn((3, 13), self.detect("from lzma import LZMAFile\nLZMAFile.name"))
+
   def test_flags_of_sys(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from sys import flags"))
 
@@ -67,6 +120,18 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_environb_of_os(self):
     self.assertOnlyIn((3, 2), self.detect("from os import environb"))
+
+  def test_TFD_NONBLOCK_of_os(self):
+    self.assertOnlyIn((3, 13), self.detect("from os import TFD_NONBLOCK"))
+
+  def test_TFD_CLOEXEC_of_os(self):
+    self.assertOnlyIn((3, 13), self.detect("from os import TFD_CLOEXEC"))
+
+  def test_TFD_TIMER_ABSTIME_of_os(self):
+    self.assertOnlyIn((3, 13), self.detect("from os import TFD_TIMER_ABSTIME"))
+
+  def test_TFD_TIMER_CANCEL_ON_SET_of_os(self):
+    self.assertOnlyIn((3, 13), self.detect("from os import TFD_TIMER_CANCEL_ON_SET"))
 
   def test_PRIO_PROCESS_of_os(self):
     self.assertOnlyIn((3, 3), self.detect("from os import PRIO_PROCESS"))
@@ -179,6 +244,12 @@ class VerminConstantMemberTests(VerminTest):
   def test_version_info_of_sys(self):
     self.assertOnlyIn(((2, 0), (3, 0)), self.detect("from sys import version_info"))
 
+  def test_exc_type_str_of_traceback_TracebackException(self):
+    self.assertOnlyIn((3, 13), self.detect("""
+from traceback import TracebackException
+TracebackException.exc_type_str
+"""))
+
   def test_sentinel_of_multiprocessing_Process(self):
     self.assertOnlyIn((3, 3),
                       self.detect("from multiprocessing import Process\np = Process()\np.sentinel"))
@@ -276,6 +347,9 @@ class VerminConstantMemberTests(VerminTest):
   def test_PyCF_TYPE_COMMENTS_of_ast(self):
     self.assertOnlyIn((3, 8), self.detect("from ast import PyCF_TYPE_COMMENTS"))
 
+  def test_PyCF_OPTIMIZED_AST_of_ast(self):
+    self.assertOnlyIn((3, 13), self.detect("from ast import PyCF_OPTIMIZED_AST"))
+
   def test_eof_of_bz2_BZ2Decompressor(self):
     self.assertOnlyIn((3, 3),
                       self.detect("from bz2 import BZ2Decompressor\nd = BZ2Decompressor()\nd.eof"))
@@ -285,6 +359,18 @@ class VerminConstantMemberTests(VerminTest):
                       self.detect("from bz2 import BZ2Decompressor\n"
                                   "d = BZ2Decompressor()\n"
                                   "d.needs_input"))
+
+  def test_mode_of_bz2_BZ2File(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from bz2 import BZ2File\n"
+                                  "d = BZ2File()\n"
+                                  "d.mode"))
+
+  def test_name_of_bz2_BZ2File(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from bz2 import BZ2File\n"
+                                  "d = BZ2File()\n"
+                                  "d.name"))
 
   def test_maxlen_of_collections_deque(self):
     self.assertOnlyIn(((2, 7), (3, 1)),
@@ -419,6 +505,9 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_HAS_TLSv1_3_of_ssl(self):
     self.assertOnlyIn(((2, 7), (3, 7)), self.detect("from ssl import HAS_TLSv1_3"))
+
+  def test_HAS_PSK_ssl(self):
+    self.assertOnlyIn((3, 13), self.detect("from ssl import HAS_PSK"))
 
   def test_HAS_NEVER_CHECK_COMMON_NAME_of_ssl(self):
     self.assertOnlyIn((3, 7), self.detect("from ssl import HAS_NEVER_CHECK_COMMON_NAME"))
@@ -587,6 +676,9 @@ class VerminConstantMemberTests(VerminTest):
   def test_CLOCK_MONOTONIC_RAW_of_time(self):
     self.assertOnlyIn((3, 3), self.detect("from time import CLOCK_MONOTONIC_RAW"))
 
+  def test_CLOCK_MONOTONIC_RAW_APPROX_of_time(self):
+    self.assertOnlyIn((3, 13), self.detect("from time import CLOCK_MONOTONIC_RAW_APPROX"))
+
   def test_CLOCK_PROCESS_CPUTIME_ID_of_time(self):
     self.assertOnlyIn((3, 3), self.detect("from time import CLOCK_PROCESS_CPUTIME_ID"))
 
@@ -601,6 +693,9 @@ class VerminConstantMemberTests(VerminTest):
 
   def test_CLOCK_UPTIME_RAW_of_time(self):
     self.assertOnlyIn((3, 8), self.detect("from time import CLOCK_UPTIME_RAW"))
+
+  def test_CLOCK_UPTIME_RAW_APPROX_of_time(self):
+    self.assertOnlyIn((3, 13), self.detect("from time import CLOCK_UPTIME_RAW_APPROX"))
 
   def test_CLOCK_REALTIME_of_time(self):
     self.assertOnlyIn((3, 3), self.detect("from time import CLOCK_REALTIME"))
@@ -903,6 +998,39 @@ month = Month.DECEMBER
   def test_MAP_STACK_of_mmap(self):
     self.assertOnlyIn((3, 11), self.detect("import mmap\nmmap.MAP_STACK"))
 
+  def test_MAP_32BIT_of_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("import mmap\nmmap.MAP_32BIT"))
+
+  def test_MAP_HASSEMAPHORE_of_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("import mmap\nmmap.MAP_HASSEMAPHORE"))
+
+  def test_MAP_JIT_of_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("import mmap\nmmap.MAP_JIT"))
+
+  def test_MAP_NOCACHE_of_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("import mmap\nmmap.MAP_NOCACHE"))
+
+  def test_MAP_NOEXTEND_of_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("import mmap\nmmap.MAP_NOEXTEND"))
+
+  def test_MAP_NORESERVE_of_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("import mmap\nmmap.MAP_NORESERVE"))
+
+  def test_MAP_RESILIENT_CODESIGN_of_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("import mmap\nmmap.MAP_RESILIENT_CODESIGN"))
+
+  def test_MAP_RESILIENT_MEDIA_of_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("import mmap\nmmap.MAP_RESILIENT_MEDIA"))
+
+  def test_MAP_TPRO_of_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("import mmap\nmmap.MAP_TPRO"))
+
+  def test_MAP_TRANSLATED_ALLOW_EXECUTE_of_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("import mmap\nmmap.MAP_TRANSLATED_ALLOW_EXECUTE"))
+
+  def test_MAP_UNIX03_of_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("import mmap\nmmap.MAP_UNIX03"))
+
   def test_MFD_CLOEXEC_of_os(self):
     self.assertOnlyIn((3, 8), self.detect("from os import MFD_CLOEXEC"))
 
@@ -1079,6 +1207,12 @@ month = Month.DECEMBER
 
   def test_REALTIME_PRIORITY_CLASS_of_subprocess(self):
     self.assertOnlyIn((3, 7), self.detect("from subprocess import REALTIME_PRIORITY_CLASS"))
+
+  def test_STARTF_FORCEONFEEDBACK_of_subprocess(self):
+    self.assertOnlyIn((3, 13), self.detect("from subprocess import STARTF_FORCEONFEEDBACK"))
+
+  def test_STARTF_FORCEOFFFEEDBACK_of_subprocess(self):
+    self.assertOnlyIn((3, 13), self.detect("from subprocess import STARTF_FORCEOFFFEEDBACK"))
 
   def test_CREATE_NO_WINDOW_of_subprocess(self):
     self.assertOnlyIn((3, 7), self.detect("from subprocess import CREATE_NO_WINDOW"))
@@ -2886,6 +3020,26 @@ month = Month.DECEMBER
     self.assertOnlyIn((3, 7),
                       self.detect("from sys import flags\n"
                                   "flags().utf8_mode"))
+
+  def test_gil_from_sys_flags(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from sys import flags\n"
+                                  "flags().gil"))
+
+  def test_int_max_str_digits_from_sys_flags(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from sys import flags\n"
+                                  "flags().int_max_str_digits"))
+
+  def test_safe_path_from_sys_flags(self):
+    self.assertOnlyIn((3, 11),
+                      self.detect("from sys import flags\n"
+                                  "flags().safe_path"))
+
+  def test_warn_default_encoding_from_sys_flags(self):
+    self.assertOnlyIn((3, 10),
+                      self.detect("from sys import flags\n"
+                                  "flags().warn_default_encoding"))
 
   def test_build_from_sys_getwindowsversion(self):
     self.assertOnlyIn(((2, 7), (3, 0)),

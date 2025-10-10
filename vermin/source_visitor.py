@@ -1,13 +1,15 @@
 import ast
 import re
 from collections import deque
+import sys
 
 from .source_state import SourceState
 from .rules import STRFTIME_REQS, BYTES_REQS, ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS,\
   CODECS_ERRORS_INDICES, CODECS_ENCODINGS, CODECS_ENCODINGS_INDICES,\
   BUILTIN_GENERIC_ANNOTATION_TYPES, DICT_UNION_SUPPORTED_TYPES, DICT_UNION_MERGE_SUPPORTED_TYPES,\
   DECORATOR_USER_FUNCTIONS
-from .utility import dotted_name, reverse_range, combine_versions, remove_whitespace
+from .utility import dotted_name, reverse_range, combine_versions, compare_requirements,\
+  remove_whitespace
 
 STRFTIME_DIRECTIVE_REGEX = re.compile(r"%(?:[-\.\d#\s\+])*(\w)")
 BYTES_DIRECTIVE_REGEX = STRFTIME_DIRECTIVE_REGEX
@@ -15,31 +17,38 @@ STR_27_FORMAT_REGEX = re.compile(r"(?<!{){}(?!})")
 WITH_PAREN_REGEX = re.compile(r"with[\s\\]*\(")
 
 def is_int_node(node):
+  if sys.version_info >= (3, 8):
+    return (isinstance(node, ast.Constant) and isinstance(node.value, int)) or \
+      (isinstance(node, ast.UnaryOp) and isinstance(node.operand, ast.Constant) and
+       isinstance(node.operand.value, int))
   return (isinstance(node, ast.Num) and isinstance(node.n, int)) or \
     (isinstance(node, ast.UnaryOp) and isinstance(node.operand, ast.Num) and
-     isinstance(node.operand.n, int))
+      isinstance(node.operand.n, int))
 
 def is_neg_int_node(node):
+  if sys.version_info >= (3, 8):
+    return (isinstance(node, ast.Constant) and isinstance(node.value, int) and node.value < 0) or \
+      (isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub) and
+       isinstance(node.operand, ast.Constant) and isinstance(node.operand.value, int))
   return (isinstance(node, ast.Num) and isinstance(node.n, int) and node.n < 0) or \
     (isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub) and
-     isinstance(node.operand, ast.Num) and isinstance(node.operand.n, int))
+      isinstance(node.operand, ast.Num) and isinstance(node.operand.n, int))
 
 def is_none_node(node):  # pragma: no cover
   if isinstance(node, ast.Name) and node.id == 'None':
     return True
-  if hasattr(ast, 'NameConstant') and isinstance(node, ast.NameConstant) and node.value is None:
-    return True
-  if hasattr(ast, 'Constant') and isinstance(node, ast.Constant) and node.value is None:
-    return True
+  if sys.version_info >= (3, 8):
+    if isinstance(node, ast.Constant) and node.value is None:
+      return True
+  elif sys.version_info >= (3, 4):
+    if isinstance(node, ast.NameConstant) and node.value is None:
+      return True
   return False
 
 def is_ellipsis_node(node):  # pragma: no cover
-  if hasattr(ast, 'Ellipsis') and isinstance(node, ast.Ellipsis):
-    return True
-  if hasattr(ast, 'Constant') and isinstance(node, ast.Constant) and \
-    isinstance(node.value, type(Ellipsis)):
-    return True
-  return False
+  if sys.version_info >= (3, 8):
+    return isinstance(node, ast.Constant) and isinstance(node.value, type(Ellipsis))
+  return hasattr(ast, 'Ellipsis') and isinstance(node, ast.Ellipsis)
 
 # Generalized unpacking, or starred expressions, are allowed when used with assignment targets prior
 # to 3.5. That means that generalized unpacking expressions are only on the right-hand side of the
@@ -213,6 +222,9 @@ class SourceVisitor(ast.NodeVisitor):
   def type_alias_statement(self):
     return self.__s.type_alias_statement
 
+  def type_alias_statement_class_scope_lambda(self):
+    return self.__s.type_alias_statement_class_scope_lambda
+
   def bytes_format(self):
     return self.__s.bytes_format
 
@@ -281,37 +293,43 @@ class SourceVisitor(ast.NodeVisitor):
   def except_star(self):
     return self.__s.except_star
 
-  def __violates_target_versions(self, versions):
-    # If only violations isn't turned on then fake violations because it means it will show the
-    # rule.
-    if versions is None or not self.__s.config.only_show_violations():
-      return True
+  def __is_violation(self, versions):
+    """Check if versions violate targets. Versions being None indicates a verbose message, and
+    version violations are not checked.
+    """
+    # versions none indicates verbose message, not that no compatible versions found
+    if versions is None:
+      return False
+    # compare_requirements considers violation if no targets, which we don't want
+    targets = self.__s.config.targets()
+    if not targets:
+      return False
+    # exactness only relevant after performing a min-reduction across all found requirements
+    violation = not compare_requirements(versions, targets, ignore_exact=True)
+    if violation:
+      self.__s.found_violation = True
+    return violation
 
-    targets = [t for (e, t) in self.__s.config.targets()]
-    if len(targets) == 1:
-      if targets[0][0] < 3:
-        targets.append(None)
-      else:
-        targets = [None, targets[0]]
+  def found_violation(self):
+    """Whether any violations were found during the visit."""
+    return self.__s.found_violation
 
-    for i in (0, 1):
-      if targets[i] is not None and (versions[i] is None or versions[i] > targets[i]):
-        return True
-    return False
+  def __show_analysis(self, violation):
+    """Whether to show analysis results. We only show violations in show-only-violations mode."""
+    return violation or not self.__s.config.only_show_violations()
 
   def __add_versions_entity(self, mins, versions, info=None, vvprint=False, entity=None,
                             plural=None):
-    # Whether to show verbose print/version info. If there are violations in show-only-violations
-    # mode, then show results. Otherwise, if it isn't that mode, it will fake being "violated" to
-    # ensure the rules are shown.
-    show = self.__violates_target_versions(versions)
+    # Whether to show verbose print/version info
+    violation = self.__is_violation(versions)
+    show = self.__show_analysis(violation)
     if show and info is not None:
       if versions in self.__s.info_versions:
         self.__s.info_versions[versions].append(info)
       else:
         self.__s.info_versions[versions] = [info]
       if vvprint:
-        self.__vvprint(info, entity=entity, versions=versions, plural=plural)
+        self.__vvprint(info, entity=entity, versions=versions, plural=plural, violation=violation)
     return combine_versions(mins, versions, self.__s.config, self.__s.info_versions)
 
   def minimum_versions(self):
@@ -450,6 +468,11 @@ class SourceVisitor(ast.NodeVisitor):
       mins = self.__add_versions_entity(mins, (None, (3, 12)),
                                         "type alias statement (`type X = SomeType`)", plural=False)
 
+    if self.type_alias_statement_class_scope_lambda():
+      mins = self.__add_versions_entity(mins, (None, (3, 13)),
+                                        "type alias statement using lambda/comp in class scope",
+                                        plural=False)
+
     if self.bytes_format():
       # Since byte strings are a `str` synonym as of 2.6+, and thus also supports `%` formatting,
       # (2, 6) is returned instead of None.
@@ -564,6 +587,12 @@ class SourceVisitor(ast.NodeVisitor):
       text += "\n"
     return text
 
+  def add_error_message(self, line):
+    """Manually add an error message line to the output text."""
+    # treat as a violation
+    self.__s.found_violation = True
+    self.__s.output_text.append(line)
+
   def set_no_lines(self, lines):
     self.__no_lines = lines
 
@@ -575,10 +604,12 @@ class SourceVisitor(ast.NodeVisitor):
       self.__s.output_text.append(msg)
 
   # pragma: no cover
-  def __verbose_print(self, msg, level, entity=None, line=None, versions=None, plural=None):
-    # If there aren't any violations in show-only-violations mode, then return. Note that if it
-    # isn't that mode, it will fake being "violated" to ensure the rules are shown.
-    if not self.__violates_target_versions(versions):
+  def __verbose_print(self, msg, level, entity=None, line=None,
+                      versions=None, plural=None, violation=None):
+    """Violation bool is inferred if not provided."""
+    if violation is None:
+      violation = self.__is_violation(versions)
+    if not self.__show_analysis(violation):
       return
 
     fmt = self.__s.config.format()
@@ -598,18 +629,21 @@ class SourceVisitor(ast.NodeVisitor):
     elif line is None and config_level > 2:
       line = self.__s.line
 
-    msg = fmt.format_output_line(msg, self.__s.path, line, col, versions, plural)
+    msg = fmt.format_output_line(msg, self.__s.path, line, col, versions, plural, violation)
     self.__s.output_text.append(msg)
 
-  def __vvprint(self, msg, entity=None, line=None, versions=None, plural=None):  # pragma: no cover
-    self.__verbose_print(msg, 2, entity, line, versions, plural=plural)
+  def __vvprint(self, msg, entity=None, line=None,
+                versions=None, plural=None, violation=None):  # pragma: no cover
+    self.__verbose_print(msg, 2, entity, line, versions, plural=plural, violation=violation)
 
-  def __vvvprint(self, msg, entity=None, line=None, versions=None, plural=None):  # pragma: no cover
-    self.__verbose_print(msg, 3, entity, line, versions, plural=plural)
+  def __vvvprint(self, msg, entity=None, line=None,
+                 versions=None, plural=None, violation=None):  # pragma: no cover
+    self.__verbose_print(msg, 3, entity, line, versions, plural=plural, violation=violation)
 
   # pragma: no cover
-  def __vvvvprint(self, msg, entity=None, line=None, versions=None, plural=None):
-    self.__verbose_print(msg, 4, entity, line, versions, plural=plural)
+  def __vvvvprint(self, msg, entity=None, line=None,
+                  versions=None, plural=None, violation=None):
+    self.__verbose_print(msg, 4, entity, line, versions, plural=plural, violation=violation)
 
   def __add_module(self, module, line=None, col=None):
     if module in self.__s.user_defs:  # pragma: no cover
@@ -775,32 +809,48 @@ class SourceVisitor(ast.NodeVisitor):
       elif isinstance(attr, ast.Call):
         if hasattr(attr, "func") and hasattr(attr.func, "id"):
           full_name.append(attr.func.id)
-      elif not primi_type and isinstance(attr, ast.Dict):
-        if len(full_name) == 0 or (full_name[0] != "dict" and full_name[-1] != "dict"):
-          full_name.append("dict")
-      elif not primi_type and isinstance(attr, ast.Set):
-        if len(full_name) == 0 or (full_name[0] != "set" and full_name[-1] != "set"):
-          full_name.append("set")
-      elif not primi_type and isinstance(attr, ast.List):
-        if len(full_name) == 0 or (full_name[0] != "list" and full_name[-1] != "list"):
-          full_name.append("list")
-      elif not primi_type and isinstance(attr, ast.Str):
-        name = "str"
-        if len(full_name) == 0 or (full_name[0] != name and len(full_name) == 1):
-          full_name.append(name)
-      elif not primi_type and isinstance(attr, ast.Num):
-        t = type(attr.n)
-        name = None
-        if t == int:
-          name = "int"
-        elif t == float:
-          name = "float"
-        if name is not None and len(full_name) == 0 or \
-          (full_name[0] != name and len(full_name) == 1):
-          full_name.append(name)
-      elif not primi_type and hasattr(ast, "Bytes") and isinstance(attr, ast.Bytes):
-        if len(full_name) == 0 or (full_name[0] != "bytes" and len(full_name) == 1):
-          full_name.append("bytes")
+      elif not primi_type:
+        if isinstance(attr, ast.Dict):
+          if len(full_name) == 0 or (full_name[0] != "dict" and full_name[-1] != "dict"):
+            full_name.append("dict")
+        elif isinstance(attr, ast.Set):
+          if len(full_name) == 0 or (full_name[0] != "set" and full_name[-1] != "set"):
+            full_name.append("set")
+        elif isinstance(attr, ast.List):
+          if len(full_name) == 0 or (full_name[0] != "list" and full_name[-1] != "list"):
+            full_name.append("list")
+        elif sys.version_info >= (3, 8):
+          if isinstance(attr, ast.Constant):
+            if isinstance(attr.value, str):
+              name = "str"
+              if len(full_name) == 0 or (full_name[0] != name and len(full_name) == 1):
+                full_name.append(name)
+            elif isinstance(attr.value, (int, float)):
+              name = "int" if isinstance(attr.value, int) else "float"
+              if name is not None and (len(full_name) == 0 or
+                                       (full_name[0] != name and len(full_name) == 1)):
+                full_name.append(name)
+            elif isinstance(attr.value, bytes):
+              if len(full_name) == 0 or (full_name[0] != "bytes" and len(full_name) == 1):
+                full_name.append("bytes")
+        else:
+          if isinstance(attr, ast.Str):
+            name = "str"
+            if len(full_name) == 0 or (full_name[0] != name and len(full_name) == 1):
+              full_name.append(name)
+          elif isinstance(attr, ast.Num):
+            t = type(attr.n)
+            name = None
+            if t is int:
+              name = "int"
+            elif t is float:
+              name = "float"
+            if name is not None and (len(full_name) == 0 or
+                                     (full_name[0] != name and len(full_name) == 1)):
+              full_name.append(name)
+          elif hasattr(ast, "Bytes") and isinstance(attr, ast.Bytes):
+            if len(full_name) == 0 or (full_name[0] != "bytes" and len(full_name) == 1):
+              full_name.append("bytes")
     full_name.reverse()
     return full_name
 
@@ -828,28 +878,44 @@ class SourceVisitor(ast.NodeVisitor):
       value_name = "set"
     elif isinstance(node.value, ast.List):
       value_name = "list"
-    elif isinstance(node.value, ast.Str):
-      value_name = "str"
-    elif isinstance(node.value, ast.Num):
-      n = node.value.n
-      if isinstance(n, int):
-        value_name = "int"
-      elif isinstance(n, float):
-        value_name = "float"
-    elif hasattr(ast, "Bytes") and isinstance(node.value, ast.Bytes):
-      value_name = "bytes"
-    elif hasattr(ast, "Constant") and isinstance(node.value, ast.Constant):
-      v = node.value.value
-      if isinstance(v, int):
-        value_name = "int"
-      elif isinstance(v, float):
-        value_name = "float"
-      elif v is None:
-        type_name = "None"
+
+    # If rvalue is None
+    elif sys.version_info >= (3, 8) and \
+         isinstance(node.value, ast.Constant) and node.value.value is None:
+      type_name = "None"
+    elif ((3, 8) > sys.version_info >= (3, 4)) and \
+         isinstance(node.value, ast.NameConstant) and node.value.value is None:
+      type_name = "None"
+    elif ((3, 4) > sys.version_info) and \
+         isinstance(node.value, ast.Name) and node.value.id == "None":
+      type_name = "None"
 
     # When a type name is used, and not a type instance.
     elif isinstance(node.value, ast.Name):
       type_name = node.value.id
+
+    elif sys.version_info >= (3, 8):
+      if isinstance(node.value, ast.Constant):
+        v = node.value.value
+        if isinstance(v, str):
+          value_name = "str"
+        elif isinstance(v, int):
+          value_name = "int"
+        elif isinstance(v, float):
+          value_name = "float"
+        elif isinstance(v, bytes):
+          value_name = "bytes"
+    else:
+      if isinstance(node.value, ast.Str):
+        value_name = "str"
+      elif isinstance(node.value, ast.Num):
+        n = node.value.n
+        if isinstance(n, int):
+          value_name = "int"
+        elif isinstance(n, float):
+          value_name = "float"
+      elif hasattr(ast, "Bytes") and isinstance(node.value, ast.Bytes):
+        value_name = "bytes"
 
     if value_name is None and type_name is None:
       return
@@ -1056,9 +1122,14 @@ class SourceVisitor(ast.NodeVisitor):
              (func.id in self.__s.module_as_name and
               self.__s.module_as_name[func.id] == "array.array"):
           for arg in node.args:
-            if isinstance(arg, ast.Str) and hasattr(arg, "s"):
-              # "array" = 5 + 1 = 6
-              self.__add_array_typecode(arg.s, node.lineno, node.col_offset + 6)
+            if sys.version_info >= (3, 8):
+              if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+                # "array" = 5 + 1 = 6
+                self.__add_array_typecode(arg.value, node.lineno, node.col_offset + 6)
+            else:
+              if isinstance(arg, ast.Str) and hasattr(arg, "s"):
+                # "array" = 5 + 1 = 6
+                self.__add_array_typecode(arg.s, node.lineno, node.col_offset + 6)
         elif func.id == "pow" and len(node.args) == 3:
           # Check if the second of three arguments of pow() is negative.
           if is_int_node(node.args[0]) and is_neg_int_node(node.args[1]) and \
@@ -1070,11 +1141,19 @@ class SourceVisitor(ast.NodeVisitor):
           self.__vvprint("super() without arguments", versions=[None, (3, 0)], plural=False)
       elif hasattr(func, "attr"):
         attr = func.attr
-        if attr == "format" and hasattr(func, "value") and isinstance(func.value, ast.Str) and \
-           "{}" in func.value.s:
+        if (sys.version_info >= (3, 8) and attr == "format" and hasattr(func, "value") and
+             isinstance(func.value, ast.Constant) and isinstance(func.value.value, str) and
+             "{}" in func.value.value) \
+           or \
+           (sys.version_info < (3, 8) and attr == "format" and hasattr(func, "value") and
+             isinstance(func.value, ast.Str) and
+             "{}" in func.value.s):
           # There cannot be "{" before or "}" after an occurrence of "{}" since "{{}}" means simply
           # an escaped "{}" and won't be replaced.
-          if STR_27_FORMAT_REGEX.search(func.value.s) is not None:
+          if (sys.version_info >= (3, 8) and
+              STR_27_FORMAT_REGEX.search(func.value.value) is not None) \
+               or \
+               (sys.version_info < (3, 8) and STR_27_FORMAT_REGEX.search(func.value.s) is not None):
             self.__vvprint("`\"..{}..\".format(..)`", versions=[(2, 7), (3, 0)])
             self.__s.format27 = True
         elif attr in ("strftime", "strptime") and hasattr(node, "args"):
@@ -1088,9 +1167,14 @@ class SourceVisitor(ast.NodeVisitor):
         self.__check_codecs_function(self.__s.function_name, node)
         if self.__s.function_name == "array.array":
           for arg in node.args:
-            if isinstance(arg, ast.Str) and hasattr(arg, "s"):
-              # "array.array" = 5 + 1 + 5 + 1 = 12
-              self.__add_array_typecode(arg.s, node.lineno, node.col_offset + 12)
+            if sys.version_info >= (3, 8):
+              if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+                # "array.array" = 5 + 1 + 5 + 1 = 12
+                self.__add_array_typecode(arg.value, node.lineno, node.col_offset + 12)
+            else:
+              if isinstance(arg, ast.Str) and hasattr(arg, "s"):
+                # "array.array" = 5 + 1 + 5 + 1 = 12
+                self.__add_array_typecode(arg.s, node.lineno, node.col_offset + 12)
 
     self.__check_generalized_unpacking(node)
     self.generic_visit(node)
@@ -1169,9 +1253,13 @@ class SourceVisitor(ast.NodeVisitor):
     self.__s.bytesv3 = True
     self.__vvprint("byte string (b'..') or `str` synonym", versions=[(2, 6), (3, 0)])
 
-    if hasattr(node, "s"):
-      for directive in BYTES_DIRECTIVE_REGEX.findall(str(node.s)):
+    if sys.version_info >= (3, 12):
+      for directive in BYTES_DIRECTIVE_REGEX.findall(str(node.value)):
         self.__add_bytes_directive(directive, node.lineno)
+    else:
+      if hasattr(node, "s"):
+        for directive in BYTES_DIRECTIVE_REGEX.findall(str(node.s)):
+          self.__add_bytes_directive(directive, node.lineno)
 
   def __is_dict(self, node):
     """Checks if node is a dict either by direct instance, name, constructor, function/lambda body,
@@ -1188,10 +1276,16 @@ class SourceVisitor(ast.NodeVisitor):
         return True
     elif isinstance(node, ast.Subscript):
       n = None
-      if isinstance(node.slice, ast.Index) and isinstance(node.slice.value, ast.Num):
-        n = node.slice.value.n
-      elif hasattr(ast, "Constant") and isinstance(node.slice, ast.Constant):
-        n = node.slice.value
+      if sys.version_info >= (3, 9):
+        if isinstance(node.slice, ast.Constant) and isinstance(node.slice.value, int):
+          n = node.slice.value
+      elif sys.version_info >= (3, 8):
+        if isinstance(node.slice, ast.Index) and isinstance(node.slice.value, ast.Constant) and \
+           isinstance(node.slice.value.value, int):
+          n = node.slice.value.value
+      else:
+        if isinstance(node.slice, ast.Index) and isinstance(node.slice.value, ast.Num):
+          n = node.slice.value.n
       if isinstance(n, int):
         for tup in ast.iter_fields(node.value):
           if (tup[0] == "elts" or tup[0] == "values") and n < len(tup[1]) and\
@@ -1220,8 +1314,12 @@ ast.Call(func=ast.Name)."""
     #   BinOp(left=Bytes(s=b'%4x'), op=Mod(), right=Num(n=10))
     #   BinOp(left=Call(func=Name(id='bytearray', ctx=Load()), args=[Bytes(s=b'%x')], keywords=[]),
     #         op=Mod(), right=Num(n=10))
-    if (hasattr(ast, "Bytes") and isinstance(node.left, ast.Bytes))\
-       and isinstance(node.op, ast.Mod):
+    if (sys.version_info >= (3, 8) and isinstance(node.left, ast.Constant) and
+         isinstance(node.left.value, bytes) and
+         isinstance(node.op, ast.Mod)) or \
+       (sys.version_info < (3, 8) and
+         hasattr(ast, "Bytes") and isinstance(node.left, ast.Bytes) and
+         isinstance(node.op, ast.Mod)):
       self.__s.bytes_format = True
       self.__vvprint("bytes `%` formatting or `str` synonym", versions=[(2, 6), (3, 5)])
 
@@ -1452,7 +1550,13 @@ ast.Call(func=ast.Name)."""
         value.append("{" + kvs + "}")
         break
 
-      elif isinstance(n, ast.Index):
+      elif sys.version_info >= (3, 9) \
+           and isinstance(n, (ast.Constant, ast.Name, ast.Slice, ast.Tuple)):
+        # Check on slice indices like a[0] or a[i] or a[0:1] or a[(0,1)]
+        val = self.__extract_fstring_value(n)
+        value.append(val)
+        break
+      elif sys.version_info < (3, 9) and isinstance(n, ast.Index):
         val = self.__extract_fstring_value(n.value)
         value.append(val)
         break
@@ -1778,10 +1882,12 @@ ast.Call(func=ast.Name)."""
           self.__s.metaclass_class_keyword = True
           self.__vvprint("'metaclass' class keyword", versions=[None, (3, 0)])
 
+    self.__s.seen_class += 1
     self.generic_visit(node)
     # Some nodes aren't visited via `self.generic_visit(node)` so it is done explicitly.
     for n in node.body:
       self.generic_visit(n)
+    self.__s.seen_class -= 1
 
   def visit_NameConstant(self, node):
     if node.value is True or node.value is False:  # pragma: no cover
@@ -2080,7 +2186,7 @@ ast.Call(func=ast.Name)."""
         if is_ellipsis_node(n):
           self.__s.ellipsis_nodes_in_slices.add(n)
     else:
-      if hasattr(ast, 'Index') and isinstance(slices_node, ast.Index):
+      if sys.version_info < (3, 9) and hasattr(ast, 'Index') and isinstance(slices_node, ast.Index):
         slices_node = slices_node.value
       if is_ellipsis_node(slices_node):
         self.__s.ellipsis_nodes_in_slices.add(slices_node)
@@ -2186,6 +2292,14 @@ ast.Call(func=ast.Name)."""
       self.__s.type_alias_statement = True
       self.__vvprint("type alias statement (`type X = SomeType`)", versions=[None, (3, 12)],
                      plural=False)
+      if self.__s.seen_class > 0:
+        for n in ast.walk(node.value):
+          if isinstance(n, ast.Lambda) or \
+            (hasattr(ast, "comprehension") and isinstance(n, ast.comprehension)):
+            self.__s.type_alias_statement_class_scope_lambda = True
+            self.__vvprint("type alias statement using lambda/comp in class scope",
+                           versions=[None, (3, 13)], plural=False)
+            break
       self.generic_visit(node)
 
   # Ignore unused nodes as a speed optimization.

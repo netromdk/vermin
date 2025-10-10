@@ -63,6 +63,7 @@ Table of Contents
 * `API (experimental) <#api-experimental>`__
 * `Analysis Exclusions <#analysis-exclusions>`__
 * `Parsable Output <#parsable-output>`__
+* `GitHub Output <#github-output>`__
 * `Contributing <#contributing>`__
 
 Usage
@@ -147,9 +148,10 @@ bytearray, ``with`` statement, asynchronous ``with`` statement, multiple context
 unpacking assignment, generalized unpacking, ellipsis literal (``...``) out of slices, dictionary
 union (``{..}  | {..}``), dictionary union merge (``a = {..}; a |= {..}``), builtin generic type
 annotations (``list[str]``), function decorators, class decorators, relaxed decorators,
-``metaclass`` class keyword, pattern matching with ``match``, union types written as ``X | Y``, and
-type alias statements (``type X = SomeType``). It tries to detect and ignore user-defined functions,
-classes, arguments, and variables with names that clash with library-defined symbols.
+``metaclass`` class keyword, pattern matching with ``match``, union types written as ``X | Y``, type
+alias statements (``type X = SomeType``), and type alias statements with lambdas/comprehensions in
+class scopes. It tries to detect and ignore user-defined functions, classes, arguments, and
+variables with names that clash with library-defined symbols.
 
 Caveats
 =======
@@ -209,18 +211,18 @@ Examples
 
   % ./vermin.py vermin
   Minimum required versions: 3.0
-  Incompatible versions:     2
+  Incompatible versions:     2.x
 
   % ./vermin.py -t=3.3 vermin
   Minimum required versions: 3.0
-  Incompatible versions:     2
+  Incompatible versions:     2.x
   Target versions not met:   3.3
   % echo $?
   1
 
   % ./vermin.py --versions vermin
   Minimum required versions: 3.0
-  Incompatible versions:     2
+  Incompatible versions:     2.x
   Version range:             2.0, 2.6, 2.7, 3.0
 
   % ./vermin.py -v examples
@@ -233,7 +235,7 @@ Examples
   !2, 3.4      /path/to/examples/abc.py
                /path/to/examples/unknown.py
   Minimum required versions:   3.4
-  Incompatible versions:         2
+  Incompatible versions:       2.x
 
   % ./vermin.py -vv /path/to/examples/abc.py
   Detecting python files..
@@ -243,7 +245,7 @@ Examples
     'abc.ABC' requires !2, 3.4
 
   Minimum required versions: 3.4
-  Incompatible versions:     2
+  Incompatible versions:     2.x
 
   % ./vermin.py -vvv /path/to/examples/abc.py
   Detecting python files..
@@ -253,7 +255,7 @@ Examples
     L2: 'abc.ABC' requires !2, 3.4
 
   Minimum required versions: 3.4
-  Incompatible versions:     2
+  Incompatible versions:     2.x
 
   % ./vermin.py -f parsable /path/to/examples/abc.py
   /path/to/examples/abc.py:1:7:2.6:3.0:'abc' module
@@ -431,6 +433,19 @@ That means that the final result is ``!2`` and ``3.4``, which is shown by the la
 .. code-block::
 
   :::!2:3.4:
+
+GitHub Output
+=============
+
+The GitHub output format has the same output as `parsable <#parsable-output>`__, but the lines are
+formatted as GitHub Actions annotations. This let's you see minimum version violations as annotated
+errors directly from a GitHub pipeline.
+
+For annotations to appear in a pull request:
+
+- Vermin must be called from a GitHub Actions workflow triggered by a PR
+- Vermin must be called with current working directory as the root of the repository
+- Only violations found in files changed in the PR will show up
 
 Contributing
 ============

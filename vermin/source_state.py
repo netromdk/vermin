@@ -2,6 +2,7 @@ import sys
 import os
 from collections import deque
 
+from .formats import ParsableFormat
 from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS
 
 class SourceState:
@@ -10,7 +11,7 @@ class SourceState:
   def __init__(self, config, path=None, source=None):
     assert config is not None, "Config must be specified!"
     self.config = config
-    self.parsable = config.format().name() == "parsable"
+    self.parsable = isinstance(config.format(), ParsableFormat)
 
     self.path = "<unknown>" if path is None else path
 
@@ -31,6 +32,9 @@ class SourceState:
 
     # List of lines of output text.
     self.output_text = []
+
+    # Whether violations were found while visiting
+    self.found_violation = False
 
     # Line/column of entities for vvv-printing.
     self.line_col_entities = {}
@@ -70,6 +74,7 @@ class SourceState:
     self.continue_in_finally = False
     self.seen_for = 0
     self.seen_while = 0
+    self.seen_class = 0
     self.try_finally = []
     self.mod_inverse_pow = False
     self.function_name = None
@@ -107,6 +112,10 @@ class SourceState:
 
     # `type X = SomeType`.
     self.type_alias_statement = False
+
+    # `type X = SomeType` with lambda or comprehension in `SomeType` with the annotation being
+    # defined in a class scope.
+    self.type_alias_statement_class_scope_lambda = False
 
     # Imported members of modules, like "exc_clear" of "sys".
     self.import_mem_mod = {}

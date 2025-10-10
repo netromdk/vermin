@@ -18,3 +18,12 @@ class VerminArrayTypecodeTests(VerminTest):
   ])
   def test_typecode_Q(self, source, min_versions):
     self.assertDetectMinVersions(source, min_versions)
+
+  @VerminTest.parameterized_args([
+    ("from array import array\narray('w')", (3, 13)),
+    ("import array\narray.array('w')", (3, 13)),
+    ("from array import array\narray('w', [1, 2])", (3, 13)),
+    ("from array import array as a\na('w', [1, 2])", (3, 13)),
+  ])
+  def test_typecode_w(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)

@@ -59,6 +59,9 @@ class VerminKwargsTests(VerminTest):
   def test_chars_of_str_lstrip(self):
     self.assertOnlyIn(((2, 2), (3, 0)), self.detect("str.lstrip(chars=None)"))
 
+  def test_count_of_str_replace(self):
+    self.assertOnlyIn((3, 13), self.detect("str.replace(count=None)"))
+
   def test_fillchar_of_str_rjust(self):
     self.assertOnlyIn(((2, 4), (3, 0)), self.detect("str.rjust(fillchar=None)"))
 
@@ -67,6 +70,86 @@ class VerminKwargsTests(VerminTest):
 
   def test_chars_of_str_strip(self):
     self.assertOnlyIn(((2, 2), (3, 0)), self.detect("str.strip(chars=None)"))
+
+  def test_optimize_of_ast_parse(self):
+    self.assertOnlyIn((3, 13), self.detect("from ast import parse\nparse(optimize=None)"))
+
+  def test_indent_of_ast_dump(self):
+    self.assertOnlyIn((3, 9), self.detect("from ast import dump\ndump(indent=None)"))
+
+  def test_show_empty_of_ast_dump(self):
+    self.assertOnlyIn((3, 13), self.detect("from ast import dump\ndump(show_empty=None)"))
+
+  def test_allow_unnamed_section_of_configparser_ConfigParser(self):
+    self.assertOnlyIn((3, 13), self.detect("""
+from configparser import ConfigParser
+ConfigParser(allow_unnamed_section=None)
+"""))
+
+  def test_allow_unnamed_section_of_configparser_RawConfigParser(self):
+    self.assertOnlyIn((3, 13), self.detect("""
+from configparser import RawConfigParser
+RawConfigParser(allow_unnamed_section=None)
+"""))
+
+  def test_show_offsets_of_dis_Bytecode(self):
+    self.assertOnlyIn((3, 13), self.detect("from dis import Bytecode\nBytecode(show_offsets=None)"))
+
+  def test_show_offsets_of_dis_disassemble(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from dis import disassemble\ndisassemble(show_offsets=None)"))
+
+  def test_show_offsets_of_dis_distb(self):
+    self.assertOnlyIn((3, 13), self.detect("from dis import distb\ndistb(show_offsets=None)"))
+
+  def test_strict_of_email_utils_getaddresses(self):
+    self.assertOnlyIn((3, 13), self.detect("""
+from email.utils import getaddresses
+getaddresses(strict=None)
+"""))
+
+  def test_strict_of_email_utils_parseaddr(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from email.utils import parseaddr\nparseaddr(strict=None)"))
+
+  def test_strict_of_itertools_batched(self):
+    self.assertOnlyIn((3, 13), self.detect("from itertools import batched\nbatched(strict=None)"))
+
+  def test_allow_code_of_marshal_dump(self):
+    self.assertOnlyIn((3, 13), self.detect("from marshal import dump\ndump(allow_code=None)"))
+
+  def test_allow_code_of_marshal_dumps(self):
+    self.assertOnlyIn((3, 13), self.detect("from marshal import dumps\ndumps(allow_code=None)"))
+
+  def test_allow_code_of_marshal_load(self):
+    self.assertOnlyIn((3, 13), self.detect("from marshal import load\nload(allow_code=None)"))
+
+  def test_allow_code_of_marshal_loads(self):
+    self.assertOnlyIn((3, 13), self.detect("from marshal import loads\nloads(allow_code=None)"))
+
+  def test_recurse_symlinks_of_pathlib_Path_glob(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from pathlib import Path\nPath.glob(recurse_symlinks=None)"))
+
+  def test_recurse_symlinks_of_pathlib_Path_rglob(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from pathlib import Path\nPath.rglob(recurse_symlinks=None)"))
+
+  def test_follow_symlinks_of_pathlib_Path_is_file(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from pathlib import Path\nPath.is_file(follow_symlinks=None)"))
+
+  def test_follow_symlinks_of_pathlib_Path_is_dir(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from pathlib import Path\nPath.is_dir(follow_symlinks=None)"))
+
+  def test_follow_symlinks_of_pathlib_Path_owner(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from pathlib import Path\nPath.owner(follow_symlinks=None)"))
+
+  def test_follow_symlinks_of_pathlib_Path_group(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from pathlib import Path\nPath.group(follow_symlinks=None)"))
 
   def test_weights_of_statistics_fmean(self):
     self.assertOnlyIn((3, 11), self.detect("""
@@ -86,11 +169,23 @@ from statistics import linear_regression
 linear_regression(proportional=None)
 """))
 
+  def test_dir_fd_of_shutil_chown(self):
+    self.assertOnlyIn((3, 13), self.detect("from shutil import chown\nchown(dir_fd=None)"))
+
+  def test_follow_symlinks_of_shutil_chown(self):
+    self.assertOnlyIn((3, 13), self.detect("from shutil import chown\nchown(follow_symlinks=None)"))
+
   def test_start_of_sum(self):
     self.assertOnlyIn((3, 8), self.detect("sum(start=None)"))
 
   def test_platform_version_of_sys_getwindowsversion(self):
     self.assertOnlyIn((3, 6), self.detect("sys.getwindowsversion(platform_version=None)"))
+
+  def test_filter_of_sqlite3_Connection_iterdump(self):
+    self.assertOnlyIn((3, 13), self.detect("""
+from sqlite3 import Connection
+Connection.iterdump(filter=None)
+"""))
 
   def test_inheritable_of_dup2_from_os(self):
     self.assertOnlyIn((3, 4), self.detect("import os\nv = os.dup2(inheritable=True)"))
@@ -131,6 +226,12 @@ linear_regression(proportional=None)
 
   def test_follow_symlinks_of_link_from_os(self):
     self.assertOnlyIn((3, 3), self.detect("import os\nv = os.link(follow_symlinks=None)"))
+
+  def test_show_group_of_traceback_TracebackException_format_exception_only(self):
+    self.assertOnlyIn((3, 13), self.detect("""
+from traceback import TracebackException
+TracebackException.format_exception_only(show_group=None)
+"""))
 
   def test_maxtasksperchild_of_Pool_from_multiprocessing(self):
     self.assertOnlyIn(((2, 7), (3, 2)), self.detect(
@@ -706,15 +807,35 @@ TimeoutExpired(stderr=None)"""))
                       self.detect("from venv import EnvBuilder\n"
                                   "EnvBuilder(upgrade_deps=False)"))
 
-  def test_with_pip_of_create_from_venv(self):
-    self.assertOnlyIn((3, 4),
-                      self.detect("from venv import create\n"
-                                  "create(with_pip=False)"))
+  def test_scm_ignore_files_of_EnvBuilder_from_venv(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from venv import EnvBuilder\n"
+                                  "EnvBuilder(scm_ignore_files=False)"))
 
   def test_prompt_of_EnvBuilder_from_venv(self):
     self.assertOnlyIn((3, 6),
                       self.detect("from venv import EnvBuilder\n"
                                   "EnvBuilder(prompt=False)"))
+
+  def test_with_pip_of_create_from_venv(self):
+    self.assertOnlyIn((3, 4),
+                      self.detect("from venv import create\n"
+                                  "create(with_pip=False)"))
+
+  def test_scm_ignore_files_of_create_from_venv(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from venv import create\n"
+                                  "create(scm_ignore_files=False)"))
+
+  def test_upgrade_deps_of_create_from_venv(self):
+    self.assertOnlyIn((3, 9),
+                      self.detect("from venv import create\n"
+                                  "create(upgrade_deps=False)"))
+
+  def test_prompt_of_create_from_venv(self):
+    self.assertOnlyIn((3, 6),
+                      self.detect("from venv import create\n"
+                                  "create(prompt=None)"))
 
   def test_flags_of_compile(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("compile(flags=None)"))
@@ -731,6 +852,18 @@ TimeoutExpired(stderr=None)"""))
   def test_closure_of_exec(self):
     self.assertOnlyIn((3, 11), self.detect("exec(closure=None)"))
 
+  def test_globals_of_exec(self):
+    self.assertOnlyIn((3, 13), self.detect("exec(globals=None)"))
+
+  def test_locals_of_exec(self):
+    self.assertOnlyIn((3, 13), self.detect("exec(locals=None)"))
+
+  def test_globals_of_eval(self):
+    self.assertOnlyIn((3, 13), self.detect("eval(globals=None)"))
+
+  def test_locals_of_eval(self):
+    self.assertOnlyIn((3, 13), self.detect("eval(locals=None)"))
+
   def test_key_of_max(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("max(key=None)"))
 
@@ -739,6 +872,9 @@ TimeoutExpired(stderr=None)"""))
 
   def test_key_of_min(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("min(key=None)"))
+
+  def test_trackfd_of_mmap_mmap(self):
+    self.assertOnlyIn((3, 13), self.detect("from mmap import mmap\nmmap(trackfd=None)"))
 
   def test_default_of_min(self):
     self.assertOnlyIn((3, 4), self.detect("min(default=None)"))
@@ -910,6 +1046,13 @@ p=Path('foo')
 p.write_text(newline=True)
 """))
 
+  def test_newline_of_path_read_text(self):
+    self.assertOnlyIn((3, 13), self.detect("""
+from pathlib import Path
+p=Path('foo')
+p.read_text(newline=True)
+"""))
+
   def test_case_sensitive_of_purepath_match(self):
     self.assertOnlyIn((3, 12), self.detect("""
 from pathlib import PurePath
@@ -936,6 +1079,20 @@ p.relative_to(walk_up=True)
   def test_exit_on_error_of_argparse_ArgumentParser(self):
     self.assertOnlyIn((3, 9),
                       self.detect("import argparse\nargparse.ArgumentParser(exit_on_error=True)"))
+
+  def test_deprecated_of_argparse_ArgumentParser_add_argument(self):
+    self.assertOnlyIn((3, 13), self.detect("""
+import argparse
+parser = argparse.ArgumentParser(prog='test')
+parser.add_argument(deprecated=True)
+"""))
+
+  def test_deprecated_of_argparse_ArgumentParser_add_parser(self):
+    self.assertOnlyIn((3, 13), self.detect("""
+import argparse
+parser = argparse.ArgumentParser(prog='test')
+parser.add_parser(deprecated=True)
+"""))
 
   def test_start_on_index_of_array_array(self):
     self.assertOnlyIn((3, 10), self.detect("import array\narray.array.index(start=None)"))
@@ -2601,6 +2758,11 @@ kqueue().control(timeout=1)
                       self.detect("from tarfile import TarFile\n"
                                   "TarFile(pax_headers=None)"))
 
+  def test_stream_of_TarFile_from_tarfile(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from tarfile import TarFile\n"
+                                  "TarFile(stream=None)"))
+
   def test_tarinfo_of_TarFile_from_tarfile(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
                       self.detect("from tarfile import TarFile\n"
@@ -2775,16 +2937,6 @@ kqueue().control(timeout=1)
     self.assertOnlyIn((3, 7),
                       self.detect("from uu import encode\n"
                                   "encode(backtick=None)"))
-
-  def test_prompt_of_create_from_venv(self):
-    self.assertOnlyIn((3, 6),
-                      self.detect("from venv import create\n"
-                                  "create(prompt=None)"))
-
-  def test_upgrade_deps_of_create_from_venv(self):
-    self.assertOnlyIn((3, 9),
-                      self.detect("from venv import create\n"
-                                  "create(upgrade_deps=None)"))
 
   def test_action_of_catch_warnings_from_warnings(self):
     self.assertOnlyIn((3, 11),

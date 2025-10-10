@@ -11,3 +11,8 @@ def vprint(msg, config):
 
 def vvprint(msg, config):
   verbose_print(msg, 2, config)
+
+def sgr(msg, *codes):
+  """Wrap message in ANSI Select Graphic Rendition codes for console styling."""
+  codes = ";".join(str(c) for c in codes)
+  return "\033[{}m{}\033[0m".format(codes, msg)
