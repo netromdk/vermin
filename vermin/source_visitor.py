@@ -722,8 +722,12 @@ class SourceVisitor(ast.NodeVisitor):
       # Check indexed arguments.
       if 0 <= idx < len(node.args):
         arg = node.args[idx]
-        if hasattr(arg, "s"):
+        name = None
+        if sys.version_info >= (3, 8) and isinstance(arg, ast.Constant):
+          name = arg.value
+        elif hasattr(arg, "s"):
           name = arg.s
+        if name is not None:
           if self.__s.config.is_excluded_codecs_error_handler(name):
             self.__vvprint("Excluding codecs error handler: {}".format(name))
           else:
@@ -732,8 +736,13 @@ class SourceVisitor(ast.NodeVisitor):
 
       # Check for "errors" keyword arguments.
       for kw in node.keywords:
-        if kw.arg == "errors" and hasattr(kw.value, "s"):
-          name = kw.value.s
+        if kw.arg == "errors":
+          if sys.version_info >= (3, 8) and isinstance(kw.value, ast.Constant):
+            name = kw.value.value
+          elif hasattr(kw.value, "s"):
+            name = kw.value.s
+          else:
+            continue
           if self.__s.config.is_excluded_codecs_error_handler(name):
             self.__vvprint("Excluding codecs error handler: {}".format(name))
             continue
@@ -746,18 +755,27 @@ class SourceVisitor(ast.NodeVisitor):
         # Check indexed arguments.
         if 0 <= idx < len(node.args):
           arg = node.args[idx]
-          if hasattr(arg, "s"):
+          if sys.version_info >= (3, 8) and isinstance(arg, ast.Constant):
+            name = arg.value
+          elif hasattr(arg, "s"):
             name = arg.s
-            if self.__s.config.is_excluded_codecs_encoding(name):
-              self.__vvprint("Excluding codecs encoding: {}".format(name))
-              continue
-            self.__s.codecs_encodings.append(name)
-            self.__add_line_col(name, node.lineno)
+          else:
+            continue
+          if self.__s.config.is_excluded_codecs_encoding(name):
+            self.__vvprint("Excluding codecs encoding: {}".format(name))
+            continue
+          self.__s.codecs_encodings.append(name)
+          self.__add_line_col(name, node.lineno)
 
         # Check for "encoding", "data_encoding", "file_encoding" keyword arguments.
         for kw in node.keywords:
-          if kw.arg in self.__s.codecs_encodings_kwargs and hasattr(kw.value, "s"):
-            name = kw.value.s
+          if kw.arg in self.__s.codecs_encodings_kwargs:
+            if sys.version_info >= (3, 8) and isinstance(kw.value, ast.Constant):
+              name = kw.value.value
+            elif hasattr(kw.value, "s"):
+              name = kw.value.s
+            else:
+              continue
             if self.__s.config.is_excluded_codecs_encoding(name):
               self.__vvprint("Excluding codecs encoding: {}".format(name))
               continue
@@ -1164,8 +1182,13 @@ class SourceVisitor(ast.NodeVisitor):
             self.__s.format27 = True
         elif attr in ("strftime", "strptime") and hasattr(node, "args"):
           for arg in node.args:
-            if hasattr(arg, "s"):
-              for directive in STRFTIME_DIRECTIVE_REGEX.findall(arg.s):
+            look_for = None
+            if sys.version_info >= (3, 8) and isinstance(arg, ast.Constant):
+              look_for = arg.value
+            elif hasattr(arg, "s"):
+              look_for = arg.s
+            if look_for is not None:
+              for directive in STRFTIME_DIRECTIVE_REGEX.findall(look_for):
                 self.__add_strftime_directive(directive, node.lineno)
 
       if isinstance(func, ast.Attribute):
