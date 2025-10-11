@@ -458,6 +458,9 @@ c.total()
   def test_field_size_limit_of_csv(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("import csv\ncsv.field_size_limit()"))
 
+  def test_dllist_of_ctypes_util(self):
+    self.assertOnlyIn((3, 14), self.detect("import ctypes.util\nctypes.util.dllist()"))
+
   def test_find_msvcrt_of_ctypes_util(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect(
       "import ctypes.util\nctypes.util.find_msvcrt()"))
@@ -473,6 +476,9 @@ c.total()
 
   def test_set_last_error_of_ctypes(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import ctypes\nctypes.set_last_error()"))
+
+  def test_CopyComPointer_of_ctypes(self):
+    self.assertOnlyIn((3, 14), self.detect("import ctypes\nctypes.CopyComPointer()"))
 
   def test_from_buffer_of_ctypes__CData(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect(
@@ -520,6 +526,10 @@ c.total()
   def test_from_float_of_decimal_Decimal(self):
     self.assertOnlyIn(((2, 7), (3, 1)), self.detect(
         "from decimal import Decimal\nDecimal.from_float()"))
+
+  def test_from_number_of_decimal_Decimal(self):
+    self.assertOnlyIn((3, 14), self.detect(
+        "from decimal import Decimal\nDecimal.from_number()"))
 
   def test_fma_of_decimal_Decimal(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from decimal import Decimal\nDecimal.fma()"))
@@ -640,6 +650,9 @@ c.total()
     self.assertOnlyIn((3, 6), self.detect(
       "from decimal import Decimal\nDecimal.as_integer_ratio()"))
 
+  def test_IEEEContext_decimal(self):
+    self.assertOnlyIn((3, 14), self.detect("import decimal\ndecimal.IEEEContext()"))
+
   def test_localcontext_decimal(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("import decimal\ndecimal.localcontext()"))
 
@@ -669,6 +682,21 @@ c.total()
 
   def test_reduce_from_functools(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import functools\nfunctools.reduce()"))
+
+  def test_heapify_max_from_heapq(self):
+    self.assertOnlyIn((3, 14), self.detect("import heapq\nheapq.heapify_max()"))
+
+  def test_heappop_max_from_heapq(self):
+    self.assertOnlyIn((3, 14), self.detect("import heapq\nheapq.heappop_max()"))
+
+  def test_heappush_max_from_heapq(self):
+    self.assertOnlyIn((3, 14), self.detect("import heapq\nheapq.heappush_max()"))
+
+  def test_heappushpop_max_from_heapq(self):
+    self.assertOnlyIn((3, 14), self.detect("import heapq\nheapq.heappushpop_max()"))
+
+  def test_heapreplace_max_from_heapq(self):
+    self.assertOnlyIn((3, 14), self.detect("import heapq\nheapq.heapreplace_max()"))
 
   def test_heappushpop_from_heapq(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import heapq\nheapq.heappushpop()"))
@@ -709,6 +737,9 @@ c.total()
 
   def test_ismethodwrapper_from_inspect(self):
     self.assertOnlyIn((3, 11), self.detect("import inspect\ninspect.ismethodwrapper()"))
+
+  def test_ispackage_from_inspect(self):
+    self.assertOnlyIn((3, 14), self.detect("import inspect\ninspect.ispackage()"))
 
   def test_cleandoc_from_inspect(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import inspect\ninspect.cleandoc()"))
@@ -1284,6 +1315,12 @@ c.total()
                                   "zf = ZipFile()\n"
                                   "zf.setpassword()"))
 
+  def test__for_archive_from_zipfile_ZipInfo(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from zipfile import ZipInfo\n"
+                                  "zi = ZipInfo()\n"
+                                  "zi._for_archive()"))
+
   def test_from_file_from_zipfile_ZipInfo(self):
     self.assertOnlyIn((3, 6),
                       self.detect("from zipfile import ZipInfo\n"
@@ -1438,6 +1475,22 @@ c.total()
   def test_home_from_path(self):
     self.assertOnlyIn((3, 5), self.detect("from pathlib import Path\np=Path('foo')\np.home()"))
 
+  def test_copy_from_path(self):
+    self.assertOnlyIn((3, 14), self.detect(
+      "from pathlib import Path\np=Path('foo')\np.copy()"))
+
+  def test_copy_into_from_path(self):
+    self.assertOnlyIn((3, 14), self.detect(
+      "from pathlib import Path\np=Path('foo')\np.copy_into()"))
+
+  def test_move_from_path(self):
+    self.assertOnlyIn((3, 14), self.detect(
+      "from pathlib import Path\np=Path('foo')\np.move()"))
+
+  def test_move_into_from_path(self):
+    self.assertOnlyIn((3, 14), self.detect(
+      "from pathlib import Path\np=Path('foo')\np.move_into()"))
+
   def test_expanduser_from_path(self):
     self.assertOnlyIn((3, 5), self.detect(
       "from pathlib import Path\np=Path('foo')\np.expanduser()"))
@@ -1518,6 +1571,15 @@ p.hardlink_to()
                       self.detect("from pathlib import PurePath\n"
                                   "p = PurePath()\n"
                                   "p.parser()"))
+
+  def test_set_trace_async_from_pdb(self):
+    self.assertOnlyIn((3, 14), self.detect("import pdb\npdb.set_trace_async()"))
+
+  def test_set_default_backend_from_pdb(self):
+    self.assertOnlyIn((3, 14), self.detect("import pdb\npdb.set_default_backend()"))
+
+  def test_get_default_backend_from_pdb(self):
+    self.assertOnlyIn((3, 14), self.detect("import pdb\npdb.get_default_backend()"))
 
   def test_all_suffixes_of_importlib_machinery(self):
     self.assertOnlyIn((3, 3),
@@ -1646,6 +1708,12 @@ p.hardlink_to()
   def test_all_tasks_of_asyncio(self):
     self.assertOnlyIn((3, 7), self.detect("import asyncio\nasyncio.all_tasks()"))
 
+  def test_capture_call_graph_of_asyncio(self):
+    self.assertOnlyIn((3, 14), self.detect("import asyncio\nasyncio.capture_call_graph()"))
+
+  def test_print_call_graph_of_asyncio(self):
+    self.assertOnlyIn((3, 14), self.detect("import asyncio\nasyncio.print_call_graph()"))
+
   def test_parse_intermixed_args_of_argparse_ArgumentParser(self):
     self.assertOnlyIn((3, 7),
                       self.detect("from argparse import ArgumentParser\n"
@@ -1706,6 +1774,18 @@ p.hardlink_to()
   def test_compile_file_of_compileall(self):
     self.assertOnlyIn(((2, 7), (3, 2)), self.detect("import compileall\ncompileall.compile_file()"))
 
+  def test_kill_workers_of_concurrent_futures_ProcessPoolExecutor(self):
+    self.assertOnlyIn((3, 14), self.detect("""
+import concurrent.futures.ProcessPoolExecutor
+concurrent.futures.ProcessPoolExecutor.kill_workers()
+"""))
+
+  def test_terminate_workers_of_concurrent_futures_ProcessPoolExecutor(self):
+    self.assertOnlyIn((3, 14), self.detect("""
+import concurrent.futures.ProcessPoolExecutor
+concurrent.futures.ProcessPoolExecutor.terminate_workers()
+"""))
+
   def test_nullcontext_of_contextlib(self):
     self.assertOnlyIn((3, 7), self.detect("import contextlib\ncontextlib.nullcontext()"))
 
@@ -1719,20 +1799,47 @@ p.hardlink_to()
     self.assertOnlyIn(((2, 7), (3, 2)), self.detect("from csv import DictWriter\n"
                                                     "DictWriter.writeheader()"))
 
+  def test_assume_default_colors_of_curses(self):
+    self.assertOnlyIn((3, 14), self.detect("import curses\ncurses.assume_default_colors()"))
+
+  def test_get_escdelay_of_curses(self):
+    self.assertOnlyIn((3, 9), self.detect("import curses\ncurses.get_escdelay()"))
+
+  def test_get_tabsize_of_curses(self):
+    self.assertOnlyIn((3, 9), self.detect("import curses\ncurses.get_tabsize()"))
+
+  def test_set_escdelay_of_curses(self):
+    self.assertOnlyIn((3, 9), self.detect("import curses\ncurses.set_escdelay()"))
+
+  def test_set_tabsize_of_curses(self):
+    self.assertOnlyIn((3, 9), self.detect("import curses\ncurses.set_tabsize()"))
+
   def test_update_lines_cols_of_curses(self):
     self.assertOnlyIn((3, 5), self.detect("import curses\ncurses.update_lines_cols()"))
 
   def test_unget_wch_of_curses(self):
     self.assertOnlyIn((3, 3), self.detect("import curses\ncurses.unget_wch()"))
 
+  def test_get_wch_of_curses_window(self):
+    self.assertOnlyIn((3, 3), self.detect("import curses.window\ncurses.window.get_wch()"))
+
   def test_has_extended_color_support_of_curses(self):
     self.assertOnlyIn((3, 10), self.detect("import curses\ncurses.has_extended_color_support()"))
+
+  def test_memoryview_at_of_curses(self):
+    self.assertOnlyIn((3, 14), self.detect("import curses\ncurses.memoryview_at()"))
 
   def test_fromisoformat_of_datetime_date(self):
     self.assertOnlyIn((3, 7), self.detect("from datetime import date\ndate.fromisoformat()"))
 
   def test_fromisoformat_of_datetime_time(self):
     self.assertOnlyIn((3, 7), self.detect("from datetime import time\ntime.fromisoformat()"))
+
+  def test_strptime_of_datetime_date(self):
+    self.assertOnlyIn((3, 14), self.detect("from datetime import date\ndate.strptime()"))
+
+  def test_strptime_of_datetime_time(self):
+    self.assertOnlyIn((3, 14), self.detect("from datetime import time\ntime.strptime()"))
 
   def test_fromisoformat_of_datetime_datetime(self):
     self.assertOnlyIn((3, 7), self.detect(
@@ -1774,6 +1881,12 @@ Fraction(42).is_integer()
 from fractions import Fraction
 f=Fraction(42)
 f.is_integer()
+"""))
+
+  def test_from_number_of_fractions_Fraction(self):
+    self.assertOnlyIn((3, 14), self.detect("""
+from fractions import Fraction
+Fraction.from_number(42)
 """))
 
   def test_pgettext_of_gettext(self):
@@ -1838,6 +1951,12 @@ f.is_integer()
 
   def test_removexattr_of_os(self):
     self.assertOnlyIn((3, 3), self.detect("from os import removexattr"))
+
+  def test_reload_environ_of_os(self):
+    self.assertOnlyIn((3, 14), self.detect("from os import reload_environ"))
+
+  def test_readinto_of_os(self):
+    self.assertOnlyIn((3, 14), self.detect("from os import readinto"))
 
   def test_listxattr_of_os(self):
     self.assertOnlyIn((3, 3), self.detect("from os import listxattr"))
@@ -1984,16 +2103,52 @@ from typing import ParamSpec
 ParamSpec().has_default()
 """))
 
+  def test_evaluate_default_of_typing_ParamSpec(self):
+    self.assertOnlyIn((3, 14), self.detect("""
+from typing import ParamSpec
+ParamSpec().evaluate_default()
+"""))
+
+  def test_evaluate_value_of_typing_TypeAliasType(self):
+    self.assertOnlyIn((3, 14), self.detect("""
+from typing import TypeAliasType
+TypeAliasType().evaluate_value()
+"""))
+
   def test_has_default_of_typing_TypeVar(self):
     self.assertOnlyIn((3, 13), self.detect("""
 from typing import TypeVar
 TypeVar().has_default()
 """))
 
+  def test_evaluate_bound_of_typing_TypeVar(self):
+    self.assertOnlyIn((3, 14), self.detect("""
+from typing import TypeVar
+TypeVar().evaluate_bound()
+"""))
+
+  def test_evaluate_default_of_typing_TypeVar(self):
+    self.assertOnlyIn((3, 14), self.detect("""
+from typing import TypeVar
+TypeVar().evaluate_default()
+"""))
+
+  def test_evaluate_constraints_of_typing_TypeVar(self):
+    self.assertOnlyIn((3, 14), self.detect("""
+from typing import TypeVar
+TypeVar().evaluate_constraints()
+"""))
+
   def test_has_default_of_typing_TypeVarTuple(self):
     self.assertOnlyIn((3, 13), self.detect("""
 from typing import TypeVarTuple
 TypeVarTuple().has_default()
+"""))
+
+  def test_evaluate_default_of_typing_TypeVarTuple(self):
+    self.assertOnlyIn((3, 14), self.detect("""
+from typing import TypeVarTuple
+TypeVarTuple().evaluate_default()
 """))
 
   def test_assert_never_of_typing(self):
@@ -2004,6 +2159,9 @@ TypeVarTuple().has_default()
 
   def test_clear_overloads_of_typing(self):
     self.assertOnlyIn((3, 11), self.detect("from typing import clear_overloads"))
+
+  def test_evaluate_forward_ref_of_typing(self):
+    self.assertOnlyIn((3, 14), self.detect("from typing import evaluate_forward_ref"))
 
   def test_get_protocol_members_of_typing(self):
     self.assertOnlyIn((3, 13), self.detect("from typing import get_protocol_members"))
@@ -2025,6 +2183,15 @@ TypeVarTuple().has_default()
 
   def test_reveal_type_of_typing(self):
     self.assertOnlyIn((3, 11), self.detect("from typing import reveal_type"))
+
+  def test_uuid6_of_uuid(self):
+    self.assertOnlyIn((3, 14), self.detect("from uuid import uuid6"))
+
+  def test_uuid7_of_uuid(self):
+    self.assertOnlyIn((3, 14), self.detect("from uuid import uuid7"))
+
+  def test_uuid8_of_uuid(self):
+    self.assertOnlyIn((3, 14), self.detect("from uuid import uuid8"))
 
   def test_is_normalized_of_unicodedata(self):
     self.assertOnlyIn((3, 8), self.detect("from unicodedata import is_normalized"))
@@ -2209,6 +2376,9 @@ TypeVarTuple().has_default()
 
   def test_get_source_segment_from_ast(self):
     self.assertOnlyIn((3, 8), self.detect("import ast\nast.get_source_segment()"))
+
+  def test_compare_from_ast(self):
+    self.assertOnlyIn((3, 14), self.detect("import ast\nast.compare()"))
 
   def test_is_active_from_asyncio_AbstractChildWatcher(self):
     self.assertOnlyIn((3, 8),
@@ -2712,6 +2882,9 @@ TypeVarTuple().has_default()
   def test_message_from_bytes_from_email(self):
     self.assertOnlyIn((3, 2), self.detect("import email\nemail.message_from_bytes()"))
 
+  def test_dump_c_stack_from_faulthandler(self):
+    self.assertOnlyIn((3, 14), self.detect("import faulthandler\nfaulthandler.dump_c_stack()"))
+
   def test_clear_cache_from_filecmp(self):
     self.assertOnlyIn((3, 4), self.detect("import filecmp\nfilecmp.clear_cache()"))
 
@@ -2727,6 +2900,9 @@ TypeVarTuple().has_default()
 
   def test_filter_from_fnmatch(self):
     self.assertOnlyIn(((2, 2), (3, 0)), self.detect("import fnmatch\nfnmatch.filter()"))
+
+  def test_filterfalse_from_fnmatch(self):
+    self.assertOnlyIn((3, 14), self.detect("import fnmatch\nfnmatch.filterfalse()"))
 
   def test_mlsd_from_ftplib_FTP(self):
     self.assertOnlyIn((3, 3),
@@ -2945,6 +3121,11 @@ TypeVarTuple().has_default()
                       self.detect("from httplib import HTTPResponse\n"
                                   "HTTPResponse().getheaders()"))
 
+  def test_burst_from_imaplib_IMAP4_Idler(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from imaplib.IMAP4 import Idler\n"
+                                  "Idler().burst()"))
+
   def test_deleteacl_from_imaplib_IMAP4(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
                       self.detect("from imaplib import IMAP4\n"
@@ -2969,6 +3150,11 @@ TypeVarTuple().has_default()
     self.assertOnlyIn(((2, 3), (3, 0)),
                       self.detect("from imaplib import IMAP4\n"
                                   "IMAP4().getquotaroot()"))
+
+  def test_idle_from_imaplib_IMAP4(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from imaplib import IMAP4\n"
+                                  "IMAP4().idle()"))
 
   def test_login_cram_md5_from_imaplib_IMAP4(self):
     self.assertOnlyIn(((2, 3), (3, 0)),
@@ -3280,10 +3466,25 @@ MimeTypes().guess_file_type()
                       self.detect("from multiprocessing import Condition\n"
                                   "Condition().wait_for()"))
 
+  def test_locked_from_multiprocessing_Lock(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from multiprocessing import Lock\n"
+                                  "Lock().locked()"))
+
+  def test_locked_from_multiprocessing_RLock(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from multiprocessing import RLock\n"
+                                  "RLock().locked()"))
+
   def test_close_from_multiprocessing_Process(self):
     self.assertOnlyIn((3, 7),
                       self.detect("from multiprocessing import Process\n"
                                   "Process().close()"))
+
+  def test_interrupt_from_multiprocessing_Process(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from multiprocessing import Process\n"
+                                  "Process().interrupt()"))
 
   def test_kill_from_multiprocessing_Process(self):
     self.assertOnlyIn((3, 7),
@@ -3491,6 +3692,12 @@ MimeTypes().guess_file_type()
 
   def test_is__from_operator(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("import operator\noperator.is_()"))
+
+  def test_is_none_from_operator(self):
+    self.assertOnlyIn((3, 14), self.detect("import operator\noperator.is_none()"))
+
+  def test_is_not_none_from_operator(self):
+    self.assertOnlyIn((3, 14), self.detect("import operator\noperator.is_not_none()"))
 
   def test_is_not_from_operator(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("import operator\noperator.is_not()"))
@@ -3713,6 +3920,9 @@ s.replace()
 
   def test_freedesktop_os_release_from_platform(self):
     self.assertOnlyIn((3, 10), self.detect("import platform\nplatform.freedesktop_os_release()"))
+
+  def test_invalidate_caches_from_platform(self):
+    self.assertOnlyIn((3, 14), self.detect("import platform\nplatform.invalidate_caches()"))
 
   def test_capa_from_poplib_POP3(self):
     self.assertOnlyIn((3, 4),
@@ -4115,6 +4325,26 @@ Template().is_valid()
                       self.detect("from symtable import Symbol\n"
                                   "Symbol().is_annotated()"))
 
+  def test_is_type_parameter_from_symtable_Symbol(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from symtable import Symbol\n"
+                                  "Symbol().is_type_parameter()"))
+
+  def test_is_free_class_from_symtable_Symbol(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from symtable import Symbol\n"
+                                  "Symbol().is_free_class()"))
+
+  def test_is_comp_iter_from_symtable_Symbol(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from symtable import Symbol\n"
+                                  "Symbol().is_comp_iter()"))
+
+  def test_is_comp_cell_from_symtable_Symbol(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from symtable import Symbol\n"
+                                  "Symbol().is_comp_cell()"))
+
   def test__clear_internal_caches_from_sys(self):
     self.assertOnlyIn((3, 13), self.detect("import sys\nsys._clear_internal_caches()"))
 
@@ -4135,6 +4365,12 @@ Template().is_valid()
 
   def test__is_interned_from_sys(self):
     self.assertOnlyIn((3, 13), self.detect("import sys\nsys._is_interned()"))
+
+  def test__is_immortal_from_sys(self):
+    self.assertOnlyIn((3, 14), self.detect("import sys\nsys._is_immortal()"))
+
+  def test_remote_exec_from_sys(self):
+    self.assertOnlyIn((3, 14), self.detect("import sys\nsys.remote_exec()"))
 
   def test_breakpointhook_from_sys(self):
     self.assertOnlyIn((3, 7), self.detect("import sys\nsys.breakpointhook()"))
@@ -4236,6 +4472,16 @@ Template().is_valid()
     self.assertOnlyIn((3, 2),
                       self.detect("from threading import Condition\n"
                                   "Condition().wait_for()"))
+
+  def test_locked_from_threading_Condition(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from threading import Condition\n"
+                                  "Condition().locked()"))
+
+  def test_locked_from_threading_RLock(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from threading import RLock\n"
+                                  "RLock().locked()"))
 
   def test_is_set_from_threading_Event(self):
     self.assertOnlyIn(((2, 6), (3, 0)),
@@ -4375,6 +4621,46 @@ TracebackException().print()
     self.assertOnlyIn((3, 2),
                       self.detect("from unittest import TestCase\n"
                                   "TestCase().assertWarnsRegex()"))
+
+  def test_assertIsSubclass_from_unittest_TestCase(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from unittest import TestCase\n"
+                                  "TestCase().assertIsSubclass()"))
+
+  def test_assertNotIsSubclass_from_unittest_TestCase(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from unittest import TestCase\n"
+                                  "TestCase().assertNotIsSubclass()"))
+
+  def test_assertStartsWith_from_unittest_TestCase(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from unittest import TestCase\n"
+                                  "TestCase().assertStartsWith()"))
+
+  def test_assertNotStartsWith_from_unittest_TestCase(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from unittest import TestCase\n"
+                                  "TestCase().assertNotStartsWith()"))
+
+  def test_assertEndsWith_from_unittest_TestCase(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from unittest import TestCase\n"
+                                  "TestCase().assertEndsWith()"))
+
+  def test_assertNotEndsWith_from_unittest_TestCase(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from unittest import TestCase\n"
+                                  "TestCase().assertNotEndsWith()"))
+
+  def test_assertHasAttr_from_unittest_TestCase(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from unittest import TestCase\n"
+                                  "TestCase().assertHasAttr()"))
+
+  def test_assertNotHasAttr_from_unittest_TestCase(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from unittest import TestCase\n"
+                                  "TestCase().assertNotHasAttr()"))
 
   def test_doClassCleanups_from_unittest_TestCase(self):
     self.assertOnlyIn((3, 8),
@@ -4585,6 +4871,18 @@ TracebackException().print()
 
   def test_reset_peak_from_tracemalloc(self):
     self.assertOnlyIn((3, 9), self.detect("import tracemalloc\ntracemalloc.reset_peak()"))
+
+  def test_fill_from_turtle(self):
+    self.assertOnlyIn((3, 14), self.detect("import turtle\nturtle.fill()"))
+
+  def test_no_animation_from_turtle(self):
+    self.assertOnlyIn((3, 14), self.detect("import turtle\nturtle.no_animation()"))
+
+  def test_poly_from_turtle(self):
+    self.assertOnlyIn((3, 14), self.detect("import turtle\nturtle.poly()"))
+
+  def test_save_from_turtle(self):
+    self.assertOnlyIn((3, 14), self.detect("import turtle\nturtle.save()"))
 
   def test_upgrade_dependencies_from_venv_EnvBuilder(self):
     self.assertOnlyIn((3, 9),
