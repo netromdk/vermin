@@ -111,6 +111,9 @@ Policy.verify_generated_headers
   def test_flags_of_sys(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from sys import flags"))
 
+  def test_ALLOW_MISSING_of_os_path(self):
+    self.assertOnlyIn((3, 14), self.detect("from os.path import ALLOW_MISSING"))
+
   def test_supports_unicode_filenames_of_os_path(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect(
         "from os.path import supports_unicode_filenames"))
@@ -385,11 +388,17 @@ TracebackException.exc_type_str
   def test_CO_COROUTINE_of_inspect(self):
     self.assertOnlyIn((3, 5), self.detect("import inspect\ninspect.CO_COROUTINE"))
 
+  def test_CO_HAS_DOCSTRING_of_inspect(self):
+    self.assertOnlyIn((3, 14), self.detect("import inspect\ninspect.CO_HAS_DOCSTRING"))
+
   def test_CO_ITERABLE_COROUTINE_of_inspect(self):
     self.assertOnlyIn((3, 5), self.detect("import inspect\ninspect.CO_ITERABLE_COROUTINE"))
 
   def test_CO_ASYNC_GENERATOR_of_inspect(self):
     self.assertOnlyIn((3, 6), self.detect("import inspect\ninspect.CO_ASYNC_GENERATOR"))
+
+  def test_CO_METHOD_of_inspect(self):
+    self.assertOnlyIn((3, 14), self.detect("import inspect\ninspect.CO_METHOD"))
 
   def test_lastResort_of_logging(self):
     self.assertOnlyIn((3, 2), self.detect("import logging\nlogging.lastResort"))
@@ -509,6 +518,9 @@ TracebackException.exc_type_str
   def test_HAS_PSK_ssl(self):
     self.assertOnlyIn((3, 13), self.detect("from ssl import HAS_PSK"))
 
+  def test_HAS_PHA_ssl(self):
+    self.assertOnlyIn((3, 14), self.detect("from ssl import HAS_PHA"))
+
   def test_HAS_NEVER_CHECK_COMMON_NAME_of_ssl(self):
     self.assertOnlyIn((3, 7), self.detect("from ssl import HAS_NEVER_CHECK_COMMON_NAME"))
 
@@ -595,6 +607,9 @@ TracebackException.exc_type_str
 
   def test_ZIP_LZMA_of_zipfile(self):
     self.assertOnlyIn((3, 3), self.detect("import zipfile\nzipfile.ZIP_LZMA"))
+
+  def test_ZIP_ZSTANDARD_of_zipfile(self):
+    self.assertOnlyIn((3, 14), self.detect("import zipfile\nzipfile.ZIP_ZSTANDARD"))
 
   def test_suffix_of_Path_of_zipfile(self):
     self.assertOnlyIn((3, 11), self.detect("from zipfile import Path\nPath().suffix"))
@@ -1369,6 +1384,9 @@ month = Month.DECEMBER
                       self.detect("from email.policy import Policy\n"
                                   "Policy().message_factory"))
 
+  def test_EHWPOISON_of_errno(self):
+    self.assertOnlyIn((3, 14), self.detect("from errno import EHWPOISON"))
+
   def test_EQFULL_of_errno(self):
     self.assertOnlyIn((3, 11), self.detect("from errno import EQFULL"))
 
@@ -1407,6 +1425,9 @@ month = Month.DECEMBER
 
   def test_DEFAULT_IGNORES_of_filecmp(self):
     self.assertOnlyIn((3, 4), self.detect("from filecmp import DEFAULT_IGNORES"))
+
+  def test_Placeholder_of_functools(self):
+    self.assertOnlyIn((3, 14), self.detect("from functools import Placeholder"))
 
   def test_callbacks_of_gc(self):
     self.assertOnlyIn((3, 3), self.detect("from gc import callbacks"))
@@ -1670,11 +1691,17 @@ month = Month.DECEMBER
   def test_SCHED_BATCH_of_os(self):
     self.assertOnlyIn((3, 3), self.detect("from os import SCHED_BATCH"))
 
+  def test_SCHED_DEADLINE_of_os(self):
+    self.assertOnlyIn((3, 14), self.detect("from os import SCHED_DEADLINE"))
+
   def test_SCHED_FIFO_of_os(self):
     self.assertOnlyIn((3, 3), self.detect("from os import SCHED_FIFO"))
 
   def test_SCHED_IDLE_of_os(self):
     self.assertOnlyIn((3, 3), self.detect("from os import SCHED_IDLE"))
+
+  def test_SCHED_NORMAL_of_os(self):
+    self.assertOnlyIn((3, 14), self.detect("from os import SCHED_NORMAL"))
 
   def test_SCHED_OTHER_of_os(self):
     self.assertOnlyIn((3, 3), self.detect("from os import SCHED_OTHER"))
@@ -1984,6 +2011,9 @@ month = Month.DECEMBER
 
   def test_supports_follow_symlinks_of_os(self):
     self.assertOnlyIn((3, 3), self.detect("from os import supports_follow_symlinks"))
+
+  def test_info_of_pathlib(self):
+    self.assertOnlyIn((3, 14), self.detect("from pathlib import info"))
 
   def test_HIGHEST_PROTOCOL_of_pickle(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("from pickle import HIGHEST_PROTOCOL"))
@@ -2683,6 +2713,216 @@ month = Month.DECEMBER
   def test_has_ipv6_of_socket(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("from socket import has_ipv6"))
 
+  def test_BDADDR_BREDR_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BDADDR_BREDR"))
+
+  def test_BDADDR_LE_PUBLIC_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BDADDR_LE_PUBLIC"))
+
+  def test_BDADDR_LE_RANDOM_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BDADDR_LE_RANDOM"))
+
+  def test_SOL_RFCOMM_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import SOL_RFCOMM"))
+
+  def test_SOL_L2CAP_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import SOL_L2CAP"))
+
+  def test_SOL_HCI_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import SOL_HCI"))
+
+  def test_SOL_SCO_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import SOL_SCO"))
+
+  def test_SOL_BLUETOOTH_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import SOL_BLUETOOTH"))
+
+  def test_L2CAP_LM_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import L2CAP_LM"))
+
+  def test_L2CAP_LM_AUTH_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import L2CAP_LM_AUTH"))
+
+  def test_L2CAP_LM_ENCRYPT_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import L2CAP_LM_ENCRYPT"))
+
+  def test_L2CAP_LM_MASTER_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import L2CAP_LM_MASTER"))
+
+  def test_L2CAP_LM_RELIABLE_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import L2CAP_LM_RELIABLE"))
+
+  def test_L2CAP_LM_SECURE_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import L2CAP_LM_SECURE"))
+
+  def test_L2CAP_LM_TRUSTED_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import L2CAP_LM_TRUSTED"))
+
+  def test_BT_CHANNEL_POLICY_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_CHANNEL_POLICY"))
+
+  def test_BT_CHANNEL_POLICY_BREDR_ONLY_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_CHANNEL_POLICY_BREDR_ONLY"))
+
+  def test_BT_CHANNEL_POLICY_BREDR_PREFERRED_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_CHANNEL_POLICY_BREDR_PREFERRED"))
+
+  def test_BT_CODEC_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_CODEC"))
+
+  def test_BT_DEFER_SETUP_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_DEFER_SETUP"))
+
+  def test_BT_FLUSHABLE_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_FLUSHABLE"))
+
+  def test_BT_FLUSHABLE_OFF_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_FLUSHABLE_OFF"))
+
+  def test_BT_FLUSHABLE_ON_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_FLUSHABLE_ON"))
+
+  def test_BT_ISO_QOS_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_ISO_QOS"))
+
+  def test_BT_MODE_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_MODE"))
+
+  def test_BT_MODE_BASIC_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_MODE_BASIC"))
+
+  def test_BT_MODE_ERTM_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_MODE_ERTM"))
+
+  def test_BT_MODE_EXT_FLOWCTL_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_MODE_EXT_FLOWCTL"))
+
+  def test_BT_MODE_LE_FLOWCTL_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_MODE_LE_FLOWCTL"))
+
+  def test_BT_MODE_STREAMING_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_MODE_STREAMING"))
+
+  def test_BT_PHY_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_PHY"))
+
+  def test_BT_PHY_BR_1M_1SLOT_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_PHY_BR_1M_1SLOT"))
+
+  def test_BT_PHY_BR_1M_3SLOT_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_PHY_BR_1M_3SLOT"))
+
+  def test_BT_PHY_BR_1M_5SLOT_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_PHY_BR_1M_5SLOT"))
+
+  def test_BT_PHY_EDR_2M_1SLOT_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_PHY_EDR_2M_1SLOT"))
+
+  def test_BT_PHY_EDR_2M_3SLOT_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_PHY_EDR_2M_3SLOT"))
+
+  def test_BT_PHY_EDR_2M_5SLOT_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_PHY_EDR_2M_5SLOT"))
+
+  def test_BT_PHY_EDR_3M_1SLOT_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_PHY_EDR_3M_1SLOT"))
+
+  def test_BT_PHY_EDR_3M_3SLOT_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_PHY_EDR_3M_3SLOT"))
+
+  def test_BT_PHY_EDR_3M_5SLOT_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_PHY_EDR_3M_5SLOT"))
+
+  def test_BT_PHY_LE_1M_RX_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_PHY_LE_1M_RX"))
+
+  def test_BT_PHY_LE_1M_TX_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_PHY_LE_1M_TX"))
+
+  def test_BT_PHY_LE_2M_RX_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_PHY_LE_2M_RX"))
+
+  def test_BT_PHY_LE_2M_TX_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_PHY_LE_2M_TX"))
+
+  def test_BT_PHY_LE_CODED_RX_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_PHY_LE_CODED_RX"))
+
+  def test_BT_PHY_LE_CODED_TX_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_PHY_LE_CODED_TX"))
+
+  def test_BT_PKT_STATUS_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_PKT_STATUS"))
+
+  def test_BT_POWER_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_POWER"))
+
+  def test_BT_POWER_FORCE_ACTIVE_OFF_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_POWER_FORCE_ACTIVE_OFF"))
+
+  def test_BT_POWER_FORCE_ACTIVE_ON_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_POWER_FORCE_ACTIVE_ON"))
+
+  def test_BT_RCVMTU_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_RCVMTU"))
+
+  def test_BT_SECURITY_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_SECURITY"))
+
+  def test_BT_SECURITY_FIPS_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_SECURITY_FIPS"))
+
+  def test_BT_SECURITY_HIGH_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_SECURITY_HIGH"))
+
+  def test_BT_SECURITY_LOW_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_SECURITY_LOW"))
+
+  def test_BT_SECURITY_MEDIUM_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_SECURITY_MEDIUM"))
+
+  def test_BT_SECURITY_SDP_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_SECURITY_SDP"))
+
+  def test_BT_SNDMTU_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_SNDMTU"))
+
+  def test_BT_VOICE_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_VOICE"))
+
+  def test_BT_VOICE_CVSD_16BIT_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_VOICE_CVSD_16BIT"))
+
+  def test_BT_VOICE_TRANSPARENT_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import BT_VOICE_TRANSPARENT"))
+
+  def test_HCI_CHANNEL_RAW_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import HCI_CHANNEL_RAW"))
+
+  def test_HCI_CHANNEL_USER_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import HCI_CHANNEL_USER"))
+
+  def test_HCI_CHANNEL_MONITOR_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import HCI_CHANNEL_MONITOR"))
+
+  def test_HCI_CHANNEL_CONTROL_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import HCI_CHANNEL_CONTROL"))
+
+  def test_HCI_CHANNEL_LOGGING_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import HCI_CHANNEL_LOGGING"))
+
+  def test_SO_HCI_EVT_FILTER_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import SO_HCI_EVT_FILTER"))
+
+  def test_SO_HCI_PKT_FILTER_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import SO_HCI_PKT_FILTER"))
+
+  def test_HCI_DEV_NONE_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import HCI_DEV_NONE"))
+
+  def test_SO_REUSEPORT_LB_from_socket(self):
+    self.assertOnlyIn((3, 14), self.detect("from socket import SO_REUSEPORT_LB"))
+
   def test_family_from_socket_socket(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
                       self.detect("from socket import socket\n"
@@ -3025,6 +3265,19 @@ month = Month.DECEMBER
     self.assertOnlyIn((3, 13),
                       self.detect("from sys import flags\n"
                                   "flags().gil"))
+
+  def test__jit_from_sys(self):
+    self.assertOnlyIn((3, 14), self.detect("from sys import _jit"))
+
+  def test_thread_inherit_context_from_sys_flags(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from sys import flags\n"
+                                  "flags().thread_inherit_context"))
+
+  def test_context_aware_warnings_from_sys_flags(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from sys import flags\n"
+                                  "flags().context_aware_warnings"))
 
   def test_int_max_str_digits_from_sys_flags(self):
     self.assertOnlyIn((3, 11),
@@ -3500,6 +3753,12 @@ something.Final
     self.assertOnlyIn((3, 7),
                       self.detect("from uuid import UUID\n"
                                   "UUID().is_safe"))
+
+  def test_NIL_from_uuid(self):
+    self.assertOnlyIn((3, 14), self.detect("from uuid import NIL"))
+
+  def test_MAX_from_uuid(self):
+    self.assertOnlyIn((3, 14), self.detect("from uuid import MAX"))
 
   def test___callback___from_weakref_ref(self):
     self.assertOnlyIn((3, 4),

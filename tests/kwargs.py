@@ -403,6 +403,9 @@ TracebackException(compact=1)
     self.assertOnlyIn((3, 3), self.detect("from xmlrpc.server import DocXMLRPCServer\n"
                                           "DocXMLRPCServer(use_builtin_types=True)"))
 
+  def test_initial_of_reduce_from_functools(self):
+    self.assertOnlyIn((3, 14), self.detect("import functools\nfunctools.reduce(initial=3)"))
+
   def test_typed_of_lru_cache_from_functools(self):
     self.assertOnlyIn((3, 3), self.detect("import functools\nfunctools.lru_cache(typed=3)"))
 
@@ -430,16 +433,28 @@ TracebackException(compact=1)
   def test_locals_of_signature_from_inspect(self):
     self.assertOnlyIn((3, 10), self.detect("import inspect\ninspect.signature(locals=True)"))
 
-  def test_globalns_of_signature_from_inspect(self):
-    self.assertOnlyIn((3, 10), self.detect("""
+  def test_unquote_annotations_of_Signature_from_inspect(self):
+    self.assertOnlyIn((3, 14), self.detect("""
 from inspect import Signature
-Signature.from_callable(globalns=True)
+Signature.format(unquote_annotations=True)
 """))
 
-  def test_localns_of_signature_from_inspect(self):
+  def test_globals_of_Signature_from_inspect(self):
     self.assertOnlyIn((3, 10), self.detect("""
 from inspect import Signature
-Signature.from_callable(localns=True)
+Signature.from_callable(globals=True)
+"""))
+
+  def test_locals_of_Signature_from_inspect(self):
+    self.assertOnlyIn((3, 10), self.detect("""
+from inspect import Signature
+Signature.from_callable(locals=True)
+"""))
+
+  def test_annotation_format_of_signature_from_inspect(self):
+    self.assertOnlyIn((3, 14), self.detect("""
+from inspect import signature
+signature(annotation_format=True)
 """))
 
   def test_write_through_of_TextIOWrapper_from_io(self):
@@ -1076,9 +1091,21 @@ p.relative_to(walk_up=True)
     self.assertOnlyIn((3, 5), self.detect(
       "import argparse\nargparse.ArgumentParser(allow_abbrev=True)"))
 
+  def test_color_of_argparse_ArgumentParser(self):
+    self.assertOnlyIn((3, 14), self.detect("""
+import argparse
+argparse.ArgumentParser(color=True)
+"""))
+
   def test_exit_on_error_of_argparse_ArgumentParser(self):
     self.assertOnlyIn((3, 9),
                       self.detect("import argparse\nargparse.ArgumentParser(exit_on_error=True)"))
+
+  def test_suggest_on_error_of_argparse_ArgumentParser(self):
+    self.assertOnlyIn((3, 14), self.detect("""
+import argparse
+argparse.ArgumentParser(suggest_on_error=True)
+"""))
 
   def test_deprecated_of_argparse_ArgumentParser_add_argument(self):
     self.assertOnlyIn((3, 13), self.detect("""
@@ -1218,6 +1245,11 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("import compileall\n"
                                   "compileall.compile_file(hardlink_dupes=None)"))
 
+  def test_buffersize_of_concurrent_futures_Executor_map(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from concurrent.futures import Executor\n"
+                                  "Executor().map(buffersize=123)"))
+
   def test_chunksize_of_concurrent_futures_Executor_map(self):
     self.assertOnlyIn((3, 5),
                       self.detect("from concurrent.futures import Executor\n"
@@ -1269,17 +1301,29 @@ binascii.a2b_base64(strict_mode=True)
   def test_show_caches_of_dis_Bytecode(self):
     self.assertOnlyIn((3, 11), self.detect("import dis\ndis.Bytecode(show_caches=True)"))
 
+  def test_show_positions_of_dis_Bytecode(self):
+    self.assertOnlyIn((3, 14), self.detect("import dis\ndis.Bytecode(show_positions=True)"))
+
   def test_show_caches_of_dis_dis(self):
     self.assertOnlyIn((3, 11), self.detect("import dis\ndis.dis(show_caches=True)"))
 
+  def test_show_positions_of_dis_dis(self):
+    self.assertOnlyIn((3, 14), self.detect("import dis\ndis.dis(show_positions=True)"))
+
   def test_show_caches_of_dis_distb(self):
     self.assertOnlyIn((3, 11), self.detect("import dis\ndis.distb(show_caches=True)"))
+
+  def test_show_positions_of_dis_distb(self):
+    self.assertOnlyIn((3, 14), self.detect("import dis\ndis.distb(show_positions=True)"))
 
   def test_show_caches_of_dis_disassemble(self):
     self.assertOnlyIn((3, 11), self.detect("import dis\ndis.disassemble(show_caches=True)"))
 
   def test_show_caches_of_dis_disco(self):
     self.assertOnlyIn((3, 11), self.detect("import dis\ndis.disco(show_caches=True)"))
+
+  def test_show_positions_of_dis_disco(self):
+    self.assertOnlyIn((3, 14), self.detect("import dis\ndis.disco(show_positions=True)"))
 
   def test_show_caches_of_dis_get_instructions(self):
     self.assertOnlyIn((3, 11), self.detect("import dis\ndis.get_instructions(show_caches=True)"))
@@ -1434,6 +1478,11 @@ binascii.a2b_base64(strict_mode=True)
     self.assertOnlyIn((3, 11),
                       self.detect("from asyncio import create_task\n"
                                   "create_task(context=None)"))
+
+  def test_eager_start_of_create_task_from_asyncio(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from asyncio import create_task\n"
+                                  "create_task(eager_start=None)"))
 
   def test_name_of_create_task_from_asyncio(self):
     self.assertOnlyIn((3, 8),
@@ -1895,6 +1944,11 @@ input(errors=None)
     self.assertOnlyIn((3, 8),
                       self.detect("from gc import get_objects\n"
                                   "get_objects(generation=None)"))
+
+  def test_echo_char_of_getpass_from_getpass(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from getpass import getpass\n"
+                                  "getpass(echo_char=None)"))
 
   def test_stream_of_getpass_from_getpass(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
@@ -2361,6 +2415,26 @@ input(errors=None)
                       self.detect("from pdb import Pdb\n"
                                   "Pdb(skip=None)"))
 
+  def test_backend_of_Pdb_from_pdb(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from pdb import Pdb\n"
+                                  "Pdb(backend=None)"))
+
+  def test_colorize_of_Pdb_from_pdb(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from pdb import Pdb\n"
+                                  "Pdb(colorize=None)"))
+
+  def test_mode_of_Pdb_from_pdb(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from pdb import Pdb\n"
+                                  "Pdb(mode=None)"))
+
+  def test_commands_of_set_trace_from_pdb(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from pdb import set_trace\n"
+                                  "set_trace(commands=None)"))
+
   def test_header_of_set_trace_from_pdb(self):
     self.assertOnlyIn((3, 7),
                       self.detect("from pdb import set_trace\n"
@@ -2813,6 +2887,11 @@ kqueue().control(timeout=1)
                       self.detect("from threading import Thread\n"
                                   "Thread(daemon=None)"))
 
+  def test_context_of_Thread_from_threading(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from threading import Thread\n"
+                                  "Thread(context=None)"))
+
   def test_globals_of_Timer_from_timeit(self):
     self.assertOnlyIn((3, 5),
                       self.detect("from timeit import Timer\n"
@@ -3173,6 +3252,11 @@ kqueue().control(timeout=1)
                       self.detect("from logging.handlers import SysLogHandler\n"
                                   "SysLogHandler(socktype=None)"))
 
+  def test_timeout_of_SysLogHandler_from_logging_handlers(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from logging.handlers import SysLogHandler\n"
+                                  "SysLogHandler(timeout=None)"))
+
   def test_atTime_of_TimedRotatingFileHandler_from_logging_handlers(self):
     self.assertOnlyIn((3, 4),
                       self.detect("from logging.handlers import TimedRotatingFileHandler\n"
@@ -3287,6 +3371,21 @@ kqueue().control(timeout=1)
     self.assertOnlyIn((3, 4),
                       self.detect("from urllib.request import urlopen\n"
                                   "urlopen(context=None)"))
+
+  def test_add_scheme_of_pathname2url_from_urllib_request(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from urllib.request import pathname2url\n"
+                                  "pathname2url(add_scheme=None)"))
+
+  def test_require_scheme_of_url2pathname_from_urllib_request(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from urllib.request import url2pathname\n"
+                                  "url2pathname(require_scheme=None)"))
+
+  def test_resolve_host_of_url2pathname_from_urllib_request(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from urllib.request import url2pathname\n"
+                                  "url2pathname(resolve_host=None)"))
 
   def test_context_of_ServerProxy_from_xmlrpc_client(self):
     self.assertOnlyIn((3, 4),
