@@ -257,6 +257,11 @@ class VerminClassMemberTests(VerminTest):
   def test_namedtuple_of_collections(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from collections import namedtuple"))
 
+  def test_InterpreterPoolExecutor_of_concurrent_futures(self):
+    self.assertOnlyIn((3, 14), self.detect("""
+from concurrent.futures import InterpreterPoolExecutor
+"""))
+
   def test_OrderedDict_of_collections(self):
     self.assertOnlyIn(((2, 7), (3, 1)), self.detect("from collections import OrderedDict"))
 
@@ -317,8 +322,17 @@ class VerminClassMemberTests(VerminTest):
   def test_unix_dialect_of_csv(self):
     self.assertOnlyIn((3, 2), self.detect("from csv import unix_dialect"))
 
+  def test_c_double_complex_of_ctypes(self):
+    self.assertOnlyIn((3, 14), self.detect("from ctypes import c_double_complex"))
+
+  def test_c_float_complex_of_ctypes(self):
+    self.assertOnlyIn((3, 14), self.detect("from ctypes import c_float_complex"))
+
   def test_c_longdouble_of_ctypes(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from ctypes import c_longdouble"))
+
+  def test_c_longdouble_complex_of_ctypes(self):
+    self.assertOnlyIn((3, 14), self.detect("from ctypes import c_longdouble_complex"))
 
   def test_c_bool_of_ctypes(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from ctypes import c_bool"))
@@ -337,6 +351,12 @@ class VerminClassMemberTests(VerminTest):
 
   def test_Signature_of_inspect(self):
     self.assertOnlyIn((3, 3), self.detect("from inspect import Signature"))
+
+  def test_Reader_of_io(self):
+    self.assertOnlyIn((3, 14), self.detect("from io import Reader"))
+
+  def test_Writer_of_io(self):
+    self.assertOnlyIn((3, 14), self.detect("from io import Writer"))
 
   def test_Parameter_of_inspect(self):
     self.assertOnlyIn((3, 3), self.detect("from inspect import Parameter"))
@@ -548,6 +568,12 @@ class VerminClassMemberTests(VerminTest):
 
   def test_ThreadingHTTPServer_of_http_server(self):
     self.assertOnlyIn((3, 7), self.detect("from http.server import ThreadingHTTPServer"))
+
+  def test_ThreadingHTTPSServer_of_http_server(self):
+    self.assertOnlyIn((3, 14), self.detect("from http.server import ThreadingHTTPSServer"))
+
+  def test_HTTPSServer_of_http_server(self):
+    self.assertOnlyIn((3, 14), self.detect("from http.server import HTTPSServer"))
 
   def test_HTTPConnection_of_httplib(self):
     self.assertOnlyIn((2, 0), self.detect("from httplib import HTTPConnection"))
