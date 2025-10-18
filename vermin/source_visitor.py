@@ -794,6 +794,69 @@ class SourceVisitor(ast.NodeVisitor):
     self.__add_codecs_error_handler(func, node)
     self.__add_codecs_encoding(func, node)
 
+  def __check_regex_function(self, func, node):
+    print("++++ checking regex function:", func, ast.dump(node), " ++++++")
+    # TODO: first check if the function name, func, is one of the known functions taking a re
+    # pattern.
+    # These functions use re patterns:
+    #   re.compile(pattern, ..)
+    #   re.search(pattern, ..)
+    #   re.match(pattern, ..)
+    #   re.fullmatch(pattern, ..)
+    #   re.split(pattern, ..)
+    #   re.findall(pattern, ..)
+    #   re.finditer(pattern, ..)
+    #   re.sub(pattern, ..)
+    #   re.subn(pattern, ..)
+    #   re.escape(pattern, ..)
+    re_funcs = ["re.compile", "re.search", "re.match", "re.fullmatch", "re.split", "re.findall",
+                "re.finditer", "re.sub", "re.subn", "re.escape"]
+    if func not in re_funcs:
+      return
+
+    if not hasattr(node, "args") or len(node.args) == 0:
+      return
+
+    arg = node.args[0]
+    print("  == pattern arg:", ast.dump(arg))
+    pattern = None
+    if sys.version_info >= (3, 8) and isinstance(arg, ast.Constant):
+      pattern = arg.value
+    elif hasattr(arg, "s"):
+      pattern = arg.s
+
+    # TODO: should this even be searched for???
+    # Detect pattern from variable (a="pattern").
+    value_name = None
+    if isinstance(arg, ast.Name):
+      value_name = arg.id
+    elif isinstance(arg, ast.Attribute):
+      value_name = dotted_name(self.__get_attribute_name(arg))
+    print(value_name)
+    print(self.__s.name_res)
+    print(self.__s.name_res_type)
+    print(self.__s.user_defs)
+    print(self.__s.module_as_name)
+    ######/
+
+    if pattern is None:
+      return
+
+    # TODO: might have to resolve a variable first in some case? re.compile(pattern_str)
+    print("  == pattern:", pattern)
+    print("  == value_name:", value_name)
+
+    if r"\z" in pattern:
+      self.__vvprint(r"regex: \z", versions=[None, (3, 14)], plural=False)
+    if re.compile(r"\(\?>.+?\)").fullmatch(pattern):  # TODO: put regex at top
+      self.__vvprint(r"regex: (?>...)", versions=[None, (3, 11)], plural=False)
+    if re.compile(r"\(\?[aiLmsux](\-[imsx])?:.+?\)").fullmatch(pattern):  # TODO: put regex at top
+      self.__vvprint(r"regex: (?aiLmsux-imsx:...)", versions=[None, (3, 6)], plural=False)
+    if re.compile(r".*(\*\+|\+\+|\?\+).*").fullmatch(pattern):  # TODO: put regex at top
+      self.__vvprint(r"regex: *+, ++, ?+ quantifiers", versions=[None, (3, 11)])
+    if re.compile(r".*\{\d+,\d+\}\+.*").fullmatch(pattern):  # TODO: put regex at top
+      self.__vvprint(r"regex: {m,n}+ quantifier", versions=[None, (3, 11)], plural=False)
+
   def __add_user_def(self, name):
     self.__s.user_defs.add(name)
 
@@ -1141,6 +1204,7 @@ class SourceVisitor(ast.NodeVisitor):
         self.__push_function_name(func.id)
         self.__add_member(func.id, node.lineno, node.col_offset)
 
+        print(func.id)
         if func.id in self.__s.import_mem_mod:
           name = self.__s.import_mem_mod[func.id] + "." + func.id
           self.__check_codecs_function(name, node)
@@ -1202,6 +1266,7 @@ class SourceVisitor(ast.NodeVisitor):
       if isinstance(func, ast.Attribute):
         self.__push_function_name(dotted_name(self.__get_attribute_name(func)))
         self.__check_codecs_function(self.__s.function_name, node)
+        self.__check_regex_function(self.__s.function_name, node)
         if self.__s.function_name == "array.array":
           for arg in node.args:
             if sys.version_info >= (3, 8):
