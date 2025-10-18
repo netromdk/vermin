@@ -120,6 +120,9 @@ class SourceState:
     # `class C[T]: ...`
     self.generic_class = False
 
+    # `t'text {var}'`
+    self.template_string_literal = False
+
     # Imported members of modules, like "exc_clear" of "sys".
     self.import_mem_mod = {}
 
