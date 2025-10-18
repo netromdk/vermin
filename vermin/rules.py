@@ -4325,3 +4325,90 @@ DECORATOR_USER_FUNCTIONS = {
   "functools.lru_cache": (None, (3, 8)),
   "functools.cache": (None, (3, 9)),
 }
+
+# regular expression detections:
+# https://docs.python.org/3.14/library/re.html#module-re
+
+# 3.14: Support \z as a synonym for \Z in regular expressions. It is interpreted unambiguously in
+# many other regular expression engines, unlike \Z, which has subtly different
+# behavior. (Contributed by Serhiy Storchaka in gh-133306.)
+
+# (?>...)
+#
+#    Attempts to match ... as if it was a separate regular expression, and if successful, continues
+#    to match the rest of the pattern following it. If the subsequent pattern fails to match, the
+#    stack can only be unwound to a point before the (?>...) because once exited, the expression,
+#    known as an atomic group, has thrown away all stack points within itself. Thus, (?>.*). would
+#    never match anything because first the .* would match all characters possible, then, having
+#    nothing left to match, the final . would fail to match. Since there are no stack points saved
+#    in the Atomic Group, and there is no stack point before it, the entire expression would thus
+#    fail to match.
+#
+#  Added in version 3.11.
+
+# (?aiLmsux-imsx:...)
+#
+#    (Zero or more letters from the set 'a', 'i', 'L', 'm', 's', 'u', 'x', optionally followed by
+#    '-' followed by one or more letters from the 'i', 'm', 's', 'x'.) The letters set or remove the
+#    corresponding flags for the part of the expression:
+#
+#        re.A (ASCII-only matching)
+#        re.I (ignore case)
+#        re.L (locale dependent)
+#        re.M (multi-line)
+#        re.S (dot matches all)
+#        re.U (Unicode matching)
+#        re.X (verbose)
+#
+#    (The flags are described in Module Contents.)
+#
+#    The letters 'a', 'L' and 'u' are mutually exclusive when used as inline flags, so they can’t be
+#    combined or follow '-'. Instead, when one of them appears in an inline group, it overrides the
+#    matching mode in the enclosing group. In Unicode patterns (?a:...) switches to ASCII-only
+#    matching, and (?u:...) switches to Unicode matching (default). In bytes patterns (?L:...)
+#    switches to locale dependent matching, and (?a:...) switches to ASCII-only matching
+#    (default). This override is only in effect for the narrow inline group, and the original
+#    matching mode is restored outside of the group.
+#
+#   Added in version 3.6.
+#
+#   Changed in version 3.7: The letters 'a', 'L' and 'u' also can be used in a group.
+
+# {m,n}+
+#
+#    Causes the resulting RE to match from m to n repetitions of the preceding RE, attempting to
+#    match as many repetitions as possible without establishing any backtracking points. This is the
+#    possessive version of the quantifier above. For example, on the 6-character string 'aaaaaa',
+#    a{3,5}+aa attempt to match 5 'a' characters, then, requiring 2 more 'a's, will need more
+#    characters than available and thus fail, while a{3,5}aa will match with a{3,5} capturing 5,
+#    then 4 'a's by backtracking and then the final 2 'a's are matched by the final aa in the
+#    pattern. x{m,n}+ is equivalent to (?>x{m,n}).
+#
+#   Added in version 3.11.
+
+
+# *+, ++, ?+
+#
+#    Like the '*', '+', and '?' quantifiers, those where '+' is appended also match as many times as
+#    possible. However, unlike the true greedy quantifiers, these do not allow back-tracking when
+#    the expression following it fails to match. These are known as possessive quantifiers. For
+#    example, a*a will match 'aaaa' because the a* will match all 4 'a's, but, when the final 'a' is
+#    encountered, the expression is backtracked so that in the end the a* ends up matching 3 'a's
+#    total, and the fourth 'a' is matched by the final 'a'. However, when a*+a is used to match
+#    'aaaa', the a*+ will match all 4 'a', but when the final 'a' fails to find any more characters
+#    to match, the expression cannot be backtracked and will thus fail to match. x*+, x++ and x?+
+#    are equivalent to (?>x*), (?>x+) and (?>x?) correspondingly.
+#
+#   Added in version 3.11.
+
+# These functions use re patterns:
+#   re.compile(pattern, ..)
+#   re.search(pattern, ..)
+#   re.match(pattern, ..)
+#   re.fullmatch(pattern, ..)
+#   re.split(pattern, ..)
+#   re.findall(pattern, ..)
+#   re.finditer(pattern, ..)
+#   re.sub(pattern, ..)
+#   re.subn(pattern, ..)
+#   re.escape(pattern, ..)
