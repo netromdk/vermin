@@ -29,7 +29,7 @@ class VerminExceptionMemberTests(VerminTest):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("from tarfile import HeaderError"))
 
   def test_LinkFallbackError_of_tarfile(self):
-    self.assertOnlyIn((3, 13), self.detect("from tarfile import LinkFallbackError"))
+    self.assertOnlyIn((3, 9), self.detect("from tarfile import LinkFallbackError"))
 
   def test_BadZipFile_of_zipfile(self):
     self.assertOnlyIn((3, 2), self.detect("from zipfile import BadZipFile"))
@@ -75,11 +75,30 @@ class VerminExceptionMemberTests(VerminTest):
   def test_MultilineContinuationError_of_configparser(self):
     self.assertOnlyIn((3, 13), self.detect("from configparser import MultilineContinuationError"))
 
+  def test_UnnamedSectionDisabledError_of_configparser(self):
+    self.assertOnlyIn((3, 14), self.detect("from configparser import UnnamedSectionDisabledError"))
+
+  def test_InvalidWriteError_of_configparser(self):
+    self.assertOnlyIn((3, 14), self.detect("from configparser import InvalidWriteError"))
+
+  def test_COMError_of_ctypes(self):
+    self.assertOnlyIn((3, 14), self.detect("from ctypes import COMError"))
+
   def test_BrokenExecutor_of_concurrent_futures(self):
     self.assertOnlyIn((3, 7), self.detect("from concurrent.futures import BrokenExecutor"))
 
   def test_InvalidStateError_of_concurrent_futures(self):
     self.assertOnlyIn((3, 8), self.detect("from concurrent.futures import InvalidStateError"))
+
+  def test_BrokenInterpreterPool_of_concurrent_futures_interpreter(self):
+    self.assertOnlyIn((3, 14), self.detect("""
+from concurrent.futures.interpreter import BrokenInterpreterPool
+"""))
+
+  def test_ExecutionFailed_of_concurrent_futures_interpreter(self):
+    self.assertOnlyIn((3, 14), self.detect("""
+from concurrent.futures.interpreter import ExecutionFailed
+"""))
 
   def test_BrokenThreadPool_of_concurrent_futures_thread(self):
     self.assertOnlyIn((3, 7), self.detect("from concurrent.futures.thread import BrokenThreadPool"))
