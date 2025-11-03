@@ -4,11 +4,11 @@ from collections import deque
 import sys
 
 from .source_state import SourceState
-from .rules import STRFTIME_REQS, BYTES_REQS, ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS,\
-  CODECS_ERRORS_INDICES, CODECS_ENCODINGS, CODECS_ENCODINGS_INDICES,\
-  BUILTIN_GENERIC_ANNOTATION_TYPES, DICT_UNION_SUPPORTED_TYPES, DICT_UNION_MERGE_SUPPORTED_TYPES,\
+from .rules import STRFTIME_REQS, BYTES_REQS, ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS, \
+  CODECS_ERRORS_INDICES, CODECS_ENCODINGS, CODECS_ENCODINGS_INDICES, \
+  BUILTIN_GENERIC_ANNOTATION_TYPES, DICT_UNION_SUPPORTED_TYPES, DICT_UNION_MERGE_SUPPORTED_TYPES, \
   DECORATOR_USER_FUNCTIONS
-from .utility import dotted_name, reverse_range, combine_versions, compare_requirements,\
+from .utility import dotted_name, reverse_range, combine_versions, compare_requirements, \
   remove_whitespace
 
 STRFTIME_DIRECTIVE_REGEX = re.compile(r"%(?:[-\.\d#\s\+])*(\w)")
@@ -224,6 +224,9 @@ class SourceVisitor(ast.NodeVisitor):
 
   def type_alias_statement_class_scope_lambda(self):
     return self.__s.type_alias_statement_class_scope_lambda
+
+  def template_string_literal(self):
+    return self.__s.template_string_literal
 
   def bytes_format(self):
     return self.__s.bytes_format
@@ -476,6 +479,11 @@ class SourceVisitor(ast.NodeVisitor):
                                         "type alias statement using lambda/comp in class scope",
                                         plural=False)
 
+    if self.template_string_literal():
+      mins = self.__add_versions_entity(mins, (None, (3, 14)),
+                                        "template string literal (`t'text {var}'`)",
+                                        plural=False)
+
     if self.bytes_format():
       # Since byte strings are a `str` synonym as of 2.6+, and thus also supports `%` formatting,
       # (2, 6) is returned instead of None.
@@ -722,8 +730,12 @@ class SourceVisitor(ast.NodeVisitor):
       # Check indexed arguments.
       if 0 <= idx < len(node.args):
         arg = node.args[idx]
-        if hasattr(arg, "s"):
+        name = None
+        if sys.version_info >= (3, 8) and isinstance(arg, ast.Constant):
+          name = arg.value
+        elif hasattr(arg, "s"):
           name = arg.s
+        if name is not None:
           if self.__s.config.is_excluded_codecs_error_handler(name):
             self.__vvprint("Excluding codecs error handler: {}".format(name))
           else:
@@ -732,8 +744,13 @@ class SourceVisitor(ast.NodeVisitor):
 
       # Check for "errors" keyword arguments.
       for kw in node.keywords:
-        if kw.arg == "errors" and hasattr(kw.value, "s"):
-          name = kw.value.s
+        if kw.arg == "errors":
+          if sys.version_info >= (3, 8) and isinstance(kw.value, ast.Constant):
+            name = kw.value.value
+          elif hasattr(kw.value, "s"):
+            name = kw.value.s
+          else:
+            continue
           if self.__s.config.is_excluded_codecs_error_handler(name):
             self.__vvprint("Excluding codecs error handler: {}".format(name))
             continue
@@ -746,18 +763,27 @@ class SourceVisitor(ast.NodeVisitor):
         # Check indexed arguments.
         if 0 <= idx < len(node.args):
           arg = node.args[idx]
-          if hasattr(arg, "s"):
+          if sys.version_info >= (3, 8) and isinstance(arg, ast.Constant):
+            name = arg.value
+          elif hasattr(arg, "s"):
             name = arg.s
-            if self.__s.config.is_excluded_codecs_encoding(name):
-              self.__vvprint("Excluding codecs encoding: {}".format(name))
-              continue
-            self.__s.codecs_encodings.append(name)
-            self.__add_line_col(name, node.lineno)
+          else:
+            continue
+          if self.__s.config.is_excluded_codecs_encoding(name):
+            self.__vvprint("Excluding codecs encoding: {}".format(name))
+            continue
+          self.__s.codecs_encodings.append(name)
+          self.__add_line_col(name, node.lineno)
 
         # Check for "encoding", "data_encoding", "file_encoding" keyword arguments.
         for kw in node.keywords:
-          if kw.arg in self.__s.codecs_encodings_kwargs and hasattr(kw.value, "s"):
-            name = kw.value.s
+          if kw.arg in self.__s.codecs_encodings_kwargs:
+            if sys.version_info >= (3, 8) and isinstance(kw.value, ast.Constant):
+              name = kw.value.value
+            elif hasattr(kw.value, "s"):
+              name = kw.value.s
+            else:
+              continue
             if self.__s.config.is_excluded_codecs_encoding(name):
               self.__vvprint("Excluding codecs encoding: {}".format(name))
               continue
@@ -1164,8 +1190,13 @@ class SourceVisitor(ast.NodeVisitor):
             self.__s.format27 = True
         elif attr in ("strftime", "strptime") and hasattr(node, "args"):
           for arg in node.args:
-            if hasattr(arg, "s"):
-              for directive in STRFTIME_DIRECTIVE_REGEX.findall(arg.s):
+            look_for = None
+            if sys.version_info >= (3, 8) and isinstance(arg, ast.Constant):
+              look_for = arg.value
+            elif hasattr(arg, "s"):
+              look_for = arg.s
+            if look_for is not None:
+              for directive in STRFTIME_DIRECTIVE_REGEX.findall(look_for):
                 self.__add_strftime_directive(directive, node.lineno)
 
       if isinstance(func, ast.Attribute):
@@ -1662,7 +1693,7 @@ ast.Call(func=ast.Name)."""
             # AugAssign: both variable names are the same so require two types.
             (name in self.__s.name_res_type and len(self.__s.name_res_type[name]) > 1) or
             # Unless it's the target value, then require not name res, is user def and res type.
-            (name not in self.__s.name_res and name in self.__s.user_defs and \
+            (name not in self.__s.name_res and name in self.__s.user_defs and
              name in self.__s.name_res_type))
 
       # Example:
@@ -2311,6 +2342,12 @@ ast.Call(func=ast.Name)."""
                            versions=[None, (3, 13)], plural=False)
             break
       self.generic_visit(node)
+
+  def visit_TemplateStr(self, node):
+    if not self.__is_no_line(node.lineno):
+      self.__s.template_string_literal = True
+      self.__vvprint("template string literal (`t'text {var}'`)", versions=[None, (3, 14)],
+                     plural=False)
 
   # Ignore unused nodes as a speed optimization.
 

@@ -2,7 +2,7 @@ import os
 from tempfile import mkdtemp
 from shutil import rmtree
 
-from vermin import Backports, Features, Config, DEFAULT_PROCESSES, CONFIG_FILE_NAMES,\
+from vermin import Backports, Features, Config, DEFAULT_PROCESSES, CONFIG_FILE_NAMES, \
   PROJECT_BOUNDARIES
 import vermin.formats
 

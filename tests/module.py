@@ -11,6 +11,9 @@ class VerminModuleTests(VerminTest):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import abc"))
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import abc as ABC"))
 
+  def test_annotationlib(self):
+    self.assertOnlyIn((3, 14), self.detect("import annotationlib"))
+
   def test_multiprocessing(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import multiprocessing"))
 
@@ -159,6 +162,9 @@ class VerminModuleTests(VerminTest):
     self.assertTrue(self.config.add_backport("asyncio"))
     self.assertOnlyIn((3, 3), self.detect("import asyncio"))
 
+  def test_asyncio_graph(self):
+    self.assertOnlyIn((3, 14), self.detect("import asyncio.graph"))
+
   def test_asyncore(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import asyncore"))
 
@@ -209,6 +215,30 @@ class VerminModuleTests(VerminTest):
 
   def test_collections_abc(self):
     self.assertOnlyIn((3, 3), self.detect("import collections.abc"))
+
+  def test_compression(self):
+    self.assertOnlyIn((3, 14), self.detect("import compression"))
+
+  def test_compression_bz2(self):
+    self.assertOnlyIn((3, 14), self.detect("import compression.bz2"))
+
+  def test_compression_gzip(self):
+    self.assertOnlyIn((3, 14), self.detect("import compression.gzip"))
+
+  def test_compression_lzma(self):
+    self.assertOnlyIn((3, 14), self.detect("import compression.lzma"))
+
+  def test_compression_zlib(self):
+    self.assertOnlyIn((3, 14), self.detect("import compression.zlib"))
+
+  def test_compression_zstd(self):
+    self.assertOnlyIn((3, 14), self.detect("import compression.zstd"))
+
+  def test_concurrent_futures(self):
+    self.assertOnlyIn((3, 2), self.detect("import concurrent.futures"))
+
+  def test_concurrent_interpreters(self):
+    self.assertOnlyIn((3, 14), self.detect("import concurrent.interpreters"))
 
   def test_compileall(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import compileall"))
@@ -398,6 +428,9 @@ class VerminModuleTests(VerminTest):
   def test_ssl(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import ssl"))
 
+  def test_string_templatelib(self):
+    self.assertOnlyIn((3, 14), self.detect("import string.templatelib"))
+
   def test_stringprep(self):
     self.assertOnlyIn(((2, 3), (3, 0)), self.detect("import stringprep"))
 
@@ -476,6 +509,9 @@ class VerminModuleTests(VerminTest):
   def test_pathlib(self):
     self.assertOnlyIn((3, 4), self.detect("import pathlib"))
 
+  def test_pathlib_types(self):
+    self.assertOnlyIn((3, 14), self.detect("import pathlib.types"))
+
   def test_pdb(self):
     self.assertOnlyIn(((2, 0), (3, 0)), self.detect("import pdb"))
 
@@ -494,9 +530,6 @@ class VerminModuleTests(VerminTest):
 
   def test_importlib_resources_abc(self):
     self.assertOnlyIn((3, 11), self.detect("import importlib.resources.abc"))
-
-  def test_concurrent_futures(self):
-    self.assertOnlyIn((3, 2), self.detect("import concurrent.futures"))
 
   def test_importlib_metadata(self):
     self.assertOnlyIn((3, 8), self.detect("import importlib.metadata"))

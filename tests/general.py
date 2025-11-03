@@ -7,9 +7,9 @@ from tempfile import NamedTemporaryFile, mkdtemp
 from shutil import rmtree
 from multiprocessing import cpu_count
 
-from vermin import combine_versions, InvalidVersionException, detect_paths,\
-  detect_paths_incremental, probably_python_file, Processor, reverse_range, dotted_name,\
-  remove_whitespace, main, sort_line_column, sort_line_column_parsable, version_strings,\
+from vermin import combine_versions, InvalidVersionException, detect_paths, \
+  detect_paths_incremental, probably_python_file, Processor, reverse_range, dotted_name, \
+  remove_whitespace, main, sort_line_column, sort_line_column_parsable, version_strings, \
   format_title_descs, DEFAULT_PROCESSES
 from vermin.formats import DefaultFormat, ParsableFormat, GitHubFormat
 from vermin.utility import compare_requirements
