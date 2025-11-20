@@ -225,6 +225,9 @@ class SourceVisitor(ast.NodeVisitor):
   def type_alias_statement_class_scope_lambda(self):
     return self.__s.type_alias_statement_class_scope_lambda
 
+  def template_string_literal(self):
+    return self.__s.template_string_literal
+
   def bytes_format(self):
     return self.__s.bytes_format
 
@@ -474,6 +477,11 @@ class SourceVisitor(ast.NodeVisitor):
     if self.type_alias_statement_class_scope_lambda():
       mins = self.__add_versions_entity(mins, (None, (3, 13)),
                                         "type alias statement using lambda/comp in class scope",
+                                        plural=False)
+
+    if self.template_string_literal():
+      mins = self.__add_versions_entity(mins, (None, (3, 14)),
+                                        "template string literal (`t'text {var}'`)",
                                         plural=False)
 
     if self.bytes_format():
@@ -2334,6 +2342,12 @@ ast.Call(func=ast.Name)."""
                            versions=[None, (3, 13)], plural=False)
             break
       self.generic_visit(node)
+
+  def visit_TemplateStr(self, node):
+    if not self.__is_no_line(node.lineno):
+      self.__s.template_string_literal = True
+      self.__vvprint("template string literal (`t'text {var}'`)", versions=[None, (3, 14)],
+                     plural=False)
 
   # Ignore unused nodes as a speed optimization.
 
