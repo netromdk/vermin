@@ -1,6 +1,6 @@
 from multiprocessing import cpu_count
 
-VERSION = "1.7.0"
+VERSION = "1.8.0"
 DEFAULT_PROCESSES = cpu_count()
 CONFIG_FILE_NAMES = ["vermin.ini", "vermin.conf", ".vermin", "setup.cfg"]
 CONFIG_SECTION = "vermin"

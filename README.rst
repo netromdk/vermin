@@ -34,8 +34,8 @@ vanilla Python, and it doesn't have any external dependencies, it can be run wit
 includes detection of v2.x functionality.
 
 It functions by parsing Python code into an abstract syntax tree (AST), which it traverses and
-matches against internal dictionaries with **3940** rules, covering v2.0-2.7 and v3.0-3.13, divided
-into **179** modules, **2720** classes/functions/constants members of modules, **911** kwargs of
+matches against internal dictionaries with **4140** rules, covering v2.0-2.7 and v3.0-3.14, divided
+into **190** modules, **2888** classes/functions/constants members of modules, **932** kwargs of
 functions, **4** strftime directives, **3** bytes format directives, **3** array typecodes, **3**
 codecs error handler names, **20** codecs encodings, **78** builtin generic annotation types, **9**
 builtin dict union (``|``) types, **8** builtin dict union merge (``|=``) types, and **2** user
@@ -44,7 +44,7 @@ function decorators.
 Backports of the standard library, like ``typing``, can be enabled for better results. Get full list
 of backports via ``--help``.
 
-The project is fairly well-tested with **4155** unit and integration tests that are executed on
+The project is fairly well-tested with **4362** unit and integration tests that are executed on
 Linux, macOS, and Windows.
 
 It is recommended to use the most recent Python version to run Vermin on projects since Python's own

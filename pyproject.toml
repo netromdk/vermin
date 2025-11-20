@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vermin"
-version = "1.7.0"
+version = "1.8.0"
 description = "Concurrently detect the minimum Python versions needed to run code"
 readme = { file = "README.rst", content-type = "text/x-rst" }
 requires-python = ">=3.0"
