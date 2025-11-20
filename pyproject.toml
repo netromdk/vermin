@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=80", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vermin"
+version = "1.7.0"
+description = "Concurrently detect the minimum Python versions needed to run code"
+readme = { file = "README.rst", content-type = "text/x-rst" }
+requires-python = ">=3.0"
+license = "MIT"
+license-files = ["LICENSE.txt"]
+authors = [
+    { name = "Morten Kristensen", email = "me@mortens.dev" }
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.0",
+    "Topic :: Utilities",
+    "Topic :: Software Development"
+]
+keywords = ["version", "detection", "analysis", "ast", "development"]
+dependencies = []
+optional-dependencies = {}
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["tests"]
+
+[project.scripts]
+vermin = "vermin:main"
+
+[project.urls]
+"Homepage" = "https://github.com/netromdk/vermin"
+"Source" = "https://github.com/netromdk/vermin"
+"Bug Reports" = "https://github.com/netromdk/vermin/issues"

@@ -3,13 +3,13 @@ from .detection import detect, visit, detect_paths, detect_paths_incremental, pr
 from .source_visitor import SourceVisitor
 from .parser import Parser
 from .processor import Processor
-from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, BYTES_REQS,\
-  ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS, CODECS_ENCODINGS, BUILTIN_GENERIC_ANNOTATION_TYPES,\
+from .rules import MOD_REQS, MOD_MEM_REQS, KWARGS_REQS, STRFTIME_REQS, BYTES_REQS, \
+  ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS, CODECS_ENCODINGS, BUILTIN_GENERIC_ANNOTATION_TYPES, \
   DICT_UNION_SUPPORTED_TYPES, DICT_UNION_MERGE_SUPPORTED_TYPES, DECORATOR_USER_FUNCTIONS
 from .arguments import Arguments
 from .config import Config
-from .utility import reverse_range, dotted_name, combine_versions, InvalidVersionException,\
-  remove_whitespace, sort_line_column, sort_line_column_parsable, version_strings,\
+from .utility import reverse_range, dotted_name, combine_versions, InvalidVersionException, \
+  remove_whitespace, sort_line_column, sort_line_column_parsable, version_strings, \
   format_title_descs
 from .backports import Backports
 from .features import Features

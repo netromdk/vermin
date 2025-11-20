@@ -74,7 +74,6 @@ class Parser:
     except SyntaxError as err:
       def format_error(msg, versions):
         """Generate an error message, as would be done by the SourceVisitor."""
-        nonlocal err
         return config.format()\
           .format_output_line(msg, path=err.filename, line=err.lineno, col=err.offset,
                               versions=versions, violation=True)

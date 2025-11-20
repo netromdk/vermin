@@ -1,4 +1,4 @@
-name: Analyze
+name: Security Check
 
 # On all pushes to PRs or pushes to specific branches. Not on ALL pushes in general because it will
 # double if pushing to a PR.
@@ -13,12 +13,13 @@ permissions:
   contents: read
 
 jobs:
-  analyze:
+  check:
 
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.14']
+        # NOTE: Keep at 3.13 until Bandit updates with 3.14 support!
+        python-version: ['3.13']
 
     steps:
     - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
@@ -32,5 +33,5 @@ jobs:
         key: ${{ runner.os}}-pip-${{ hashFiles('**/.*-requirements.txt') }}
         restore-keys: |
           ${{ runner.os}}-pip-
-    - name: Analyze
-      run: ./misc/actions/analyze.sh
+    - name: Security Check
+      run: ./misc/actions/security-check.sh

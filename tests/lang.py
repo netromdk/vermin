@@ -1,4 +1,4 @@
-from vermin import BUILTIN_GENERIC_ANNOTATION_TYPES, DICT_UNION_SUPPORTED_TYPES,\
+from vermin import BUILTIN_GENERIC_ANNOTATION_TYPES, DICT_UNION_SUPPORTED_TYPES, \
   DICT_UNION_MERGE_SUPPORTED_TYPES, dotted_name, Parser, InvalidVersionException
 
 from .testutils import VerminTest, current_version
@@ -1115,6 +1115,47 @@ class A[T]:
     self.assertTrue(visitor.type_alias_statement())
     self.assertTrue(visitor.type_alias_statement_class_scope_lambda())
     self.assertOnlyIn((3, 13), visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 14)
+  def test_template_string_literal(self):
+    visitor = self.visit("t'hello'")
+    self.assertTrue(visitor.template_string_literal())
+    self.assertOnlyIn((3, 14), visitor.minimum_versions())
+
+    visitor = self.visit("t'hello {var}'")
+    self.assertTrue(visitor.template_string_literal())
+    self.assertOnlyIn((3, 14), visitor.minimum_versions())
+
+    visitor = self.visit("""
+from string.templatelib import Interpolation
+
+def lower_upper(template):
+    parts = []
+    for part in template:
+        if isinstance(part, Interpolation):
+            parts.append(str(part.value).upper())
+        else:
+            parts.append(part.lower())
+    return ''.join(parts)
+
+name = 'Wenslydale'
+template = t'Mister {name}'
+assert lower_upper(template) == 'mister WENSLYDALE'
+""")
+    self.assertTrue(visitor.template_string_literal())
+    self.assertOnlyIn((3, 14), visitor.minimum_versions())
+
+    visitor = self.visit("""
+attributes = {'src': 'test.jpg', 'alt': 'test test'}
+template = t'<img {attributes}>'
+assert html(template) == '<img src="test.jpg" alt="test test" />'
+""")
+    self.assertTrue(visitor.template_string_literal())
+    self.assertOnlyIn((3, 14), visitor.minimum_versions())
+
+    # f-strings are not t-strings
+    visitor = self.visit("f'hello'")
+    self.assertFalse(visitor.template_string_literal())
 
   @VerminTest.skipUnlessVersion(3, 5)
   def test_bytes_format(self):

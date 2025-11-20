@@ -45,14 +45,13 @@ clean-venv:
 	rm -fr .venv
 
 clean-pypi:
-	rm -fr build dist *.egg-info
+	rm -fr build dist *.egg-info vermin/*.egg-info
 
 dist-clean: clean clean-venv clean-pypi
 
 pypi-dist: clean-pypi
-	python -m pip install --upgrade wheel twine
-	python setup.py sdist
-	python setup.py bdist_wheel --universal
+	python -m pip install --upgrade build wheel twine
+	python -m build
 
 update-coverage-requirements: setup-venv setup-coverage
 	pip freeze > misc/.coverage-requirements.txt
@@ -79,7 +78,7 @@ semgrep-dry-run:
 	${SEMGREP_CMD} --dry-run
 
 lint:
-	pylint -j 0 --disable=C0103,C0114,C0115,C0116,C0209,C0302,W0201,W0311,W0621,W0703,R0801,R0902,R0903,R0904,R0911,R0912,R0913,R0914,R0915,R0916,R1702,E1136\
+	pylint -j 0 --disable=C0103,C0114,C0115,C0116,C0209,C0302,W0201,W0311,W0621,W0703,R0801,R0902,R0903,R0904,R0911,R0912,R0913,R0914,R0915,R0916,R0917,R1702,E1101,E1136\
 		${TOP_LEVEL_FILES}
 
 check-pypi:
