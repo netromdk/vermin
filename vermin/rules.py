@@ -1972,6 +1972,8 @@ def MOD_MEM_REQS(config):
     "xml.etree.ElementTree.tostringlist": ((2, 7), (3, 2)),
     "xml.parsers.expat.xmlparser.EntityDeclHandler": ((2, 1), (3, 0)),
     "xml.parsers.expat.xmlparser.GetInputContext": ((2, 1), (3, 0)),
+    "xml.parsers.expat.xmlparser.SetAllocTrackerActivationThreshold": (None, (3, 14)),
+    "xml.parsers.expat.xmlparser.SetAllocTrackerMaximumAmplification": (None, (3, 14)),
     "xml.parsers.expat.xmlparser.UseForeignDTD": ((2, 3), (3, 0)),
     "xml.parsers.expat.xmlparser.XmlDeclHandler": ((2, 1), (3, 0)),
     "xml.parsers.expat.xmlparser.buffer_size": ((2, 3), (3, 0)),

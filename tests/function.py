@@ -4821,6 +4821,16 @@ TracebackException().print()
                       self.detect("from xml.parsers.expat import xmlparser\n"
                                   "xmlparser().GetInputContext()"))
 
+  def test_SetAllocTrackerActivationThreshold_from_xml_parsers_expat_xmlparser(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from xml.parsers.expat import xmlparser\n"
+                                  "xmlparser().SetAllocTrackerActivationThreshold()"))
+
+  def test_SetAllocTrackerMaximumAmplification_from_xml_parsers_expat_xmlparser(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from xml.parsers.expat import xmlparser\n"
+                                  "xmlparser().SetAllocTrackerMaximumAmplification()"))
+
   def test_UseForeignDTD_from_xml_parsers_expat_xmlparser(self):
     self.assertOnlyIn(((2, 3), (3, 0)),
                       self.detect("from xml.parsers.expat import xmlparser\n"
