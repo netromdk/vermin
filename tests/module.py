@@ -588,3 +588,15 @@ class VerminModuleTests(VerminTest):
 
   def test_test_support_warnings_helper(self):
     self.assertOnlyIn((3, 10), self.detect("import test.support.warnings_helper"))
+
+  def test_math_integer(self):
+    self.assertOnlyIn((3, 15), self.detect("import math.integer"))
+
+  def test_profiling(self):
+    self.assertOnlyIn((3, 15), self.detect("import profiling"))
+
+  def test_profiling_sampling(self):
+    self.assertOnlyIn((3, 15), self.detect("import profiling.sampling"))
+
+  def test_profiling_tracing(self):
+    self.assertOnlyIn((3, 15), self.detect("import profiling.tracing"))
