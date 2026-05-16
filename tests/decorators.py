@@ -121,3 +121,6 @@ def foo(): pass""")
 
   def test_deprecated_of_warnings(self):
     self.assertOnlyIn((3, 13), self.detect("from warnings import deprecated"))
+
+  def test_disjoint_base_of_typing(self):
+    self.assertOnlyIn((3, 15), self.detect("from typing import disjoint_base"))
