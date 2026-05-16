@@ -33,6 +33,9 @@ class SourceState:
     # List of lines of output text.
     self.output_text = []
 
+    # Set of (msg, versions, entity) fingerprints to avoid duplicate output lines.
+    self.output_seen = set()
+
     # Whether violations were found while visiting
     self.found_violation = False
 

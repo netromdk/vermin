@@ -38,6 +38,14 @@ class VerminGeneralTests(VerminTest):
     visitor = self.visit("from abc import ABC")
     self.assertNotEmpty(visitor.output_text())
 
+  def test_visit_output_text_dedup(self):
+    self.config.set_verbose(2)
+    # Same member used twice should produce one output line.
+    visitor = self.visit("import os; os.cpu_count(); os.cpu_count()")
+    lines = visitor.output_text().splitlines()
+    self.assertEqual(len(lines), 1)
+    self.assertIn("os.cpu_count", lines[0])
+
   def test_visit_output_text_has_correct_lines(self):
     self.config.set_verbose(3)  # Line numbers start at verbosity 3.
     visitor = self.visit("""a = 1

@@ -589,11 +589,8 @@ class SourceVisitor(ast.NodeVisitor):
     return mins
 
   def output_text(self):
-    # Throw away dups and sort. But only when not dumping AST node visits because it would throw
-    # away multiple statements that are similar in AST.
+    # Sort the output lines.
     text = self.__s.output_text
-    if not self.__s.config.print_visits():
-      text = list(set(text))
     self.__s.output_text = self.__s.config.format().sort_output_lines(text)
 
     text = "\n".join(self.__s.output_text)
@@ -644,6 +641,15 @@ class SourceVisitor(ast.NodeVisitor):
       line = self.__s.line
 
     msg = fmt.format_output_line(msg, self.__s.path, line, col, versions, plural, violation)
+
+    # Deduplicate output by feature identity to avoid same feature producing multiple lines.
+    versions_key = None
+    if versions is not None:
+      versions_key = tuple(tuple(v) if v is not None else None for v in versions)
+    fingerprint = (msg, versions_key, entity)
+    if fingerprint in self.__s.output_seen:
+      return
+    self.__s.output_seen.add(fingerprint)
     self.__s.output_text.append(msg)
 
   def __vvprint(self, msg, entity=None, line=None,
