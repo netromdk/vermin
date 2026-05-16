@@ -33,6 +33,9 @@ class SourceState:
     # List of lines of output text.
     self.output_text = []
 
+    # Set of (msg, versions, entity) fingerprints to avoid duplicate output lines.
+    self.output_seen = set()
+
     # Whether violations were found while visiting
     self.found_violation = False
 
@@ -104,7 +107,8 @@ class SourceState:
     self.module_getattr_func = False
     self.pattern_matching = False
     self.union_types = False
-    self.builtin_types = {"dict", "set", "list", "unicode", "str", "int", "float", "long", "bytes"}
+    self.builtin_types = {"dict", "set", "list", "unicode", "str", "int", "float", "long", "bytes",
+                          "bytearray", "frozenset", "tuple", "bool", "memoryview"}
     self.codecs_encodings_kwargs = ("encoding", "data_encoding", "file_encoding")
     self.super_no_args = False
     self.except_star = False

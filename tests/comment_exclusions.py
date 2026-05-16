@@ -47,6 +47,11 @@ class VerminCommentsExclusionsTests(VerminTest):
     self.assertIn(1, visitor.no_lines())
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
 
+    # novermin in a non-first segment.
+    visitor = self.visit("import email.parser.FeedParser  # noqa # novermin")
+    self.assertIn(1, visitor.no_lines())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
     # Testing multiple comment segments on its own refers to the next line.
     visitor = self.visit("# noqa # novm # nolint\nimport email.parser.FeedParser")
     self.assertIn(2, visitor.no_lines())

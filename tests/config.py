@@ -501,6 +501,25 @@ targets = 4.0
     self.assertTrue(self.config.add_target((2, 7), exact=True))
     self.assertEqual([[True, (2, 7)]], self.config.targets())
 
+  def test_add_exclusion_file_nonexistent(self):
+    # Should not crash on nonexistent file (exception is silently caught).
+    self.config.add_exclusion_file("nonexistent_file_xyz")
+
+  def test_parse_file_invalid(self):
+    fp = ScopedTemporaryFile()
+    fp.write(b"not valid ini content")
+    fp.close()
+    config = Config.parse_file(fp.path())
+    self.assertIsNone(config)
+
+  def test_parse_file_strips_line_whitespace(self):
+    fp = ScopedTemporaryFile()
+    fp.write(b"[vermin]\nexclusions = foo.bar\n  baz.qux  \n  more.stuff\n")
+    fp.close()
+    config = Config.parse_file(fp.path())
+    self.assertIsNotNone(config)
+    self.assertEqual(["baz.qux", "foo.bar", "more.stuff"], config.exclusions())
+
   def test_parse_file(self):
     fp = ScopedTemporaryFile()
     fp.write(b"""[vermin]

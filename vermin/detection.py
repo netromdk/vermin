@@ -511,6 +511,7 @@ def detect_paths(paths, hidden=False, processes=cpu_count(), ignore_chars=None,
   depth = 0
   ignore_chars = ignore_chars or []
   args = [(paths, depth, hidden, ignore_chars, scan_symlink_folders, config)]
+  pool = None
 
   try:
     # pylint: disable=consider-using-with
@@ -531,11 +532,18 @@ def detect_paths(paths, hidden=False, processes=cpu_count(), ignore_chars=None,
           new_args += further_args
       args = new_args
 
-    if pool:
-      pool.close()
-  except RuntimeError:
+  except RuntimeError as ex:
+    # Match the specific multiprocessing bootstrap RuntimeError ("An attempt has been made to start
+    # a new process before the current process has finished its bootstrapping phase."). Any other
+    # RuntimeError is a real bug and must propagate.
+    if "before the current process has finished its bootstrapping phase" not in str(ex):
+      raise
     nprint("""RuntimeError: If running `detect_paths()` outside of `if __name__ == \"__main__\":`
 it, or the code calling it, must be done within it instead.""", config)
+  finally:
+    if pool:
+      pool.close()
+      pool.join()
   return accept_paths
 
 def visit(source, config=None, path=None):

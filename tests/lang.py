@@ -619,6 +619,20 @@ class VerminLanguageTests(VerminTest):
     visitor = self.visit("bytes().hex()")
     self.assertIn("bytes.hex", visitor.members())
 
+  def test_bytearray_from_type(self):
+    visitor = self.visit("bytearray(b'hello').hex()")
+    self.assertIn("bytearray.hex", visitor.members())
+    visitor = self.visit("bytearray().hex()")
+    self.assertIn("bytearray.hex", visitor.members())
+
+  def test_bool_from_type(self):
+    visitor = self.visit("bool()")
+    self.assertIn("bool", visitor.members())
+
+  def test_memoryview_from_type(self):
+    visitor = self.visit("memoryview(b'hello').release()")
+    self.assertIn("memoryview.release", visitor.members())
+
   @VerminTest.parameterized_args([
     ["with func():\n  pass"],
     ["with a as (b, c): pass"],
@@ -667,6 +681,8 @@ class VerminLanguageTests(VerminTest):
     ["""with \
   \
   (a, b as c): pass"""],
+    ["with(a, b): pass"],
+    ["with    (a, b): pass"],
   ])
   def test_with_parentheses(self, source):
     visitor = self.visit(source)

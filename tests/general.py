@@ -7,6 +7,8 @@ from tempfile import NamedTemporaryFile, mkdtemp
 from shutil import rmtree
 from multiprocessing import cpu_count
 
+import vermin.processor
+import vermin.detection
 from vermin import combine_versions, InvalidVersionException, detect_paths, \
   detect_paths_incremental, probably_python_file, Processor, reverse_range, dotted_name, \
   remove_whitespace, main, sort_line_column, sort_line_column_parsable, version_strings, \
@@ -16,6 +18,23 @@ from vermin.utility import compare_requirements
 
 from .testutils import VerminTest, current_version, ScopedTemporaryFile, detect, visit, touch, \
   working_dir
+
+class _MockPool:
+  def __init__(self, imap_raise=None):
+    self.close_called = False
+    self.join_called = False
+    self._imap_raise = imap_raise
+
+  def close(self):
+    self.close_called = True
+
+  def join(self):
+    self.join_called = True
+
+  def imap(self, _, __):
+    if self._imap_raise is not None:
+      raise self._imap_raise
+    return []
 
 class VerminGeneralTests(VerminTest):
   def test_detect_without_config(self):
@@ -37,6 +56,14 @@ class VerminGeneralTests(VerminTest):
     # Earlier, it wouldn't have output text defined because `minimum_versions()` wasn't called.
     visitor = self.visit("from abc import ABC")
     self.assertNotEmpty(visitor.output_text())
+
+  def test_visit_output_text_dedup(self):
+    self.config.set_verbose(2)
+    # Same member used twice should produce one output line.
+    visitor = self.visit("import os; os.cpu_count(); os.cpu_count()")
+    lines = visitor.output_text().splitlines()
+    self.assertEqual(len(lines), 1)
+    self.assertIn("os.cpu_count", lines[0])
 
   def test_visit_output_text_has_correct_lines(self):
     self.config.set_verbose(3)  # Line numbers start at verbosity 3.
@@ -1075,6 +1102,122 @@ print('hello')     # print(expr) requires 2+ or 3+
     self.assertEmpty(backports)
     self.assertFalse(used_novermin)
     self.assertTrue(maybe_anns)
+
+  def test_processor_runtime_error_pool_constructor_bootstrap(self):
+    orig = vermin.processor.mp.Pool
+    msg = "An attempt has been made to start a new process before the current " \
+          "process has finished its bootstrapping phase."
+
+    def raise_pool(*_, **__):
+      raise RuntimeError(msg)
+    vermin.processor.mp.Pool = raise_pool
+    try:
+      (mins, incomp, unique_versions, backports, used_novermin, maybe_anns) = \
+        Processor().process([abspath("vermin")], self.config)
+    finally:
+      vermin.processor.mp.Pool = orig
+    self.assertEqual(mins, [(0, 0), (0, 0)])
+    self.assertFalse(incomp)
+    self.assertEmpty(unique_versions)
+    self.assertEmpty(backports)
+    self.assertFalse(used_novermin)
+    self.assertFalse(maybe_anns)
+
+  def test_processor_runtime_error_pool_constructor_other(self):
+    orig = vermin.processor.mp.Pool
+
+    def raise_pool(*_, **__):
+      raise RuntimeError("some other error")
+    vermin.processor.mp.Pool = raise_pool
+    try:
+      with self.assertRaises(RuntimeError):
+        Processor().process([abspath("vermin")], self.config)
+    finally:
+      vermin.processor.mp.Pool = orig
+
+  def test_processor_runtime_error_imap_bootstrap(self):
+    orig = vermin.processor.mp.Pool
+    msg = "An attempt has been made to start a new process before the current " \
+          "process has finished its bootstrapping phase."
+    mock = _MockPool(imap_raise=RuntimeError(msg))
+    vermin.processor.mp.Pool = lambda *_, **__: mock
+    try:
+      (mins, incomp, unique_versions, backports, used_novermin, maybe_anns) = \
+        Processor().process([abspath("vermin")], self.config)
+    finally:
+      vermin.processor.mp.Pool = orig
+    self.assertEqual(mins, [(0, 0), (0, 0)])
+    self.assertFalse(incomp)
+    self.assertEmpty(unique_versions)
+    self.assertEmpty(backports)
+    self.assertFalse(used_novermin)
+    self.assertFalse(maybe_anns)
+    self.assertTrue(mock.close_called)
+    self.assertTrue(mock.join_called)
+
+  def test_processor_runtime_error_imap_other(self):
+    orig = vermin.processor.mp.Pool
+    mock = _MockPool(imap_raise=RuntimeError("some other error"))
+    vermin.processor.mp.Pool = lambda *_, **__: mock
+    try:
+      with self.assertRaises(RuntimeError):
+        Processor().process([abspath("vermin")], self.config)
+    finally:
+      vermin.processor.mp.Pool = orig
+    self.assertTrue(mock.close_called)
+    self.assertTrue(mock.join_called)
+
+  def test_detect_paths_runtime_error_pool_constructor_bootstrap(self):
+    orig = vermin.detection.Pool
+    msg = "An attempt has been made to start a new process before the current " \
+          "process has finished its bootstrapping phase."
+
+    def raise_pool(*_, **__):
+      raise RuntimeError(msg)
+    vermin.detection.Pool = raise_pool
+    try:
+      paths = detect_paths([abspath("vermin")], config=self.config)
+    finally:
+      vermin.detection.Pool = orig
+    self.assertEmpty(paths)
+
+  def test_detect_paths_runtime_error_pool_constructor_other(self):
+    orig = vermin.detection.Pool
+
+    def raise_pool(*_, **__):
+      raise RuntimeError("some other error")
+    vermin.detection.Pool = raise_pool
+    try:
+      with self.assertRaises(RuntimeError):
+        detect_paths([abspath("vermin")], config=self.config)
+    finally:
+      vermin.detection.Pool = orig
+
+  def test_detect_paths_runtime_error_imap_bootstrap(self):
+    orig = vermin.detection.Pool
+    msg = "An attempt has been made to start a new process before the current " \
+          "process has finished its bootstrapping phase."
+    mock = _MockPool(imap_raise=RuntimeError(msg))
+    vermin.detection.Pool = lambda *_, **__: mock
+    try:
+      paths = detect_paths([abspath("vermin")], config=self.config)
+    finally:
+      vermin.detection.Pool = orig
+    self.assertEmpty(paths)
+    self.assertTrue(mock.close_called)
+    self.assertTrue(mock.join_called)
+
+  def test_detect_paths_runtime_error_imap_other(self):
+    orig = vermin.detection.Pool
+    mock = _MockPool(imap_raise=RuntimeError("some other error"))
+    vermin.detection.Pool = lambda *_, **__: mock
+    try:
+      with self.assertRaises(RuntimeError):
+        detect_paths([abspath("vermin")], config=self.config)
+    finally:
+      vermin.detection.Pool = orig
+    self.assertTrue(mock.close_called)
+    self.assertTrue(mock.join_called)
 
   def test_format_title_descs(self):
     descs = (

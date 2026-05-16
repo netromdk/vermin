@@ -89,7 +89,8 @@ class Config:
   @staticmethod
   def parse_file(path):
     try:
-      return Config.parse_fp(open(path, mode="r", encoding="utf-8"), filename=path)
+      with open(path, mode="r", encoding="utf-8") as fp:
+        return Config.parse_fp(fp, filename=path)
     except Exception as ex:
       print("Could not load config file: {}".format(path))
       print(ex)
@@ -177,7 +178,8 @@ class Config:
 
     def getstringlist(option):
       keepends = False
-      return parser.get(CONFIG_SECTION, option).strip().splitlines(keepends)
+      return [ln.strip() for ln in
+              parser.get(CONFIG_SECTION, option).strip().splitlines(keepends) if ln.strip()]
 
     config.set_quiet(getbool("quiet"))
     config.set_verbose(getuint("verbose"))
@@ -414,7 +416,7 @@ the `exact` argument is supplied for exactness."""
     if isinstance(target, str):
       target = parse_target(target)
       if target is None:
-        return None
+        return False
 
     if len(target) != 2 or not isinstance(target[0], bool) or not isinstance(target[1], tuple) or\
        len(target[1]) != 2:

@@ -50,6 +50,9 @@ Linux, macOS, and Windows.
 It is recommended to use the most recent Python version to run Vermin on projects since Python's own
 language parser is used to detect language features, like f-strings since Python 3.6 etc.
 
+As it parses each file, it reports Python syntax errors and warnings with full context, making it
+easy to fix them in addition to the minimum versions detected.
+
 
 Table of Contents
 =================

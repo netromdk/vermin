@@ -39,6 +39,7 @@ class Processor:
     maybe_annotations = False
     mins = [(0, 0), (0, 0)]
     incomp = False
+    pool = None
 
     try:
       # pylint: disable=consider-using-with
@@ -87,12 +88,19 @@ class Processor:
           incomp = True
           print_incomp(proc_res.path, proc_res.text)
 
-      if pool:
-        pool.close()
-    except RuntimeError:
+    except RuntimeError as ex:
+      # Match the specific multiprocessing bootstrap RuntimeError ("An attempt has been made to
+      # start a new process before the current process has finished its bootstrapping phase."). Any
+      # other RuntimeError is a real bug and must propagate.
+      if "before the current process has finished its bootstrapping phase" not in str(ex):
+        raise
       nprint("""RuntimeError: If running `Processor.process()` outside of
 `if __name__ == \"__main__\":` it, or the code calling it, must be done within it instead.""",
              config)
+    finally:
+      if pool:
+        pool.close()
+        pool.join()
 
     unique_versions = list(unique_versions)
     unique_versions.sort()
