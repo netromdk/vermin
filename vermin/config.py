@@ -89,7 +89,8 @@ class Config:
   @staticmethod
   def parse_file(path):
     try:
-      return Config.parse_fp(open(path, mode="r", encoding="utf-8"), filename=path)
+      with open(path, mode="r", encoding="utf-8") as fp:
+        return Config.parse_fp(fp, filename=path)
     except Exception as ex:
       print("Could not load config file: {}".format(path))
       print(ex)

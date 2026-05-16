@@ -501,6 +501,13 @@ targets = 4.0
     self.assertTrue(self.config.add_target((2, 7), exact=True))
     self.assertEqual([[True, (2, 7)]], self.config.targets())
 
+  def test_parse_file_invalid(self):
+    fp = ScopedTemporaryFile()
+    fp.write(b"not valid ini content")
+    fp.close()
+    config = Config.parse_file(fp.path())
+    self.assertIsNone(config)
+
   def test_parse_file(self):
     fp = ScopedTemporaryFile()
     fp.write(b"""[vermin]
