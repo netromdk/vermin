@@ -416,7 +416,7 @@ the `exact` argument is supplied for exactness."""
     if isinstance(target, str):
       target = parse_target(target)
       if target is None:
-        return None
+        return False
 
     if len(target) != 2 or not isinstance(target[0], bool) or not isinstance(target[1], tuple) or\
        len(target[1]) != 2:
