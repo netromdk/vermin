@@ -508,6 +508,14 @@ targets = 4.0
     config = Config.parse_file(fp.path())
     self.assertIsNone(config)
 
+  def test_parse_file_strips_line_whitespace(self):
+    fp = ScopedTemporaryFile()
+    fp.write(b"[vermin]\nexclusions = foo.bar\n  baz.qux  \n  more.stuff\n")
+    fp.close()
+    config = Config.parse_file(fp.path())
+    self.assertIsNotNone(config)
+    self.assertEqual(["baz.qux", "foo.bar", "more.stuff"], config.exclusions())
+
   def test_parse_file(self):
     fp = ScopedTemporaryFile()
     fp.write(b"""[vermin]

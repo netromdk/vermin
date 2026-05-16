@@ -178,7 +178,8 @@ class Config:
 
     def getstringlist(option):
       keepends = False
-      return parser.get(CONFIG_SECTION, option).strip().splitlines(keepends)
+      return [ln.strip() for ln in
+              parser.get(CONFIG_SECTION, option).strip().splitlines(keepends) if ln.strip()]
 
     config.set_quiet(getbool("quiet"))
     config.set_verbose(getuint("verbose"))
