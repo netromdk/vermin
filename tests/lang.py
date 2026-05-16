@@ -681,6 +681,8 @@ class VerminLanguageTests(VerminTest):
     ["""with \
   \
   (a, b as c): pass"""],
+    ["with(a, b): pass"],
+    ["with    (a, b): pass"],
   ])
   def test_with_parentheses(self, source):
     visitor = self.visit(source)
