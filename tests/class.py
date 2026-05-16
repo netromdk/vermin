@@ -115,6 +115,9 @@ class VerminClassMemberTests(VerminTest):
   def test_Signals_of_signals(self):
     self.assertOnlyIn((3, 5), self.detect("from signals import Signals"))
 
+  def test_StartupState_from_site(self):
+    self.assertOnlyIn((3, 15), self.detect("from site import StartupState"))
+
   def test_Barrier_of_multiprocessing(self):
     self.assertOnlyIn((3, 3), self.detect("from multiprocessing import Barrier"))
 
@@ -634,6 +637,9 @@ from concurrent.futures import InterpreterPoolExecutor
 
   def test_EntryPoints_of_importlib_metadata(self):
     self.assertOnlyIn((3, 10), self.detect("from importlib.metadata import EntryPoints"))
+
+  def test_MetadataNotFound_of_importlib_metadata(self):
+    self.assertOnlyIn((3, 15), self.detect("from importlib.metadata import MetadataNotFound"))
 
   def test_LazyLoader_of_importlib_util(self):
     self.assertOnlyIn((3, 5), self.detect("from importlib.util import LazyLoader"))

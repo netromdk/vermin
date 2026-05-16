@@ -3950,3 +3950,21 @@ something.Final
 
   def test_status_of_urllib_response_addinfourl(self):
     self.assertOnlyIn((3, 9), self.detect("from urllib.response.addinfourl import status"))
+
+  def test_RLIMIT_NTHR_of_resource(self):
+    self.assertOnlyIn((3, 15), self.detect("from resource import RLIMIT_NTHR"))
+
+  def test_RLIMIT_THREADS_of_resource(self):
+    self.assertOnlyIn((3, 15), self.detect("from resource import RLIMIT_THREADS"))
+
+  def test_RLIMIT_UMTXP_of_resource(self):
+    self.assertOnlyIn((3, 15), self.detect("from resource import RLIMIT_UMTXP"))
+
+  def test_RLIM_SAVED_CUR_of_resource(self):
+    self.assertOnlyIn((3, 15), self.detect("from resource import RLIM_SAVED_CUR"))
+
+  def test_RLIM_SAVED_MAX_of_resource(self):
+    self.assertOnlyIn((3, 15), self.detect("from resource import RLIM_SAVED_MAX"))
+
+  def test_HAS_PSK_TLS13_of_ssl(self):
+    self.assertOnlyIn((3, 15), self.detect("from ssl import HAS_PSK_TLS13"))
