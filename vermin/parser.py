@@ -59,8 +59,8 @@ class Parser:
         # comment. A comment is alone on a line if the previous token is a newline or the line
         # column is zero.
         alone = (prev_newline or lcol == 0)
-        any(find_comment(segment.strip(), lno, alone)
-            for segment in string[1:].strip().split("#"))
+        for segment in string[1:].strip().split("#"):
+          find_comment(segment.strip(), lno, alone)
 
       prev_newline = token.type in (NEWLINE, NL)
     return novermin
