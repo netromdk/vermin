@@ -276,6 +276,9 @@ class SourceVisitor(ast.NodeVisitor):
   def generic_class(self):
     return self.__s.generic_class
 
+  def unpacking_in_comprehension(self):
+    return self.__s.unpacking_in_comprehension
+
   def __get_source_line(self, line, col=0):
     if self.__s.source is None:
       return None  # pragma: no cover
@@ -529,6 +532,9 @@ class SourceVisitor(ast.NodeVisitor):
     if self.generic_class():
       mins = self.__add_versions_entity(mins, (None, (3, 12)), "generic class `class C[T]: ...`")
 
+    if self.unpacking_in_comprehension():
+      mins = self.__add_versions_entity(mins, (None, (3, 15)),
+                                        "unpacking in comprehension (PEP 798)")
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
         vers = STRFTIME_REQS[directive]
@@ -1080,6 +1086,10 @@ class SourceVisitor(ast.NodeVisitor):
     if isinstance(node.ctx, ast.Store):
       self.__s.unpacking_assignment = True
       self.__vvprint("unpacking assignment", versions=[None, (3, 0)])
+    elif self.__s.comprehension_depth > 0 and isinstance(node.ctx, ast.Load):
+      # PEP 798: starred expression in comprehension value expression (3.15+).
+      self.__s.unpacking_in_comprehension = True
+      self.__vvprint("unpacking in comprehension (PEP 798)", versions=[None, (3, 15)])
     self.generic_visit(node)
 
   def __check_generalized_unpacking(self, node):
@@ -2062,30 +2072,38 @@ ast.Call(func=ast.Name)."""
     return user_defs_copy
 
   def visit_ListComp(self, node):
+    self.__s.comprehension_depth += 1
     user_defs_copy = self.__handle_comprehensions(node.generators)
     self.generic_visit(node)
     self.__s.user_defs = user_defs_copy
+    self.__s.comprehension_depth -= 1
 
   def visit_SetComp(self, node):
+    self.__s.comprehension_depth += 1
     self.__s.set_comp = True
     self.__vvprint("set comprehensions", versions=[(2, 7), (3, 0)])
 
     user_defs_copy = self.__handle_comprehensions(node.generators)
     self.generic_visit(node)
     self.__s.user_defs = user_defs_copy
+    self.__s.comprehension_depth -= 1
 
   def visit_GeneratorExp(self, node):
+    self.__s.comprehension_depth += 1
     user_defs_copy = self.__handle_comprehensions(node.generators)
     self.generic_visit(node)
     self.__s.user_defs = user_defs_copy
+    self.__s.comprehension_depth -= 1
 
   def visit_DictComp(self, node):
+    self.__s.comprehension_depth += 1
     self.__s.dict_comp = True
     self.__vvprint("dict comprehensions", versions=[(2, 7), (3, 0)])
 
     user_defs_copy = self.__handle_comprehensions(node.generators)
     self.generic_visit(node)
     self.__s.user_defs = user_defs_copy
+    self.__s.comprehension_depth -= 1
 
   def visit_comprehension(self, node):
     if hasattr(node, "is_async") and node.is_async == 1:

@@ -127,6 +127,12 @@ class SourceState:
     # `t'text {var}'`
     self.template_string_literal = False
 
+    # Track depth of nested comprehension value expressions (PEP 798).
+    self.comprehension_depth = 0
+
+    # `*x` unpacking in comprehension value expressions (PEP 798).
+    self.unpacking_in_comprehension = False
+
     # Imported members of modules, like "exc_clear" of "sys".
     self.import_mem_mod = {}
 

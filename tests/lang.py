@@ -1173,6 +1173,19 @@ assert html(template) == '<img src="test.jpg" alt="test test" />'
     visitor = self.visit("f'hello'")
     self.assertFalse(visitor.template_string_literal())
 
+  @VerminTest.skipUnlessVersion(3, 15)
+  def test_unpacking_in_comprehension(self):
+    visitor = self.visit("[*x for x in range(10)]")
+    self.assertTrue(visitor.unpacking_in_comprehension())
+    self.assertOnlyIn((3, 15), visitor.minimum_versions())
+
+    visitor = self.visit("{*x for x in range(10)}")
+    self.assertTrue(visitor.unpacking_in_comprehension())
+    self.assertOnlyIn((3, 15), visitor.minimum_versions())
+
+    visitor = self.visit("[x for x in range(10)]")
+    self.assertFalse(visitor.unpacking_in_comprehension())
+
   @VerminTest.skipUnlessVersion(3, 5)
   def test_bytes_format(self):
     visitor = self.visit("b'%x' % 10")
