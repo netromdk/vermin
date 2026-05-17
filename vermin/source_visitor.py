@@ -279,6 +279,12 @@ class SourceVisitor(ast.NodeVisitor):
   def unpacking_in_comprehension(self):
     return self.__s.unpacking_in_comprehension
 
+  def lazy_imports(self):
+    return self.__s.lazy_imports
+
+  def lazy_modules(self):
+    return self.__s.lazy_modules
+
   def __get_source_line(self, line, col=0):
     if self.__s.source is None:
       return None  # pragma: no cover
@@ -535,6 +541,15 @@ class SourceVisitor(ast.NodeVisitor):
     if self.unpacking_in_comprehension():
       mins = self.__add_versions_entity(mins, (None, (3, 15)),
                                         "unpacking in comprehension (PEP 798)")
+
+    if self.lazy_imports():
+      mins = self.__add_versions_entity(mins, (None, (3, 15)),
+                                        "lazy imports (PEP 810)")
+
+    if self.lazy_modules():
+      mins = self.__add_versions_entity(mins, (None, (3, 15)),
+                                        "`__lazy_modules__`")
+
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
         vers = STRFTIME_REQS[directive]
@@ -1021,6 +1036,12 @@ class SourceVisitor(ast.NodeVisitor):
     if self.__is_no_line(node.lineno):
       return
 
+    # PEP 810: `lazy import` (3.15+).
+    if hasattr(node, "is_lazy") and node.is_lazy:
+      self.__s.lazy_imports = True
+      self.__vvprint("lazy imports (PEP 810)", line=node.lineno,
+                     versions=[None, (3, 15)])
+
     for name in node.names:
       line = node.lineno
       col = node.col_offset + 7  # "import" = 6 + 1
@@ -1041,6 +1062,12 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.__is_no_line(node.lineno):
       return
+
+    # PEP 810: `lazy from ... import` (3.15+).
+    if hasattr(node, "is_lazy") and node.is_lazy:
+      self.__s.lazy_imports = True
+      self.__vvprint("lazy imports (PEP 810)", line=node.lineno,
+                     versions=[None, (3, 15)])
 
     from_col = 5  # "from" = 4 + 1
     self.__add_module(node.module, node.lineno, node.col_offset + from_col)
@@ -1075,6 +1102,10 @@ class SourceVisitor(ast.NodeVisitor):
     elif node.id in ("True", "False"):
       self.__s.bool_const = True
       self.__vvvprint("True/False constant", versions=[(2, 3), (3, 0)])
+    elif node.id == "__lazy_modules__":
+      self.__s.lazy_modules = True
+      self.__vvprint("`__lazy_modules__`", line=node.lineno,
+                     versions=[None, (3, 15)])
 
   def visit_Print(self, node):  # pragma: no cover
     self.__s.printv2 = True
