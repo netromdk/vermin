@@ -138,6 +138,9 @@ class SourceState:
 
     # `__lazy_modules__` module attribute.
     self.lazy_modules = False
+
+    # `slice` type subscript support, e.g. `slice[1:2:3]`.
+    self.slice_subscription = False
     # Imported members of modules, like "exc_clear" of "sys".
     self.import_mem_mod = {}
 
