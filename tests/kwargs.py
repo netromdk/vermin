@@ -4544,6 +4544,130 @@ import bisect
 bisect.insort_right(key='x')
 """))
 
+  def test_max_threads_of_dump_traceback_from_faulthandler(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from faulthandler import dump_traceback
+dump_traceback(max_threads=None)
+"""))
+
+  def test_max_threads_of_dump_traceback_later_from_faulthandler(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from faulthandler import dump_traceback_later
+dump_traceback_later(max_threads=None)
+"""))
+
+  def test_max_threads_of_enable_from_faulthandler(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from faulthandler import enable
+enable(max_threads=None)
+"""))
+
+  def test_max_threads_of_register_from_faulthandler(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from faulthandler import register
+register(max_threads=None)
+"""))
+
+  def test_max_response_headers_of_HTTPConnection_from_http_client(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from http.client import HTTPConnection
+HTTPConnection(max_response_headers=None)
+"""))
+
+  def test_max_response_headers_of_HTTPSConnection_from_http_client(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from http.client import HTTPSConnection
+HTTPSConnection(max_response_headers=None)
+"""))
+
+  def test_extra_response_headers_of_SimpleHTTPRequestHandler_from_http_server(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from http.server import SimpleHTTPRequestHandler
+SimpleHTTPRequestHandler(extra_response_headers=None)
+"""))
+
+  def test_fallback_to_class_doc_of_getdoc_from_inspect(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from inspect import getdoc
+getdoc(fallback_to_class_doc=None)
+"""))
+
+  def test_inherit_class_doc_of_getdoc_from_inspect(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from inspect import getdoc
+getdoc(inherit_class_doc=None)
+"""))
+
+  def test_array_hook_of_load_from_json(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from json import load
+load(array_hook=None)
+"""))
+
+  def test_array_hook_of_loads_from_json(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from json import loads
+loads(array_hook=None)
+"""))
+
+  def test_target_time_of_autorange_from_timeit_Timer(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from timeit import Timer
+x = Timer()
+x.autorange(target_time=None)
+"""))
+
+  def test_nolinestop_of_search_from_tkinter_Text(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from tkinter import Text
+x = Text()
+x.search(nolinestop=None)
+"""))
+
+  def test_strictlimits_of_search_from_tkinter_Text(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from tkinter import Text
+x = Text()
+x.search(strictlimits=None)
+"""))
+
+  def test_formatter_of_assertLogs_from_unittest_TestCase(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from unittest import TestCase
+x = TestCase()
+x.assertLogs(formatter=None)
+"""))
+
+  def test_missing_as_none_of_urldefrag_from_urllib_parse(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from urllib.parse import urldefrag
+urldefrag(missing_as_none=None)
+"""))
+
+  def test_missing_as_none_of_urlparse_from_urllib_parse(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from urllib.parse import urlparse
+urlparse(missing_as_none=None)
+"""))
+
+  def test_missing_as_none_of_urlsplit_from_urllib_parse(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from urllib.parse import urlsplit
+urlsplit(missing_as_none=None)
+"""))
+
+  def test_keep_empty_of_urlunparse_from_urllib_parse(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from urllib.parse import urlunparse
+urlunparse(keep_empty=None)
+"""))
+
+  def test_keep_empty_of_urlunsplit_from_urllib_parse(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from urllib.parse import urlunsplit
+urlunsplit(keep_empty=None)
+"""))
+
   def test_kw_only_of_dataclasses_dataclass(self):
     self.assertOnlyIn((3, 10), self.detect("""
 from dataclasses import dataclass

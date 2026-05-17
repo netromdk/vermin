@@ -10,6 +10,9 @@ class VerminClassMemberTests(VerminTest):
   def test_SafeConfigParser_of_ConfigParser(self):
     self.assertOnlyIn((2, 3), self.detect("from ConfigParser import SafeConfigParser"))
 
+  def test_ExtendedInterpolation_of_configparser(self):
+    self.assertOnlyIn((3, 2), self.detect("from configparser import ExtendedInterpolation"))
+
   def test_LifoQueue_of_Queue(self):
     self.assertOnlyIn((2, 6), self.detect("from Queue import LifoQueue"))
 
@@ -19,8 +22,14 @@ class VerminClassMemberTests(VerminTest):
   def test_ABC_of_abc(self):
     self.assertOnlyIn((3, 4), self.detect("from abc import ABC"))
 
+  def test_Format_of_annotationlib(self):
+    self.assertOnlyIn((3, 14), self.detect("from annotationlib import Format"))
+
   def test_BooleanOptionalAction_of_argparse(self):
     self.assertOnlyIn((3, 9), self.detect("from argparse import BooleanOptionalAction"))
+
+  def test_Constant_of_ast(self):
+    self.assertOnlyIn((3, 6), self.detect("from ast import Constant"))
 
   def test_Barrier_of_asyncio(self):
     self.assertOnlyIn((3, 11), self.detect("from asyncio import Barrier"))
@@ -428,6 +437,12 @@ from concurrent.futures import InterpreterPoolExecutor
   def test_Template_of_string(self):
     self.assertOnlyIn(((2, 4), (3, 0)), self.detect("from string import Template"))
 
+  def test_Interpolation_of_string_templatelib(self):
+    self.assertOnlyIn((3, 14), self.detect("from string.templatelib import Interpolation"))
+
+  def test_Template_of_string_templatelib(self):
+    self.assertOnlyIn((3, 14), self.detect("from string.templatelib import Template"))
+
   def test_Struct_of_struct(self):
     self.assertOnlyIn(((2, 5), (3, 0)), self.detect("from struct import Struct"))
 
@@ -460,6 +475,9 @@ from concurrent.futures import InterpreterPoolExecutor
 
   def test_local_of_threading(self):
     self.assertOnlyIn(((2, 4), (3, 0)), self.detect("from threading import local"))
+
+  def test_ttk_of_tkinter(self):
+    self.assertOnlyIn((3, 1), self.detect("from tkinter import ttk"))
 
   def test_struct_time_of_time(self):
     self.assertOnlyIn(((2, 2), (3, 0)), self.detect("from time import struct_time"))
@@ -539,6 +557,9 @@ from concurrent.futures import InterpreterPoolExecutor
   def test_EnumDict_of_enum(self):
     self.assertOnlyIn((3, 13), self.detect("from enum import EnumDict"))
 
+  def test_EnumType_of_enum(self):
+    self.assertOnlyIn((3, 11), self.detect("from enum import EnumType"))
+
   def test_Flag_of_enum(self):
     self.assertOnlyIn((3, 6), self.detect("from enum import Flag"))
 
@@ -547,6 +568,9 @@ from concurrent.futures import InterpreterPoolExecutor
 
   def test_IntFlag_of_enum(self):
     self.assertOnlyIn((3, 6), self.detect("from enum import IntFlag"))
+
+  def test_ReprEnum_of_enum(self):
+    self.assertOnlyIn((3, 11), self.detect("from enum import ReprEnum"))
 
   def test_StrEnum_of_enum(self):
     self.assertOnlyIn((3, 11), self.detect("from enum import StrEnum"))

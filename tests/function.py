@@ -446,6 +446,18 @@ c = Counter()
 c.total()
 """))
 
+  def test___ixor___of_collections_Counter(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("from collections import Counter\n"
+                                  "c = Counter()\n"
+                                  "c.__ixor__()"))
+
+  def test___xor___of_collections_Counter(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("from collections import Counter\n"
+                                  "c = Counter()\n"
+                                  "c.__xor__()"))
+
   def test_suppress_of_contextlib(self):
     self.assertOnlyIn((3, 4), self.detect("import contextlib\ncontextlib.suppress()"))
 
@@ -1687,6 +1699,11 @@ p.hardlink_to()
   def test__check_future_of_asyncio_Task(self):
     self.assertOnlyIn((3, 11), self.detect("from asyncio import Task\nTask()._check_future()"))
 
+  def test_cancel_of_asyncio_TaskGroup(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("from asyncio import TaskGroup\n"
+                                  "TaskGroup().cancel()"))
+
   def test_run_of_asyncio(self):
     self.assertOnlyIn((3, 7), self.detect("import asyncio\nasyncio.run()"))
 
@@ -2673,6 +2690,16 @@ TypeVarTuple().evaluate_default()
                       self.detect("from collections import UserString\n"
                                   "UserString().maketrans()"))
 
+  def test_removeprefix_from_collections_UserString(self):
+    self.assertOnlyIn((3, 9),
+                      self.detect("from collections import UserString\n"
+                                  "UserString().removeprefix()"))
+
+  def test_removesuffix_from_collections_UserString(self):
+    self.assertOnlyIn((3, 9),
+                      self.detect("from collections import UserString\n"
+                                  "UserString().removesuffix()"))
+
   def test_clear_from_collections_abc_MutableSequence(self):
     self.assertOnlyIn((3, 3),
                       self.detect("from collections.abc import MutableSequence\n"
@@ -2755,6 +2782,12 @@ TypeVarTuple().evaluate_default()
 
   def test_clear_from_dbm_ndbm(self):
     self.assertOnlyIn((3, 13), self.detect("from dbm import ndbm\nndbm.clear()"))
+
+  def test_reorganize_of_dbm_dumb(self):
+    self.assertOnlyIn((3, 15), self.detect("from dbm import dumb\ndumb.reorganize()"))
+
+  def test_reorganize_of_dbm_sqlite3(self):
+    self.assertOnlyIn((3, 15), self.detect("from dbm import sqlite3\nsqlite3.reorganize()"))
 
   def test_DocFileSuite_from_doctest(self):
     self.assertOnlyIn(((2, 4), (3, 0)), self.detect("import doctest\ndoctest.DocFileSuite()"))
@@ -4971,3 +5004,185 @@ from test.support import check_disallow_instantiation
 
   def test_add_note_from_BaseException(self):
     self.assertOnlyIn((3, 11), self.detect("BaseException.add_note()"))
+
+  def test_take_bytes_of_bytearray(self):
+    self.assertOnlyIn((3, 15), self.detect("bytearray.take_bytes()"))
+
+  def test_default_content_type_of_SimpleHTTPRequestHandler(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect(
+                        "import http.server\n"
+                        "http.server.SimpleHTTPRequestHandler.default_content_type"))
+
+  def test_fmax_of_math(self):
+    self.assertOnlyIn((3, 15), self.detect("from math import fmax"))
+
+  def test_fmin_of_math(self):
+    self.assertOnlyIn((3, 15), self.detect("from math import fmin"))
+
+  def test_isnormal_of_math(self):
+    self.assertOnlyIn((3, 15), self.detect("from math import isnormal"))
+
+  def test_issubnormal_of_math(self):
+    self.assertOnlyIn((3, 15), self.detect("from math import issubnormal"))
+
+  def test_signbit_of_math(self):
+    self.assertOnlyIn((3, 15), self.detect("from math import signbit"))
+
+  def test_set_name_of_mmap(self):
+    self.assertOnlyIn((3, 15), self.detect("import mmap\nmmap.mmap.set_name()"))
+
+  def test_statx_of_os(self):
+    self.assertOnlyIn((3, 15), self.detect("from os import statx"))
+
+  def test_prefixmatch_of_Pattern(self):
+    self.assertOnlyIn((3, 15), self.detect("import re\nre.Pattern.prefixmatch()"))
+
+  def test_prefixmatch_of_re(self):
+    self.assertOnlyIn((3, 15), self.detect("from re import prefixmatch"))
+
+  def test_reorganize_of_Shelf(self):
+    self.assertOnlyIn((3, 15), self.detect("import shelve\nshelve.Shelf.reorganize()"))
+
+  def test_get_groups_of_SSLContext(self):
+    self.assertOnlyIn((3, 15), self.detect("import ssl\nssl.SSLContext.get_groups()"))
+
+  def test_set_ciphersuites_of_SSLContext(self):
+    self.assertOnlyIn((3, 15), self.detect("import ssl\nssl.SSLContext.set_ciphersuites()"))
+
+  def test_set_client_sigalgs_of_SSLContext(self):
+    self.assertOnlyIn((3, 15), self.detect("import ssl\nssl.SSLContext.set_client_sigalgs()"))
+
+  def test_set_groups_of_SSLContext(self):
+    self.assertOnlyIn((3, 15), self.detect("import ssl\nssl.SSLContext.set_groups()"))
+
+  def test_set_server_sigalgs_of_SSLContext(self):
+    self.assertOnlyIn((3, 15), self.detect("import ssl\nssl.SSLContext.set_server_sigalgs()"))
+
+  def test_client_sigalg_of_SSLSocket(self):
+    self.assertOnlyIn((3, 15), self.detect("import ssl\nssl.SSLSocket.client_sigalg"))
+
+  def test_group_of_SSLSocket(self):
+    self.assertOnlyIn((3, 15), self.detect("import ssl\nssl.SSLSocket.group"))
+
+  def test_server_sigalg_of_SSLSocket(self):
+    self.assertOnlyIn((3, 15), self.detect("import ssl\nssl.SSLSocket.server_sigalg"))
+
+  def test_get_sigalgs_of_ssl(self):
+    self.assertOnlyIn((3, 15), self.detect("from ssl import get_sigalgs"))
+
+  def test_get_cells_of_Function(self):
+    self.assertOnlyIn((3, 15), self.detect("import symtable\nsymtable.Function.get_cells()"))
+
+  def test_is_cell_of_Symbol(self):
+    self.assertOnlyIn((3, 15), self.detect("import symtable\nsymtable.Symbol.is_cell()"))
+
+  def test_abi_info_of_sys(self):
+    self.assertOnlyIn((3, 15), self.detect("from sys import abi_info"))
+
+  def test_get_lazy_imports_of_sys(self):
+    self.assertOnlyIn((3, 15), self.detect("from sys import get_lazy_imports"))
+
+  def test_set_lazy_imports_of_sys(self):
+    self.assertOnlyIn((3, 15), self.detect("from sys import set_lazy_imports"))
+
+  def test_set_lazy_imports_filter_of_sys(self):
+    self.assertOnlyIn((3, 15), self.detect("from sys import set_lazy_imports_filter"))
+
+  def test_concurrent_tee_of_threading(self):
+    self.assertOnlyIn((3, 15), self.detect("from threading import concurrent_tee"))
+
+  def test_serialize_iterator_of_threading(self):
+    self.assertOnlyIn((3, 15), self.detect("from threading import serialize_iterator"))
+
+  def test_synchronized_iterator_of_threading(self):
+    self.assertOnlyIn((3, 15), self.detect("from threading import synchronized_iterator"))
+
+  def test_detail_of_Event(self):
+    self.assertOnlyIn((3, 15), self.detect("import tkinter\ntkinter.Event.detail"))
+
+  def test_user_data_of_Event(self):
+    self.assertOnlyIn((3, 15), self.detect("import tkinter\ntkinter.Event.user_data"))
+
+  def test_search_all_of_Text(self):
+    self.assertOnlyIn((3, 15), self.detect("import tkinter\ntkinter.Text.search_all()"))
+
+  def test_grid_content_of_tkinter(self):
+    self.assertOnlyIn((3, 15), self.detect("import tkinter\ntkinter.grid_content()"))
+
+  def test_pack_content_of_tkinter(self):
+    self.assertOnlyIn((3, 15), self.detect("import tkinter\ntkinter.pack_content()"))
+
+  def test_place_content_of_tkinter(self):
+    self.assertOnlyIn((3, 15), self.detect("import tkinter\ntkinter.place_content()"))
+
+  def test_TypeForm_from_typing(self):
+    self.assertOnlyIn((3, 15), self.detect("from typing import TypeForm"))
+
+  def test_FrameLocalsProxyType_from_types(self):
+    self.assertOnlyIn((3, 15), self.detect("from types import FrameLocalsProxyType"))
+
+  def test_LazyImportType_from_types(self):
+    self.assertOnlyIn((3, 15), self.detect("from types import LazyImportType"))
+
+  def test_MacOS_from_webbrowser(self):
+    self.assertOnlyIn((3, 15), self.detect("from webbrowser import MacOS"))
+
+  def test_block_of_unicodedata(self):
+    self.assertOnlyIn((3, 15), self.detect("from unicodedata import block"))
+
+  def test_extended_pictographic_of_unicodedata(self):
+    self.assertOnlyIn((3, 15), self.detect("from unicodedata import extended_pictographic"))
+
+  def test_grapheme_cluster_break_of_unicodedata(self):
+    self.assertOnlyIn((3, 15), self.detect("from unicodedata import grapheme_cluster_break"))
+
+  def test_indic_conjunct_break_of_unicodedata(self):
+    self.assertOnlyIn((3, 15), self.detect("from unicodedata import indic_conjunct_break"))
+
+  def test_iter_graphemes_of_unicodedata(self):
+    self.assertOnlyIn((3, 15), self.detect("from unicodedata import iter_graphemes"))
+
+  def test_isxidcontinue_of_unicodedata(self):
+    self.assertOnlyIn((3, 15), self.detect("from unicodedata import isxidcontinue"))
+
+  def test_isxidstart_of_unicodedata(self):
+    self.assertOnlyIn((3, 15), self.detect("from unicodedata import isxidstart"))
+
+  def test_getformat_of_Wave_read(self):
+    self.assertOnlyIn((3, 15), self.detect("import wave\nwave.Wave_read.getformat()"))
+
+  def test_getformat_of_Wave_write(self):
+    self.assertOnlyIn((3, 15), self.detect("import wave\nwave.Wave_write.getformat()"))
+
+  def test_setformat_of_Wave_write(self):
+    self.assertOnlyIn((3, 15), self.detect("import wave\nwave.Wave_write.setformat()"))
+
+  def test_setparams_of_Wave_write(self):
+    self.assertOnlyIn((3, 15), self.detect("import wave\nwave.Wave_write.setparams()"))
+
+  def test_is_valid_name_of_xml(self):
+    self.assertOnlyIn((3, 15), self.detect("from xml import is_valid_name"))
+
+  def test_is_valid_text_of_xml(self):
+    self.assertOnlyIn((3, 15), self.detect("from xml import is_valid_text"))
+
+  def test_SetBillionLaughsAttackProtectionActivationThreshold(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect(
+                        "import xml.parsers.expat\n"
+                        "xml.parsers.expat.xmlparser."
+                        "SetBillionLaughsAttackProtectionActivationThreshold"))
+
+  def test_SetBillionLaughsAttackProtectionMaximumAmplification(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect(
+                        "import xml.parsers.expat\n"
+                        "xml.parsers.expat.xmlparser."
+                        "SetBillionLaughsAttackProtectionMaximumAmplification"))
+
+  def test_adler32_combine_of_zlib(self):
+    self.assertOnlyIn((3, 15), self.detect("from zlib import adler32_combine"))
+
+  def test_crc32_combine_of_zlib(self):
+    self.assertOnlyIn((3, 15), self.detect("from zlib import crc32_combine"))

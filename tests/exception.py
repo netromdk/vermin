@@ -1,6 +1,9 @@
 from .testutils import VerminTest
 
 class VerminExceptionMemberTests(VerminTest):
+  def test_BrokenBarrierError_of_asyncio(self):
+    self.assertOnlyIn((3, 11), self.detect("from asyncio import BrokenBarrierError"))
+
   def test_QueueShutDown_of_asyncio(self):
     self.assertOnlyIn((3, 13), self.detect("from asyncio import QueueShutDown"))
 
