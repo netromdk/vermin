@@ -18,8 +18,8 @@ WITH_PAREN_REGEX = re.compile(r"with[\s\\]*\(")
 
 def is_int_node(node):
   if sys.version_info >= (3, 8):
-    return (isinstance(node, ast.Constant) and isinstance(node.value, int)) or \
-      (isinstance(node, ast.UnaryOp) and isinstance(node.operand, ast.Constant) and
+    return (isinstance(node, getattr(ast, "Constant")) and isinstance(node.value, int)) or \
+      (isinstance(node, ast.UnaryOp) and isinstance(node.operand, getattr(ast, "Constant")) and
        isinstance(node.operand.value, int))
   return (isinstance(node, ast.Num) and isinstance(node.n, int)) or \
     (isinstance(node, ast.UnaryOp) and isinstance(node.operand, ast.Num) and
@@ -27,9 +27,10 @@ def is_int_node(node):
 
 def is_neg_int_node(node):
   if sys.version_info >= (3, 8):
-    return (isinstance(node, ast.Constant) and isinstance(node.value, int) and node.value < 0) or \
+    return (isinstance(node, getattr(ast, "Constant")) and
+            isinstance(node.value, int) and node.value < 0) or \
       (isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub) and
-       isinstance(node.operand, ast.Constant) and isinstance(node.operand.value, int))
+       isinstance(node.operand, getattr(ast, "Constant")) and isinstance(node.operand.value, int))
   return (isinstance(node, ast.Num) and isinstance(node.n, int) and node.n < 0) or \
     (isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub) and
       isinstance(node.operand, ast.Num) and isinstance(node.operand.n, int))
@@ -38,7 +39,7 @@ def is_none_node(node):  # pragma: no cover
   if isinstance(node, ast.Name) and node.id == 'None':
     return True
   if sys.version_info >= (3, 8):
-    if isinstance(node, ast.Constant) and node.value is None:
+    if isinstance(node, getattr(ast, "Constant")) and node.value is None:
       return True
   elif sys.version_info >= (3, 4):
     if isinstance(node, ast.NameConstant) and node.value is None:
@@ -47,7 +48,7 @@ def is_none_node(node):  # pragma: no cover
 
 def is_ellipsis_node(node):  # pragma: no cover
   if sys.version_info >= (3, 8):
-    return isinstance(node, ast.Constant) and isinstance(node.value, type(Ellipsis))
+    return isinstance(node, getattr(ast, "Constant")) and isinstance(node.value, type(Ellipsis))
   return hasattr(ast, 'Ellipsis') and isinstance(node, ast.Ellipsis)
 
 # Generalized unpacking, or starred expressions, are allowed when used with assignment targets prior
@@ -765,7 +766,7 @@ class SourceVisitor(ast.NodeVisitor):
       if 0 <= idx < len(node.args):
         arg = node.args[idx]
         name = None
-        if sys.version_info >= (3, 8) and isinstance(arg, ast.Constant):
+        if sys.version_info >= (3, 8) and isinstance(arg, getattr(ast, "Constant")):
           name = arg.value
         elif hasattr(arg, "s"):
           name = arg.s
@@ -779,7 +780,7 @@ class SourceVisitor(ast.NodeVisitor):
       # Check for "errors" keyword arguments.
       for kw in node.keywords:
         if kw.arg == "errors":
-          if sys.version_info >= (3, 8) and isinstance(kw.value, ast.Constant):
+          if sys.version_info >= (3, 8) and isinstance(kw.value, getattr(ast, "Constant")):
             name = kw.value.value
           elif hasattr(kw.value, "s"):
             name = kw.value.s
@@ -797,7 +798,7 @@ class SourceVisitor(ast.NodeVisitor):
         # Check indexed arguments.
         if 0 <= idx < len(node.args):
           arg = node.args[idx]
-          if sys.version_info >= (3, 8) and isinstance(arg, ast.Constant):
+          if sys.version_info >= (3, 8) and isinstance(arg, getattr(ast, "Constant")):
             name = arg.value
           elif hasattr(arg, "s"):
             name = arg.s
@@ -812,7 +813,7 @@ class SourceVisitor(ast.NodeVisitor):
         # Check for "encoding", "data_encoding", "file_encoding" keyword arguments.
         for kw in node.keywords:
           if kw.arg in self.__s.codecs_encodings_kwargs:
-            if sys.version_info >= (3, 8) and isinstance(kw.value, ast.Constant):
+            if sys.version_info >= (3, 8) and isinstance(kw.value, getattr(ast, "Constant")):
               name = kw.value.value
             elif hasattr(kw.value, "s"):
               name = kw.value.s
@@ -886,7 +887,7 @@ class SourceVisitor(ast.NodeVisitor):
           if len(full_name) == 0 or (full_name[0] != "list" and full_name[-1] != "list"):
             full_name.append("list")
         elif sys.version_info >= (3, 8):
-          if isinstance(attr, ast.Constant):
+          if isinstance(attr, getattr(ast, "Constant")):
             if isinstance(attr.value, str):
               name = "str"
               if len(full_name) == 0 or (full_name[0] != name and len(full_name) == 1):
@@ -947,7 +948,7 @@ class SourceVisitor(ast.NodeVisitor):
 
     # If rvalue is None
     elif sys.version_info >= (3, 8) and \
-         isinstance(node.value, ast.Constant) and node.value.value is None:
+         isinstance(node.value, getattr(ast, "Constant")) and node.value.value is None:
       type_name = "None"
     elif ((3, 8) > sys.version_info >= (3, 4)) and \
          isinstance(node.value, ast.NameConstant) and node.value.value is None:
@@ -961,7 +962,7 @@ class SourceVisitor(ast.NodeVisitor):
       type_name = node.value.id
 
     elif sys.version_info >= (3, 8):
-      if isinstance(node.value, ast.Constant):
+      if isinstance(node.value, getattr(ast, "Constant")):
         v = node.value.value
         if isinstance(v, str):
           value_name = "str"
@@ -1209,7 +1210,7 @@ class SourceVisitor(ast.NodeVisitor):
               self.__s.module_as_name[func.id] == "array.array"):
           for arg in node.args:
             if sys.version_info >= (3, 8):
-              if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+              if isinstance(arg, getattr(ast, "Constant")) and isinstance(arg.value, str):
                 # "array" = 5 + 1 = 6
                 self.__add_array_typecode(arg.value, node.lineno, node.col_offset + 6)
             else:
@@ -1228,7 +1229,8 @@ class SourceVisitor(ast.NodeVisitor):
       elif hasattr(func, "attr"):
         attr = func.attr
         if (sys.version_info >= (3, 8) and attr == "format" and hasattr(func, "value") and
-             isinstance(func.value, ast.Constant) and isinstance(func.value.value, str) and
+             isinstance(func.value, getattr(ast, "Constant")) and
+             isinstance(func.value.value, str) and
              "{}" in func.value.value) \
            or \
            (sys.version_info < (3, 8) and attr == "format" and hasattr(func, "value") and
@@ -1245,7 +1247,7 @@ class SourceVisitor(ast.NodeVisitor):
         elif attr in ("strftime", "strptime") and hasattr(node, "args"):
           for arg in node.args:
             look_for = None
-            if sys.version_info >= (3, 8) and isinstance(arg, ast.Constant):
+            if sys.version_info >= (3, 8) and isinstance(arg, getattr(ast, "Constant")):
               look_for = arg.value
             elif hasattr(arg, "s"):
               look_for = arg.s
@@ -1259,7 +1261,7 @@ class SourceVisitor(ast.NodeVisitor):
         if self.__s.function_name == "array.array":
           for arg in node.args:
             if sys.version_info >= (3, 8):
-              if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+              if isinstance(arg, getattr(ast, "Constant")) and isinstance(arg.value, str):
                 # "array.array" = 5 + 1 + 5 + 1 = 12
                 self.__add_array_typecode(arg.value, node.lineno, node.col_offset + 12)
             else:
@@ -1368,10 +1370,11 @@ class SourceVisitor(ast.NodeVisitor):
     elif isinstance(node, ast.Subscript):
       n = None
       if sys.version_info >= (3, 9):
-        if isinstance(node.slice, ast.Constant) and isinstance(node.slice.value, int):
+        if isinstance(node.slice, getattr(ast, "Constant")) and isinstance(node.slice.value, int):
           n = node.slice.value
       elif sys.version_info >= (3, 8):
-        if isinstance(node.slice, ast.Index) and isinstance(node.slice.value, ast.Constant) and \
+        if isinstance(node.slice, ast.Index) and \
+           isinstance(node.slice.value, getattr(ast, "Constant")) and \
            isinstance(node.slice.value.value, int):
           n = node.slice.value.value
       else:
@@ -1405,7 +1408,7 @@ ast.Call(func=ast.Name)."""
     #   BinOp(left=Bytes(s=b'%4x'), op=Mod(), right=Num(n=10))
     #   BinOp(left=Call(func=Name(id='bytearray', ctx=Load()), args=[Bytes(s=b'%x')], keywords=[]),
     #         op=Mod(), right=Num(n=10))
-    if (sys.version_info >= (3, 8) and isinstance(node.left, ast.Constant) and
+    if (sys.version_info >= (3, 8) and isinstance(node.left, getattr(ast, "Constant")) and
          isinstance(node.left.value, bytes) and
          isinstance(node.op, ast.Mod)) or \
        (sys.version_info < (3, 8) and
@@ -1479,7 +1482,7 @@ ast.Call(func=ast.Name)."""
       if isinstance(n, ast.Name):
         value.append(n.id)
 
-      elif hasattr(ast, "Constant") and isinstance(n, ast.Constant):
+      elif hasattr(ast, "Constant") and isinstance(n, getattr(ast, "Constant")):
         v = str(n.value)
         if isinstance(n.value, str):
           v = "\"{}\"".format(v)
@@ -1642,7 +1645,7 @@ ast.Call(func=ast.Name)."""
         break
 
       elif sys.version_info >= (3, 9) \
-           and isinstance(n, (ast.Constant, ast.Name, ast.Slice, ast.Tuple)):
+           and isinstance(n, (ast.Name, ast.Slice, ast.Tuple)):
         # Check on slice indices like a[0] or a[i] or a[0:1] or a[(0,1)]
         val = self.__extract_fstring_value(n)
         value.append(val)
@@ -1704,7 +1707,8 @@ ast.Call(func=ast.Name)."""
         # A self-referencing f-string will be at the end of the Constant, like "..stuff..expr=", and
         # the next value will be a FormattedValue(value=..) with Names or nested Calls with Names
         # inside, for instance.
-        if isinstance(val, ast.Constant) and hasattr(val, "value") and \
+        const_type = getattr(ast, "Constant", None)
+        if const_type is not None and isinstance(val, const_type) and hasattr(val, "value") and \
            isinstance(val.value, str) and val.value.strip().endswith("=") and i + 1 < total:
             next_val = node.values[i + 1]
             if isinstance(next_val, ast.FormattedValue):
