@@ -446,6 +446,18 @@ c = Counter()
 c.total()
 """))
 
+  def test___ixor___of_collections_Counter(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("from collections import Counter\n"
+                                  "c = Counter()\n"
+                                  "c.__ixor__()"))
+
+  def test___xor___of_collections_Counter(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("from collections import Counter\n"
+                                  "c = Counter()\n"
+                                  "c.__xor__()"))
+
   def test_suppress_of_contextlib(self):
     self.assertOnlyIn((3, 4), self.detect("import contextlib\ncontextlib.suppress()"))
 
@@ -1687,6 +1699,11 @@ p.hardlink_to()
   def test__check_future_of_asyncio_Task(self):
     self.assertOnlyIn((3, 11), self.detect("from asyncio import Task\nTask()._check_future()"))
 
+  def test_cancel_of_asyncio_TaskGroup(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("from asyncio import TaskGroup\n"
+                                  "TaskGroup().cancel()"))
+
   def test_run_of_asyncio(self):
     self.assertOnlyIn((3, 7), self.detect("import asyncio\nasyncio.run()"))
 
@@ -2673,6 +2690,16 @@ TypeVarTuple().evaluate_default()
                       self.detect("from collections import UserString\n"
                                   "UserString().maketrans()"))
 
+  def test_removeprefix_from_collections_UserString(self):
+    self.assertOnlyIn((3, 9),
+                      self.detect("from collections import UserString\n"
+                                  "UserString().removeprefix()"))
+
+  def test_removesuffix_from_collections_UserString(self):
+    self.assertOnlyIn((3, 9),
+                      self.detect("from collections import UserString\n"
+                                  "UserString().removesuffix()"))
+
   def test_clear_from_collections_abc_MutableSequence(self):
     self.assertOnlyIn((3, 3),
                       self.detect("from collections.abc import MutableSequence\n"
@@ -2755,6 +2782,12 @@ TypeVarTuple().evaluate_default()
 
   def test_clear_from_dbm_ndbm(self):
     self.assertOnlyIn((3, 13), self.detect("from dbm import ndbm\nndbm.clear()"))
+
+  def test_reorganize_of_dbm_dumb(self):
+    self.assertOnlyIn((3, 15), self.detect("from dbm import dumb\ndumb.reorganize()"))
+
+  def test_reorganize_of_dbm_sqlite3(self):
+    self.assertOnlyIn((3, 15), self.detect("from dbm import sqlite3\nsqlite3.reorganize()"))
 
   def test_DocFileSuite_from_doctest(self):
     self.assertOnlyIn(((2, 4), (3, 0)), self.detect("import doctest\ndoctest.DocFileSuite()"))
@@ -5074,6 +5107,15 @@ from test.support import check_disallow_instantiation
   def test_search_all_of_Text(self):
     self.assertOnlyIn((3, 15), self.detect("import tkinter\ntkinter.Text.search_all()"))
 
+  def test_grid_content_of_tkinter(self):
+    self.assertOnlyIn((3, 15), self.detect("import tkinter\ntkinter.grid_content()"))
+
+  def test_pack_content_of_tkinter(self):
+    self.assertOnlyIn((3, 15), self.detect("import tkinter\ntkinter.pack_content()"))
+
+  def test_place_content_of_tkinter(self):
+    self.assertOnlyIn((3, 15), self.detect("import tkinter\ntkinter.place_content()"))
+
   def test_TypeForm_from_typing(self):
     self.assertOnlyIn((3, 15), self.detect("from typing import TypeForm"))
 
@@ -5115,6 +5157,9 @@ from test.support import check_disallow_instantiation
 
   def test_setformat_of_Wave_write(self):
     self.assertOnlyIn((3, 15), self.detect("import wave\nwave.Wave_write.setformat()"))
+
+  def test_setparams_of_Wave_write(self):
+    self.assertOnlyIn((3, 15), self.detect("import wave\nwave.Wave_write.setparams()"))
 
   def test_is_valid_name_of_xml(self):
     self.assertOnlyIn((3, 15), self.detect("from xml import is_valid_name"))

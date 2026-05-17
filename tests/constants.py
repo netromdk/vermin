@@ -88,6 +88,12 @@ class VerminConstantMemberTests(VerminTest):
   def test_cache_info_of_dis_Instruction(self):
     self.assertOnlyIn((3, 13), self.detect("from dis import Instruction\nInstruction.cache_info"))
 
+  def test_hasarg_of_dis(self):
+    self.assertOnlyIn((3, 12), self.detect("from dis import hasarg"))
+
+  def test_hasexc_of_dis(self):
+    self.assertOnlyIn((3, 12), self.detect("from dis import hasexc"))
+
   def test_skips_of_doctest_DocTestRunner(self):
     self.assertOnlyIn((3, 13),
                       self.detect("from doctest import DocTestRunner\nDocTestRunner.skips"))
@@ -100,6 +106,24 @@ class VerminConstantMemberTests(VerminTest):
     self.assertOnlyIn((3, 13), self.detect("""
 from email.policy import Policy
 Policy.verify_generated_headers
+"""))
+
+  def test_FORWARDREF_of_annotationlib_Format(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from annotationlib import Format\nFormat.FORWARDREF"))
+
+  def test_STRING_of_annotationlib_Format(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from annotationlib import Format\nFormat.STRING"))
+
+  def test_VALUE_of_annotationlib_Format(self):
+    self.assertOnlyIn((3, 14),
+                      self.detect("from annotationlib import Format\nFormat.VALUE"))
+
+  def test_VALUE_WITH_FAKE_GLOBALS_of_annotationlib_Format(self):
+    self.assertOnlyIn((3, 14), self.detect("""
+from annotationlib import Format
+Format.VALUE_WITH_FAKE_GLOBALS
 """))
 
   def test_mode_of_lzma_LZMAFile(self):
@@ -1383,6 +1407,11 @@ month = Month.DECEMBER
     self.assertOnlyIn((3, 6),
                       self.detect("from email.policy import Policy\n"
                                   "Policy().message_factory"))
+
+  def test_utf8_of_email_policy_EmailPolicy(self):
+    self.assertOnlyIn((3, 5),
+                      self.detect("from email.policy import EmailPolicy\n"
+                                  "EmailPolicy.utf8"))
 
   def test_EHWPOISON_of_errno(self):
     self.assertOnlyIn((3, 14), self.detect("from errno import EHWPOISON"))
@@ -3387,6 +3416,9 @@ month = Month.DECEMBER
                       self.detect("from sys import version_info\n"
                                   "version_info().minor"))
 
+  def test_monitoring_of_sys(self):
+    self.assertOnlyIn((3, 12), self.detect("from sys import monitoring"))
+
   def test_releaselevel_from_sys_version_info(self):
     self.assertOnlyIn(((2, 7), (3, 0)),
                       self.detect("from sys import version_info\n"
@@ -3519,6 +3551,9 @@ month = Month.DECEMBER
     self.assertOnlyIn((3, 4),
                       self.detect("from types import ModuleType\n"
                                   "ModuleType().__spec__"))
+
+  def test___name___of_property(self):
+    self.assertOnlyIn((3, 13), self.detect("property.__name__"))
 
   def test_NoneType_of_types(self):
     self.assertOnlyIn(((2, 0), (3, 10)), self.detect("from types import NoneType"))
