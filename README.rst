@@ -155,9 +155,10 @@ union (``{..}  | {..}``), dictionary union merge (``a = {..}; a |= {..}``), buil
 annotations (``list[str]``), function decorators, class decorators, relaxed decorators,
 ``metaclass`` class keyword, pattern matching with ``match``, union types written as ``X | Y``, type
 alias statements (``type X = SomeType``), type alias statements with lambdas/comprehensions in class
-scopes, generic classes (``class C[T]: ...``), and template string literals (``t'{var}'``). It tries
-to detect and ignore user-defined functions, classes, arguments, and variables with names that clash
-with library-defined symbols.
+scopes, generic classes (``class C[T]: ...``), template string literals (``t'{var}'``), lazy imports
+(``lazy import``, ``lazy from ... import``), and special module attributes like ``__lazy_modules__``.
+It tries to detect and ignore user-defined functions, classes, arguments, and variables with names
+that clash with library-defined symbols.
 
 Caveats
 =======
