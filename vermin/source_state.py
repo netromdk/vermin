@@ -133,6 +133,11 @@ class SourceState:
     # `*x` unpacking in comprehension value expressions (PEP 798).
     self.unpacking_in_comprehension = False
 
+    # `lazy import` statement (PEP 810).
+    self.lazy_imports = False
+
+    # `__lazy_modules__` module attribute.
+    self.lazy_modules = False
     # Imported members of modules, like "exc_clear" of "sys".
     self.import_mem_mod = {}
 
