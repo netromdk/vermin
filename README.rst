@@ -141,21 +141,22 @@ Features detected include v2/v3 ``print expr`` and ``print(expr)``, ``long``, f-
 asynchronous comprehensions, ``await`` in comprehensions, asynchronous ``for``-loops, boolean
 constants, named expressions, keyword-only parameters, positional-only parameters, ``nonlocal``,
 ``yield from``, exception context cause (``raise .. from ..``), ``except*``, ``set`` literals,
-``set`` comprehensions, ``dict`` comprehensions, infix matrix multiplication, ``"..".format(..)``,
-imports (``import X``, ``from X import Y``, ``from X import *``), function calls wrt. name and
-kwargs, ``strftime`` + ``strptime`` directives used, function and variable annotations (also
-``Final`` and ``Literal``), ``continue`` in ``finally`` block, modular inverse ``pow()``, array
-typecodes, codecs error handler names, encodings, ``%`` formatting and directives for bytes and
-bytearray, ``with`` statement, asynchronous ``with`` statement, multiple context expressions in a
-``with`` statement, multiple context expressions in a ``with`` statement grouped with parenthesis,
-unpacking assignment, generalized unpacking, ellipsis literal (``...``) out of slices, dictionary
-union (``{..}  | {..}``), dictionary union merge (``a = {..}; a |= {..}``), builtin generic type
-annotations (``list[str]``), function decorators, class decorators, relaxed decorators,
-``metaclass`` class keyword, pattern matching with ``match``, union types written as ``X | Y``, type
-alias statements (``type X = SomeType``), type alias statements with lambdas/comprehensions in class
-scopes, generic classes (``class C[T]: ...``), and template string literals (``t'{var}'``). It tries
-to detect and ignore user-defined functions, classes, arguments, and variables with names that clash
-with library-defined symbols.
+``set`` comprehensions, ``dict`` comprehensions, unpacking in comprehension value expressions (``[*x
+for x in range(10)]``), infix matrix multiplication, ``"..".format(..)``, imports (``import X``,
+``from X import Y``, ``from X import *``), function calls wrt. name and kwargs, ``strftime`` +
+``strptime`` directives used, function and variable annotations (also ``Final`` and ``Literal``),
+``continue`` in ``finally`` block, modular inverse ``pow()``, array typecodes, codecs error handler
+names, encodings, ``%`` formatting and directives for bytes and bytearray, ``with`` statement,
+asynchronous ``with`` statement, multiple context expressions in a ``with`` statement, multiple
+context expressions in a ``with`` statement grouped with parenthesis, unpacking assignment,
+generalized unpacking, ellipsis literal (``...``) out of slices, dictionary union (``{..}  |
+{..}``), dictionary union merge (``a = {..}; a |= {..}``), builtin generic type annotations
+(``list[str]``), function decorators, class decorators, relaxed decorators, ``metaclass`` class
+keyword, pattern matching with ``match``, union types written as ``X | Y``, type alias statements
+(``type X = SomeType``), type alias statements with lambdas/comprehensions in class scopes, generic
+classes (``class C[T]: ...``), and template string literals (``t'{var}'``). It tries to detect and
+ignore user-defined functions, classes, arguments, and variables with names that clash with
+library-defined symbols.
 
 Caveats
 =======
