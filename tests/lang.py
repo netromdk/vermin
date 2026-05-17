@@ -1206,6 +1206,15 @@ assert html(template) == '<img src="test.jpg" alt="test test" />'
 
     visitor = self.visit("__all__ = []")
     self.assertFalse(visitor.lazy_modules())
+
+  def test_slice_subscription(self):
+    visitor = self.visit("x = slice[1:2:3]")
+    self.assertTrue(visitor.slice_subscription())
+    self.assertOnlyIn((3, 15), visitor.minimum_versions())
+
+    visitor = self.visit("x = slice(1, 2, 3)")
+    self.assertFalse(visitor.slice_subscription())
+
   @VerminTest.skipUnlessVersion(3, 5)
   def test_bytes_format(self):
     visitor = self.visit("b'%x' % 10")

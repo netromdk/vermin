@@ -285,6 +285,9 @@ class SourceVisitor(ast.NodeVisitor):
   def lazy_modules(self):
     return self.__s.lazy_modules
 
+  def slice_subscription(self):
+    return self.__s.slice_subscription
+
   def __get_source_line(self, line, col=0):
     if self.__s.source is None:
       return None  # pragma: no cover
@@ -549,6 +552,10 @@ class SourceVisitor(ast.NodeVisitor):
     if self.lazy_modules():
       mins = self.__add_versions_entity(mins, (None, (3, 15)),
                                         "`__lazy_modules__`")
+
+    if self.slice_subscription():
+      mins = self.__add_versions_entity(mins, (None, (3, 15)),
+                                        "slice subscription")
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
@@ -2290,6 +2297,13 @@ ast.Call(func=ast.Name)."""
         for n in slices_node.elts:
           if is_ellipsis_node(n):
             self.__s.ellipsis_nodes_in_slices.add(n)
+
+    # `slice[...]` subscript support (3.15+).
+    if isinstance(node.value, ast.Name) and node.value.id == "slice" \
+       and "slice" not in self.__s.user_defs:
+      self.__s.slice_subscription = True
+      self.__vvprint("slice subscription", line=node.lineno,
+                     versions=[None, (3, 15)])
 
     self.generic_visit(node)
 

@@ -155,9 +155,9 @@ generalized unpacking, ellipsis literal (``...``) out of slices, dictionary unio
 keyword, pattern matching with ``match``, union types written as ``X | Y``, type alias statements
 (``type X = SomeType``), type alias statements with lambdas/comprehensions in class scopes, generic
 classes (``class C[T]: ...``), template string literals (``t'{var}'``), lazy imports (``lazy
-import``, ``lazy from ... import``), and special module attributes like ``__lazy_modules__``. It
-tries to detect and ignore user-defined functions, classes, arguments, and variables with names that
-clash with library-defined symbols.
+import``, ``lazy from ... import``), special module attributes like ``__lazy_modules__``, and slice
+type subscription (``slice[1:2:3]``). It tries to detect and ignore user-defined functions, classes,
+arguments, and variables with names that clash with library-defined symbols.
 
 Caveats
 =======
