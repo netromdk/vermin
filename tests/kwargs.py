@@ -143,6 +143,23 @@ getaddresses(strict=None)
     self.assertOnlyIn((3, 13),
                       self.detect("from pathlib import Path\nPath.is_dir(follow_symlinks=None)"))
 
+  def test_follow_symlinks_of_pathlib_Path_exists_chained_receiver(self):
+    # A chained receiver like `Path.cwd().exists(..)` must still resolve to the
+    # `pathlib.Path.exists` kwarg rule and not be hidden by the intermediate `cwd()` call. See #327.
+    self.assertOnlyIn((3, 12),
+                      self.detect("from pathlib import Path\n"
+                                  "Path.cwd().exists(follow_symlinks=True)"))
+
+  def test_follow_symlinks_of_pathlib_Path_is_file_chained_receiver(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from pathlib import Path\n"
+                                  "Path.cwd().is_file(follow_symlinks=True)"))
+
+  def test_follow_symlinks_of_pathlib_Path_is_dir_chained_receiver(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from pathlib import Path\n"
+                                  "Path.cwd().is_dir(follow_symlinks=True)"))
+
   def test_follow_symlinks_of_pathlib_Path_owner(self):
     self.assertOnlyIn((3, 13),
                       self.detect("from pathlib import Path\nPath.owner(follow_symlinks=None)"))
