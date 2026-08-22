@@ -7,6 +7,9 @@ from tokenize import generate_tokens, COMMENT, NEWLINE, NL, STRING
 # 'type' identifier [type_params] "=" expression
 TYPE_ALIAS_STMT = re.compile(r"type\s+(\w+)\s+(\[.+?\]\s+)?=\s+(.+)")
 
+# 'case' pattern-clause containing a unary '+' before a number literal
+UNARY_PLUS_MATCH_PATTERN = re.compile(r"case\s[^:]*\+\s*[0-9.]")
+
 class Parser:
   def __init__(self, source, path=None):
     self.__source = source
@@ -91,8 +94,15 @@ class Parser:
       # Type alias statements.
       # NOTE: This is only triggered with Python 3.11 or older.
       if lmsg == "invalid syntax" and TYPE_ALIAS_STMT.match(text) is not None:
-        msg = "info: type alias statement `{}` requires !2, 3.12".format(text)
+        msg = "info: type alias statement `{}`".format(text)
         versions = [None, (3, 12)]
+        return (None, versions, set(), format_error(msg, versions))
+
+      # Unary `+` in match literal patterns.
+      # NOTE: This is only triggered with Python 3.14 or older.
+      if lmsg == "invalid syntax" and UNARY_PLUS_MATCH_PATTERN.search(text) is not None:
+        msg = "info: unary `+` in match literal pattern `{}`".format(text)
+        versions = [None, (3, 15)]
         return (None, versions, set(), format_error(msg, versions))
 
       min_versions = [(0, 0), (0, 0)]

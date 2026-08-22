@@ -291,6 +291,9 @@ class SourceVisitor(ast.NodeVisitor):
   def slice_subscription(self):
     return self.__s.slice_subscription
 
+  def unary_plus_match_pattern(self):
+    return self.__s.unary_plus_match_pattern
+
   def __get_source_line(self, line, col=0):
     if self.__s.source is None:
       return None  # pragma: no cover
@@ -568,6 +571,10 @@ class SourceVisitor(ast.NodeVisitor):
     if self.slice_subscription():
       mins = self.__add_versions_entity(mins, (None, (3, 15)),
                                         "slice subscription")
+
+    if self.unary_plus_match_pattern():
+      mins = self.__add_versions_entity(mins, (None, (3, 15)),
+                                        "unary `+` in match literal pattern")
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
@@ -2151,6 +2158,21 @@ ast.Call(func=ast.Name)."""
       return
     self.__s.pattern_matching = True
     self.__vvprint("pattern matching", line=node.lineno, versions=[None, (3, 10)])
+    self.generic_visit(node)
+
+  def visit_MatchValue(self, node):
+    has_unary_plus = any(isinstance(n, ast.UnaryOp) and isinstance(n.op, ast.UAdd)
+                         for n in ast.walk(node))
+
+    # In early 3.15 builds, the folded `+` survives only in the source at the pattern's start.
+    if not has_unary_plus:
+      line = self.__get_source_line(node.lineno, node.col_offset)
+      has_unary_plus = line is not None and line.startswith("+")
+
+    if has_unary_plus:
+      self.__s.unary_plus_match_pattern = True
+      self.__vvprint("unary `+` in match literal pattern", line=node.lineno,
+                     versions=[None, (3, 15)])
     self.generic_visit(node)
 
   # Comment-excluded lines skip conditional blocks if enabled.
