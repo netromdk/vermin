@@ -141,6 +141,10 @@ class SourceState:
 
     # `slice` type subscript support, e.g. `slice[1:2:3]`.
     self.slice_subscription = False
+
+    # Unary `+` in match literal patterns, e.g. `case +1:`.
+    self.unary_plus_match_pattern = False
+
     # Imported members of modules, like "exc_clear" of "sys".
     self.import_mem_mod = {}
 

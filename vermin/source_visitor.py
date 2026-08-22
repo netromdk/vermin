@@ -289,6 +289,9 @@ class SourceVisitor(ast.NodeVisitor):
   def slice_subscription(self):
     return self.__s.slice_subscription
 
+  def unary_plus_match_pattern(self):
+    return self.__s.unary_plus_match_pattern
+
   def __get_source_line(self, line, col=0):
     if self.__s.source is None:
       return None  # pragma: no cover
@@ -557,6 +560,10 @@ class SourceVisitor(ast.NodeVisitor):
     if self.slice_subscription():
       mins = self.__add_versions_entity(mins, (None, (3, 15)),
                                         "slice subscription")
+
+    if self.unary_plus_match_pattern():
+      mins = self.__add_versions_entity(mins, (None, (3, 15)),
+                                        "unary `+` in match literal pattern")
 
     for directive in self.strftime_directives():
       if directive in STRFTIME_REQS:
@@ -2316,6 +2323,17 @@ ast.Call(func=ast.Name)."""
       return
     self.__s.pattern_matching = True
     self.__vvprint("pattern matching", line=node.lineno, versions=[None, (3, 10)])
+    self.generic_visit(node)
+
+  def visit_MatchValue(self, node):
+    # Unary `+` before literal patterns folds away at parse time on 3.15+, thus comparing the
+    # character before the constant against the source text.
+    if isinstance(node.value, getattr(ast, "Constant")) and node.value.col_offset > 0:
+      line = self.__get_source_line(node.value.lineno, node.value.col_offset - 1)
+      if line is not None and line.startswith("+"):
+        self.__s.unary_plus_match_pattern = True
+        self.__vvprint("unary `+` in match literal pattern", line=node.value.lineno,
+                       versions=[None, (3, 15)])
     self.generic_visit(node)
 
   # Comment-excluded lines skip conditional blocks if enabled.

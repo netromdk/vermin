@@ -2418,3 +2418,34 @@ class Foo:
   pass
 """)
     self.assertFalse(visitor.generic_class())
+
+  @VerminTest.skipUnlessVersion(3, 10)
+  def test_unary_plus_match_pattern(self):
+    self.assertEqual([None, (3, 15)], self.detect("""
+match x:
+  case +1:
+    pass
+"""))
+    self.assertEqual([None, (3, 15)], self.detect("""
+match x:
+  case [1, +2]:
+    pass
+"""))
+
+  @VerminTest.skipUnlessVersion(3, 15)
+  def test_unary_plus_match_pattern_visitor_flag(self):
+    visitor = self.visit("""
+match x:
+  case +1:
+    pass
+""")
+    self.assertTrue(visitor.unary_plus_match_pattern())
+
+  @VerminTest.skipUnlessVersion(3, 10)
+  def test_unary_minus_match_pattern_not_flagged(self):
+    visitor = self.visit("""
+match x:
+  case -1:
+    pass
+""")
+    self.assertFalse(visitor.unary_plus_match_pattern())
