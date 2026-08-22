@@ -4296,6 +4296,9 @@ ARRAY_TYPECODE_REQS = {
   "q": (None, (3, 3)),
   "Q": (None, (3, 3)),
   "w": (None, (3, 13)),
+  "e": (None, (3, 15)),
+  "Zf": (None, (3, 15)),
+  "Zd": (None, (3, 15)),
 }
 
 # codecs error handler requirements: error name -> requirements
