@@ -39,4 +39,4 @@ jobs:
       uses: github/codeql-action/autobuild@cf1bb45a277cb3c205638b2cd5c984db1c46a412
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@cf1bb45a277cb3c205638b2cd5c984db1c46a412
+      uses: github/codeql-action/analyze@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd
