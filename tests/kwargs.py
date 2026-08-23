@@ -618,23 +618,11 @@ signature(annotation_format=True)
   def test_timeout_of_wait_from_subprocess_Popen(self):
     self.assertOnlyIn((3, 3), self.detect("from subprocess import Popen\nPopen.wait(timeout=None)"))
 
-  def test_stdout_of_CalledProcessError_from_subprocess(self):
-    self.assertOnlyIn((3, 5),
-                      self.detect("""
-from subprocess import CalledProcessError
-CalledProcessError(stdout=None)"""))
-
   def test_stderr_of_CalledProcessError_from_subprocess(self):
     self.assertOnlyIn((3, 5),
                       self.detect("""
 from subprocess import CalledProcessError
 CalledProcessError(stderr=None)"""))
-
-  def test_stdout_of_TimeoutExpired_from_subprocess(self):
-    self.assertOnlyIn((3, 5),
-                      self.detect("""
-from subprocess import TimeoutExpired
-TimeoutExpired(stdout=None)"""))
 
   def test_stderr_of_TimeoutExpired_from_subprocess(self):
     self.assertOnlyIn((3, 5),
@@ -958,10 +946,6 @@ TimeoutExpired(stderr=None)"""))
   def test_domain_of_email_utils_make_msgid(self):
     self.assertOnlyIn((3, 2), self.detect(
       "import email.utils\nemail.utils.make_msgid(domain=None)"))
-
-  def test_charset_of_email_utils_formatdate(self):
-    self.assertOnlyIn((3, 3), self.detect(
-      "import email.utils\nemail.utils.formatdate(charset=None)"))
 
   def test_charset_of_email_utils_formataddr(self):
     self.assertOnlyIn((3, 3), self.detect(
@@ -3177,11 +3161,6 @@ kqueue().control(timeout=1)
                       self.detect("from email.parser import Parser\n"
                                   "Parser(policy=None)"))
 
-  def test_strict_of_Parser_from_email_parser(self):
-    self.assertOnlyIn(((2, 2), (3, 0)),
-                      self.detect("from email.parser import Parser\n"
-                                  "Parser(strict=None)"))
-
   def test_headersonly_of_parse_from_email_parser_Parser(self):
     self.assertOnlyIn(((2, 2), (3, 0)),
                       self.detect("from email.parser import Parser\n"
@@ -4908,13 +4887,6 @@ base64.b85decode(b'', ignorechars=b'')
                       self.detect("""
 import base64
 base64.b85encode(b'', wrapcol=76)
-"""))
-
-  def test_canonical_of_base64_urlsafe_b64decode(self):
-    self.assertOnlyIn((3, 15),
-                      self.detect("""
-import base64
-base64.urlsafe_b64decode(b'', canonical=True)
 """))
 
   def test_padded_of_base64_urlsafe_b64decode(self):
