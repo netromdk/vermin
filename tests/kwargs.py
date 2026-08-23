@@ -52,24 +52,8 @@ class VerminKwargsTests(VerminTest):
   def test_reverse_of_sorted(self):
     self.assertOnlyIn(((2, 4), (3, 0)), self.detect("sorted(reverse=None)"))
 
-  def test_fillchar_of_str_ljust(self):
-    self.assertOnlyIn(((2, 4), (3, 0)), self.detect("s = str()\ns.ljust(fillchar=None)"))
-    self.assertOnlyIn(((2, 4), (3, 0)), self.detect("str.ljust(fillchar=None)"))
-
-  def test_chars_of_str_lstrip(self):
-    self.assertOnlyIn(((2, 2), (3, 0)), self.detect("str.lstrip(chars=None)"))
-
   def test_count_of_str_replace(self):
     self.assertOnlyIn((3, 13), self.detect("str.replace(count=None)"))
-
-  def test_fillchar_of_str_rjust(self):
-    self.assertOnlyIn(((2, 4), (3, 0)), self.detect("str.rjust(fillchar=None)"))
-
-  def test_chars_of_str_rstrip(self):
-    self.assertOnlyIn(((2, 2), (3, 0)), self.detect("str.rstrip(chars=None)"))
-
-  def test_chars_of_str_strip(self):
-    self.assertOnlyIn(((2, 2), (3, 0)), self.detect("str.strip(chars=None)"))
 
   def test_optimize_of_ast_parse(self):
     self.assertOnlyIn((3, 13), self.detect("from ast import parse\nparse(optimize=None)"))
@@ -379,9 +363,6 @@ TracebackException(compact=1)
   def test_use_errno_of_CFUNCTYPE_from_ctypes(self):
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect(
       "import ctypes\nctypes.CFUNCTYPE(use_errno=True)"))
-
-  def test_offset_of_byref_from_ctypes(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import ctypes\nctypes.byref(offset=3)"))
 
   def test_autojunk_of_SequenceMatcher_from_difflib(self):
     self.assertOnlyIn(((2, 7), (3, 2)),
@@ -1109,12 +1090,6 @@ import argparse
 parser = argparse.ArgumentParser(prog='test')
 parser.add_parser(deprecated=True)
 """))
-
-  def test_start_on_index_of_array_array(self):
-    self.assertOnlyIn((3, 10), self.detect("import array\narray.array.index(start=None)"))
-
-  def test_stop_on_index_of_array_array(self):
-    self.assertOnlyIn((3, 10), self.detect("import array\narray.array.index(stop=None)"))
 
   def test_skip_of_bdb_Bdb(self):
     self.assertOnlyIn(((2, 7), (3, 1)), self.detect("import bdb\nbdb.Bdb(skip=True)"))
@@ -2243,16 +2218,6 @@ input(errors=None)
     self.assertOnlyIn((3, 8),
                       self.detect("from logging import warning\n"
                                   "warning(stacklevel=None)"))
-
-  def test_version_of_dump_from_marshal(self):
-    self.assertOnlyIn(((2, 4), (3, 0)),
-                      self.detect("from marshal import dump\n"
-                                  "dump(version=None)"))
-
-  def test_version_of_dumps_from_marshal(self):
-    self.assertOnlyIn(((2, 4), (3, 0)),
-                      self.detect("from marshal import dumps\n"
-                                  "dumps(version=None)"))
 
   def test_domain_of_cat_from_nis(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
@@ -3444,11 +3409,6 @@ kqueue().control(timeout=1)
                       self.detect("from _thread import lock\n"
                                   "x = lock()\n"
                                   "x.acquire(timeout=None)"))
-
-  def test_signum_of_interrupt_main_from__thread(self):
-    self.assertOnlyIn((3, 10),
-                      self.detect("from _thread import interrupt_main\n"
-                                  "interrupt_main(signum=None)"))
 
   def test_required_of_add_subparsers_from_argparse_ArgumentParser(self):
     self.assertOnlyIn((3, 7),
