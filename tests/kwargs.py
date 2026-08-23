@@ -414,10 +414,10 @@ TracebackException(compact=1)
   def test_locals_of_signature_from_inspect(self):
     self.assertOnlyIn((3, 10), self.detect("import inspect\ninspect.signature(locals=True)"))
 
-  def test_unquote_annotations_of_Signature_from_inspect(self):
+  def test_quote_annotation_strings_of_Signature_from_inspect(self):
     self.assertOnlyIn((3, 14), self.detect("""
 from inspect import Signature
-Signature.format(unquote_annotations=True)
+Signature.format(quote_annotation_strings=False)
 """))
 
   def test_globals_of_Signature_from_inspect(self):
@@ -1403,10 +1403,10 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from Tkinter import Tk\n"
                                   "Tk(useTk=None)"))
 
-  def test_encodings_of_FileType_from_argparse(self):
+  def test_encoding_of_FileType_from_argparse(self):
     self.assertOnlyIn((3, 4),
                       self.detect("from argparse import FileType\n"
-                                  "FileType(encodings=None)"))
+                                  "FileType(encoding=None)"))
 
   def test_errors_of_FileType_from_argparse(self):
     self.assertOnlyIn((3, 4),
