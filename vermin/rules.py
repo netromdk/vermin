@@ -4346,7 +4346,6 @@ CODECS_ENCODINGS = {
   ("uu_codec", "uu-codec"): (None, (3, 2)),
   ("uu"): (None, (3, 4)),
 
-  ("zip_codec", "zip-codec"): (None, (3, 2)),
   ("zip", "zlib"): (None, (3, 4)),
 
   # == Text transforms ==
