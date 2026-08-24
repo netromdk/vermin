@@ -4856,6 +4856,36 @@ import base64
 base64.urlsafe_b64decode(b'', padded=True)
 """))
 
+  def test_wrapcol_of_base64_z85encode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.z85encode(b'', wrapcol=76)
+"""))
+
+  def test_count_of_bytes_replace(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("bytes.replace(b'', b'', b'', count=1)"))
+
+  def test_count_of_bytearray_replace(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect(
+                        "bytearray.replace(bytearray(b''), b'', b'', count=1)"))
+
+  def test_color_of_ast_dump(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import ast
+ast.dump(ast.parse('x'), color=True)
+"""))
+
+  def test_color_of_difflib_unified_diff(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import difflib
+difflib.unified_diff('a', 'b', color=True)
+"""))
+
   def test_padded_of_base64_urlsafe_b64encode(self):
     self.assertOnlyIn((3, 15),
                       self.detect("""
