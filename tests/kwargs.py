@@ -1538,7 +1538,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(allow_no_value=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(allow_no_value=None)"))
 
@@ -1547,7 +1547,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(comment_prefixes=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(comment_prefixes=None)"))
 
@@ -1556,7 +1556,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(converters=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(converters=None)"))
 
@@ -1565,7 +1565,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(default_section=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(default_section=None)"))
 
@@ -1574,7 +1574,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(delimiters=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(delimiters=None)"))
 
@@ -1583,7 +1583,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(empty_lines_in_values=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(empty_lines_in_values=None)"))
 
@@ -1592,7 +1592,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(interpolation=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(interpolation=None)"))
 
@@ -1601,7 +1601,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(strict=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(strict=None)"))
 
@@ -1610,7 +1610,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(allow_no_value=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(allow_no_value=None)"))
 
@@ -1619,7 +1619,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(comment_prefixes=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(comment_prefixes=None)"))
 
@@ -1628,7 +1628,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(converters=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(converters=None)"))
 
@@ -1637,7 +1637,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(default_section=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(default_section=None)"))
 
@@ -1646,7 +1646,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(delimiters=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(delimiters=None)"))
 
@@ -1655,7 +1655,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(empty_lines_in_values=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(empty_lines_in_values=None)"))
 
@@ -1664,7 +1664,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(interpolation=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(interpolation=None)"))
 
@@ -1673,7 +1673,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(strict=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(strict=None)"))
 
@@ -1682,7 +1682,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import DuplicateSectionError\n"
                                   "DuplicateSectionError(lineno=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import DuplicateSectionError\n"
                                   "DuplicateSectionError(lineno=None)"))
 
@@ -1691,7 +1691,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import DuplicateSectionError\n"
                                   "DuplicateSectionError(source=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import DuplicateSectionError\n"
                                   "DuplicateSectionError(source=None)"))
 
@@ -1700,7 +1700,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import ParsingError\n"
                                   "ParsingError(source=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import ParsingError\n"
                                   "ParsingError(source=None)"))
 
