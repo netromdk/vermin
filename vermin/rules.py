@@ -4334,16 +4334,16 @@ CODECS_ENCODINGS = {
   ("base64", "base_64", "base-64"): (None, (3, 4)),
 
   ("bz2_codec", "bz2-codec"): (None, (3, 2)),
-  ("bz2"): (None, (3, 4)),
+  ("bz2",): (None, (3, 4)),
 
   ("hex_codec", "hex-codec"): (None, (3, 2)),
-  ("hex"): (None, (3, 4)),
+  ("hex",): (None, (3, 4)),
 
   ("quopri_codec", "quopri-codec"): (None, (3, 2)),
   ("quopri", "quotedprintable", "quoted_printable", "quoted-printable"): (None, (3, 4)),
 
   ("uu_codec", "uu-codec"): (None, (3, 2)),
-  ("uu"): (None, (3, 4)),
+  ("uu",): (None, (3, 4)),
 
   ("zip", "zlib"): (None, (3, 4)),
 
@@ -4351,7 +4351,7 @@ CODECS_ENCODINGS = {
 
   # Caesar cipher
   ("rot_13", "rot-13"): (None, (3, 2)),
-  ("rot13"): (None, (3, 4)),
+  ("rot13",): (None, (3, 4)),
 }
 
 # Correlate the value of kwarg "encoding", "file_encoding", "data_encoding" of the following
