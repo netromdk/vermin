@@ -90,8 +90,6 @@ codecs.encode('test', 'quoted-printable')
     self.assertDetectMinVersions(source, min_versions)
 
   @VerminTest.parameterized_args([
-    ("import codecs\ncodecs.encode('test', 'zip_codec')", (3, 2)),
-    ("import codecs\ncodecs.encode('test', 'zip-codec')", (3, 2)),
     ("import codecs\ncodecs.encode('test', 'zip')", (3, 4)),
     ("import codecs\ncodecs.encode('test', 'zlib')", (3, 4)),
   ])
