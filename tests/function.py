@@ -362,7 +362,7 @@ IsolatedAsyncioTestCase.enterAsyncContext()
     self.assertOnlyIn((3, 8), self.detect("from unittest import addModuleCleanup"))
 
   def test_doModuleCleanups_of_unittest(self):
-    self.assertOnlyIn((3, 8), self.detect("from unittest import doModuleCleanups"))
+    self.assertOnlyIn((3, 11), self.detect("from unittest import doModuleCleanups"))
 
   def test_enterModuleContext_of_unittest(self):
     self.assertOnlyIn((3, 11), self.detect("from unittest import enterModuleContext"))
