@@ -9,7 +9,7 @@ VERSIONED_BACKPORT_REGEX = re.compile(r"([\w_\.]+)\=\=.+")
 BACKPORTS = (
   ("argparse", ["https://pypi.org/project/argparse/"], ((2, 3), (3, 1))),
   ("asyncio", ["https://pypi.org/project/asyncio/"], (None, (3, 3))),
-  ("configparser", ["https://pypi.org/project/configparser/"], ((2, 6), (3, 0))),
+  ("configparser", ["https://pypi.org/project/configparser/"], ((2, 6), (3, 2))),
   ("contextvars", ["https://pypi.org/project/contextvars/"], (None, (3, 5))),
   ("dataclasses", ["https://pypi.org/project/dataclasses/"], (None, (3, 6))),
   ("enum", ["https://pypi.org/project/enum34/"], ((2, 4), (3, 3))),

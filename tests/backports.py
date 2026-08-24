@@ -30,7 +30,7 @@ class VerminBackportsTests(VerminTest):
   def test_str(self):
     self.assertEqual("""   argparse               - https://pypi.org/project/argparse/ (2.3, 3.1)
    asyncio                - https://pypi.org/project/asyncio/ (!2, 3.3)
-   configparser           - https://pypi.org/project/configparser/ (2.6, 3.0)
+   configparser           - https://pypi.org/project/configparser/ (2.6, 3.2)
    contextvars            - https://pypi.org/project/contextvars/ (!2, 3.5)
    dataclasses            - https://pypi.org/project/dataclasses/ (!2, 3.6)
    enum                   - https://pypi.org/project/enum34/ (2.4, 3.3)

@@ -35,7 +35,7 @@ class VerminModuleTests(VerminTest):
   def test_configparser(self):
     self.assertOnlyIn((3, 0), self.detect("import configparser"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import configparser"))
+    self.assertOnlyIn(((2, 6), (3, 2)), self.detect("import configparser"))
 
   def test_copy_reg(self):
     self.assertOnlyIn((2, 0), self.detect("import copy_reg"))

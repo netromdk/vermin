@@ -2737,7 +2737,7 @@ TypeVarTuple().evaluate_default()
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser().read_dict()"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser().read_dict()"))
 
@@ -2746,7 +2746,7 @@ TypeVarTuple().evaluate_default()
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser().read_file()"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser().read_file()"))
 
@@ -2755,7 +2755,7 @@ TypeVarTuple().evaluate_default()
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser().read_string()"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser().read_string()"))
 
@@ -2764,7 +2764,7 @@ TypeVarTuple().evaluate_default()
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser().read_dict()"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser().read_dict()"))
 
@@ -2773,7 +2773,7 @@ TypeVarTuple().evaluate_default()
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser().read_file()"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser().read_file()"))
 
@@ -2782,7 +2782,7 @@ TypeVarTuple().evaluate_default()
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser().read_string()"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser().read_string()"))
 

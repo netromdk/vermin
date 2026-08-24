@@ -1293,7 +1293,7 @@ month = Month.DECEMBER
                       self.detect("from configparser import DuplicateSectionError\n"
                                   "DuplicateSectionError().lineno"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import DuplicateSectionError\n"
                                   "DuplicateSectionError().lineno"))
 
@@ -1302,7 +1302,7 @@ month = Month.DECEMBER
                       self.detect("from configparser import DuplicateSectionError\n"
                                   "DuplicateSectionError().source"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import DuplicateSectionError\n"
                                   "DuplicateSectionError().source"))
 
@@ -1311,7 +1311,7 @@ month = Month.DECEMBER
                       self.detect("from configparser import ParsingError\n"
                                   "ParsingError().source"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import ParsingError\n"
                                   "ParsingError().source"))
 
