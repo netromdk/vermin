@@ -2425,22 +2425,22 @@ TypeVarTuple().evaluate_default()
                                   "Server().close_clients()"))
 
   def test_get_loop_from_asyncio_Server(self):
-    self.assertOnlyIn((3, 7),
+    self.assertOnlyIn((3, 9),
                       self.detect("from asyncio import Server\n"
                                   "Server().get_loop()"))
 
   def test_is_serving_from_asyncio_Server(self):
-    self.assertOnlyIn((3, 7),
+    self.assertOnlyIn((3, 9),
                       self.detect("from asyncio import Server\n"
                                   "Server().is_serving()"))
 
   def test_serve_forever_from_asyncio_Server(self):
-    self.assertOnlyIn((3, 7),
+    self.assertOnlyIn((3, 9),
                       self.detect("from asyncio import Server\n"
                                   "Server().serve_forever()"))
 
   def test_start_serving_from_asyncio_Server(self):
-    self.assertOnlyIn((3, 7),
+    self.assertOnlyIn((3, 9),
                       self.detect("from asyncio import Server\n"
                                   "Server().start_serving()"))
 
