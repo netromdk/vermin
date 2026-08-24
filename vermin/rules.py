@@ -4311,7 +4311,7 @@ CODECS_ERRORS_INDICES = {
   "codecs.StreamWriter": 1,
   "codecs.StreamReader": 1,
   "codecs.StreamReaderWriter": 3,
-  "codecs.StreamRecorder": 5,
+  "codecs.StreamRecoder": 5,
 }
 
 # codecs encodings and aliases -> requirements
