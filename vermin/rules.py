@@ -1991,7 +1991,7 @@ def MOD_MEM_REQS(config):
     "unittest.TestResult.startTestRun": ((2, 7), (3, 1)),
     "unittest.TestResult.stopTestRun": ((2, 7), (3, 1)),
     "unittest.addModuleCleanup": (None, (3, 8)),
-    "unittest.doModuleCleanups": (None, (3, 8)),
+    "unittest.doModuleCleanups": (None, (3, 11)),
     "unittest.enterModuleContext": (None, (3, 11)),
     "unittest.installHandler": ((2, 7), (3, 2)),
     "unittest.mock.Mock.assert_called": (None, (3, 6)),
