@@ -756,7 +756,6 @@ def MOD_MEM_REQS(config):
     "asyncio.StreamWriter.is_closing": (None, (3, 7)),
     "asyncio.StreamWriter.start_tls": (None, (3, 11)),
     "asyncio.StreamWriter.wait_closed": (None, (3, 7)),
-    "asyncio.Task._check_future": (None, (3, 11)),
     "asyncio.Task.cancelling": (None, (3, 11)),
     "asyncio.Task.get_context": (None, (3, 12)),
     "asyncio.Task.get_coro": (None, (3, 8)),

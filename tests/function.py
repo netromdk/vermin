@@ -1696,9 +1696,6 @@ p.hardlink_to()
   def test_time_ns_of_time(self):
     self.assertOnlyIn((3, 7), self.detect("from time import time_ns"))
 
-  def test__check_future_of_asyncio_Task(self):
-    self.assertOnlyIn((3, 11), self.detect("from asyncio import Task\nTask()._check_future()"))
-
   def test_cancel_of_asyncio_TaskGroup(self):
     self.assertOnlyIn((3, 15),
                       self.detect("from asyncio import TaskGroup\n"
