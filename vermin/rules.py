@@ -3229,7 +3229,6 @@ def MOD_MEM_REQS(config):
     "functools.cache": (None, (3, 9)),
     "functools.cached_property": (None, (3, 8)),
     "functools.lru_cache": (None, (3, 2)),
-    "functools.partial_method": (None, (3, 4)),
     "functools.singledispatch": (None, (3, 4)),
     "functools.singledispatchmethod": (None, (3, 8)),
     "functools.total_ordering": ((2, 7), (3, 2)),

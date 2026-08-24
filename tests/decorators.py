@@ -31,9 +31,6 @@ class VerminDecoratorMemberTests(VerminTest):
   def test_lru_cache_of_functools(self):
     self.assertOnlyIn((3, 2), self.detect("from functools import lru_cache"))
 
-  def test_partial_method_of_functools(self):
-    self.assertOnlyIn((3, 4), self.detect("from functools import partial_method"))
-
   def test_singledispatch_of_functools(self):
     self.assertOnlyIn((3, 4), self.detect("from functools import singledispatch"))
 
