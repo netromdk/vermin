@@ -93,7 +93,7 @@ def MOD_REQS(config):
     "encodings.utf_8_sig": ((2, 5), (3, 0)),
     "ensurepip": ((2, 7), (3, 4)),
     "enum": bpv("enum", (None, (3, 4)), config),
-    "faulthandler": bpv("faulthandler", (None, (3, 3)), config),
+    "faulthandler": (None, (3, 3)),
     "fractions": ((2, 6), (3, 0)),
     "functools": ((2, 5), (3, 0)),
     "future_builtins": ((2, 6), None),
