@@ -3151,9 +3151,9 @@ TypeVarTuple().evaluate_default()
                       self.detect("from httplib import HTTPResponse\n"
                                   "HTTPResponse().getheaders()"))
 
-  def test_burst_from_imaplib_IMAP4_Idler(self):
+  def test_burst_from_imaplib_Idler(self):
     self.assertOnlyIn((3, 14),
-                      self.detect("from imaplib.IMAP4 import Idler\n"
+                      self.detect("from imaplib import Idler\n"
                                   "Idler().burst()"))
 
   def test_deleteacl_from_imaplib_IMAP4(self):
