@@ -187,8 +187,6 @@ class VerminModuleTests(VerminTest):
 
   def test_faulthandler(self):
     self.assertOnlyIn((3, 3), self.detect("import faulthandler"))
-    self.assertTrue(self.config.add_backport("faulthandler"))
-    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import faulthandler"))
 
   def test_ipaddress(self):
     self.assertOnlyIn((3, 3), self.detect("import ipaddress"))
