@@ -1572,6 +1572,31 @@ p.hardlink_to()
                                   "p = PurePath()\n"
                                   "p.parser()"))
 
+  def test_with_stem_of_Path(self):
+    self.assertOnlyIn((3, 9),
+                      self.detect("from pathlib import Path\n"
+                                  "Path('foo').with_stem('bar')"))
+
+  def test_with_segments_of_Path(self):
+    self.assertOnlyIn((3, 12),
+                      self.detect("from pathlib import Path\n"
+                                  "Path('foo').with_segments('bar')"))
+
+  def test_is_relative_to_of_Path(self):
+    self.assertOnlyIn((3, 9),
+                      self.detect("from pathlib import Path\n"
+                                  "Path('foo').is_relative_to('bar')"))
+
+  def test_full_match_of_Path(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from pathlib import Path\n"
+                                  "Path('foo').full_match('*')"))
+
+  def test_parser_of_Path(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from pathlib import Path\n"
+                                  "Path.parser"))
+
   def test_set_trace_async_from_pdb(self):
     self.assertOnlyIn((3, 14), self.detect("import pdb\npdb.set_trace_async()"))
 
