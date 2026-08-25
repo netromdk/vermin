@@ -160,6 +160,20 @@ getaddresses(strict=None)
                       self.detect("from pathlib import Path\n"
                                   "Path.cwd().is_dir(follow_symlinks=True)"))
 
+  def test_follow_symlinks_of_pathlib_Path_is_file_multi_hop(self):
+    self.assertOnlyIn((3, 13),
+                      self.detect("from pathlib import Path\n"
+                                  "Path.cwd().resolve().is_file(follow_symlinks=True)"))
+
+  def test_follow_symlinks_of_pathlib_Path_exists_aliased_module(self):
+    self.assertOnlyIn((3, 12),
+                      self.detect("import pathlib as pl\n"
+                                  "pl.Path.cwd().exists(follow_symlinks=True)"))
+
+  def test_follow_symlinks_of_unrelated_chain_not_detected(self):
+    self.assertNotIn((3, 12),
+                     self.detect("foo.bar().exists(follow_symlinks=True)\n"))
+
   def test_follow_symlinks_of_pathlib_Path_owner(self):
     self.assertOnlyIn((3, 13),
                       self.detect("from pathlib import Path\nPath.owner(follow_symlinks=None)"))
@@ -1097,6 +1111,18 @@ p.match(case_sensitive=True)
 from pathlib import PurePath
 p=PurePath('foo')
 p.relative_to(walk_up=True)
+"""))
+
+  def test_case_sensitive_of_path_match_via_Path(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from pathlib import Path
+Path('foo').match(case_sensitive=True)
+"""))
+
+  def test_walk_up_of_path_relative_to_via_Path(self):
+    self.assertOnlyIn((3, 12), self.detect("""
+from pathlib import Path
+Path('foo').relative_to('bar', walk_up=True)
 """))
 
   def test_optimization_of_importlib_util_cache_from_source(self):
