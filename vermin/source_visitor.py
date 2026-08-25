@@ -1288,6 +1288,33 @@ class SourceVisitor(ast.NodeVisitor):
       else:
         added |= self.__add_kwargs(func_name, node.arg, self.__s.line)
 
+      # A chained receiver, like `Path.cwd().exists(follow_symlinks=True)`, yields intermediate
+      # call(s) in the name (`Path.cwd.exists`) that hide the real method being called. When the
+      # full name didn't match a known kwarg rule, retry with the intermediate call(s) collapsed
+      # away, keeping the receiver plus the final method (`Path.exists`). The receiver root may
+      # already be resolved and span several segments (e.g. `pathlib.Path.cwd.exists`), so try
+      # every receiver-length prefix joined with the final method. Only accept a collapsed form
+      # that corresponds to an actual kwarg rule, to avoid false matches.
+      if len(exp_name) > 2:
+        method = exp_name[-1]
+        for end in range(len(exp_name) - 1, 0, -1):
+          collapsed = exp_name[:end] + [method]
+
+          # Resolve the receiver root the same way as the primary lookups above.
+          if collapsed[0] in self.__s.import_mem_mod:
+            collapsed = [self.__s.import_mem_mod[collapsed[0]]] + collapsed
+          elif collapsed[0] in self.__s.name_res:
+            res = self.__s.name_res[collapsed[0]]
+            if res in self.__s.import_mem_mod:
+              collapsed = [self.__s.import_mem_mod[res], res] + collapsed[1:]
+            else:
+              collapsed = [res] + collapsed[1:]
+
+          collapsed_name = dotted_name(collapsed)
+          if (collapsed_name, node.arg) in self.__s.kwargs_reqs_rules:
+            added |= self.__add_kwargs(collapsed_name, node.arg, self.__s.line)
+            break
+
     # If not excluded or ignored then visit keyword values also.
     if added:
       self.generic_visit(node)
