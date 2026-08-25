@@ -306,6 +306,9 @@ class SourceVisitor(ast.NodeVisitor):
     # versions none indicates verbose message, not that no compatible versions found
     if versions is None:
       return False
+    # If all version entries are sentinels or `None`, no real constraints exist.
+    if all(v is None or v == (0, 0) for v in versions):
+      return False
     # compare_requirements considers violation if no targets, which we don't want
     targets = self.__s.config.targets()
     if not targets:

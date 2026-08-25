@@ -270,6 +270,18 @@ import argparse    # 2.3, 3.1
     visitor = self.visit(code)
     self.assertEmpty(visitor.output_text())
 
+  def test_typing_extensions_no_violation_for_3x(self):
+    # `typing_extensions` with unversioned backport defaults to `((0,0),(0,0))` sentinel. Do not
+    # treat as a violation when targeting any Python 3.x.
+    self.config.add_target((3, 8))
+    visitor = self.visit("import typing_extensions")
+    self.assertEmpty(visitor.output_text())
+
+    self.config.clear_targets()
+    self.config.add_target((3, 7))
+    visitor = self.visit("import typing_extensions")
+    self.assertEmpty(visitor.output_text())
+
   def test_violate_unpacking_assignment(self):
     # Violation.
     self.config.add_target((2, 7))
