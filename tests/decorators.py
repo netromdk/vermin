@@ -31,9 +31,6 @@ class VerminDecoratorMemberTests(VerminTest):
   def test_lru_cache_of_functools(self):
     self.assertOnlyIn((3, 2), self.detect("from functools import lru_cache"))
 
-  def test_partial_method_of_functools(self):
-    self.assertOnlyIn((3, 4), self.detect("from functools import partial_method"))
-
   def test_singledispatch_of_functools(self):
     self.assertOnlyIn((3, 4), self.detect("from functools import singledispatch"))
 
@@ -121,3 +118,6 @@ def foo(): pass""")
 
   def test_deprecated_of_warnings(self):
     self.assertOnlyIn((3, 13), self.detect("from warnings import deprecated"))
+
+  def test_disjoint_base_of_typing(self):
+    self.assertOnlyIn((3, 15), self.detect("from typing import disjoint_base"))

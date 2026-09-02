@@ -127,6 +127,24 @@ class SourceState:
     # `t'text {var}'`
     self.template_string_literal = False
 
+    # Track depth of nested comprehension value expressions (PEP 798).
+    self.comprehension_depth = 0
+
+    # `*x` unpacking in comprehension value expressions (PEP 798).
+    self.unpacking_in_comprehension = False
+
+    # `lazy import` statement (PEP 810).
+    self.lazy_imports = False
+
+    # `__lazy_modules__` module attribute.
+    self.lazy_modules = False
+
+    # `slice` type subscript support, e.g. `slice[1:2:3]`.
+    self.slice_subscription = False
+
+    # Unary `+` in match literal patterns, e.g. `case +1:`.
+    self.unary_plus_match_pattern = False
+
     # Imported members of modules, like "exc_clear" of "sys".
     self.import_mem_mod = {}
 

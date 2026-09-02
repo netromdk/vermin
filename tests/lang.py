@@ -1173,6 +1173,48 @@ assert html(template) == '<img src="test.jpg" alt="test test" />'
     visitor = self.visit("f'hello'")
     self.assertFalse(visitor.template_string_literal())
 
+  @VerminTest.skipUnlessVersion(3, 15)
+  def test_unpacking_in_comprehension(self):
+    visitor = self.visit("[*x for x in range(10)]")
+    self.assertTrue(visitor.unpacking_in_comprehension())
+    self.assertOnlyIn((3, 15), visitor.minimum_versions())
+
+    visitor = self.visit("{*x for x in range(10)}")
+    self.assertTrue(visitor.unpacking_in_comprehension())
+    self.assertOnlyIn((3, 15), visitor.minimum_versions())
+
+    visitor = self.visit("[x for x in range(10)]")
+    self.assertFalse(visitor.unpacking_in_comprehension())
+
+  @VerminTest.skipUnlessVersion(3, 15)
+  def test_lazy_imports(self):
+    visitor = self.visit("lazy import foo")
+    self.assertTrue(visitor.lazy_imports())
+    self.assertOnlyIn((3, 15), visitor.minimum_versions())
+
+    visitor = self.visit("lazy from bar import foo")
+    self.assertTrue(visitor.lazy_imports())
+    self.assertOnlyIn((3, 15), visitor.minimum_versions())
+
+    visitor = self.visit("import foo")
+    self.assertFalse(visitor.lazy_imports())
+
+  def test_lazy_modules(self):
+    visitor = self.visit("__lazy_modules__ = []")
+    self.assertTrue(visitor.lazy_modules())
+    self.assertOnlyIn((3, 15), visitor.minimum_versions())
+
+    visitor = self.visit("__all__ = []")
+    self.assertFalse(visitor.lazy_modules())
+
+  def test_slice_subscription(self):
+    visitor = self.visit("x = slice[1:2:3]")
+    self.assertTrue(visitor.slice_subscription())
+    self.assertOnlyIn((3, 15), visitor.minimum_versions())
+
+    visitor = self.visit("x = slice(1, 2, 3)")
+    self.assertFalse(visitor.slice_subscription())
+
   @VerminTest.skipUnlessVersion(3, 5)
   def test_bytes_format(self):
     visitor = self.visit("b'%x' % 10")
@@ -2376,3 +2418,34 @@ class Foo:
   pass
 """)
     self.assertFalse(visitor.generic_class())
+
+  @VerminTest.skipUnlessVersion(3, 10)
+  def test_unary_plus_match_pattern(self):
+    self.assertEqual([None, (3, 15)], self.detect("""
+match x:
+  case +1:
+    pass
+"""))
+    self.assertEqual([None, (3, 15)], self.detect("""
+match x:
+  case [1, +2]:
+    pass
+"""))
+
+  @VerminTest.skipUnlessVersion(3, 15)
+  def test_unary_plus_match_pattern_visitor_flag(self):
+    visitor = self.visit("""
+match x:
+  case +1:
+    pass
+""")
+    self.assertTrue(visitor.unary_plus_match_pattern())
+
+  @VerminTest.skipUnlessVersion(3, 10)
+  def test_unary_minus_match_pattern_not_flagged(self):
+    visitor = self.visit("""
+match x:
+  case -1:
+    pass
+""")
+    self.assertFalse(visitor.unary_plus_match_pattern())
