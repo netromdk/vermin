@@ -219,3 +219,38 @@ def compare_requirements(reqs, targets, ignore_exact=False):
         return False
   # all targets satisfied
   return True
+
+def split_lines(source):
+  """Splits source into lines on `\\n`, `\\r`, and `\\r\\n` (not vertical tabs or form feeds), and
+  returns the code-point start offset of each line: `(lines, offsets)` where `lines[i]` is the text
+  of line `i + 1` with its line terminator stripped and `offsets[i]` is its start offset in source.
+  """
+  lines = []
+  offsets = [0]
+  n = len(source)
+  prev = 0
+  i = 0
+  while i < n:
+    ch = source[i]
+    if ch == "\n":
+      i += 1
+    elif ch == "\r":
+      i += 1
+      if i < n and source[i] == "\n":
+        i += 1
+    else:
+      i += 1
+      continue
+    offsets.append(i)
+    seg = source[prev:i]
+    if seg.endswith("\r\n"):
+      seg = seg[:-2]
+    elif seg.endswith("\n") or seg.endswith("\r"):
+      seg = seg[:-1]
+    lines.append(seg)
+    prev = i
+  if prev < n:
+    lines.append(source[prev:])
+  if len(offsets) == len(lines):
+    offsets.append(n)
+  return lines, offsets

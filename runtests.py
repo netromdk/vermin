@@ -13,6 +13,7 @@ if ISOLATE is not None:
 
 SUITES = (
   "general",
+  "utility",
   "config",
   "arguments",
   "lang",
