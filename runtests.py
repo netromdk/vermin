@@ -17,6 +17,7 @@ SUITES = (
   "config",
   "arguments",
   "lang",
+  "fstring_detector",
   "module",
   "builtin_classes",
   "class",
