@@ -119,6 +119,7 @@ class FStringDetectorTests(VerminTest):
     ("f\"{\n'''a'''\n}\"", "multi_line"),
     ("'''lit''' f\"{x\n+y}\"", "multi_line"),
     ('f"{a \\\n}"', "multi_line"),
+    ("f'abc {\nx\n}'", "multi_line"),
 
     ('f"{x}"', None),
     ('f"{x:10}"', None),
@@ -140,6 +141,15 @@ class FStringDetectorTests(VerminTest):
     ('f"outer {f"""inner"""}"', "nested_same_quote"),
     ('f"{x:{f".2f"}}"', "nested_same_quote"),
     ('f"1 {f"2 {f"3"}"}"', "nested_same_quote"),
+    ('f"normal {f"{a=}"} normal"', "nested_same_quote"),
+    ('f"normal {f"{a:.3f}"} normal"', "nested_same_quote"),
+    ('f"normal { {f"{ { [1, 2] } }" } } normal"', "nested_same_quote"),
+    ('f"foo {f"bar {x}"} baz"', "nested_same_quote"),
+    ('value = f"{f"\\{1}"}"', "nested_same_quote"),
+    ('value = rf"{f"\\{1}"}"', "nested_same_quote"),
+    ('value = f"{rf"\\{1}"}"', "nested_same_quote"),
+    ('_ = "a" f"b {f"c" f"d"} e" "f"', "nested_same_quote"),
+    ('f"\\"foo\\" {f"\\"foo\\""} \\"\\""', "nested_same_quote"),
 
     ('f"""outer {f"inner"}"""', None),
     ('f"outer {f\'inner\'}"', None),
@@ -174,6 +184,10 @@ class FStringDetectorTests(VerminTest):
   @VerminTest.parameterized_args([
     ("f\"{'\\n'.join(x)}\"", "backslash"),
     ("f\"{r'\\n'}\"", "backslash"),
+    ("f\"{'\\''}\"", "backslash"),
+    ("t = f\"{'\\InHere'=}\"", "backslash"),
+    ('f"{"\\xFF\\N{space}"=}"', "backslash"),
+    ('f"{r"\\xFF"=}"', "backslash"),
 
     ("f\"{chr(10)}\"", None),
     ("f'hello\\nworld'", None),

@@ -5,6 +5,11 @@ FEATURES = (
     "[Unstable] Detect self-documenting fstrings. Can in",
     "some cases wrongly report fstrings as self-documenting."
   ]),
+  ("fstring-pep701", [
+    "[Unstable] Detect PEP 701 f-string features (3.12+).",
+    "Same-quote nesting and multi-line expressions.",
+    "Requires running on Python 3.12+."
+  ]),
   ("union-types", [
     "[Unstable] Detect union types `X | Y`. Can in some cases",
     "wrongly report union types due to having to employ heuristics."

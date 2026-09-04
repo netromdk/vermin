@@ -180,6 +180,222 @@ class VerminLanguageTests(VerminTest):
     self.config.enable_feature("fstring-self-doc")
     self.assert_self_doc(source)
 
+  def assert_pep701(self, source):
+    visitor = self.visit(source)
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
+
+  def assert_not_pep701(self, source):
+    visitor = self.visit(source)
+    self.assertTrue(visitor.fstrings())
+    self.assertFalse(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 6), visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 12)
+  @VerminTest.parameterized_args([
+    ("f\"{chr(10)}\"",),
+    ("f\"{'#notacomment'}\"",),
+    ("f'hello {name}'",),
+    ("f'''{x}'''",),
+    ("f'''{\n3\n}'''",),
+
+    # Mixed triple/single (valid pre-3.12).
+    ('f"""outer {f"inner"}"""',),
+
+    # Different-quote nesting (valid pre-3.12).
+    ('f"outer {f\'inner\'}"',),
+    ("f'outer {f\"inner\"}'",),
+
+    # Backslash in literal, not expression.
+    ("f'hello\\nworld'",),
+  ])
+  def test_pep701_not_detected(self, source):
+    self.config.enable_feature("fstring-pep701")
+    self.assert_not_pep701(source)
+
+  @VerminTest.skipUnlessVersion(3, 12)
+  @VerminTest.parameterized_args([
+    # Same-quote nesting.
+    ('f"outer {f"inner"}"',),
+    ("f'outer {f'inner'}'",),
+    ('f"""outer {f"""inner"""}"""',),
+    ("f'''outer {f'''inner'''}'''",),
+    ('f"1 {f"2 {f"3"}"}"',),
+
+    # Format-spec nesting.
+    ('f"{x:{f".2f"}}"',),
+
+    # Single outer with triple inner.
+    ('f"outer {f"""inner"""}"',),
+
+    # Multi-line expressions.
+    ('f"{\n1+2\n}"',),
+    ("f\"{\n'''a'''\n}\"",),
+
+    # Backslash.
+    ("f\"{'\\n'.join(x)}\"",),
+    ("f\"{r'\\n'}\"",),
+    ('f"{a \\\n}"',),
+
+    # Comment.
+    ('f"{x  # comment\n}"',),
+    ('f"{\n# comment\n1+2\n}"',),
+  ])
+  def test_pep701_detected(self, source):
+    self.config.enable_feature("fstring-pep701")
+    self.assert_pep701(source)
+
+  @VerminTest.skipUnlessVersion(3, 12)
+  @VerminTest.parameterized_args([
+    ("'lit' f\"{f\"{x}\"}\"",),
+    ('"""lit""" f"{f"{x}"}"',),
+    ("'''lit''' f\"{f\"{x}\"}\"",),
+    ("f'{\"lit\" f'{x}'}'",),
+    ('f"""{rf"""{x}"""}"""',),
+    ('f"{fr"""{x}"""}"',),
+    ("f'outer {rf'''{x}'''}'",),
+    ('f"{F"é{fr"""{x}"""}config"}"',),
+    ("('lit'\n# comment between\n f\"{f\"{x}\"}\")",),
+    ("'''lit''' f\"{x\n+y}\"",),
+    ('f"""{x  # c\n:>3}"""',),
+  ])
+  def test_pep701_implicit_concat(self, source):
+    self.config.enable_feature("fstring-pep701")
+    self.assert_pep701(source)
+
+  @VerminTest.skipUnlessVersion(3, 12)
+  @VerminTest.parameterized_args([
+    ('f"{x\n# comment\n}"',),
+    ('f"""{x\n# comment\n}"""',),
+    ('f"""{x  # comment\n}"""',),
+    ('f"""{x  # c\n:>3}"""',),
+  ])
+  def test_pep701_comment_variants(self, source):
+    self.config.enable_feature("fstring-pep701")
+    self.assert_pep701(source)
+
+  @VerminTest.skipUnlessVersion(3, 12)
+  def test_pep701_feature_flag(self):
+    self.config.reset()
+    visitor = self.visit('f"outer {f"inner"}"')
+    self.assertTrue(visitor.fstrings())
+    self.assertFalse(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 6), visitor.minimum_versions())
+
+    self.config.enable_feature("fstring-pep701")
+    visitor = self.visit('f"outer {f"inner"}"')
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
+
+  # Ordinary 3.6+ valid fstrings must never be flagged as PEP 701. Especially important on pre-3.12
+  # interpreters.
+  @VerminTest.skipUnlessVersion(3, 6)
+  @VerminTest.parameterized_args([
+    ('f"{x}"',),
+    ('f"{x:10}"',),
+    ('f"{x:#04x}"',),
+    ('f"{x!r}"',),
+    ("f'{x}'",),
+    ("f'{x:10}'",),
+    ("f'{x!s}'",),
+    ('f"{x:>#12}"',),
+    ('f"{x:#x}"',),
+    ('f"{x:{width}}"',),
+    ('f"value: {x:#08x}"',),
+    ('f"hello {name}"',),
+
+    # Non-ASCII literal text before a field shifts AST byte-based column offsets away from
+    # code-point positions. Post-3.12 parsers removed the pinned field positions, exposing the
+    # format spec `#x` and similar as a false comment or backslash PEP 701 trigger.
+    ('f"é{x}"',),
+    ('f"é{x:#x}"',),
+    ('f"é{x:#04x}"',),
+    ('f"┐{x}"',),
+    ('f"┐{p - 8:#x} ◂"',),
+    ("f'é{x:#x}'",),
+    ('rf"00:0000│\\s+{sp - 8:#x} ◂— 0"',),
+    ('f"euro€ {x:#x} ~"',),
+    ("f''",),
+    ("f'{x}'",),
+
+    # Pre-3.12 parsers pin every `FormattedValue` to the whole fused span, with `lineno=1` and
+    # `end_lineno=N`, which previously read as a multi-line implicit string concat expression.
+    ('s = (f"got {x}: "\n     f"done")',),
+    ('s = (f"done"\n     f"got {x}: ")',),
+    ('s = (f"{a}"\n     f"{b}")',),
+    ('s = (f"{a}"\n     "literal")\n',),
+    ('s = (f"done"\n     f"done")',),
+    ('s = f"{a}" f"{b}"',),
+
+    # `#` inside a format spec is spec filler text, not a comment. Valid since 3.6.
+    ('f"""{x:>3  # c\n}"""',),
+    ('f"""{x:{w}  # c\n}"""',),
+    ('f"""{x!r:>3  # c\n}"""',),
+
+    # Leading plain literal hides a differently-quoted nested fstring.
+    ('\'pre\' f"{f\'{x}\'}"',),
+    ("'''pre''' f\"{f'{x}'}\"",),
+
+    # Format-spec nested fstrings are valid pre-3.12 even when same-quoted.
+    ('f"{x:{f\'{y}\'}}"',),
+    ('f"""{x:{f"{y}"}}"""',),
+
+    # Multi-line expression in the triple-quoted trailing part of an implicit concatenation.
+    ('s = f"lit {a}" f"""{b\n+ c}"""',),
+  ])
+  def test_fstrings_pep701_no_false_positives(self, source):
+    self.config.enable_feature("fstring-pep701")
+    visitor = self.visit(source)
+    self.assertFalse(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 6), visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 12)
+  def test_fstrings_self_doc_and_pep701(self):
+    self.config.enable_feature("fstring-self-doc")
+    self.config.enable_feature("fstring-pep701")
+
+    visitor = self.visit("a = 1\nf'{a=}'")
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.fstrings_self_doc())
+    self.assertFalse(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+    visitor = self.visit('f"outer {f"inner"}"')
+    self.assertTrue(visitor.fstrings())
+    self.assertFalse(visitor.fstrings_self_doc())
+    self.assertTrue(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
+
+    # Self-doc inside PEP 701 nested fstring.
+    visitor = self.visit('f"result: {f"{x=}"}"')
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.fstrings_self_doc())
+    self.assertTrue(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
+
+    # Same-quote nesting whose inner field is self-doc, and a backslash-in-expression combined with
+    # a self-doc marker.
+    visitor = self.visit('f"normal {f"{a=}"} normal"')
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.fstrings_self_doc())
+    self.assertTrue(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
+
+    visitor = self.visit("t = f\"{'\\InHere'=}\"")
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.fstrings_self_doc())
+    self.assertTrue(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
+
+    # The double-quoted empty-string self-doc form only parses on 3.12+.
+    visitor = self.visit('f"{""=}"')
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.fstrings_self_doc())
+    self.assertFalse(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
   @VerminTest.skipUnlessVersion(3, 5)
   def test_coroutines_async(self):
     visitor = self.visit("async def func():\n\tpass")

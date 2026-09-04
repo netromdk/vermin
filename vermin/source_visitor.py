@@ -101,6 +101,9 @@ class SourceVisitor(ast.NodeVisitor):
   def fstrings_self_doc(self):
     return self.__s.fstrings_self_doc
 
+  def fstrings_pep701(self):
+    return self.__s.fstrings_pep701
+
   def bool_const(self):
     return self.__s.bool_const
 
@@ -371,6 +374,9 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.fstrings_self_doc():  # pragma: no cover
       mins = self.__add_versions_entity(mins, (None, (3, 8)), "self-documenting f-strings")
+
+    if self.fstrings_pep701():  # pragma: no cover
+      mins = self.__add_versions_entity(mins, (None, (3, 12)), "f-strings (PEP 701)")
 
     if self.bool_const():  # pragma: no cover
       mins = self.__add_versions_entity(mins, ((2, 3), (3, 0)), "'bool' constant")
@@ -1450,228 +1456,6 @@ ast.Call(func=ast.Name)."""
     if is_ellipsis_node(node):
       self.visit_Ellipsis(node)
 
-  def __extract_fstring_value(self, node):  # pragma: no cover
-    value = []
-    is_call = False
-    for n in ast.walk(node):
-      if isinstance(n, ast.Name):
-        value.append(n.id)
-
-      elif hasattr(ast, "Constant") and isinstance(n, ast.Constant):
-        v = str(n.value)
-        if isinstance(n.value, str):
-          v = "\"{}\"".format(v)
-        value.append(v)
-
-      elif isinstance(n, ast.Add):
-        value.append("+")
-
-      elif isinstance(n, ast.Sub):
-        value.append("-")
-
-      elif isinstance(n, ast.Div):
-        value.append("/")
-
-      elif isinstance(n, ast.FloorDiv):
-        value.append("//")
-
-      elif isinstance(n, ast.Mult):
-        value.append("*")
-
-      elif hasattr(ast, "MatMult") and isinstance(n, ast.MatMult):
-        value.append("@")
-
-      elif isinstance(n, ast.Mod):
-        value.append("%")
-
-      elif isinstance(n, ast.Pow):
-        value.append("**")
-
-      elif isinstance(n, ast.BitXor):
-        value.append("^")
-
-      elif isinstance(n, ast.BitOr):
-        value.append("|")
-
-      elif isinstance(n, ast.BitAnd):
-        value.append("&")
-
-      elif isinstance(n, ast.Not):
-        value.append("not ")
-
-      elif isinstance(n, ast.USub):
-        value.append("-")
-
-      elif isinstance(n, ast.UAdd):
-        value.append("+")
-
-      elif isinstance(n, ast.Invert):
-        value.append("~")
-
-      elif isinstance(n, ast.LShift):
-        value.append("<<")
-
-      elif isinstance(n, ast.RShift):
-        value.append(">>")
-
-      elif isinstance(n, ast.In):
-        value.append("in ")
-
-      elif isinstance(n, ast.NotIn):
-        value.append("not in ")
-
-      elif isinstance(n, ast.Is):
-        value.append(" is ")
-
-      elif isinstance(n, ast.IsNot):
-        value.append(" is not ")
-
-      elif isinstance(n, ast.Or):
-        value.append(" or ")
-
-      elif isinstance(n, ast.And):
-        value.append(" and ")
-
-      elif isinstance(n, ast.Eq):
-        value.append(" == ")
-
-      elif isinstance(n, ast.NotEq):
-        value.append(" != ")
-
-      elif isinstance(n, ast.LtE):
-        value.append(" <= ")
-
-      elif isinstance(n, ast.GtE):
-        value.append(" >= ")
-
-      elif isinstance(n, ast.Gt):
-        value.append(" > ")
-
-      elif isinstance(n, ast.Lt):
-        value.append(" < ")
-
-      elif hasattr(ast, "comprehension") and isinstance(n, ast.comprehension):
-        target = self.__extract_fstring_value(n.target)
-        iter_ = self.__extract_fstring_value(n.iter)
-        value.append("{} in {}".format(target, iter_))
-        break
-
-      elif isinstance(n, ast.Attribute):
-        value += self.__get_attribute_name(n)
-        break
-
-      elif isinstance(n, ast.keyword):
-        val = self.__extract_fstring_value(n.value)
-        value.append("{}={}".format(n.arg, val))
-        break
-
-      elif isinstance(n, ast.Call):
-        is_call = True
-        if len(n.args) == 0 and len(n.keywords) == 0:
-          value.append("{}()".format(self.__extract_fstring_value(n.func)))
-          break
-
-      elif isinstance(n, ast.BinOp):
-        left = self.__extract_fstring_value(n.left)
-        op = self.__extract_fstring_value(n.op)
-        right = self.__extract_fstring_value(n.right)
-        value.append(left + op + right)
-        break
-
-      elif isinstance(n, ast.UnaryOp):
-        op = self.__extract_fstring_value(n.op)
-        operand = self.__extract_fstring_value(n.operand)
-        value.append(op + operand)
-        break
-
-      elif isinstance(n, ast.BoolOp):
-        op = self.__extract_fstring_value(n.op)
-        vals = [self.__extract_fstring_value(v) for v in n.values]
-        value.append(op.join(vals))
-        break
-
-      elif isinstance(n, ast.IfExp):
-        test = self.__extract_fstring_value(n.test)
-        body = self.__extract_fstring_value(n.body)
-        orelse = self.__extract_fstring_value(n.orelse)
-        value.append("{} if {} else {}".format(body, test, orelse))
-        break
-
-      elif isinstance(n, ast.Tuple):
-        elts = [self.__extract_fstring_value(elt) for elt in n.elts]
-        value.append("({})".format(",".join(elts)))
-        break
-
-      elif isinstance(n, ast.List):
-        elts = [self.__extract_fstring_value(elt) for elt in n.elts]
-        value.append("[{}]".format(",".join(elts)))
-        break
-
-      elif isinstance(n, ast.Set):
-        elts = [self.__extract_fstring_value(elt) for elt in n.elts]
-        value.append("{" + ",".join(elts) + "}")
-        break
-
-      elif isinstance(n, ast.Dict):
-        keys = [self.__extract_fstring_value(key) for key in n.keys]
-        vals = [self.__extract_fstring_value(val) for val in n.values]
-        kvs = ",".join(["{}:{}".format(k, v) for (k, v) in zip(keys, vals)])
-        value.append("{" + kvs + "}")
-        break
-
-      elif sys.version_info >= (3, 9) \
-           and isinstance(n, (ast.Constant, ast.Name, ast.Slice, ast.Tuple)):
-        # Check on slice indices like a[0] or a[i] or a[0:1] or a[(0,1)]
-        val = self.__extract_fstring_value(n)
-        value.append(val)
-        break
-      elif sys.version_info < (3, 9) and isinstance(n, ast.Index):
-        val = self.__extract_fstring_value(n.value)
-        value.append(val)
-        break
-
-      elif hasattr(ast, "ListComp") and isinstance(n, ast.ListComp):
-        elt = self.__extract_fstring_value(n.elt)
-        gens = [self.__extract_fstring_value(gen) for gen in n.generators]
-        value.append("[{} for {}]".format(elt, " ".join(gens)))
-        break
-
-      elif hasattr(ast, "SetComp") and isinstance(n, ast.SetComp):
-        elt = self.__extract_fstring_value(n.elt)
-        gens = [self.__extract_fstring_value(gen) for gen in n.generators]
-        value.append("{" + "{} for {}".format(elt, " ".join(gens)) + "}")
-        break
-
-      elif hasattr(ast, "DictComp") and isinstance(n, ast.DictComp):
-        key = self.__extract_fstring_value(n.key)
-        val = self.__extract_fstring_value(n.value)
-        gens = [self.__extract_fstring_value(gen) for gen in n.generators]
-        value.append("{" + "{}:{} for {}".format(key, val, " ".join(gens)) + "}")
-        break
-
-      elif hasattr(ast, "GeneratorExp") and isinstance(n, ast.GeneratorExp):
-        elt = self.__extract_fstring_value(n.elt)
-        gens = [self.__extract_fstring_value(gen) for gen in n.generators]
-        value.append("({} for {})".format(elt, " ".join(gens)))
-        break
-
-      elif isinstance(n, ast.Compare):
-        left = self.__extract_fstring_value(n.left)
-        ops = [self.__extract_fstring_value(op) for op in n.ops]
-        comps = [self.__extract_fstring_value(comp) for comp in n.comparators]
-        value.append(left + "".join(["{} {}".format(op, comp) for (op, comp) in zip(ops, comps)]))
-        break
-
-      elif isinstance(n, ast.Subscript):
-        val = self.__extract_fstring_value(n.value)
-        slice_ = self.__extract_fstring_value(n.slice)
-        value.append("{}[{}]".format(val, slice_))
-        break
-
-    if is_call:
-      return "(".join(value) + ")" * (len(value) - 1)  # "a(b(c()))"
-    return ".".join(value)  # "a" or "a.b"..
-
   def visit_JoinedStr(self, node):
     self.__s.fstrings = True
     self.__vvprint("f-strings", versions=[None, (3, 6)])
@@ -1681,6 +1465,14 @@ ast.Call(func=ast.Name)."""
       if self.__fstr.is_self_doc(node):
         self.__s.fstrings_self_doc = True
         self.__vvprint("self-documenting f-strings", versions=[None, (3, 8)])
+
+    # PEP 701 fstrings detection requires Python 3.12+ to parse the syntax in the first place, and
+    # avoids both false positives and false negatives.
+    if self.__s.fstrings_pep701_enabled and sys.version_info >= (3, 12) and \
+       hasattr(node, "values") and hasattr(node, "end_lineno"):  # pragma: no cover
+      if self.__fstr.pep701_violation(node) is not None:
+        self.__s.fstrings_pep701 = True
+        self.__vvprint("f-strings (PEP 701)", versions=[None, (3, 12)])
 
     self.generic_visit(node)
 
