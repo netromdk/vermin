@@ -73,6 +73,11 @@ class FStringDetectorTests(VerminTest):
     ("f'''{\n3\n=}'''", True),
     ("f'{f(a=4)=}'", True),
     ("f\"\\N{EXCLAMATION MARK}{a=}\"", True),
+    ("f\"{x = :.2f}\"", True),
+    ("f\"{(x) = :.2f}\"", True),
+    ("f\"{     2      +     2    =    }\"", True),
+    ("f\"{''=}\"", True),
+    ('f"""{1=: "this" is fine}"""', True),
 
     # CRLFs must not shift the byte offsets of nodes on later lines.
     ("x = 1\r\ns = f\"{x=}\"\r\n", True),

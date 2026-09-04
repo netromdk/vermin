@@ -4,12 +4,12 @@ from collections import deque
 import sys
 
 from .source_state import SourceState
+from .fstring_detector import FStringDetector
 from .rules import STRFTIME_REQS, BYTES_REQS, ARRAY_TYPECODE_REQS, CODECS_ERROR_HANDLERS, \
   CODECS_ERRORS_INDICES, CODECS_ENCODINGS, CODECS_ENCODINGS_INDICES, \
   BUILTIN_GENERIC_ANNOTATION_TYPES, DICT_UNION_SUPPORTED_TYPES, DICT_UNION_MERGE_SUPPORTED_TYPES, \
   DECORATOR_USER_FUNCTIONS
-from .utility import dotted_name, reverse_range, combine_versions, compare_requirements, \
-  remove_whitespace
+from .utility import dotted_name, reverse_range, combine_versions, compare_requirements
 
 STRFTIME_DIRECTIVE_REGEX = re.compile(r"%(?:[-\.\d#\s\+])*(\w)")
 BYTES_DIRECTIVE_REGEX = STRFTIME_DIRECTIVE_REGEX
@@ -57,11 +57,6 @@ def is_valid_star_unpack(node):
   return hasattr(ast, "Starred") and isinstance(node, ast.Starred) and\
     isinstance(node.ctx, ast.Load)
 
-def trim_fstring_value(value):  # pragma: no cover
-  # HACK: Since parentheses are stripped of the AST, we'll just remove all those deduced or directly
-  # available such that the self-doc f-strings can be compared.
-  return remove_whitespace(value, ["\\(", "\\)"])
-
 def assign_target_walk(node):
   """Walker used for determining assignment target nodes. It ignores all `ast.Subscript` and
 `ast.Attribute` nodes.
@@ -77,6 +72,7 @@ class SourceVisitor(ast.NodeVisitor):
   def __init__(self, config, path=None, source=None):
     super().__init__()
     self.__s = SourceState(config, path, source)
+    self.__fstr = FStringDetector(self.__s.source)
 
   def modules(self):
     return self.__s.modules
@@ -371,10 +367,10 @@ class SourceVisitor(ast.NodeVisitor):
       mins = self.__add_versions_entity(mins, ((2, 6), (3, 0)), "'bytes' type")
 
     if self.fstrings():
-      mins = self.__add_versions_entity(mins, (None, (3, 6)), "fstrings")
+      mins = self.__add_versions_entity(mins, (None, (3, 6)), "f-strings")
 
     if self.fstrings_self_doc():  # pragma: no cover
-      mins = self.__add_versions_entity(mins, (None, (3, 8)), "self-documenting fstrings")
+      mins = self.__add_versions_entity(mins, (None, (3, 8)), "self-documenting f-strings")
 
     if self.bool_const():  # pragma: no cover
       mins = self.__add_versions_entity(mins, ((2, 3), (3, 0)), "'bool' constant")
@@ -1679,24 +1675,12 @@ ast.Call(func=ast.Name)."""
   def visit_JoinedStr(self, node):
     self.__s.fstrings = True
     self.__vvprint("f-strings", versions=[None, (3, 6)])
-    if self.__s.fstring_self_doc_enabled and hasattr(node, "values"):  # pragma: no cover
-      total = len(node.values)
-      for i in range(total):
-        val = node.values[i]
-        # A self-referencing f-string will be at the end of the Constant, like "..stuff..expr=", and
-        # the next value will be a FormattedValue(value=..) with Names or nested Calls with Names
-        # inside, for instance.
-        if isinstance(val, ast.Constant) and hasattr(val, "value") and \
-           isinstance(val.value, str) and val.value.strip().endswith("=") and i + 1 < total:
-            next_val = node.values[i + 1]
-            if isinstance(next_val, ast.FormattedValue):
-              fstring_value =\
-                trim_fstring_value(self.__extract_fstring_value(next_val.value))
-              if len(fstring_value) > 0 and\
-                trim_fstring_value(val.value).endswith(fstring_value + "="):
-                  self.__s.fstrings_self_doc = True
-                  self.__vvprint("self-documenting fstrings", versions=[None, (3, 8)])
-                  break
+
+    if self.__s.fstring_self_doc_enabled and hasattr(node, "values") and \
+       hasattr(node, "end_lineno"):  # pragma: no cover
+      if self.__fstr.is_self_doc(node):
+        self.__s.fstrings_self_doc = True
+        self.__vvprint("self-documenting f-strings", versions=[None, (3, 8)])
 
     self.generic_visit(node)
 
