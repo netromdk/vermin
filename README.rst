@@ -136,26 +136,27 @@ on how to get hooks set up on your project.
 Features
 ========
 
-Features detected include v2/v3 ``print expr`` and ``print(expr)``, ``long``, f-strings, coroutines
-(``async`` and ``await``), asynchronous generators (``await`` and ``yield`` in same function),
-asynchronous comprehensions, ``await`` in comprehensions, asynchronous ``for``-loops, boolean
-constants, named expressions, keyword-only parameters, positional-only parameters, ``nonlocal``,
-``yield from``, exception context cause (``raise .. from ..``), ``except*``, ``set`` literals,
-``set`` comprehensions, ``dict`` comprehensions, infix matrix multiplication, ``"..".format(..)``,
-imports (``import X``, ``from X import Y``, ``from X import *``), function calls wrt. name and
-kwargs, ``strftime`` + ``strptime`` directives used, function and variable annotations (also
-``Final`` and ``Literal``), ``continue`` in ``finally`` block, modular inverse ``pow()``, array
-typecodes, codecs error handler names, encodings, ``%`` formatting and directives for bytes and
-bytearray, ``with`` statement, asynchronous ``with`` statement, multiple context expressions in a
-``with`` statement, multiple context expressions in a ``with`` statement grouped with parenthesis,
-unpacking assignment, generalized unpacking, ellipsis literal (``...``) out of slices, dictionary
-union (``{..}  | {..}``), dictionary union merge (``a = {..}; a |= {..}``), builtin generic type
-annotations (``list[str]``), function decorators, class decorators, relaxed decorators,
-``metaclass`` class keyword, pattern matching with ``match``, union types written as ``X | Y``, type
-alias statements (``type X = SomeType``), type alias statements with lambdas/comprehensions in class
-scopes, generic classes (``class C[T]: ...``), and template string literals (``t'{var}'``). It tries
-to detect and ignore user-defined functions, classes, arguments, and variables with names that clash
-with library-defined symbols.
+Features detected include v2/v3 ``print expr`` and ``print(expr)``, ``long``, f-strings,
+self-documenting f-strings (``f'{a=}'``), PEP 701 f-strings (3.12+), coroutines (``async`` and
+``await``), asynchronous generators (``await`` and ``yield`` in same function), asynchronous
+comprehensions, ``await`` in comprehensions, asynchronous ``for``-loops, boolean constants, named
+expressions, keyword-only parameters, positional-only parameters, ``nonlocal``, ``yield from``,
+exception context cause (``raise .. from ..``), ``except*``, ``set`` literals, ``set``
+comprehensions, ``dict`` comprehensions, infix matrix multiplication, ``"..".format(..)``, imports
+(``import X``, ``from X import Y``, ``from X import *``), function calls wrt. name and kwargs,
+``strftime`` + ``strptime`` directives used, function and variable annotations (also ``Final`` and
+``Literal``), ``continue`` in ``finally`` block, modular inverse ``pow()``, array typecodes, codecs
+error handler names, encodings, ``%`` formatting and directives for bytes and bytearray, ``with``
+statement, asynchronous ``with`` statement, multiple context expressions in a ``with`` statement,
+multiple context expressions in a ``with`` statement grouped with parenthesis, unpacking assignment,
+generalized unpacking, ellipsis literal (``...``) out of slices, dictionary union (``{..}  |
+{..}``), dictionary union merge (``a = {..}; a |= {..}``), builtin generic type annotations
+(``list[str]``), function decorators, class decorators, relaxed decorators, ``metaclass`` class
+keyword, pattern matching with ``match``, union types written as ``X | Y``, type alias statements
+(``type X = SomeType``), type alias statements with lambdas/comprehensions in class scopes, generic
+classes (``class C[T]: ...``), and template string literals (``t'{var}'``). It tries to detect and
+ignore user-defined functions, classes, arguments, and variables with names that clash with
+library-defined symbols.
 
 Caveats
 =======
@@ -163,11 +164,16 @@ Caveats
 For frequently asked questions, check out the `FAQ discussions
 <https://github.com/netromdk/vermin/discussions/categories/faq>`__.
 
-Self-documenting fstrings detection has been disabled by default because the built-in AST cannot
-distinguish ``f'{a=}'`` from ``f'a={a}'``, for instance, since it optimizes some information away
-(`#39 <https://github.com/netromdk/vermin/issues/39>`__). And this incorrectly marks some source
-code as using fstring self-doc when only using general fstring. To enable (unstable) fstring
-self-doc detection, use ``--feature fstring-self-doc``.
+Self-documenting f-strings (``f'{a=}'``) cannot be distinguished from plain f-strings such as
+``f'a={a}'`` by the AST alone, because the parser optimizes some information away (`#39
+<https://github.com/netromdk/vermin/issues/39>`__). Vermin therefore also verifies against the
+source code. This detection is enabled by default, but can be disabled with ``--no-feature``. Note
+that this also disables all other features.
+
+PEP 701 f-string features require Python 3.12+. Vermin detects these using AST analysis combined
+with source code heuristics, enabled by default, which requires Vermin to parse the syntax on Python
+3.12+ (`#264 <https://github.com/netromdk/vermin/issues/264>`__). Use ``--no-feature`` to disable
+this detection.
 
 Detecting union types (``X | Y`` `PEP 604 <https://www.python.org/dev/peps/pep-0604/>`__) can be
 tricky because Vermin doesn't know all underlying details of constants and types since it parses and
