@@ -304,18 +304,31 @@ aaa
     self.assertFalse(self.config.show_tips())
 
   def test_feature(self):
+    # Default features are enabled.
+    self.config.reset()
+    self.assertContainsDict({"code": 0}, self.parse_args(["--verbose"]))
+    self.assertEqualItems(Features.defaults(), self.config.features())
+
+    # `--feature` is additive on top of the default features.
+    self.config.reset()
+    self.assertContainsDict({"code": 0}, self.parse_args(["--feature", "union-types"]))
+    feats = Features.defaults() | {"union-types"}
+    self.assertEqualItems(feats, self.config.features())
+
     # Needs <name> part.
+    self.config.reset()
     self.assertContainsDict({"code": 1}, self.parse_args(["--feature"]))
-    self.assertEmpty(self.config.features())
+    self.assertEqualItems(Features.defaults(), self.config.features())
 
     # Unknown feature.
+    self.config.reset()
     self.assertContainsDict({"code": 1}, self.parse_args(["--feature", "foobarbaz"]))
-    self.assertEmpty(self.config.features())
+    self.assertEqualItems(Features.defaults(), self.config.features())
 
-    # Known features.
+    # Known features can be enabled individually after clearing all defaults.
     for feature in Features.features():
       self.config.reset()
-      self.assertContainsDict({"code": 0}, self.parse_args(["--feature", feature]))
+      self.assertContainsDict({"code": 0}, self.parse_args(["--no-feature", "--feature", feature]))
       self.assertEqualItems([feature], self.config.features())
       self.assertContainsDict({"code": 0}, self.parse_args(["--no-feature"]))
       self.assertEmpty(self.config.features())

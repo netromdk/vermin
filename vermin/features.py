@@ -1,14 +1,15 @@
 from .utility import format_title_descs
 
+DEFAULT_FEATURES = ("fstring-self-doc", "fstring-pep701")
+
 FEATURES = (
   ("fstring-self-doc", [
-    "[Unstable] Detect self-documenting fstrings. Can in",
-    "some cases wrongly report fstrings as self-documenting."
+    "Detect self-documenting fstrings. Enabled by default.",
   ]),
   ("fstring-pep701", [
-    "[Unstable] Detect PEP 701 f-string features (3.12+).",
-    "Same-quote nesting and multi-line expressions.",
-    "Requires running on Python 3.12+."
+    "Detect PEP 701 f-string features (3.12+): same-quote",
+    "nesting and multi-line expressions. Requires running on",
+    "Python 3.12+. Enabled by default."
   ]),
   ("union-types", [
     "[Unstable] Detect union types `X | Y`. Can in some cases",
@@ -17,6 +18,10 @@ FEATURES = (
 )
 
 class Features:
+  @staticmethod
+  def defaults():
+    return set(DEFAULT_FEATURES)
+
   @staticmethod
   def str(indent=0):
     return format_title_descs(FEATURES, Features.features(), indent)

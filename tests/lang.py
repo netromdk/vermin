@@ -185,6 +185,26 @@ class VerminLanguageTests(VerminTest):
     self.config.enable_feature("fstring-self-doc")
     self.assert_self_doc(source)
 
+  @VerminTest.skipUnlessVersion(3, 8)
+  def test_self_doc_feature_flag(self):
+    # Enabled by default.
+    visitor = self.visit("a = 1\nf'{a=}'")
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.fstrings_self_doc())
+    self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+    self.config.clear_features()
+    visitor = self.visit("a = 1\nf'{a=}'")
+    self.assertTrue(visitor.fstrings())
+    self.assertFalse(visitor.fstrings_self_doc())
+    self.assertOnlyIn((3, 6), visitor.minimum_versions())
+
+    self.config.enable_feature("fstring-self-doc")
+    visitor = self.visit("a = 1\nf'{a=}'")
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.fstrings_self_doc())
+    self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
   def assert_pep701(self, source):
     visitor = self.visit(source)
     self.assertTrue(visitor.fstrings())
@@ -282,7 +302,14 @@ class VerminLanguageTests(VerminTest):
 
   @VerminTest.skipUnlessVersion(3, 12)
   def test_pep701_feature_flag(self):
+    # Enabled by default.
     self.config.reset()
+    visitor = self.visit('f"outer {f"inner"}"')
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
+
+    self.config.clear_features()
     visitor = self.visit('f"outer {f"inner"}"')
     self.assertTrue(visitor.fstrings())
     self.assertFalse(visitor.fstrings_pep701())

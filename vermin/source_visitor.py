@@ -372,10 +372,10 @@ class SourceVisitor(ast.NodeVisitor):
     if self.fstrings():
       mins = self.__add_versions_entity(mins, (None, (3, 6)), "f-strings")
 
-    if self.fstrings_self_doc():  # pragma: no cover
+    if self.fstrings_self_doc():
       mins = self.__add_versions_entity(mins, (None, (3, 8)), "self-documenting f-strings")
 
-    if self.fstrings_pep701():  # pragma: no cover
+    if self.fstrings_pep701():
       mins = self.__add_versions_entity(mins, (None, (3, 12)), "f-strings (PEP 701)")
 
     if self.bool_const():  # pragma: no cover
@@ -1466,7 +1466,7 @@ ast.Call(func=ast.Name)."""
     self.__vvprint("f-strings", versions=[None, (3, 6)])
 
     if self.__s.fstring_self_doc_enabled and hasattr(node, "values") and \
-       hasattr(node, "end_lineno"):  # pragma: no cover
+       hasattr(node, "end_lineno"):
       if self.__fstr.is_self_doc(node):
         self.__s.fstrings_self_doc = True
         self.__vvprint("self-documenting f-strings", versions=[None, (3, 8)])
@@ -1474,7 +1474,7 @@ ast.Call(func=ast.Name)."""
     # PEP 701 fstrings detection requires Python 3.12+ to parse the syntax in the first place, and
     # avoids both false positives and false negatives.
     if self.__s.fstrings_pep701_enabled and sys.version_info >= (3, 12) and \
-       hasattr(node, "values") and hasattr(node, "end_lineno"):  # pragma: no cover
+       hasattr(node, "values") and hasattr(node, "end_lineno"):
       if self.__fstr.pep701_violation(node) is not None:
         self.__s.fstrings_pep701 = True
         self.__vvprint("f-strings (PEP 701)", versions=[None, (3, 12)])
