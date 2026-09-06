@@ -19,6 +19,27 @@ class VerminExclusionsTests(VerminTest):
     visitor = self.visit("from argparse import ArgumentParser\nArgumentParser(allow_abbrev=False)")
     self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3, 8)
+  def test_kwarg_excluded_value(self):
+    self.config.enable_feature("fstring-self-doc")
+
+    source = "from argparse import ArgumentParser\nArgumentParser(allow_abbrev=f'{1=}')"
+    visitor = self.visit(source)
+    self.assertTrue(visitor.fstrings_self_doc())
+    self.assertEqual([("argparse.ArgumentParser", "allow_abbrev")], visitor.kwargs())
+    self.assertEqual([None, (3, 8)], visitor.minimum_versions())
+
+    self.config.add_exclusion("argparse.ArgumentParser(allow_abbrev)")
+    visitor = self.visit(source)
+    self.assertFalse(visitor.fstrings_self_doc())
+    self.assertEqual([], visitor.kwargs())
+    self.assertEqual([(2, 7), (3, 2)], visitor.minimum_versions())
+
+    self.config.add_exclusion("argparse")
+    visitor = self.visit(source)
+    self.assertFalse(visitor.fstrings_self_doc())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
   def test_codecs_error_handler(self):
     visitor = self.visit("import codecs\ncodecs.encode('test', 'utf-8', 'surrogateescape')")
     self.assertEqual([None, (3, 1)], visitor.minimum_versions())

@@ -704,7 +704,7 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.__s.config.is_excluded_kwarg(function, keyword):
       self.__vvprint("Excluding kwarg: {}({})".format(function, keyword))
-      return False
+      return None
 
     fn_kw = (function, keyword)
     if fn_kw not in self.__s.kwargs:
@@ -1262,7 +1262,7 @@ class SourceVisitor(ast.NodeVisitor):
     self.generic_visit(node)
 
   def visit_keyword(self, node):
-    added = False
+    excluded = False
     for func_name in self.__s.function_name_stack:
       # kwarg related.
       exp_name = func_name.split(".")
@@ -1270,28 +1270,33 @@ class SourceVisitor(ast.NodeVisitor):
       # Check if function is imported from module.
       if func_name in self.__s.import_mem_mod:
         mod = self.__s.import_mem_mod[func_name]
-        added |= self.__add_kwargs(dotted_name([mod, func_name]), node.arg, self.__s.line)
+        excluded |= \
+          self.__add_kwargs(dotted_name([mod, func_name]), node.arg, self.__s.line) is None
 
       # When having "ElementTree.tostringlist", for instance, and include mapping "{'ElementTree':
       # 'xml.etree'}" then try piecing them together to form a match.
       elif exp_name[0] in self.__s.import_mem_mod:
         mod = self.__s.import_mem_mod[exp_name[0]]
-        added |= self.__add_kwargs(dotted_name([mod, func_name]), node.arg, self.__s.line)
+        excluded |= \
+          self.__add_kwargs(dotted_name([mod, func_name]), node.arg, self.__s.line) is None
 
       # Lookup indirect names via variables.
       elif exp_name[0] in self.__s.name_res:
         res = self.__s.name_res[exp_name[0]]
         if res in self.__s.import_mem_mod:
           mod = self.__s.import_mem_mod[res]
-          added |= self.__add_kwargs(dotted_name([mod, res, exp_name[1:]]), node.arg, self.__s.line)
+          excluded |= \
+            self.__add_kwargs(dotted_name([mod, res, exp_name[1:]]), node.arg,
+                              self.__s.line) is None
 
         # Try as FQN.
         else:
-          added |= self.__add_kwargs(dotted_name([res, exp_name[1:]]), node.arg, self.__s.line)
+          excluded |= \
+            self.__add_kwargs(dotted_name([res, exp_name[1:]]), node.arg, self.__s.line) is None
 
       # Only add direct function if not found via module/class/member.
       else:
-        added |= self.__add_kwargs(func_name, node.arg, self.__s.line)
+        excluded |= self.__add_kwargs(func_name, node.arg, self.__s.line) is None
 
       # A chained receiver, like `Path.cwd().exists(follow_symlinks=True)`, yields intermediate
       # call(s) in the name (`Path.cwd.exists`) that hide the real method being called. When the
@@ -1317,11 +1322,11 @@ class SourceVisitor(ast.NodeVisitor):
 
           collapsed_name = dotted_name(collapsed)
           if (collapsed_name, node.arg) in self.__s.kwargs_reqs_rules:
-            added |= self.__add_kwargs(collapsed_name, node.arg, self.__s.line)
+            excluded |= self.__add_kwargs(collapsed_name, node.arg, self.__s.line) is None
             break
 
-    # If not excluded or ignored then visit keyword values also.
-    if added:
+    # Visit keyword values unless the keyword rule was explicitly excluded.
+    if not excluded:
       self.generic_visit(node)
 
   def visit_Bytes(self, node):

@@ -120,6 +120,7 @@ class VerminLanguageTests(VerminTest):
     ("f'{(a+b)}={x!r}'",),
     ("a = 1\nf'{{x={a}}}'",),
     ("f'{x:.2f}'",),
+    ("x = 'x'\ndef foo(shell):pass\nfoo(shell=f'a={x!r}')",),
   ])
   def test_self_doc_not_detected(self, source):
     self.config.enable_feature("fstring-self-doc")
@@ -175,6 +176,10 @@ class VerminLanguageTests(VerminTest):
     ("f\"Disposition param parsing is not linear: {d1=} vs {d2=}\"",),
     ("f\"overrun because hit {self.max_length=}\"",),
     ("f'summary: {save_count=} for {len(frames)=}'",),
+
+    # kwarg to a user-defined function.
+    ("x = 1\ndef foo(shell):pass\nfoo(shell=f\"{x=}\")",),
+    ("x = 1\ndef foo(position=None, **kw):pass\nfoo(position=1, shell=f\"{x=}\")",),
   ])
   def test_self_doc_detected(self, source):
     self.config.enable_feature("fstring-self-doc")
