@@ -52,6 +52,7 @@ class SourceState:
     self.fstrings = False
     self.fstrings_self_doc = False
     self.fstrings_pep701 = False
+    self.fstrings_await = False
     self.bool_const = False
     self.annotations = False
     self.var_annotations = False

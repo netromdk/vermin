@@ -448,6 +448,28 @@ class VerminLanguageTests(VerminTest):
     self.assertTrue(visitor.fstrings_pep701())
     self.assertOnlyIn((3, 12), visitor.minimum_versions())
 
+  @VerminTest.skipUnlessVersion(3, 6)
+  def test_await_in_fstring(self):
+    # From 3.7, `await` may be used in expressions within f-strings.
+    visitor = self.visit("async def f():\n  return f'{await g()}'")
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.coroutines())
+    self.assertTrue(visitor.fstrings_await())
+    self.assertOnlyIn((3, 7), visitor.minimum_versions())
+
+    visitor = self.visit("async def f():\n  x = [f'{await g()}']")
+    self.assertTrue(visitor.fstrings_await())
+    self.assertOnlyIn((3, 7), visitor.minimum_versions())
+
+    visitor = self.visit("async def f():\n  await g()")
+    self.assertFalse(visitor.fstrings_await())
+    self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+    # An f-string without `await` next to one stays at the f-string minimum.
+    visitor = self.visit("async def f():\n  await g()\n  return f'{x}'")
+    self.assertFalse(visitor.fstrings_await())
+    self.assertOnlyIn((3, 6), visitor.minimum_versions())
+
   @VerminTest.skipUnlessVersion(3, 5)
   def test_coroutines_async(self):
     visitor = self.visit("async def func():\n\tpass")

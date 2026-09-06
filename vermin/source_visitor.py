@@ -104,6 +104,9 @@ class SourceVisitor(ast.NodeVisitor):
   def fstrings_pep701(self):
     return self.__s.fstrings_pep701
 
+  def fstrings_await(self):
+    return self.__s.fstrings_await
+
   def bool_const(self):
     return self.__s.bool_const
 
@@ -377,6 +380,9 @@ class SourceVisitor(ast.NodeVisitor):
 
     if self.fstrings_pep701():
       mins = self.__add_versions_entity(mins, (None, (3, 12)), "f-strings (PEP 701)")
+
+    if self.fstrings_await():
+      mins = self.__add_versions_entity(mins, (None, (3, 7)), "`await` in f-string")
 
     if self.bool_const():  # pragma: no cover
       mins = self.__add_versions_entity(mins, ((2, 3), (3, 0)), "'bool' constant")
@@ -1479,7 +1485,26 @@ ast.Call(func=ast.Name)."""
         self.__s.fstrings_pep701 = True
         self.__vvprint("f-strings (PEP 701)", versions=[None, (3, 12)])
 
+    # `await` was only allowed within f-string expressions from 3.7.
+    if hasattr(node, "values") and self.__fstring_has_await(node):
+      self.__s.fstrings_await = True
+      self.__vvprint("`await` in f-string", versions=[None, (3, 7)])
+
     self.generic_visit(node)
+
+  def __fstring_has_await(self, node):
+    for value in node.values:
+      if isinstance(value, ast.FormattedValue) and self.__contains_await(value):
+        return True
+    return False
+
+  def __contains_await(self, node):
+    if isinstance(node, ast.Await):
+      return True
+    for child in ast.iter_child_nodes(node):
+      if self.__contains_await(child):
+        return True
+    return False
 
   # Mark variable names as aliases.
   def visit_Assign(self, node):
