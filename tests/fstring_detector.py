@@ -182,6 +182,37 @@ class FStringDetectorTests(VerminTest):
 
   @VerminTest.skipUnlessVersion(3, 12)
   @VerminTest.parameterized_args([
+    ('f"abc {a["x"]} def"', "same_quote_string"),
+    ("f'ab {a['x']} cd'", "same_quote_string"),
+    ('f"{d["k"]=}"', "same_quote_string"),
+    ('f"{ {"a": k} }"', "same_quote_string"),
+    ('f"t{ ["a"] }"', "same_quote_string"),
+    ('f"{a["x"]["y"]}"', "same_quote_string"),
+    ('f"{x:{"ab"}}"', "same_quote_string"),
+    ('f"{x:{w["y"]}}"', "same_quote_string"),
+    ("f'{ {'k': v} }'", "same_quote_string"),
+
+    # A different quote is valid since 3.6.
+    ('f"abc {a[\'x\']} def"', None),
+    ("f'abc {a[\"x\"]} def'", None),
+    ('f"{x:{w[\'y\']}}"', None),
+    ('f"{x:>a\'b}"', None),
+    ("f'{x:{w[\"y\"]}}'", None),
+
+    # Triple-quoted f-strings allow the single-character reuse natively.
+    ('f"""abc {a["x"]} def"""', None),
+    ('f"""abc {a[\'x\']} def"""', None),
+    ("f'''abc {a['x']} def'''", None),
+
+    ('f"{chr(34)}"', None),
+    ('f"{x:10}"', None),
+    ('f"{f\'x\'}"', None),
+  ])
+  def test_pep701_same_quote_string(self, source, expected):
+    self.assert_pep701(source, expected)
+
+  @VerminTest.skipUnlessVersion(3, 12)
+  @VerminTest.parameterized_args([
     ("f\"{'\\n'.join(x)}\"", "backslash"),
     ("f\"{r'\\n'}\"", "backslash"),
     ("f\"{'\\''}\"", "backslash"),

@@ -266,6 +266,13 @@ class VerminLanguageTests(VerminTest):
     # Comment.
     ('f"{x  # comment\n}"',),
     ('f"{\n# comment\n1+2\n}"',),
+
+    # String literals reusing the outer quote.
+    ('f"abc {a["x"]} def"',),
+    ("f'ab {a['x']} cd'",),
+    ('f"{x:{"ab"}}"',),
+    ('f"{x:{w["y"]}}"',),
+    ('f"{d["k"]=}"',),
   ])
   def test_pep701_detected(self, source):
     self.config.enable_feature("fstring-pep701")
@@ -376,6 +383,18 @@ class VerminLanguageTests(VerminTest):
 
     # Multi-line expression in the triple-quoted trailing part of an implicit concatenation.
     ('s = f"lit {a}" f"""{b\n+ c}"""',),
+
+    # A different quote inside a field is valid since 3.6.
+    ('f"abc {a[\'x\']} def"',),
+    ("f'abc {a[\"x\"]} def'",),
+    ('f"{x:{w[\'y\']}}"',),
+    ('f"{x:>a\'b}"',),
+    ("f'{x:{w[\"y\"]}}'",),
+
+    # Triple-quoted f-strings allow reusing their quote character in a literal.
+    ('f"""abc {a["x"]} def"""',),
+    ('f"""abc {a[\'x\']} def"""',),
+    ("f'''abc {a['x']} def'''",),
   ])
   def test_fstrings_pep701_no_false_positives(self, source):
     self.config.enable_feature("fstring-pep701")
@@ -421,12 +440,13 @@ class VerminLanguageTests(VerminTest):
     self.assertTrue(visitor.fstrings_pep701())
     self.assertOnlyIn((3, 12), visitor.minimum_versions())
 
-    # The double-quoted empty-string self-doc form only parses on 3.12+.
+    # The empty-string self-doc form reuses the outer quote for a literal, so it only parses on
+    # 3.12+ as a same-quote string literal.
     visitor = self.visit('f"{""=}"')
     self.assertTrue(visitor.fstrings())
     self.assertTrue(visitor.fstrings_self_doc())
-    self.assertFalse(visitor.fstrings_pep701())
-    self.assertOnlyIn((3, 8), visitor.minimum_versions())
+    self.assertTrue(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
 
   @VerminTest.skipUnlessVersion(3, 5)
   def test_coroutines_async(self):

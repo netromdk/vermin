@@ -187,7 +187,7 @@ class FStringDetector:
     return False
 
   def pep701_violation(self, node):
-    """Return the first PEP 701 construct the JoinedStr `node` triggers, or None. All four are
+    """Return the first PEP 701 construct the JoinedStr `node` triggers, or None. All five are
     `SyntaxError` before 3.12.
     """
     if self._source is None:
@@ -235,8 +235,15 @@ class FStringDetector:
         if not outer_triple or inner[1]:
           return "nested_same_quote"
 
+      # A string literal reusing the outer quote inside a field is only legal from 3.12. A
+      # triple-quoted f-string natively allows the single-character reuse, so only single/double
+      # quotes trigger this. The backslash check is ordered first so escaped same-quote literals
+      # keep their backslash label.
       if self._has_pep701_backslash(val, lines):
         return "backslash"
+
+      if not outer_triple and self._has_same_quote_string(val, outer_quote):
+        return "same_quote_string"
 
       if self._has_pep701_comment(val, lines):
         return "comment"
@@ -508,6 +515,38 @@ class FStringDetector:
 
       pos += 1
     return end
+
+  def _has_same_quote_string(self, node, outer_quote):
+    """Whether a replacement field contains a string literal reusing the outer quote. Reusing the
+    quote character only became legal within a field in 3.12, so the whole field body, expression
+    and format spec, is scanned for a bare outer-quote character.
+    """
+    source = self._source
+    lines = self._lines
+    if source is None or lines is None or not hasattr(node, "end_lineno") or \
+       not hasattr(node, "end_col_offset"):
+      return False
+
+    src_len = len(source)
+    start = self._span_offset(lines, node.lineno, node.col_offset, src_len)
+    end = self._span_offset(lines, node.end_lineno, node.end_col_offset, src_len)
+    if start is None or end is None or end <= start + 2:
+      return False
+
+    # Exclude the enclosing braces, bounding the scan to the field body.
+    if end > start and source[end - 1] == CLOSE_BRACE:
+      end -= 1
+
+    pos = start + 1
+    while pos < end:
+      ch = source[pos]
+      if ch == outer_quote:
+        return True
+      if ch in STRING_QUOTE_CHARS:
+        pos = self._skip_string(source, pos, end, src_len)
+        continue
+      pos += 1
+    return False
 
   def _walk_joined_strs(self, node):
     for child in ast.iter_child_nodes(node):
