@@ -78,6 +78,8 @@ class FStringDetectorTests(VerminTest):
     ("f\"{     2      +     2    =    }\"", True),
     ("f\"{''=}\"", True),
     ('f"""{1=: "this" is fine}"""', True),
+    ("f'{(x)=}'", True),
+    ("f'{a[0]=}'", True),
 
     # CRLFs must not shift the byte offsets of nodes on later lines.
     ("x = 1\r\ns = f\"{x=}\"\r\n", True),
@@ -238,6 +240,7 @@ class FStringDetectorTests(VerminTest):
   @VerminTest.parameterized_args([
     ('f"""{x  # comment\n}"""', "comment"),
     ('f"""{x\n# comment\n}"""', "comment"),
+    ("f\"\"\"{a + 'x'  # c\n}\"\"\"", "comment"),
 
     ("f\"{'#notacomment'}\"", None),
     ('f"{x}"', None),
@@ -310,3 +313,173 @@ class FStringDetectorTests(VerminTest):
   ])
   def test_pep701_parser_line_breaks(self, source, expected):
     self.assert_pep701(source, expected)
+
+
+def _set_span(node, span):
+  node.lineno, node.col_offset, node.end_lineno, node.end_col_offset = span
+  return node
+
+
+def _name(identifier, span):
+  return _set_span(ast.Name(id=identifier, ctx=ast.Load()), span)
+
+
+def _joined(values, span):
+  return _set_span(ast.JoinedStr(values=values), span)
+
+
+def _formatted(value, span):
+  return _set_span(ast.FormattedValue(value=value, conversion=-1, format_spec=None), span)
+
+
+class FStringDetectorParityTests(VerminTest):
+  """PEP 701 parity tests that run on every interpreter, covering analysis the 3.12-gated suite
+  never reaches.
+  """
+
+  # pylint: disable=protected-access
+
+  def setUp(self):
+    super().setUp()
+    self.none_detector = FStringDetector(None)
+
+    # The source code is inert on purpose, being short and single-line with no braces, quotes, or
+    # backslashes. And thus the fabricated spans have nothing to find and must always miss.
+    self.detector = FStringDetector("xyz")
+
+  def assert_pep701_none(self, source, span, token):
+    detector = FStringDetector(source)
+    nodes = joined_strs(source)
+    self.assertTrue(nodes, "no f-string in: " + source)
+
+    # Re-apply the 3.12+ top-level span, since pre-3.12 parsers pin it to the whole f-string.
+    for val in nodes[0].values:
+      if isinstance(val, ast.FormattedValue):
+        _set_span(val, span)
+        break
+
+    for node in nodes:
+      self.assertIsNone(detector.pep701_violation(node), source)
+
+    got = detector._read_fstring_token(nodes[0], source.splitlines())
+    self.assertEqual(token, got, source)
+
+  # Spans as 3.12+ reports them, re-applied where pre-3.12 parsers pin fields to the f-string.
+  @VerminTest.parameterized_args([
+    ('f"{{lit}}{x}"', (1, 9, 1, 12), ('"', False)),
+    ('f"{a[\'x\']}"', (1, 2, 1, 10), ('"', False)),
+    ('f"{x:{f\'{y}\'}}"', (1, 2, 1, 14), ('"', False)),
+    ("f'outer {f\"mid\"}'", (1, 8, 1, 16), ("'", False)),
+    ('f"\\N{EXCLAMATION MARK}{x}"', (1, 22, 1, 25), ('"', False)),
+    ('r"lit" f"{x}"', (1, 9, 1, 12), ('"', False)),
+    ('("lit"\n# c\n f"{y}")', (3, 3, 3, 6), ('"', False)),
+    ("('''lit''' f'{x}')", (1, 13, 1, 16), ("'", False)),
+    ("f\"\"\"{a + '#'}\"\"\"", (1, 4, 1, 13), ('"', True)),
+    ('f"\\\\{x}"', (1, 4, 1, 7), ('"', False)),
+  ])
+  def test_pep701_cross_version(self, source, spans, token):
+    self.assert_pep701_none(source, spans, token)
+
+  def test_codepoint_helpers(self):
+    """Codepoint helpers on a truncated UTF-8 column and out-of-range spans."""
+    self.assertEqual(1, self.detector._codepoint_col(["é"], 1, 1))
+    self.assertIsNone(self.detector._span_offset(self.detector._lines, 4, 0, 3))
+    self.assertEqual(0, self.detector._codepoint_length(["a"], 9, 0, 9, 0))
+
+  def test_scanner_guards(self):
+    """String/brace scanners that run past their end without a closing token."""
+    self.assertEqual(3, self.detector._skip_string("f\"ab", 1, 3, 4))
+    self.assertEqual(4, self.detector._fstring_body_end("f\"ab", 1, 4, '"', False, None, None))
+    self.assertEqual(4, self.detector._field_end("f\"{x", 3, 4))
+
+  def test_token_span_guards(self):
+    # A joined span past the source.
+    self.assertIsNone(
+      self.detector._read_fstring_token(_joined([], (9, 0, 9, 1)), self.detector._lines))
+
+    # An end span past the source.
+    self.assertIsNone(
+      self.detector._read_fstring_token(_joined([], (1, 0, 9, 1)), self.detector._lines))
+
+    # A field span past the source.
+    bad_fv = _formatted(_name("x", (1, 1, 1, 2)), (9, 1, 9, 2))
+    self.assertIsNone(
+      self.detector._read_fstring_token(_joined([bad_fv], (1, 0, 1, 5)), self.detector._lines))
+
+  def test_build_field_contexts_guards(self):
+    # A node without `end_col_offset`, like it was pre-3.8, yields no contexts.
+    class BareStringNode:
+      def __init__(self, values):
+        self.values = values
+        self.lineno = 1
+        self.col_offset = 0
+        self.end_lineno = 1
+    truncated = BareStringNode([])
+    self.assertEqual({}, self.detector._build_field_contexts(truncated, self.detector._lines)[0])
+
+    # A joined span past the source yields no contexts.
+    self.assertEqual({}, self.detector._build_field_contexts(
+      _joined([], (1, 0, 9, 1)), self.detector._lines)[0])
+
+    # Real literals re-scanned under an empty joined node resolve nothing.
+    for source, span in (("f\"a{b}c\"", (1, 2, 1, 7)),
+                         ("f\"{{x}}\"", (1, 2, 1, 6)),
+                         ("f\"ab\\N{SPACE}cd\"", (1, 2, 1, 13))):
+      fabricated = FStringDetector(source)
+      contexts = fabricated._build_field_contexts(_joined([], span), [source])[0]
+      self.assertEqual({}, contexts)
+
+    # A brace outside any f-string literal falls back to the default context.
+    mid = FStringDetector("f\"a\" {x} f\"b\"")
+    contexts, default = mid._build_field_contexts(_joined([], (1, 0, 1, 13)), ["f\"a\" {x} f\"b\""])
+    self.assertEqual({5: ('"', False)}, contexts)
+    self.assertEqual(('"', False), default)
+
+  def test_resolve_field_context_fallback(self):
+    no_pos = ast.FormattedValue(value=_name("x", (1, 1, 1, 2)), conversion=-1, format_spec=None)
+    default = ("'", True)
+    self.assertEqual(default, self.detector._resolve_field_context(no_pos, {}, default))
+
+  def test_self_doc_walk_guards(self):
+    candidate = \
+      ast.FormattedValue(value=_name("a", (1, 1, 1, 2)), conversion=ord("r"), format_spec=None)
+
+    # An empty f-string has no fields to walk.
+    self.assertFalse(self.none_detector.is_self_doc(_joined([], (1, 0, 1, 3))))
+
+    # A joined span past the source triggers the out-of-range guard.
+    self.assertFalse(self.detector.is_self_doc(_joined([candidate], (9, 0, 9, 3))))
+
+    # A normal `!r` field is simply not self-documenting.
+    self.assertFalse(FStringDetector("f\"x\"").is_self_doc(_joined([candidate], (1, 0, 1, 4))))
+
+    # Value node lacking end offsets, so the walk can't read past its span.
+    value_no_end = ast.Name(id="a")
+    value_no_end.lineno, value_no_end.col_offset = 1, 3
+    fv_no_end = ast.FormattedValue(value=value_no_end, conversion=ord("r"), format_spec=None)
+    fv_no_end.lineno, fv_no_end.col_offset = 1, 2
+    fv_no_end.end_lineno, fv_no_end.end_col_offset = 1, 4
+    self.assertFalse(FStringDetector("f\"{x}\"").is_self_doc(_joined([fv_no_end], (1, 0, 1, 5))))
+
+    # Value truncated at the span's edge, where no `=` can follow.
+    truncated_fv = _formatted(_name("x", (1, 3, 1, 4)), (1, 2, 1, 4))
+    self.assertFalse(FStringDetector("f\"{x}\"").is_self_doc(_joined([truncated_fv], (1, 0, 1, 4))))
+
+  def test_violation_scan_guards(self):
+    sample = _formatted(_name("x", (1, 2, 1, 5)), (1, 2, 1, 6))
+    self.assertFalse(self.none_detector._has_same_quote_string(sample, '"'))
+    self.assertFalse(self.none_detector._has_pep701_backslash(sample, None))
+    self.assertFalse(self.none_detector._has_pep701_comment(sample, None))
+
+    bad_span = _formatted(_name("x", (1, 1, 1, 2)), (9, 0, 9, 1))
+    self.assertFalse(self.detector._has_same_quote_string(bad_span, '"'))
+    self.assertFalse(self.detector._has_pep701_comment(bad_span, self.detector._lines))
+
+  def test_backslash_scan(self):
+    cont = FStringDetector("f\"{a \\\n}\"")
+    cont_fv = _formatted(_name("a", (1, 3, 1, 4)), (1, 2, 2, 1))
+    self.assertTrue(cont._has_pep701_backslash(cont_fv, cont._lines))
+
+    token_error = FStringDetector("f\"ab'\\\nc}\"")
+    token_fv = _formatted(_name("x", (1, 3, 1, 6)), (1, 2, 1, 6))
+    self.assertFalse(token_error._has_pep701_backslash(token_fv, token_error._lines))
