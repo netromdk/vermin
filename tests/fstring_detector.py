@@ -390,8 +390,13 @@ class FStringDetectorParityTests(VerminTest):
   def test_codepoint_helpers(self):
     """Codepoint helpers on a truncated UTF-8 column and out-of-range spans."""
     self.assertEqual(1, self.detector._codepoint_col(["é"], 1, 1))
-    self.assertIsNone(self.detector._span_offset(self.detector._lines, 4, 0, 3))
+    self.assertIsNone(self.detector._span_offset(self.detector._lines, 4, 0))
     self.assertEqual(0, self.detector._codepoint_length(["a"], 9, 0, 9, 0))
+
+    # A `lineno` in range for the char count but beyond the actual line count must return `None`
+    # rather than index past the per-line offset array.
+    single_line = FStringDetector("abc")
+    self.assertIsNone(single_line._span_offset(single_line._lines, 2, 0))
 
   def test_scanner_guards(self):
     """String/brace scanners that run past their end without a closing token."""

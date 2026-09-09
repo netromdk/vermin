@@ -48,9 +48,8 @@ class FStringDetector:
 
   def _codepoint_length(self, lines, start_lineno, start_col_offset,
                         end_lineno, end_col_offset):
-    src_len = len(self._source)
-    start_off = self._span_offset(lines, start_lineno, start_col_offset, src_len)
-    end_off = self._span_offset(lines, end_lineno, end_col_offset, src_len)
+    start_off = self._span_offset(lines, start_lineno, start_col_offset)
+    end_off = self._span_offset(lines, end_lineno, end_col_offset)
     if start_off is None or end_off is None:
       return 0
     return max(0, end_off - start_off)
@@ -80,8 +79,8 @@ class FStringDetector:
     """Confirm self-doc by locating each `{..}` region in the source."""
     source = self._source
     lines = self._lines
-    start = self._span_offset(lines, node.lineno, node.col_offset, len(source))
-    end = self._span_offset(lines, node.end_lineno, node.end_col_offset, len(source))
+    start = self._span_offset(lines, node.lineno, node.col_offset)
+    end = self._span_offset(lines, node.end_lineno, node.end_col_offset)
     if start is None or end is None:
       return False
 
@@ -293,14 +292,14 @@ class FStringDetector:
 
     # Map the byte-based span-start position to a code-point source offset.
     src_len = len(source)
-    start = self._span_offset(lines, node.lineno, node.col_offset, src_len)
+    start = self._span_offset(lines, node.lineno, node.col_offset)
     if start is None:
       return None
 
     # Use end-of-source as the span end when the node has no end column.
     end = src_len
     if hasattr(node, "end_col_offset"):
-      end = self._span_offset(lines, node.end_lineno, node.end_col_offset, src_len)
+      end = self._span_offset(lines, node.end_lineno, node.end_col_offset)
       if end is None:
         return None
 
@@ -311,7 +310,7 @@ class FStringDetector:
       if not isinstance(val, ast.FormattedValue):
         continue
       if hasattr(val, "lineno") and hasattr(val, "col_offset"):
-        offset = self._span_offset(lines, val.lineno, val.col_offset, src_len)
+        offset = self._span_offset(lines, val.lineno, val.col_offset)
         if offset is None:
           return None
         bound = offset
@@ -347,11 +346,11 @@ class FStringDetector:
       pos += 1
     return None
 
-  def _span_offset(self, lines, lineno, col_offset, src_len):
+  def _span_offset(self, lines, lineno, col_offset):
     """Return the source offset of a code-point line/column position, or None."""
-    if lineno - 1 >= src_len:
+    if not lines or lineno < 1 or lineno > len(lines):
       return None
-    return self._line_offsets[lineno - 1] + self._codepoint_col(lines, lineno, col_offset)
+    return self._line_offsets[lineno - 1] + self._codepoint_col(lines, lineno, max(0, col_offset))
 
   def _skip_string(self, source, pos, bound, src_len):
     """Skip a plain string literal starting at the quote at `pos` and return the offset past it."""
@@ -391,8 +390,8 @@ class FStringDetector:
     if not hasattr(node, "end_col_offset"):
       return contexts, default
 
-    start = self._span_offset(lines, node.lineno, node.col_offset, src_len)
-    end = self._span_offset(lines, node.end_lineno, node.end_col_offset, src_len)
+    start = self._span_offset(lines, node.lineno, node.col_offset)
+    end = self._span_offset(lines, node.end_lineno, node.end_col_offset)
     if start is None or end is None:
       return contexts, default
 
@@ -447,7 +446,7 @@ class FStringDetector:
     col = getattr(val, "col_offset", None)
     if lineno is None or col is None:
       return default_context
-    offset = self._span_offset(self._lines, lineno, col, len(self._source))
+    offset = self._span_offset(self._lines, lineno, col)
     field_ctx = contexts.get(offset)
     return default_context if field_ctx is None else field_ctx
 
@@ -557,8 +556,8 @@ class FStringDetector:
       return False
 
     src_len = len(source)
-    start = self._span_offset(lines, node.lineno, node.col_offset, src_len)
-    end = self._span_offset(lines, node.end_lineno, node.end_col_offset, src_len)
+    start = self._span_offset(lines, node.lineno, node.col_offset)
+    end = self._span_offset(lines, node.end_lineno, node.end_col_offset)
     if start is None or end is None or end <= start + 2:
       return False
 
@@ -648,16 +647,16 @@ class FStringDetector:
       return False
 
     src_len = len(source)
-    start = self._span_offset(lines, node.lineno, node.col_offset, src_len)
+    start = self._span_offset(lines, node.lineno, node.col_offset)
     if start is None:
       return False
 
     # Bound the scan by the format-spec `:` when present, else the closing `}`.
     spec = node.format_spec if hasattr(node, "format_spec") else None
     if spec is not None and getattr(spec, "lineno", None) is not None:
-      end = self._span_offset(lines, spec.lineno, spec.col_offset, src_len)
+      end = self._span_offset(lines, spec.lineno, spec.col_offset)
     else:
-      end = self._span_offset(lines, node.end_lineno, node.end_col_offset, src_len)
+      end = self._span_offset(lines, node.end_lineno, node.end_col_offset)
       if end is not None and end > start and source[end - 1] == CLOSE_BRACE:
         end -= 1
     if end is None or end <= start:
