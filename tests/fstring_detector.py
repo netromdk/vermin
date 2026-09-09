@@ -289,6 +289,10 @@ class FStringDetectorTests(VerminTest):
     ('f"""{x  # c\n:>3}"""', True),
     ('f"""{x\n# comment\n}"""', True),
     ("f\"{'#notacomment'}\"", False),
+
+    # A `#` before the format spec is a comment, but after the `:` it is literal text.
+    ('q = "zz" + f"""{a  # c\n}"""', True),
+    ('q = "zz" + f"""{x:>3  # c\n}"""', False),
   ])
   def test_pep701_comment_region(self, source, expected):
     detector = FStringDetector(source)

@@ -673,7 +673,7 @@ class FStringDetector:
     while pos < field_len:
       ch = field[pos]
       if ch in STRING_QUOTE_CHARS:
-        pos = self._skip_string(source, start + pos, start + end, src_len) - start
+        pos = self._skip_string(source, start + pos, end, src_len) - start
         continue
       if ch == HASH:
         return True
