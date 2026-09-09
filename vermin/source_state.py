@@ -51,6 +51,8 @@ class SourceState:
     self.bytesv3 = False
     self.fstrings = False
     self.fstrings_self_doc = False
+    self.fstrings_pep701 = False
+    self.fstrings_await = False
     self.bool_const = False
     self.annotations = False
     self.var_annotations = False
@@ -148,10 +150,8 @@ class SourceState:
     # Lines that should be ignored if they have the comment "novermin" or "novm".
     self.no_lines = set()
 
-    # Default to disabling fstring self-doc detection since the built-in AST cannot distinguish
-    # `f'{a=}'` from `f'a={a}'`, for instance, because it optimizes some information away. And this
-    # incorrectly marks some source code as using fstring self-doc when only using general fstring.
     self.fstring_self_doc_enabled = self.config.has_feature("fstring-self-doc")
+    self.fstrings_pep701_enabled = self.config.has_feature("fstring-pep701")
 
     # Default to disabling union types detection because it sometimes fails to report it correctly
     # due to using heuristics.

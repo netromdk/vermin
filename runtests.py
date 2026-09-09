@@ -13,9 +13,11 @@ if ISOLATE is not None:
 
 SUITES = (
   "general",
+  "utility",
   "config",
   "arguments",
   "lang",
+  "fstring_detector",
   "module",
   "builtin_classes",
   "class",
