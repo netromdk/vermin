@@ -109,3 +109,7 @@ examples
 
 # IntelliJ
 .idea/
+
+# Rendered manpages
+docs/man/*.1
+docs/man/*.5
