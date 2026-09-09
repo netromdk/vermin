@@ -90,6 +90,13 @@ class FStringDetectorTests(VerminTest):
     ("x = 1\rs = f\"{x=}\"\r", True),
     ("y = \"\v\f\"\ns = f\"{x=}\"\n", True),
 
+    # Implicit concat merging a leading plain string part must not misdirect the self-doc `{`-anchor
+    # onto that part.
+    ('"{" f"{x=}"', True),
+    ('"{x}" f"{y=}"', True),
+    ('("{\\n" f"{x=}")', True),
+    ('"}" f"{x=}"', True),
+
     ("a = 1\nf'a={a}'", False),
     ("a = 1\nf'={a}'", False),
     ("f'{a != b}'", False),

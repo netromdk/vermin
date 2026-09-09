@@ -85,12 +85,11 @@ class FStringDetector:
     if start is None or end is None:
       return False
 
-    # Skip the f-string prefix and the opening quote.
-    pos = start
-    while pos < end and source[pos].lower() in FSTRING_PREFIX_CHARS:
-      pos += 1
-    if pos < end and source[pos] in STRING_QUOTE_CHARS:
-      pos += 1
+    # Locate the first f-string literal in the fused span. Implicit concat can merge a leading plain
+    # string part, whose literal braces would otherwise misdirect the `{`-anchor.
+    pos = self._fstring_opener_end(source, start, end, start)
+    if pos is None:
+      return False
 
     for idx, val in enumerate(node.values):
       if not isinstance(val, ast.FormattedValue):
@@ -247,6 +246,36 @@ class FStringDetector:
 
       if self._has_pep701_comment(val, lines):
         return "comment"
+    return None
+
+  def _fstring_opener_end(self, source, pos, bound, lower_bound):
+    """Return the offset just past the opening quote of the first f-string literal in `[pos,
+    bound)`, skipping plain strings, comments, and non-f prefixes, or None if there is no f-string.
+    """
+    while pos < bound:
+      ch = source[pos]
+
+      if ch in STRING_QUOTE_CHARS:
+        if self._match_fstring_quote(source, pos, lower_bound) is None:
+          next_pos = self._skip_string(source, pos, bound, len(source))
+          if next_pos >= bound:
+            # No well-formed plain literal within bounds. Advance past the lone quote and keep
+            # scanning so the `{`-anchor still finds the fields.
+            pos += SINGLE_QUOTE_LEN
+            continue
+          pos = next_pos
+          continue
+
+        # F-string opener found. Return just past its quote(s).
+        pos += (TRIPLE_QUOTE_LEN if source.startswith(ch * TRIPLE_QUOTE_LEN, pos)
+                else SINGLE_QUOTE_LEN)
+        return pos
+
+      if ch == HASH:
+        pos = self._skip_comment(source, pos, bound)
+        continue
+
+      pos += 1
     return None
 
   def _read_fstring_token(self, node, lines):
