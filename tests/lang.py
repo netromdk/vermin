@@ -98,326 +98,377 @@ class VerminLanguageTests(VerminTest):
       self.assertFalse(visitor.named_expressions())
       self.assertOnlyIn((3, 6), visitor.minimum_versions())
 
+  def assert_self_doc(self, source):
+    visitor = self.visit(source)
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.fstrings_self_doc())
+    self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+  def assert_not_self_doc(self, source):
+    visitor = self.visit(source)
+    self.assertFalse(visitor.fstrings_self_doc())
+
   @VerminTest.skipUnlessVersion(3, 8)
-  def test_fstrings_self_doc(self):
-    enabled = False
-    if enabled:  # pragma: no cover
-      self.config.enable_feature("fstring-self-doc")
-
-      # NOTE: The built-in AST cannot distinguish `f'{a=}'` from `f'a={a}'` because it optimizes
-      # some information away. Therefore, this test will be seen as a self-doc f-string, which is
-      # why fstring self-doc detection has been disabled for now.
-      visitor = self.visit("a = 1\nf'a={a}'")
-      self.assertFalse(visitor.fstrings_self_doc())
-
-      visitor = self.visit("name = 'world'\nf'hello {name=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("name = 'world'\nf'hello={name}'")
-      self.assertFalse(visitor.fstrings_self_doc())
-
-      visitor = self.visit("a = 1\nf'={a}'")
-      self.assertFalse(visitor.fstrings_self_doc())
-
-      visitor = self.visit("a = 1\nf'{a=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("a = 1\nb = 2\nf'={b}={a}'")
-      self.assertFalse(visitor.fstrings_self_doc())
-
-      visitor = self.visit("a = 1\nb = 2\nf'{b=}={a}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{a =}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{ a=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{a= }'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{ a = }'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{1+1=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{1+b=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{a+b=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{a+1=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{a-1=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{a/1=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{a//1=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{a*1=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{not a=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{1 in []=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{1 not in []=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{None is None=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{None is not True=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{10 % 5=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{10 ^ 5=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{10 | 5=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{10 & 5=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{10 ** 5=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{-5=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{+5=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{~5=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{x << y=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{x >> y=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{x @ y=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{a or b=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{a and b=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{(1,2,3)=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{[1,2,3]=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{ {1,2,3}=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{ {1:1, 2:2}=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{[x for x in [1,2,3]]=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{(x for x in [1,2,3])=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{ {x for x in [1,2,3]}=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{ {x:1 for x in [1,2,3]}=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{0==1=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{0<1=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{0>1=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{0<=1=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{0>=1=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{0==1!=2=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{3.14=:10.10}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{3.14=!s:10.10}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{x=!s}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{x=!r}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{x=!a}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{x=:.2f}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{x=!a:^20}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{f\"{3.1415=:.1f}\":*^20}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'alpha a {pi=} w omega'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'''{\n3\n=}'''")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{f(a=4)=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{f(a=\"3=\")=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{C()=!r:*^20}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{user=!s}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{delta.days=:,d}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{user=!s}  {delta.days=:,d}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{delta.days:,d}'")
-      self.assertFalse(visitor.fstrings_self_doc())
-
-      visitor = self.visit("f'{cos(radians(theta)):.3f}'")
-      self.assertFalse(visitor.fstrings_self_doc())
-
-      visitor = self.visit("f'{cos(radians(theta))=:.3f}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'={cos(radians(theta)):.3f}'")
-      self.assertFalse(visitor.fstrings_self_doc())
-
-      visitor = self.visit("f'{theta}  {cos(radians(theta)):.3f}'")
-      self.assertFalse(visitor.fstrings_self_doc())
-
-      visitor = self.visit("f'{cos(radians(theta)):.3f} {theta=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{(a+b)=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{(a+((b-(c*d))/e))=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{d[\"foo\"]=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'i:{i=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{1 if True else 2=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'{(d[a], None) if 42 != 84 else (1,2,3)=}'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
-
-      visitor = self.visit("f'expr={ {x: y for x, y in [(1, 2) ]} = }'")
-      self.assertTrue(visitor.fstrings_self_doc())
-      self.assertOnlyIn((3, 8), visitor.minimum_versions())
+  @VerminTest.parameterized_args([
+    ("a = 1\nf'a={a}'",),
+    ("name = 'world'\nf'hello={name}'",),
+    ("a = 1\nf'={a}'",),
+    ("a = 1\nb = 2\nf'={b}={a}'",),
+    ("f'{x:=10}'",),
+    ("f'hello {name!r}'",),
+    ("f'val={val:.2f}'",),
+    ("f'{(a+b)}={x!r}'",),
+    ("a = 1\nf'{{x={a}}}'",),
+    ("f'{x:.2f}'",),
+    ("x = 'x'\ndef foo(shell):pass\nfoo(shell=f'a={x!r}')",),
+  ])
+  def test_self_doc_not_detected(self, source):
+    self.config.enable_feature("fstring-self-doc")
+    self.assert_not_self_doc(source)
+
+  @VerminTest.skipUnlessVersion(3, 8)
+  @VerminTest.parameterized_args([
+    ("a = 1\nf'{a=}'",),
+    ("name = 'world'\nf'hello {name=}'",),
+    ("a = 1\nb = 2\nf'{b=}={a}'",),
+    ("f'{a =}'",),
+    ("f'{ a=}'",),
+    ("f'{a= }'",),
+    ("f'{ a = }'",),
+    ("f'{1+1=}'",),
+    ("f'{a+b=}'",),
+    ("f'{not a=}'",),
+    ("f'{10 % 5=}'",),
+    ("f'{x << y=}'",),
+    ("f'{a or b=}'",),
+    ("f'{(1,2,3)=}'",),
+    ("f'{[1,2,3]=}'",),
+    ("f'{ {1,2,3}=}'",),
+    ("f'{ {1:1, 2:2}=}'",),
+    ("f'{0==1=}'",),
+    ("f'{0<1=}'",),
+    ("f'{0==1!=2=}'",),
+    ("f'{3.14=:10.10}'",),
+    ("f'{3.14=!s:10.10}'",),
+    ("f'{x=!r}'",),
+    ("f'{x=:.2f}'",),
+    ("f'{x=!a:^20}'",),
+    ("f'{d[\"foo\"]=:.2f}'",),
+    ("f'{f\"{3.1415=:.1f}\":*^20}'",),
+    ("f'{f(a=4)=}'",),
+    ("f'{f(a=\"3=\")=}'",),
+    ("f'{C()=!r:*^20}'",),
+    ("f'{delta.days=:,d}'",),
+    ("f'{user=!s}  {delta.days=:,d}'",),
+    ("f'{cos(radians(theta))=:.3f}'",),
+    ("f'{(a+b)=}'",),
+    ("f'{d[\"foo\"]=}'",),
+    ("f'i:{i=}'",),
+    ("f'{1 if True else 2=}'",),
+    ("f'{(d[a], None) if 42 != 84 else (1,2,3)=}'",),
+    ("f'expr={ {x: y for x, y in [(1, 2) ]} = }'",),
+    ("f'''{\na=\n}'''",),
+    ("f\"{x = :.2f}\"",),
+    ("f\"{(x) = :.2f}\"",),
+
+    # Real-world patterns.
+    ("f\"Expected {provider=} to be a class since {provider_kw=} was\"",),
+    ("f\"Disposition param parsing is not linear: {d1=} vs {d2=}\"",),
+    ("f\"overrun because hit {self.max_length=}\"",),
+    ("f'summary: {save_count=} for {len(frames)=}'",),
+
+    # kwarg to a user-defined function.
+    ("x = 1\ndef foo(shell):pass\nfoo(shell=f\"{x=}\")",),
+    ("x = 1\ndef foo(position=None, **kw):pass\nfoo(position=1, shell=f\"{x=}\")",),
+  ])
+  def test_self_doc_detected(self, source):
+    self.config.enable_feature("fstring-self-doc")
+    self.assert_self_doc(source)
+
+  @VerminTest.skipUnlessVersion(3, 8)
+  def test_self_doc_feature_flag(self):
+    # Enabled by default.
+    visitor = self.visit("a = 1\nf'{a=}'")
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.fstrings_self_doc())
+    self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+    self.config.clear_features()
+    visitor = self.visit("a = 1\nf'{a=}'")
+    self.assertTrue(visitor.fstrings())
+    self.assertFalse(visitor.fstrings_self_doc())
+    self.assertOnlyIn((3, 6), visitor.minimum_versions())
+
+    self.config.enable_feature("fstring-self-doc")
+    visitor = self.visit("a = 1\nf'{a=}'")
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.fstrings_self_doc())
+    self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+  def assert_pep701(self, source):
+    visitor = self.visit(source)
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
+
+  def assert_not_pep701(self, source):
+    visitor = self.visit(source)
+    self.assertTrue(visitor.fstrings())
+    self.assertFalse(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 6), visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 12)
+  @VerminTest.parameterized_args([
+    ("f\"{chr(10)}\"",),
+    ("f\"{'#notacomment'}\"",),
+    ("f'hello {name}'",),
+    ("f'''{x}'''",),
+    ("f'''{\n3\n}'''",),
+
+    # Mixed triple/single (valid pre-3.12).
+    ('f"""outer {f"inner"}"""',),
+
+    # Different-quote nesting (valid pre-3.12).
+    ('f"outer {f\'inner\'}"',),
+    ("f'outer {f\"inner\"}'",),
+
+    # Backslash in literal, not expression.
+    ("f'hello\\nworld'",),
+  ])
+  def test_pep701_not_detected(self, source):
+    self.config.enable_feature("fstring-pep701")
+    self.assert_not_pep701(source)
+
+  @VerminTest.skipUnlessVersion(3, 12)
+  @VerminTest.parameterized_args([
+    # Same-quote nesting.
+    ('f"outer {f"inner"}"',),
+    ("f'outer {f'inner'}'",),
+    ('f"""outer {f"""inner"""}"""',),
+    ("f'''outer {f'''inner'''}'''",),
+    ('f"1 {f"2 {f"3"}"}"',),
+
+    # Format-spec nesting.
+    ('f"{x:{f".2f"}}"',),
+
+    # Single outer with triple inner.
+    ('f"outer {f"""inner"""}"',),
+
+    # Multi-line expressions.
+    ('f"{\n1+2\n}"',),
+    ("f\"{\n'''a'''\n}\"",),
+
+    # Backslash.
+    ("f\"{'\\n'.join(x)}\"",),
+    ("f\"{r'\\n'}\"",),
+    ('f"{a \\\n}"',),
+
+    # Comment.
+    ('f"{x  # comment\n}"',),
+    ('f"{\n# comment\n1+2\n}"',),
+
+    # String literals reusing the outer quote.
+    ('f"abc {a["x"]} def"',),
+    ("f'ab {a['x']} cd'",),
+    ('f"{x:{"ab"}}"',),
+    ('f"{x:{w["y"]}}"',),
+    ('f"{d["k"]=}"',),
+  ])
+  def test_pep701_detected(self, source):
+    self.config.enable_feature("fstring-pep701")
+    self.assert_pep701(source)
+
+  @VerminTest.skipUnlessVersion(3, 12)
+  @VerminTest.parameterized_args([
+    ("'lit' f\"{f\"{x}\"}\"",),
+    ('"""lit""" f"{f"{x}"}"',),
+    ("'''lit''' f\"{f\"{x}\"}\"",),
+    ("f'{\"lit\" f'{x}'}'",),
+    ('f"""{rf"""{x}"""}"""',),
+    ('f"{fr"""{x}"""}"',),
+    ("f'outer {rf'''{x}'''}'",),
+    ('f"{F"é{fr"""{x}"""}config"}"',),
+    ("('lit'\n# comment between\n f\"{f\"{x}\"}\")",),
+    ("'''lit''' f\"{x\n+y}\"",),
+    ('f"""{x  # c\n:>3}"""',),
+  ])
+  def test_pep701_implicit_concat(self, source):
+    self.config.enable_feature("fstring-pep701")
+    self.assert_pep701(source)
+
+  @VerminTest.skipUnlessVersion(3, 12)
+  @VerminTest.parameterized_args([
+    ('f"{x\n# comment\n}"',),
+    ('f"""{x\n# comment\n}"""',),
+    ('f"""{x  # comment\n}"""',),
+    ('f"""{x  # c\n:>3}"""',),
+  ])
+  def test_pep701_comment_variants(self, source):
+    self.config.enable_feature("fstring-pep701")
+    self.assert_pep701(source)
+
+  @VerminTest.skipUnlessVersion(3, 12)
+  def test_pep701_feature_flag(self):
+    # Enabled by default.
+    self.config.reset()
+    visitor = self.visit('f"outer {f"inner"}"')
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
+
+    self.config.clear_features()
+    visitor = self.visit('f"outer {f"inner"}"')
+    self.assertTrue(visitor.fstrings())
+    self.assertFalse(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 6), visitor.minimum_versions())
+
+    self.config.enable_feature("fstring-pep701")
+    visitor = self.visit('f"outer {f"inner"}"')
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
+
+  # Ordinary 3.6+ valid fstrings must never be flagged as PEP 701. Especially important on pre-3.12
+  # interpreters.
+  @VerminTest.skipUnlessVersion(3, 6)
+  @VerminTest.parameterized_args([
+    ('f"{x}"',),
+    ('f"{x:10}"',),
+    ('f"{x:#04x}"',),
+    ('f"{x!r}"',),
+    ("f'{x}'",),
+    ("f'{x:10}'",),
+    ("f'{x!s}'",),
+    ('f"{x:>#12}"',),
+    ('f"{x:#x}"',),
+    ('f"{x:{width}}"',),
+    ('f"value: {x:#08x}"',),
+    ('f"hello {name}"',),
+
+    # Non-ASCII literal text before a field shifts AST byte-based column offsets away from
+    # code-point positions. Post-3.12 parsers removed the pinned field positions, exposing the
+    # format spec `#x` and similar as a false comment or backslash PEP 701 trigger.
+    ('f"é{x}"',),
+    ('f"é{x:#x}"',),
+    ('f"é{x:#04x}"',),
+    ('f"┐{x}"',),
+    ('f"┐{p - 8:#x} ◂"',),
+    ("f'é{x:#x}'",),
+    ('rf"00:0000│\\s+{sp - 8:#x} ◂— 0"',),
+    ('f"euro€ {x:#x} ~"',),
+    ("f''",),
+    ("f'{x}'",),
+
+    # Pre-3.12 parsers pin every `FormattedValue` to the whole fused span, with `lineno=1` and
+    # `end_lineno=N`, which previously read as a multi-line implicit string concat expression.
+    ('s = (f"got {x}: "\n     f"done")',),
+    ('s = (f"done"\n     f"got {x}: ")',),
+    ('s = (f"{a}"\n     f"{b}")',),
+    ('s = (f"{a}"\n     "literal")\n',),
+    ('s = (f"done"\n     f"done")',),
+    ('s = f"{a}" f"{b}"',),
+
+    # `#` inside a format spec is spec filler text, not a comment. Valid since 3.6.
+    ('f"""{x:>3  # c\n}"""',),
+    ('f"""{x:{w}  # c\n}"""',),
+    ('f"""{x!r:>3  # c\n}"""',),
+
+    # Leading plain literal hides a differently-quoted nested fstring.
+    ('\'pre\' f"{f\'{x}\'}"',),
+    ("'''pre''' f\"{f'{x}'}\"",),
+
+    # Format-spec nested fstrings are valid pre-3.12 even when same-quoted.
+    ('f"{x:{f\'{y}\'}}"',),
+    ('f"""{x:{f"{y}"}}"""',),
+
+    # Multi-line expression in the triple-quoted trailing part of an implicit concatenation.
+    ('s = f"lit {a}" f"""{b\n+ c}"""',),
+
+    # A different quote inside a field is valid since 3.6.
+    ('f"abc {a[\'x\']} def"',),
+    ("f'abc {a[\"x\"]} def'",),
+    ('f"{x:{w[\'y\']}}"',),
+    ('f"{x:>a\'b}"',),
+    ("f'{x:{w[\"y\"]}}'",),
+
+    # Triple-quoted f-strings allow reusing their quote character in a literal.
+    ('f"""abc {a["x"]} def"""',),
+    ('f"""abc {a[\'x\']} def"""',),
+    ("f'''abc {a['x']} def'''",),
+  ])
+  def test_fstrings_pep701_no_false_positives(self, source):
+    self.config.enable_feature("fstring-pep701")
+    visitor = self.visit(source)
+    self.assertFalse(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 6), visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 12)
+  def test_fstrings_self_doc_and_pep701(self):
+    self.config.enable_feature("fstring-self-doc")
+    self.config.enable_feature("fstring-pep701")
+
+    visitor = self.visit("a = 1\nf'{a=}'")
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.fstrings_self_doc())
+    self.assertFalse(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 8), visitor.minimum_versions())
+
+    visitor = self.visit('f"outer {f"inner"}"')
+    self.assertTrue(visitor.fstrings())
+    self.assertFalse(visitor.fstrings_self_doc())
+    self.assertTrue(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
+
+    # Self-doc inside PEP 701 nested fstring.
+    visitor = self.visit('f"result: {f"{x=}"}"')
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.fstrings_self_doc())
+    self.assertTrue(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
+
+    # Same-quote nesting whose inner field is self-doc, and a backslash-in-expression combined with
+    # a self-doc marker.
+    visitor = self.visit('f"normal {f"{a=}"} normal"')
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.fstrings_self_doc())
+    self.assertTrue(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
+
+    visitor = self.visit("t = f\"{'\\InHere'=}\"")
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.fstrings_self_doc())
+    self.assertTrue(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
+
+    # The empty-string self-doc form reuses the outer quote for a literal, so it only parses on
+    # 3.12+ as a same-quote string literal.
+    visitor = self.visit('f"{""=}"')
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.fstrings_self_doc())
+    self.assertTrue(visitor.fstrings_pep701())
+    self.assertOnlyIn((3, 12), visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 6)
+  def test_await_in_fstring(self):
+    # From 3.7, `await` may be used in expressions within f-strings.
+    visitor = self.visit("async def f():\n  return f'{await g()}'")
+    self.assertTrue(visitor.fstrings())
+    self.assertTrue(visitor.coroutines())
+    self.assertTrue(visitor.fstrings_await())
+    self.assertOnlyIn((3, 7), visitor.minimum_versions())
+
+    visitor = self.visit("async def f():\n  x = [f'{await g()}']")
+    self.assertTrue(visitor.fstrings_await())
+    self.assertOnlyIn((3, 7), visitor.minimum_versions())
+
+    visitor = self.visit("async def f():\n  await g()")
+    self.assertFalse(visitor.fstrings_await())
+    self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+    # An f-string without `await` next to one stays at the f-string minimum.
+    visitor = self.visit("async def f():\n  await g()\n  return f'{x}'")
+    self.assertFalse(visitor.fstrings_await())
+    self.assertOnlyIn((3, 6), visitor.minimum_versions())
 
   @VerminTest.skipUnlessVersion(3, 5)
   def test_coroutines_async(self):

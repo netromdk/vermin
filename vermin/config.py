@@ -29,7 +29,7 @@ class Config:
     self.__exclusion_regex = set()
     self.__make_paths_absolute = True
     self.__backports = set()
-    self.__features = set()
+    self.__features = Features.defaults()
     self.__targets = []
     self.__eval_annotations = False
     self.__only_show_violations = False

@@ -20,7 +20,7 @@ class VerminConfigTests(VerminTest):
     self.assertFalse(self.config.analyze_hidden())
     self.assertEmpty(self.config.exclusions())
     self.assertEmpty(self.config.backports())
-    self.assertEmpty(self.config.features())
+    self.assertEqualItems(Features.defaults(), self.config.features())
     self.assertEmpty(self.config.targets())
     self.assertEqual("default", self.config.format().name())
     self.assertFalse(self.config.eval_annotations())

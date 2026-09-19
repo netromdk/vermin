@@ -187,10 +187,11 @@ class Arguments:
       print("\n  --no-backport (default)\n"
             "        Use no backports. Clears any backports specified before this.")
       print("\n  [--feature <name>] ...\n"
-            "        Some features are disabled by default due to being unstable:\n{}".
-            format(Features.str(10)))
-      print("\n  --no-feature (default)\n"
-            "        Use no features. Clears any features specified before this.")
+            "        Some features are enabled by default. Others must be\n"
+            "        explicitly enabled:\n{}".format(Features.str(10)))
+      print("\n  --no-feature\n"
+            "        Use no features. Disables all features, including those\n"
+            "        that are enabled by default.")
 
   def parse(self, config, detect_folder=None):
     assert config is not None

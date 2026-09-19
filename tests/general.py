@@ -238,7 +238,7 @@ c = 3
 
   def test_detect_paths(self):
     paths = detect_paths([abspath("vermin")], config=self.config)
-    self.assertEqual(20, len(paths))
+    self.assertEqual(21, len(paths))
 
   def test_detect_hidden_paths(self):
     tmp_fld = mkdtemp()
