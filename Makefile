@@ -4,6 +4,8 @@ OTHER_FILES=count.py
 MODULES=vermin tests
 TOP_LEVEL_FILES=${MODULES} vermin.py runtests.py ${OTHER_FILES}
 SEMGREP_CMD=semgrep ci --metrics off --timeout 60 --verbose
+MANPAGES=docs/man/vermin.1 docs/man/vermin.ini.5
+RSTMAN ?= rst2man
 
 test-self:
 	./vermin.py --violations -q -t=3 ${VERMIN_FILES}
@@ -29,7 +31,10 @@ setup-coverage: clean
 setup-analysis: clean
 	pip install -r misc/.analysis-requirements.txt
 
-setup: setup-venv setup-analysis
+setup-docs: clean
+	pip install -r misc/.docs-requirements.txt
+
+setup: setup-venv setup-analysis setup-docs
 
 install-deps:
 	python -m pip install --upgrade pip virtualenv
@@ -95,3 +100,17 @@ test-coverage:
 
 coverage-report:
 	coverage report -m
+
+define docs_rule
+$(1): $(1).rst
+	$(RSTMAN) $(1).rst $(1)
+endef
+
+$(foreach manpage,$(MANPAGES),$(eval $(call docs_rule,$(manpage))))
+
+docs: $(MANPAGES)
+
+clean-docs:
+	rm -f $(MANPAGES)
+
+.PHONY: docs clean-docs
