@@ -1,6 +1,9 @@
 from .testutils import VerminTest
 
 class VerminExceptionMemberTests(VerminTest):
+  def test_BrokenBarrierError_of_asyncio(self):
+    self.assertOnlyIn((3, 11), self.detect("from asyncio import BrokenBarrierError"))
+
   def test_QueueShutDown_of_asyncio(self):
     self.assertOnlyIn((3, 13), self.detect("from asyncio import QueueShutDown"))
 
@@ -90,18 +93,18 @@ class VerminExceptionMemberTests(VerminTest):
   def test_InvalidStateError_of_concurrent_futures(self):
     self.assertOnlyIn((3, 8), self.detect("from concurrent.futures import InvalidStateError"))
 
-  def test_BrokenInterpreterPool_of_concurrent_futures_interpreter(self):
-    self.assertOnlyIn((3, 14), self.detect("""
-from concurrent.futures.interpreter import BrokenInterpreterPool
-"""))
-
-  def test_ExecutionFailed_of_concurrent_futures_interpreter(self):
-    self.assertOnlyIn((3, 14), self.detect("""
-from concurrent.futures.interpreter import ExecutionFailed
-"""))
-
   def test_BrokenThreadPool_of_concurrent_futures_thread(self):
     self.assertOnlyIn((3, 7), self.detect("from concurrent.futures.thread import BrokenThreadPool"))
+
+  def test_BrokenInterpreterPool_of_concurrent_interpreters(self):
+    self.assertOnlyIn((3, 14), self.detect("""
+from concurrent.interpreters import BrokenInterpreterPool
+"""))
+
+  def test_ExecutionFailed_of_concurrent_interpreters(self):
+    self.assertOnlyIn((3, 14), self.detect("""
+from concurrent.interpreters import ExecutionFailed
+"""))
 
   def test_BrokenProcessPool_of_concurrent_futures_process(self):
     self.assertOnlyIn((3, 3), self.detect(

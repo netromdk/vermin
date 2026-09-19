@@ -52,24 +52,8 @@ class VerminKwargsTests(VerminTest):
   def test_reverse_of_sorted(self):
     self.assertOnlyIn(((2, 4), (3, 0)), self.detect("sorted(reverse=None)"))
 
-  def test_fillchar_of_str_ljust(self):
-    self.assertOnlyIn(((2, 4), (3, 0)), self.detect("s = str()\ns.ljust(fillchar=None)"))
-    self.assertOnlyIn(((2, 4), (3, 0)), self.detect("str.ljust(fillchar=None)"))
-
-  def test_chars_of_str_lstrip(self):
-    self.assertOnlyIn(((2, 2), (3, 0)), self.detect("str.lstrip(chars=None)"))
-
   def test_count_of_str_replace(self):
     self.assertOnlyIn((3, 13), self.detect("str.replace(count=None)"))
-
-  def test_fillchar_of_str_rjust(self):
-    self.assertOnlyIn(((2, 4), (3, 0)), self.detect("str.rjust(fillchar=None)"))
-
-  def test_chars_of_str_rstrip(self):
-    self.assertOnlyIn(((2, 2), (3, 0)), self.detect("str.rstrip(chars=None)"))
-
-  def test_chars_of_str_strip(self):
-    self.assertOnlyIn(((2, 2), (3, 0)), self.detect("str.strip(chars=None)"))
 
   def test_optimize_of_ast_parse(self):
     self.assertOnlyIn((3, 13), self.detect("from ast import parse\nparse(optimize=None)"))
@@ -411,9 +395,6 @@ TracebackException(compact=1)
     self.assertOnlyIn(((2, 6), (3, 0)), self.detect(
       "import ctypes\nctypes.CFUNCTYPE(use_errno=True)"))
 
-  def test_offset_of_byref_from_ctypes(self):
-    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import ctypes\nctypes.byref(offset=3)"))
-
   def test_autojunk_of_SequenceMatcher_from_difflib(self):
     self.assertOnlyIn(((2, 7), (3, 2)),
                       self.detect("import difflib\ndifflib.SequenceMatcher(autojunk=True)"))
@@ -464,10 +445,10 @@ TracebackException(compact=1)
   def test_locals_of_signature_from_inspect(self):
     self.assertOnlyIn((3, 10), self.detect("import inspect\ninspect.signature(locals=True)"))
 
-  def test_unquote_annotations_of_Signature_from_inspect(self):
+  def test_quote_annotation_strings_of_Signature_from_inspect(self):
     self.assertOnlyIn((3, 14), self.detect("""
 from inspect import Signature
-Signature.format(unquote_annotations=True)
+Signature.format(quote_annotation_strings=False)
 """))
 
   def test_globals_of_Signature_from_inspect(self):
@@ -649,23 +630,11 @@ signature(annotation_format=True)
   def test_timeout_of_wait_from_subprocess_Popen(self):
     self.assertOnlyIn((3, 3), self.detect("from subprocess import Popen\nPopen.wait(timeout=None)"))
 
-  def test_stdout_of_CalledProcessError_from_subprocess(self):
-    self.assertOnlyIn((3, 5),
-                      self.detect("""
-from subprocess import CalledProcessError
-CalledProcessError(stdout=None)"""))
-
   def test_stderr_of_CalledProcessError_from_subprocess(self):
     self.assertOnlyIn((3, 5),
                       self.detect("""
 from subprocess import CalledProcessError
 CalledProcessError(stderr=None)"""))
-
-  def test_stdout_of_TimeoutExpired_from_subprocess(self):
-    self.assertOnlyIn((3, 5),
-                      self.detect("""
-from subprocess import TimeoutExpired
-TimeoutExpired(stdout=None)"""))
 
   def test_stderr_of_TimeoutExpired_from_subprocess(self):
     self.assertOnlyIn((3, 5),
@@ -990,10 +959,6 @@ TimeoutExpired(stderr=None)"""))
     self.assertOnlyIn((3, 2), self.detect(
       "import email.utils\nemail.utils.make_msgid(domain=None)"))
 
-  def test_charset_of_email_utils_formatdate(self):
-    self.assertOnlyIn((3, 3), self.detect(
-      "import email.utils\nemail.utils.formatdate(charset=None)"))
-
   def test_charset_of_email_utils_formataddr(self):
     self.assertOnlyIn((3, 3), self.detect(
       "import email.utils\nemail.utils.formataddr(charset=None)"))
@@ -1045,6 +1010,11 @@ TimeoutExpired(stderr=None)"""))
   def test_exit_ok_of_path_mkdir(self):
     self.assertOnlyIn(
         (3, 5), self.detect("from pathlib import Path\np=Path('foo')\np.mkdir(exist_ok=True)"))
+
+  def test_parent_mode_of_path_mkdir(self):
+    self.assertOnlyIn(
+        (3, 15),
+        self.detect("from pathlib import Path\np=Path('foo')\np.mkdir(parent_mode=0o700)"))
 
   def test_strict_of_path_resolve(self):
     self.assertOnlyIn(
@@ -1163,12 +1133,6 @@ import argparse
 parser = argparse.ArgumentParser(prog='test')
 parser.add_parser(deprecated=True)
 """))
-
-  def test_start_on_index_of_array_array(self):
-    self.assertOnlyIn((3, 10), self.detect("import array\narray.array.index(start=None)"))
-
-  def test_stop_on_index_of_array_array(self):
-    self.assertOnlyIn((3, 10), self.detect("import array\narray.array.index(stop=None)"))
 
   def test_skip_of_bdb_Bdb(self):
     self.assertOnlyIn(((2, 7), (3, 1)), self.detect("import bdb\nbdb.Bdb(skip=True)"))
@@ -1482,10 +1446,10 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from Tkinter import Tk\n"
                                   "Tk(useTk=None)"))
 
-  def test_encodings_of_FileType_from_argparse(self):
+  def test_encoding_of_FileType_from_argparse(self):
     self.assertOnlyIn((3, 4),
                       self.detect("from argparse import FileType\n"
-                                  "FileType(encodings=None)"))
+                                  "FileType(encoding=None)"))
 
   def test_errors_of_FileType_from_argparse(self):
     self.assertOnlyIn((3, 4),
@@ -1617,7 +1581,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(allow_no_value=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(allow_no_value=None)"))
 
@@ -1626,7 +1590,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(comment_prefixes=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(comment_prefixes=None)"))
 
@@ -1635,7 +1599,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(converters=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(converters=None)"))
 
@@ -1644,7 +1608,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(default_section=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(default_section=None)"))
 
@@ -1653,7 +1617,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(delimiters=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(delimiters=None)"))
 
@@ -1662,7 +1626,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(empty_lines_in_values=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(empty_lines_in_values=None)"))
 
@@ -1671,7 +1635,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(interpolation=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(interpolation=None)"))
 
@@ -1680,7 +1644,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(strict=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import ConfigParser\n"
                                   "ConfigParser(strict=None)"))
 
@@ -1689,7 +1653,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(allow_no_value=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(allow_no_value=None)"))
 
@@ -1698,7 +1662,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(comment_prefixes=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(comment_prefixes=None)"))
 
@@ -1707,7 +1671,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(converters=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(converters=None)"))
 
@@ -1716,7 +1680,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(default_section=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(default_section=None)"))
 
@@ -1725,7 +1689,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(delimiters=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(delimiters=None)"))
 
@@ -1734,7 +1698,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(empty_lines_in_values=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(empty_lines_in_values=None)"))
 
@@ -1743,7 +1707,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(interpolation=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(interpolation=None)"))
 
@@ -1752,7 +1716,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(strict=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import RawConfigParser\n"
                                   "RawConfigParser(strict=None)"))
 
@@ -1761,7 +1725,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import DuplicateSectionError\n"
                                   "DuplicateSectionError(lineno=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import DuplicateSectionError\n"
                                   "DuplicateSectionError(lineno=None)"))
 
@@ -1770,7 +1734,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import DuplicateSectionError\n"
                                   "DuplicateSectionError(source=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import DuplicateSectionError\n"
                                   "DuplicateSectionError(source=None)"))
 
@@ -1779,7 +1743,7 @@ binascii.a2b_base64(strict_mode=True)
                       self.detect("from configparser import ParsingError\n"
                                   "ParsingError(source=None)"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)),
+    self.assertOnlyIn(((2, 6), (3, 2)),
                       self.detect("from configparser import ParsingError\n"
                                   "ParsingError(source=None)"))
 
@@ -2298,16 +2262,6 @@ input(errors=None)
                       self.detect("from logging import warning\n"
                                   "warning(stacklevel=None)"))
 
-  def test_version_of_dump_from_marshal(self):
-    self.assertOnlyIn(((2, 4), (3, 0)),
-                      self.detect("from marshal import dump\n"
-                                  "dump(version=None)"))
-
-  def test_version_of_dumps_from_marshal(self):
-    self.assertOnlyIn(((2, 4), (3, 0)),
-                      self.detect("from marshal import dumps\n"
-                                  "dumps(version=None)"))
-
   def test_domain_of_cat_from_nis(self):
     self.assertOnlyIn(((2, 5), (3, 0)),
                       self.detect("from nis import cat\n"
@@ -2337,6 +2291,11 @@ input(errors=None)
     self.assertOnlyIn((3, 2),
                       self.detect("from os import makedirs\n"
                                   "makedirs(exist_ok=None)"))
+
+  def test_parent_mode_of_makedirs_from_os(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("from os import makedirs\n"
+                                  "makedirs(parent_mode=0o700)"))
 
   def test_dir_fd_of_mkdir_from_os(self):
     self.assertOnlyIn((3, 3),
@@ -2578,6 +2537,11 @@ input(errors=None)
                       self.detect("from pprint import PrettyPrinter\n"
                                   "PrettyPrinter(underscore_numbers=None)"))
 
+  def test_expand_of_PrettyPrinter_from_pprint(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("from pprint import PrettyPrinter\n"
+                                  "PrettyPrinter(expand=True)"))
+
   def test_depth_of_pformat_from_pprint(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
                       self.detect("from pprint import pformat\n"
@@ -2603,6 +2567,16 @@ input(errors=None)
                       self.detect("from pprint import pformat\n"
                                   "pformat(underscore_numbers=None)"))
 
+  def test_expand_of_pformat_from_pprint(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("from pprint import pformat\n"
+                                  "pformat(expand=True)"))
+
+  def test_expand_of_pp_from_pprint(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("from pprint import pp\n"
+                                  "pp(expand=True)"))
+
   def test_depth_of_pprint_from_pprint(self):
     self.assertOnlyIn(((2, 4), (3, 0)),
                       self.detect("from pprint import pprint\n"
@@ -2627,6 +2601,11 @@ input(errors=None)
     self.assertOnlyIn((3, 10),
                       self.detect("from pprint import pprint\n"
                                   "pprint(underscore_numbers=None)"))
+
+  def test_expand_of_pprint_from_pprint(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("from pprint import pprint\n"
+                                  "pprint(expand=True)"))
 
   def test_invalidation_mode_of_compile_from_py_compile(self):
     self.assertOnlyIn((3, 7),
@@ -3190,11 +3169,6 @@ kqueue().control(timeout=1)
                       self.detect("from email.parser import Parser\n"
                                   "Parser(policy=None)"))
 
-  def test_strict_of_Parser_from_email_parser(self):
-    self.assertOnlyIn(((2, 2), (3, 0)),
-                      self.detect("from email.parser import Parser\n"
-                                  "Parser(strict=None)"))
-
   def test_headersonly_of_parse_from_email_parser_Parser(self):
     self.assertOnlyIn(((2, 2), (3, 0)),
                       self.detect("from email.parser import Parser\n"
@@ -3478,11 +3452,6 @@ kqueue().control(timeout=1)
                       self.detect("from _thread import lock\n"
                                   "x = lock()\n"
                                   "x.acquire(timeout=None)"))
-
-  def test_signum_of_interrupt_main_from__thread(self):
-    self.assertOnlyIn((3, 10),
-                      self.detect("from _thread import interrupt_main\n"
-                                  "interrupt_main(signum=None)"))
 
   def test_required_of_add_subparsers_from_argparse_ArgumentParser(self):
     self.assertOnlyIn((3, 7),
@@ -4587,6 +4556,130 @@ import bisect
 bisect.insort_right(key='x')
 """))
 
+  def test_max_threads_of_dump_traceback_from_faulthandler(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from faulthandler import dump_traceback
+dump_traceback(max_threads=None)
+"""))
+
+  def test_max_threads_of_dump_traceback_later_from_faulthandler(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from faulthandler import dump_traceback_later
+dump_traceback_later(max_threads=None)
+"""))
+
+  def test_max_threads_of_enable_from_faulthandler(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from faulthandler import enable
+enable(max_threads=None)
+"""))
+
+  def test_max_threads_of_register_from_faulthandler(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from faulthandler import register
+register(max_threads=None)
+"""))
+
+  def test_max_response_headers_of_HTTPConnection_from_http_client(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from http.client import HTTPConnection
+HTTPConnection(max_response_headers=None)
+"""))
+
+  def test_max_response_headers_of_HTTPSConnection_from_http_client(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from http.client import HTTPSConnection
+HTTPSConnection(max_response_headers=None)
+"""))
+
+  def test_extra_response_headers_of_SimpleHTTPRequestHandler_from_http_server(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from http.server import SimpleHTTPRequestHandler
+SimpleHTTPRequestHandler(extra_response_headers=None)
+"""))
+
+  def test_fallback_to_class_doc_of_getdoc_from_inspect(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from inspect import getdoc
+getdoc(fallback_to_class_doc=None)
+"""))
+
+  def test_inherit_class_doc_of_getdoc_from_inspect(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from inspect import getdoc
+getdoc(inherit_class_doc=None)
+"""))
+
+  def test_array_hook_of_load_from_json(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from json import load
+load(array_hook=None)
+"""))
+
+  def test_array_hook_of_loads_from_json(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from json import loads
+loads(array_hook=None)
+"""))
+
+  def test_target_time_of_autorange_from_timeit_Timer(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from timeit import Timer
+x = Timer()
+x.autorange(target_time=None)
+"""))
+
+  def test_nolinestop_of_search_from_tkinter_Text(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from tkinter import Text
+x = Text()
+x.search(nolinestop=None)
+"""))
+
+  def test_strictlimits_of_search_from_tkinter_Text(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from tkinter import Text
+x = Text()
+x.search(strictlimits=None)
+"""))
+
+  def test_formatter_of_assertLogs_from_unittest_TestCase(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from unittest import TestCase
+x = TestCase()
+x.assertLogs(formatter=None)
+"""))
+
+  def test_missing_as_none_of_urldefrag_from_urllib_parse(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from urllib.parse import urldefrag
+urldefrag(missing_as_none=None)
+"""))
+
+  def test_missing_as_none_of_urlparse_from_urllib_parse(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from urllib.parse import urlparse
+urlparse(missing_as_none=None)
+"""))
+
+  def test_missing_as_none_of_urlsplit_from_urllib_parse(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from urllib.parse import urlsplit
+urlsplit(missing_as_none=None)
+"""))
+
+  def test_keep_empty_of_urlunparse_from_urllib_parse(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from urllib.parse import urlunparse
+urlunparse(keep_empty=None)
+"""))
+
+  def test_keep_empty_of_urlunsplit_from_urllib_parse(self):
+    self.assertOnlyIn((3, 15), self.detect("""
+from urllib.parse import urlunsplit
+urlunsplit(keep_empty=None)
+"""))
+
   def test_kw_only_of_dataclasses_dataclass(self):
     self.assertOnlyIn((3, 10), self.detect("""
 from dataclasses import dataclass
@@ -4623,4 +4716,320 @@ from dataclasses import dataclass, field
 @dataclass
 class Foo:
   bar: int = field(kw_only=False)
+"""))
+
+  def test_module_of_compile(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+compile(source='', module='m')
+"""))
+
+  def test_module_of_ast_parse(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+from ast import parse
+parse('', module='m')
+"""))
+
+  def test_module_of_symtable_symtable(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import symtable
+symtable.symtable('x', 'f', 'exec', module='m')
+"""))
+
+  def test_fullname_of_source_to_code_from_importlib_abc(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+from importlib.abc import InspectLoader
+InspectLoader.source_to_code('x', fullname='m')
+"""))
+
+  def test_canonical_of_base64_a85decode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.a85decode(b'', canonical=True)
+"""))
+
+  def test_ignorechars_of_base64_b16decode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.b16decode(b'', ignorechars=b'')
+"""))
+
+  def test_wrapcol_of_base64_b16encode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.b16encode(b'', wrapcol=76)
+"""))
+
+  def test_canonical_of_base64_b32decode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.b32decode(b'', canonical=True)
+"""))
+
+  def test_ignorechars_of_base64_b32decode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.b32decode(b'', ignorechars=b'')
+"""))
+
+  def test_padded_of_base64_b32decode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.b32decode(b'', padded=True)
+"""))
+
+  def test_padded_of_base64_b32encode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.b32encode(b'', padded=True)
+"""))
+
+  def test_wrapcol_of_base64_b32encode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.b32encode(b'', wrapcol=76)
+"""))
+
+  def test_canonical_of_base64_b32hexdecode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.b32hexdecode(b'', canonical=True)
+"""))
+
+  def test_ignorechars_of_base64_b32hexdecode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.b32hexdecode(b'', ignorechars=b'')
+"""))
+
+  def test_padded_of_base64_b32hexdecode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.b32hexdecode(b'', padded=True)
+"""))
+
+  def test_padded_of_base64_b32hexencode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.b32hexencode(b'', padded=True)
+"""))
+
+  def test_wrapcol_of_base64_b32hexencode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.b32hexencode(b'', wrapcol=76)
+"""))
+
+  def test_canonical_of_base64_b64decode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.b64decode(b'', canonical=True)
+"""))
+
+  def test_ignorechars_of_base64_b64decode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.b64decode(b'', ignorechars=b'')
+"""))
+
+  def test_padded_of_base64_b64decode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.b64decode(b'', padded=True)
+"""))
+
+  def test_padded_of_base64_b64encode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.b64encode(b'', padded=True)
+"""))
+
+  def test_wrapcol_of_base64_b64encode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.b64encode(b'', wrapcol=76)
+"""))
+
+  def test_canonical_of_base64_b85decode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.b85decode(b'', canonical=True)
+"""))
+
+  def test_ignorechars_of_base64_b85decode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.b85decode(b'', ignorechars=b'')
+"""))
+
+  def test_wrapcol_of_base64_b85encode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.b85encode(b'', wrapcol=76)
+"""))
+
+  def test_padded_of_base64_urlsafe_b64decode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.urlsafe_b64decode(b'', padded=True)
+"""))
+
+  def test_wrapcol_of_base64_z85encode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.z85encode(b'', wrapcol=76)
+"""))
+
+  def test_count_of_bytes_replace(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("bytes.replace(b'', b'', b'', count=1)"))
+
+  def test_count_of_bytearray_replace(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect(
+                        "bytearray.replace(bytearray(b''), b'', b'', count=1)"))
+
+  def test_color_of_ast_dump(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import ast
+ast.dump(ast.parse('x'), color=True)
+"""))
+
+  def test_color_of_difflib_unified_diff(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import difflib
+difflib.unified_diff('a', 'b', color=True)
+"""))
+
+  def test_padded_of_base64_urlsafe_b64encode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.urlsafe_b64encode(b'', padded=True)
+"""))
+
+  def test_canonical_of_base64_z85decode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.z85decode(b'', canonical=True)
+"""))
+
+  def test_ignorechars_of_base64_z85decode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.z85decode(b'', ignorechars=b'')
+"""))
+
+  def test_pad_of_base64_z85encode(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import base64
+base64.z85encode(b'', pad=b' ')
+"""))
+
+  def test_padded_of_binascii_a2b_base32(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import binascii
+binascii.a2b_base32(b'', padded=True)
+"""))
+
+  def test_alphabet_of_binascii_a2b_base64(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import binascii
+binascii.a2b_base64(b'', alphabet=None)
+"""))
+
+  def test_canonical_of_binascii_a2b_base64(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import binascii
+binascii.a2b_base64(b'', canonical=True)
+"""))
+
+  def test_ignorechars_of_binascii_a2b_base64(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import binascii
+binascii.a2b_base64(b'', ignorechars=b'')
+"""))
+
+  def test_padded_of_binascii_a2b_base64(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import binascii
+binascii.a2b_base64(b'', padded=True)
+"""))
+
+  def test_ignorechars_of_binascii_a2b_hex(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import binascii
+binascii.a2b_hex(b'', ignorechars=b'')
+"""))
+
+  def test_padded_of_binascii_b2a_base32(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import binascii
+binascii.b2a_base32(b'', padded=True)
+"""))
+
+  def test_alphabet_of_binascii_b2a_base64(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import binascii
+binascii.b2a_base64(b'', alphabet=None)
+"""))
+
+  def test_padded_of_binascii_b2a_base64(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import binascii
+binascii.b2a_base64(b'', padded=True)
+"""))
+
+  def test_wrapcol_of_binascii_b2a_base64(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import binascii
+binascii.b2a_base64(b'', wrapcol=76)
+"""))
+
+  def test_ignorechars_of_binascii_unhexlify(self):
+    self.assertOnlyIn((3, 15),
+                      self.detect("""
+import binascii
+binascii.unhexlify(b'', ignorechars=b'')
 """))

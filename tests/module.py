@@ -35,7 +35,7 @@ class VerminModuleTests(VerminTest):
   def test_configparser(self):
     self.assertOnlyIn((3, 0), self.detect("import configparser"))
     self.assertTrue(self.config.add_backport("configparser"))
-    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import configparser"))
+    self.assertOnlyIn(((2, 6), (3, 2)), self.detect("import configparser"))
 
   def test_copy_reg(self):
     self.assertOnlyIn((2, 0), self.detect("import copy_reg"))
@@ -187,8 +187,6 @@ class VerminModuleTests(VerminTest):
 
   def test_faulthandler(self):
     self.assertOnlyIn((3, 3), self.detect("import faulthandler"))
-    self.assertTrue(self.config.add_backport("faulthandler"))
-    self.assertOnlyIn(((2, 6), (3, 0)), self.detect("import faulthandler"))
 
   def test_ipaddress(self):
     self.assertOnlyIn((3, 3), self.detect("import ipaddress"))
@@ -588,3 +586,15 @@ class VerminModuleTests(VerminTest):
 
   def test_test_support_warnings_helper(self):
     self.assertOnlyIn((3, 10), self.detect("import test.support.warnings_helper"))
+
+  def test_math_integer(self):
+    self.assertOnlyIn((3, 15), self.detect("import math.integer"))
+
+  def test_profiling(self):
+    self.assertOnlyIn((3, 15), self.detect("import profiling"))
+
+  def test_profiling_sampling(self):
+    self.assertOnlyIn((3, 15), self.detect("import profiling.sampling"))
+
+  def test_profiling_tracing(self):
+    self.assertOnlyIn((3, 15), self.detect("import profiling.tracing"))
