@@ -94,11 +94,11 @@ backports = NAME
   See ``--help`` or vermin(1) for a full list of supported backports.
 
 features = NAME
-  Some features are disabled by default due to being unstable:
+  Some features are enabled by default. Others must be explicitly enabled.
 
   See ``--help`` or vermin(1) for a full list of supported features.
 
-format = **default**
+format = ***default***
   Format to show results and output in. Supported formats:
 
   See ``--help`` or vermin(1) for a full list of supported formats.

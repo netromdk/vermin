@@ -127,7 +127,7 @@ Options
 -V, --version
   Show the version number and exits.
 
--c=FILE, --config-file=FILE
+-c FILE, --config-file FILE
   Loads the specified config file unless ``--no-config-file`` is specified. Any
   additional arguments supplied are applied on top of that config. See vermin.ini(5)
   section for more information.
@@ -198,7 +198,7 @@ Options
   Don't scan symlinks to folders to include in analysis. Symlinks to non-folders
   or top-level folders will always be scanned.
 
--f=FORMAT, --format=FORMAT
+-f FORMAT, --format FORMAT
   Format to show results and output in. Supported formats:
 
   default
@@ -217,12 +217,12 @@ Options
     other verbose messages as notices. The intent is that it be used for linting
     in a GitHub Actions pipeline.
 
---exclude=NAME
+[--exclude NAME] ...
   Exclude full names, like 'email.parser.FeedParser', from analysis. Useful to
   ignore conditional logic that can trigger incompatible results. This option may
   be specified multiple times.
 
---exclude-file=FILE
+[--exclude-file FILE] ...
   Exclude full names, like 'email.parser.FeedParser', from analysis but read from
   the specified file instead. Each line of the file constitutes an exclusion with
   the same format as with `--exclude`.
@@ -230,7 +230,7 @@ Options
 --no-exclude (default)
   Use no excludes. Clears any excludes specified before this.
 
---exclude-regex=PATTERN
+[--exclude-regex PATTERN] ...
   Exclude files from analysis by matching a regex pattern against their entire
   path as expanded from the Vermin command line. Patterns are matched using
   `re.search()`, so '^' or '$' anchors should be applied as needed.
@@ -246,7 +246,7 @@ Options
 --no-make-paths-absolute
   Do not convert relative paths from the command line into absolute paths.
 
---backport=NAME
+[--backport NAME] ...
   Some features are sometimes backported into packages, in repositories such as PyPi,
   that are widely used but aren't in the standard language. If such a backport is
   specified as being used, the results will reflect that instead. Versioned
@@ -289,18 +289,21 @@ Options
 --no-backport (default)
   Use no backports. Clears any backports specified before this.
 
---feature=NAME
-  Some features are disabled by default due to being unstable:
+[--feature NAME] ...
+  Some features are enabled by default. Others must be explicitly enabled:
 
   fstring-self-doc
-    Detect self-documenting fstrings. Can in some cases wrongly report fstrings
-    as self-documenting.
+    Detect self-documenting fstrings. Enabled by default.
+  fstring-pep701
+    Detect PEP 701 f-string features (3.12+): same-quote nesting and
+    multi-line expressions. Requires running on Python 3.12+. Enabled by default.
   union-types
-    Detect union types `X | Y`. Can in some cases wrongly report union types due
-    to having to employ heuristics.
+    [Unstable] Detect union types `X | Y`. Can in some cases wrongly report
+    union types due to having to employ heuristics.
 
---no-feature (default)
-  Use no features. Clears any features specified before this.
+--no-feature
+  Use no features. Disables all features, including those that are enabled by
+  default.
 
 Examples
 ========
