@@ -100,7 +100,7 @@ EncodedFile('test', 'utf-8', 'utf-8', 'namereplace')
                       self.detect("from codecs import StreamReaderWriter as SRW\n"
                                   "SRW(open('hello.txt'), None, None, 'namereplace')"))
 
-  def test_function_StreamRecorder(self):
+  def test_function_StreamRecoder(self):
     self.assertOnlyIn((3, 5), self.detect(
-      "from codecs import StreamRecorder as SR, encode, decode\n"
+      "from codecs import StreamRecoder as SR, encode, decode\n"
       "SR(open('hello.txt'), encode, decode, None, None, 'namereplace')"))

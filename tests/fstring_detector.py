@@ -40,7 +40,7 @@ class FStringDetectorTests(VerminTest):
   def test_input_guards(self):
     detector = FStringDetector('f"{x}"')
     bare = ast.JoinedStr()
-    const = ast.Constant(value="a")
+    const = ast.parse("1", mode="eval").body
     self.assertIsNone(detector.pep701_violation(bare))
     self.assertFalse(detector.is_self_doc(const))
     self.assertIsNone(detector.pep701_violation(const))

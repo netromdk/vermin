@@ -33,3 +33,9 @@ class VerminBuiltinClassesMemberTests(VerminTest):
 
   def test_BaseExceptionGroup(self):
     self.assertOnlyIn((3, 11), self.detect("BaseExceptionGroup()"))
+
+  def test_frozendict(self):
+    self.assertOnlyIn((3, 15), self.detect("frozendict()"))
+
+  def test_sentinel(self):
+    self.assertOnlyIn((3, 15), self.detect("sentinel()"))

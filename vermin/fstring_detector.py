@@ -71,7 +71,7 @@ class FStringDetector:
     val = values[index]
     if val.conversion == REPR_CONVERSION:
       return True
-    return index > 0 and isinstance(values[index - 1], ast.Constant) and \
+    return index > 0 and isinstance(values[index - 1], getattr(ast, "Constant")) and \
       isinstance(values[index - 1].value, str) and \
       values[index - 1].value.rstrip().endswith(SELF_DOC_MARKER)
 
@@ -127,7 +127,7 @@ class FStringDetector:
       # opening quote, so the `{`-anchor cannot locate their fields. A self-doc fold whose text
       # appears verbatim in the source with a `{` directly before it is self-locating, its trailing
       # `=` the marker.
-      if idx > 0 and isinstance(node.values[idx - 1], ast.Constant) and \
+      if idx > 0 and isinstance(node.values[idx - 1], getattr(ast, "Constant")) and \
          isinstance(node.values[idx - 1].value, str) and \
          node.values[idx - 1].value.rstrip().endswith(SELF_DOC_MARKER) and \
          not node.values[idx - 1].value.startswith(OPEN_BRACE):
