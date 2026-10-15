@@ -258,15 +258,13 @@ Options
   *asyncio*
     https://pypi.org/project/asyncio/ (!2, 3.3)
   *configparser*
-    https://pypi.org/project/configparser/ (2.6, 3.0)
+    https://pypi.org/project/configparser/ (2.6, 3.2)
   *contextvars*
     https://pypi.org/project/contextvars/ (!2, 3.5)
   *dataclasses*
     https://pypi.org/project/dataclasses/ (!2, 3.6)
   *enum*
     https://pypi.org/project/enum34/ (2.4, 3.3)
-  *faulthandler*
-    https://pypi.org/project/faulthandler/ (2.6, 3.0)
   *importlib*
     https://pypi.org/project/importlib/ (2.3, 3.0)
   *ipaddress*
