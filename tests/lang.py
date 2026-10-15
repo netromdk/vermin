@@ -1225,17 +1225,29 @@ assert html(template) == '<img src="test.jpg" alt="test test" />'
     self.assertFalse(visitor.template_string_literal())
 
   @VerminTest.skipUnlessVersion(3, 15)
-  def test_unpacking_in_comprehension(self):
-    visitor = self.visit("[*x for x in range(10)]")
-    self.assertTrue(visitor.unpacking_in_comprehension())
+  @VerminTest.parameterized_args([
+    ("[*x for x in range(10)]",),
+    ("{*x for x in range(10)}",),
+    ("(*x for x in range(10))",),
+    ("{**d for d in items}",),
+    ("[[*y for y in x] for x in z]",),
+  ])
+  def test_unpacking_in_comprehension(self, source):
+    visitor = self.visit(source)
+    self.assertTrue(visitor.unpacking_in_comprehension(), source)
     self.assertOnlyIn((3, 15), visitor.minimum_versions())
 
-    visitor = self.visit("{*x for x in range(10)}")
-    self.assertTrue(visitor.unpacking_in_comprehension())
-    self.assertOnlyIn((3, 15), visitor.minimum_versions())
-
-    visitor = self.visit("[x for x in range(10)]")
-    self.assertFalse(visitor.unpacking_in_comprehension())
+  @VerminTest.skipUnlessVersion(3, 5)
+  @VerminTest.parameterized_args([
+    ("[print(i, *foo) for i in range(5)]",),
+    ("[f(*x) for x in y]",),
+    ("[x for x in g(*foo)]",),
+    ("[[*a, *b] for x in range(3)]",),
+    ("[x for x in range(10)]",),
+  ])
+  def test_unpacking_in_comprehension_false_positives(self, source):
+    visitor = self.visit(source)
+    self.assertFalse(visitor.unpacking_in_comprehension(), source)
 
   @VerminTest.skipUnlessVersion(3, 15)
   def test_lazy_imports(self):
