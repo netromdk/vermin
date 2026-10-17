@@ -153,6 +153,10 @@ class SourceState:
     # Name -> type resolutions. Is a dictionary of sets.
     self.name_res_type = {}
 
+    # Function name -> resolved return type, for user-defined functions with a return annotation
+    # that can be statically resolved to a builtin type (e.g. `def foo() -> str`).
+    self.function_returns = {}
+
     # User-defined symbols to be ignored.
     self.user_defs = set()
 
