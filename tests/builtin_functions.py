@@ -291,6 +291,14 @@ class VerminBuiltinFunctionsMemberTests(VerminTest):
     self.assertDetectMinVersions(source, min_versions)
 
   @VerminTest.parameterized_args([
+    ("def foo() -> str:\n\treturn ''\na = foo()\na.removeprefix()", (3, 9)),
+    ("def foo() -> bytes:\n\treturn b''\na = foo()\na.removeprefix()", (3, 9)),
+    ("def foo() -> bytearray:\n\treturn bytearray()\na = foo()\na.removeprefix()", (3, 9)),
+  ])
+  def test_removeprefix_of_returned_value(self, source, min_versions):
+    self.assertDetectMinVersions(source, min_versions)
+
+  @VerminTest.parameterized_args([
     ("s=\"\"\ns.removesuffix()", (3, 9)),
     ("\"\".removesuffix()", (3, 9)),
     ("s=str()\ns.removesuffix()", (3, 9)),
