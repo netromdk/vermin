@@ -1265,10 +1265,20 @@ assert html(template) == '<img src="test.jpg" alt="test test" />'
   def test_lazy_modules(self):
     visitor = self.visit("__lazy_modules__ = []")
     self.assertTrue(visitor.lazy_modules())
-    self.assertOnlyIn((3, 15), visitor.minimum_versions())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
 
     visitor = self.visit("__all__ = []")
     self.assertFalse(visitor.lazy_modules())
+
+  def test_lazy_modules_verbose(self):
+    self.config.set_verbose(3)
+    visitor = self.visit("__lazy_modules__ = ['json']")
+    self.assertTrue(visitor.lazy_modules())
+    self.assertEqual([(0, 0), (0, 0)], visitor.minimum_versions())
+
+    # Detected and shown, but without a version requirement.
+    self.assertEqual(visitor.output_text(), """L1: `__lazy_modules__`
+""")
 
   def test_slice_subscription(self):
     visitor = self.visit("x = slice[1:2:3]")

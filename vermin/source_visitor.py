@@ -564,10 +564,6 @@ class SourceVisitor(ast.NodeVisitor):
       mins = self.__add_versions_entity(mins, (None, (3, 15)),
                                         "lazy imports (PEP 810)")
 
-    if self.lazy_modules():
-      mins = self.__add_versions_entity(mins, (None, (3, 15)),
-                                        "`__lazy_modules__`")
-
     if self.slice_subscription():
       mins = self.__add_versions_entity(mins, (None, (3, 15)),
                                         "slice subscription")
@@ -1137,9 +1133,9 @@ class SourceVisitor(ast.NodeVisitor):
       self.__s.bool_const = True
       self.__vvvprint("True/False constant", versions=[(2, 3), (3, 0)])
     elif node.id == "__lazy_modules__":
+      # Detected but no version requirement because earlier Python versions ignore it.
       self.__s.lazy_modules = True
-      self.__vvprint("`__lazy_modules__`", line=node.lineno,
-                     versions=[None, (3, 15)])
+      self.__vvprint("`__lazy_modules__`", line=node.lineno)
 
   def visit_Print(self, node):  # pragma: no cover
     self.__s.printv2 = True
