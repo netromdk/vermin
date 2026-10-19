@@ -53,3 +53,19 @@ class VerminModuleTests(VerminTest):
     self.assertFalse(visitor.literal_annotations())
     self.assertTrue(visitor.maybe_annotations())
     self.assertOnlyIn((3, 0), visitor.minimum_versions())
+
+  def test_return_type_used_for_type_deduction(self):
+    # A statically-resolvable return annotation should let member access on the call result be
+    # attributed to the builtin type.
+    self.assertOnlyIn((3, 9), self.detect(
+      "def foo() -> str:\n\treturn ''\na = foo()\na.removeprefix('x')"))
+
+  def test_return_type_not_deduced_without_annotation(self):
+    # Without a return annotation no assumption should be made, mirroring the previous behaviour.
+    self.assertEqual([(0, 0), (0, 0)], self.detect(
+      "def foo():\n\treturn ''\na = foo()\na.removeprefix('x')"))
+
+  def test_return_type_not_deduced_for_unknown_annotation(self):
+    # A non-builtin annotation must not produce any type deduction.
+    self.assertEqual([None, (3, 0)], self.detect(
+      "class Foo:\n\tpass\ndef bar() -> Foo:\n\treturn Foo()\na = bar()\na.removeprefix('x')"))

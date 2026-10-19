@@ -864,6 +864,26 @@ class SourceVisitor(ast.NodeVisitor):
     else:
       self.__s.name_res_type[source].add(target)
 
+  def __resolve_annotation_type(self, node):
+    """Resolve a type annotation node to a builtin type name, or None if it cannot be resolved.
+
+    Supports plain builtin names (`-> str`) as well as subscripted generics whose base is a builtin
+    (`-> list[str]` -> "list"). Non-builtin annotations (`-> MyClass`, `-> Optional[str]`) return
+    None so that no assumptions are made about the deduced type.
+    """
+    while isinstance(node, ast.Subscript):
+      node = node.value
+    if isinstance(node, ast.Name):
+      name = node.id
+    elif isinstance(node, ast.Attribute):
+      # e.g. `typing.List` or `collections.abc.Sequence`; only the leaf matters for builtins.
+      name = dotted_name(self.__get_attribute_name(node)).split(".")[-1]
+    else:
+      return None
+    if name in self.__s.builtin_types:
+      return name
+    return None
+
   def __is_builtin_type(self, name):
     return name in self.__s.builtin_types
 
@@ -946,6 +966,10 @@ class SourceVisitor(ast.NodeVisitor):
     if isinstance(node.value, ast.Call):
       if isinstance(node.value.func, ast.Name):
         value_name = node.value.func.id
+        # If the called function is user-defined and has a resolvable return type annotation, use
+        # that type instead of the function name for type deduction (e.g. `def foo() -> str`).
+        if value_name in self.__s.function_returns:
+          value_name = self.__s.function_returns[value_name]
       elif isinstance(node.value.func, ast.Attribute):
         value_name = dotted_name(self.__get_attribute_name(node.value.func))
 
@@ -1685,6 +1709,14 @@ ast.Call(func=ast.Name)."""
 
     # Add function name and argument names as user-defs.
     self.__add_user_def(node.name)
+
+    # Remember a statically-resolvable return type annotation so that calls to this function can
+    # take part in type deduction. E.g. `def foo() -> str` allows `foo().removeprefix()` to be
+    # recognized as a `str` member.
+    if hasattr(node, "returns") and node.returns:
+      ret_type = self.__resolve_annotation_type(node.returns)
+      if ret_type is not None:
+        self.__s.function_returns[node.name] = ret_type
 
     # Module-level `__dir__()` is supported by `dir()` and `__getattr__(name)` through lookup since
     # 3.7 but it isn't a version requirement because it has always been possible to define such
