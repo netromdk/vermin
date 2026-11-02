@@ -2116,10 +2116,10 @@ ast.Call(func=ast.Name)."""
         coll_name = dotted_name(self.__get_attribute_name(node.value))
       if coll_name in BUILTIN_GENERIC_ANNOTATION_TYPES:
         match(coll_name)
-      elif coll_name in self.__s.import_mem_mod:
-        full_coll_name = dotted_name([self.__s.import_mem_mod[coll_name], coll_name])
-        if full_coll_name in BUILTIN_GENERIC_ANNOTATION_TYPES:
-          match(full_coll_name)
+      elif coll_name in self.__s.import_mem_mod and \
+           dotted_name([self.__s.import_mem_mod[coll_name], coll_name]) \
+           in BUILTIN_GENERIC_ANNOTATION_TYPES:
+        match(dotted_name([self.__s.import_mem_mod[coll_name], coll_name]))
       elif coll_name in self.__s.name_res_type:
         for t in self.__s.name_res_type[coll_name]:
           if t in BUILTIN_GENERIC_ANNOTATION_TYPES:

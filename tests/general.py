@@ -811,6 +811,20 @@ c = 3
     sys.argv = [sys.argv[0]]
     self.assertEqual(ex.exception.code, 1)
 
+  def test_main_contextvar_annotation_meets_python38_target(self):
+    fp = ScopedTemporaryFile()
+    fp.writeln(b"import contextvars\ncontextvars.ContextVar[str]")
+    fp.close()
+    args = sys.argv
+    try:
+      with self.assertRaises(SystemExit) as ex:
+        sys.argv = [sys.argv[0], "--eval-annotations", "--no-tips", "--processes=1",
+                    "-t=3.8-", fp.path()]
+        main()
+    finally:
+      sys.argv = args
+    self.assertEqual(ex.exception.code, 0)
+
   def test_main_no_rules_hit_target_not_met_violations_mode(self):
     # Python file that doesn't hit any rules, even with targets, should exit successfully for
     # violations mode.

@@ -1463,6 +1463,36 @@ for file in ['foo']:
       self.assertTrue(visitor.dict_union_merge(), msg=src)
       self.assertOnlyIn((3, 9), visitor.minimum_versions())
 
+  @VerminTest.parameterized_args([
+    ("import contextvars\ncontextvars.ContextVar[str]",),
+    ("import contextvars as cv\ncv.ContextVar[str]",),
+    ("from contextvars import ContextVar\nContextVar[str]",),
+    ("from contextvars import ContextVar as CV\nCV[str]",),
+    ("import contextvars\ndef test() -> contextvars.ContextVar[str]: pass",),
+  ])
+  def test_contextvar_generic_annotation(self, source):
+    self.config.set_eval_annotations(True)
+    visitor = self.visit(source)
+    self.assertFalse(visitor.builtin_generic_type_annotations(), msg=source)
+    self.assertOnlyIn((3, 7), visitor.minimum_versions(), msg=source)
+
+  @VerminTest.parameterized_args([
+    ("import contextvars\ncontextvars.ContextVar[list[str]]",),
+    ("from contextvars import ContextVar\nContextVar[dict[str, int]]",),
+    ("import contextvars\ncontextvars.Token[str]",),
+  ])
+  def test_contextvar_annotation_requires_newer_nested_type(self, source):
+    self.config.set_eval_annotations(True)
+    visitor = self.visit(source)
+    self.assertTrue(visitor.builtin_generic_type_annotations(), msg=source)
+    self.assertOnlyIn((3, 9), visitor.minimum_versions(), msg=source)
+
+  def test_contextvar_name_rebound_to_builtin_generic(self):
+    self.config.set_eval_annotations(True)
+    visitor = self.visit("from contextvars import ContextVar\nContextVar = list\nContextVar[str]")
+    self.assertTrue(visitor.builtin_generic_type_annotations())
+    self.assertOnlyIn((3, 9), visitor.minimum_versions())
+
   def test_builtin_generic_type_annotation(self):
     # For each type, either use directly if builtin or import and then use. And the fully-qualified
     # variant.
