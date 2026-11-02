@@ -34,10 +34,10 @@ vanilla Python, and it doesn't have any external dependencies, it can be run wit
 includes detection of v2.x functionality.
 
 It functions by parsing Python code into an abstract syntax tree (AST), which it traverses and
-matches against internal dictionaries with **4312** rules, covering v2.0-2.7 and v3.0-3.15, divided
+matches against internal dictionaries with **4311** rules, covering v2.0-2.7 and v3.0-3.15, divided
 into **194** modules, **2995** classes/functions/constants members of modules, **991** kwargs of
 functions, **4** strftime directives, **3** bytes format directives, **6** array typecodes, **3**
-codecs error handler names, **19** codecs encodings, **78** builtin generic annotation types, **9**
+codecs error handler names, **19** codecs encodings, **77** builtin generic annotation types, **9**
 builtin dict union (``|``) types, **8** builtin dict union merge (``|=``) types, and **2** user
 function decorators.
 

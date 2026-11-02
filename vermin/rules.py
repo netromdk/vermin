@@ -4421,7 +4421,6 @@ BUILTIN_GENERIC_ANNOTATION_TYPES = (
   "concurrent.futures.thread._WorkItem",
   "contextlib.AbstractAsyncContextManager",
   "contextlib.AbstractContextManager",
-  "contextvars.ContextVar",
   "contextvars.Token",
   "ctypes.Array",
   "ctypes.LibraryLoader",
