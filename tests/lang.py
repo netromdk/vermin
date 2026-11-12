@@ -494,15 +494,55 @@ class VerminLanguageTests(VerminTest):
                            "  yield 42\n"
                            "  async def func2():\n"
                            "    await other()")
-      self.assertFalse(visitor.async_generator())
+      self.assertTrue(visitor.async_generator())
+      self.assertOnlyIn((3, 6), visitor.minimum_versions())
 
     # 3.7 = await in comprehension.
     if current_version() >= (3, 7):
       visitor = self.visit("async def func():\n"
                            "  yield 42\n"
                            "  d = [v for v in await other()]")
-      self.assertFalse(visitor.async_generator())
+      self.assertTrue(visitor.async_generator())
       self.assertTrue(visitor.await_in_comprehension())
+      self.assertOnlyIn((3, 7), visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 6)
+  def test_async_generator_without_await(self):
+    visitor = self.visit("async def func():\n  yield 42")
+    self.assertTrue(visitor.async_generator())
+    self.assertOnlyIn((3, 6), visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 6)
+  def test_async_generator_nested_scopes(self):
+    for body in ("  def inner():\n    yield 1",
+                 "  return lambda: (yield 1)",
+                 "  class C:\n    def method(self):\n      yield 1",
+                 "  class C:\n    value = lambda: (yield 1)"):
+      for await_statement in ("", "  await other()\n"):
+        visitor = self.visit("async def func():\n" + await_statement + body)
+        self.assertFalse(visitor.async_generator())
+        self.assertOnlyIn((3, 5), visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 6)
+  def test_async_generator_nested_defaults_and_decorators(self):
+    for body in ("  inner = lambda x=(yield 1): x",
+                 "  def inner(x=(yield 1)):\n    pass",
+                 "  async def inner(x=(yield 1)):\n    pass",
+                 "  @decorate((yield 1))\n  def inner():\n    pass",
+                 "  @decorate((yield 1))\n  async def inner():\n    pass",
+                 "  class C((yield object)):\n    pass",
+                 "  @decorate((yield 1))\n  class C:\n    pass"):
+      visitor = self.visit("async def func():\n" + body)
+      self.assertTrue(visitor.async_generator())
+      self.assertOnlyIn((3, 6), visitor.minimum_versions())
+
+  @VerminTest.skipUnlessVersion(3, 6)
+  def test_async_generator_excluded_yield(self):
+    for body in ("  yield 1  # novermin",
+                 "  if condition:  # novermin\n    yield 1"):
+      visitor = self.visit("async def func():\n" + body)
+      self.assertFalse(visitor.async_generator())
+      self.assertOnlyIn((3, 5), visitor.minimum_versions())
 
   @VerminTest.skipUnlessVersion(3, 7)
   def test_async_comprehension(self):
