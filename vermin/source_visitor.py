@@ -1769,15 +1769,34 @@ ast.Call(func=ast.Name)."""
       # Reset to seen yields before function.
       self.__s.seen_yield = seen_yield
 
+  def __has_yield_in_scope(self, node):
+    if hasattr(node, "lineno") and self.__is_no_line(node.lineno):
+      return False
+    if isinstance(node, ast.Yield):
+      return True
+
+    # Nested bodies have their own scope, but their defaults, decorators and class bases are
+    # evaluated in the enclosing scope. The function being checked is passed in as body statements.
+    nested_scope = isinstance(node, (ast.FunctionDef, ast.Lambda, ast.ClassDef,
+                                     getattr(ast, "AsyncFunctionDef", ast.FunctionDef)))
+    for field, value in ast.iter_fields(node):
+      if (nested_scope and field in ("body", "type_params")) or \
+         (field == "returns" and not self.__s.config.eval_annotations()):
+        continue
+      values = value if isinstance(value, list) else [value]
+      if any(isinstance(child, ast.AST) and self.__has_yield_in_scope(child) for child in values):
+        return True
+    return False
+
   def visit_AsyncFunctionDef(self, node):
     seen_await = self.__s.seen_await
     seen_yield = self.__s.seen_yield
     if self.__handle_FunctionDef(node):
       self.__s.coroutines = True
       self.__vvprint("coroutines (async)", line=node.lineno, versions=[None, (3, 5)], plural=True)
-      if self.__s.seen_yield > seen_yield and self.__s.seen_await > seen_await:
+      if any(self.__has_yield_in_scope(statement) for statement in node.body):
         self.__s.async_generator = True
-        self.__vvprint("async generators (await and yield in same func)",
+        self.__vvprint("async generators (yield in async function)",
                        line=node.lineno, versions=[None, (3, 6)], plural=True)
 
       # Reset to seen awaits/yields before async function.
